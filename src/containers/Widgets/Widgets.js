@@ -102,4 +102,3 @@ export default class Widgets extends Component {
     );
   }
 }
-

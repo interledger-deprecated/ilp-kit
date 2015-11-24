@@ -15,8 +15,8 @@ module.exports = Object.assign({
   apiHost: process.env.APIHOST || 'localhost',
   apiPort: process.env.APIPORT,
   app: {
-    title: 'React Redux Example',
-    description: 'All the modern best practices in one example.',
+    title: 'Five Bells Ledger UI',
+    description: 'We\'ll change this later.',
     meta: {
       charSet: 'utf-8',
       property: {
