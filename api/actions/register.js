@@ -1,4 +1,4 @@
-import create from '../ledger';
+import {create} from '../ledger';
 
 export default function register(req) {
   const user = {
