@@ -68,6 +68,8 @@ export default class App extends Component {
           </NavBrand>
 
           <CollapsibleNav eventKey={0}>
+            {user &&
+              <p className="navbar-text">Balance: {user.balance}</p>}
             <Nav navbar>
               {user && <LinkContainer to="/chat">
                 <NavItem eventKey={1}>Chat</NavItem>
