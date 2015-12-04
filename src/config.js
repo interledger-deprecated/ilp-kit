@@ -14,6 +14,10 @@ module.exports = Object.assign({
   port: process.env.PORT,
   apiHost: process.env.APIHOST || 'localhost',
   apiPort: process.env.APIPORT,
+  ledgerHost: process.env.LEDGERHOST || 'localhost',
+  ledgerPort: process.env.LEDGERPORT,
+  ledgerAdminName: process.env.LEDGERADMINNAME,
+  ledgerAdminPass: process.env.LEDGERADMINPASS,
   app: {
     title: 'Five Bells Ledger UI',
     description: 'We\'ll change this later.',
