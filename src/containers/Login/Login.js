@@ -16,39 +16,38 @@ export default class Login extends Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-    const input = this.refs.username;
-    this.props.login(input.value);
+    const nameInput = this.refs.name;
+    const passwordInput = this.refs.password;
+    this.props.login(nameInput.value, passwordInput.value);
     input.value = '';
   }
 
   render() {
-    const {user, logout} = this.props;
+    //const {user, logout} = this.props;
     const styles = require('./Login.scss');
     return (
       <div className={styles.loginPage + ' container'}>
         <DocumentMeta title={config.app.title + ': Login'}/>
         <h1>Login</h1>
-        {!user &&
-        <div>
-          <form className="login-form form-inline" onSubmit={this.handleSubmit}>
-            <div className="form-group">
-              <input type="text" ref="username" placeholder="Enter a username" className="form-control"/>
+        <form onSubmit={this.handleSubmit}>
+          <div className="row">
+            <div className="col-sm-4">
+              <div className="form-group">
+                <label>Name</label>
+                <input type="text" ref="name" className="form-control"/>
+              </div>
             </div>
-            <button className="btn btn-success" onClick={this.handleSubmit}><i className="fa fa-sign-in"/>{' '}Log In
-            </button>
-          </form>
-          <p>This will "log you in" as this user, storing the username in the session of the API server.</p>
-        </div>
-        }
-        {user &&
-        <div>
-          <p>You are currently logged in as {user.name}.</p>
-
-          <div>
-            <button className="btn btn-danger" onClick={logout}><i className="fa fa-sign-out"/>{' '}Log Out</button>
           </div>
-        </div>
-        }
+          <div className="row">
+            <div className="col-sm-4">
+              <div className="form-group">
+                <label>Password</label>
+                <input type="text" ref="password" className="form-control"/>
+              </div>
+            </div>
+          </div>
+          <button type="submit" className="btn btn-success"><i className="fa fa-sign-in"/>{' '}Log In</button>
+        </form>
       </div>
     );
   }

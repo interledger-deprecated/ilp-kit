@@ -28,7 +28,6 @@ export default class Register extends Component {
       <div className={styles.registerPage + ' container'}>
         <DocumentMeta title={config.app.title + ': Register'}/>
         <h1>Register</h1>
-        <div>
           <form className="register-form" onSubmit={this.handleSubmit}>
             <div className="row">
               <div className="col-sm-4">
@@ -46,9 +45,8 @@ export default class Register extends Component {
                 </div>
               </div>
             </div>
-            <button className="btn btn-success" onClick={this.handleSubmit}><i className="fa fa-sign-in"/>{' '}Register</button>
+            <button type="submit" className="btn btn-success"><i className="fa fa-sign-in"/>{' '}Register</button>
           </form>
-        </div>
       </div>
     );
   }

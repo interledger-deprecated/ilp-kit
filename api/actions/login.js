@@ -1,7 +1,17 @@
+import getUser from '../ledger';
+
 export default function login(req) {
   const user = {
-    name: req.body.name
+    name: req.body.name,
+    password: req.body.password
   };
-  req.session.user = user;
-  return Promise.resolve(user);
+  return getUser(user)
+    .then((user) => {
+      req.session.user = user;
+      return user;
+    })
+    .catch((err) => {
+      console.log('err', err);
+      req.session.user = '';
+    });
 }
