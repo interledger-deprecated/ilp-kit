@@ -19,11 +19,10 @@ export default class Login extends Component {
     const nameInput = this.refs.name;
     const passwordInput = this.refs.password;
     this.props.login(nameInput.value, passwordInput.value);
-    input.value = '';
   }
 
   render() {
-    //const {user, logout} = this.props;
+    // const {user, logout} = this.props;
     const styles = require('./Login.scss');
     return (
       <div className={styles.loginPage + ' container'}>
