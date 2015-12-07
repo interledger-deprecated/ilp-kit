@@ -11,6 +11,8 @@ const LOGOUT = 'redux-example/auth/LOGOUT';
 const LOGOUT_SUCCESS = 'redux-example/auth/LOGOUT_SUCCESS';
 const LOGOUT_FAIL = 'redux-example/auth/LOGOUT_FAIL';
 
+const SEND_SUCCESS = 'redux-example/send/SEND_SUCCESS';
+
 const initialState = {
   loaded: false
 };
@@ -88,6 +90,14 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         loggingOut: false,
         logoutError: action.error
+      };
+    case SEND_SUCCESS:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          balance: state.user.balance - action.result.debits[0].amount
+        }
       };
     default:
       return state;
