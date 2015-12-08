@@ -1,14 +1,19 @@
-import React, {Component} from 'react';
+import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import DocumentMeta from 'react-document-meta';
 import * as sendActions from 'redux/modules/send';
 import config from '../../config';
+
 
 @connect(
   state => ({send: state.send}),
   sendActions)
 
 export default class Send extends Component {
+
+  static propTypes = {
+    send: PropTypes.func
+  }
 
   handleSubmit = (event) => {
     console.log('this.props', this.props);

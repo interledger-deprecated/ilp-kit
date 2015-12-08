@@ -3,7 +3,7 @@ import multireducer from 'multireducer';
 import { routerStateReducer } from 'redux-router';
 
 import auth from './auth';
-import send from './send';
+import { send } from './send';
 import counter from './counter';
 import {reducer as form} from 'redux-form';
 import info from './info';
