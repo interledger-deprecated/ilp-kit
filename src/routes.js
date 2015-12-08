@@ -7,7 +7,6 @@ import {
     Home,
     Widgets,
     Send,
-    About,
     Login,
     LoginSuccess,
     Register,
@@ -48,7 +47,6 @@ export default (store) => {
       </Route>
 
       { /* Routes */ }
-      <Route path="about" component={About}/>
       <Route path="login" component={Login}/>
       <Route path="register" component={Register}/>
       <Route path="survey" component={Survey}/>
