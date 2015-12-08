@@ -18,7 +18,7 @@ export default class Login extends Component {
     event.preventDefault();
     const nameInput = this.refs.name;
     const passwordInput = this.refs.password;
-    this.props.login(nameInput.value, passwordInput.value);
+    this.props.login(nameInput.value, '');
   }
 
   render() {
@@ -33,15 +33,7 @@ export default class Login extends Component {
             <div className="col-sm-4">
               <div className="form-group">
                 <label>Name</label>
-                <input type="text" ref="name" className="form-control"/>
-              </div>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-sm-4">
-              <div className="form-group">
-                <label>Password</label>
-                <input type="text" ref="password" className="form-control"/>
+                <input type="text" ref="name" placeholder="Name" className="form-control"/>
               </div>
             </div>
           </div>

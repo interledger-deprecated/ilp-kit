@@ -41,7 +41,7 @@ export default class Register extends Component {
               <div className="col-sm-4">
                 <div className="form-group">
                   <label>Password</label>
-                  <input type="text" ref="password" placeholder="Enter a password" className="form-control"/>
+                  <input type="password" ref="password" placeholder="Enter a password" className="form-control"/>
                 </div>
               </div>
             </div>

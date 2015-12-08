@@ -71,20 +71,17 @@ export default class App extends Component {
             {user &&
               <p className="navbar-text">Balance: {user.balance}</p>}
             <Nav navbar>
-              {user && <LinkContainer to="/chat">
-                <NavItem eventKey={1}>Chat</NavItem>
-              </LinkContainer>}
-
-              <LinkContainer to="/widgets">
-                <NavItem eventKey={2}>Widgets</NavItem>
-              </LinkContainer>
+              {user &&
               <LinkContainer to="/send">
                 <NavItem eventKey={3}>Send</NavItem>
-              </LinkContainer>
-              <LinkContainer to="/survey">
-                <NavItem eventKey={4}>Survey</NavItem>
-              </LinkContainer>
-
+              </LinkContainer>}
+            </Nav>
+            <Nav navbar right>
+              <NavItem eventKey={1} target="_blank" title="View on Github" href="https://github.com/interledger/five-bells-ledger-ui">
+                <i className="fa fa-github"/>
+              </NavItem>
+            </Nav>
+            <Nav navbar right>
               {!user &&
               <LinkContainer to="/login">
                 <NavItem eventKey={6}>Login</NavItem>
@@ -94,18 +91,13 @@ export default class App extends Component {
                 <NavItem eventKey={7}>Register</NavItem>
               </LinkContainer>}
               {user &&
+              <p className={styles.loggedInMessage + ' navbar-text'}>Logged in as <strong>{user.name}</strong>.</p>}
+              {user &&
               <LinkContainer to="/logout">
                 <NavItem eventKey={8} className="logout-link" onClick={this.handleLogout}>
                   Logout
                 </NavItem>
               </LinkContainer>}
-            </Nav>
-            {user &&
-            <p className={styles.loggedInMessage + ' navbar-text'}>Logged in as <strong>{user.name}</strong>.</p>}
-            <Nav navbar right>
-              <NavItem eventKey={1} target="_blank" title="View on Github" href="https://github.com/erikras/react-redux-universal-hot-example">
-                <i className="fa fa-github"/>
-              </NavItem>
             </Nav>
           </CollapsibleNav>
         </Navbar>
@@ -116,10 +108,7 @@ export default class App extends Component {
         <InfoBar/>
 
         <div className="well text-center">
-          Have questions? Ask for help <a
-          href="https://github.com/erikras/react-redux-universal-hot-example/issues"
-          target="_blank">on Github</a> or in the <a
-          href="https://discord.gg/0ZcbPKXt5bZZb1Ko" target="_blank">#react-redux-universal</a> Discord channel.
+          <a href="https://github.com/interledger/five-bells-ledger-ui" target="_blank">Five Bells Ledger UI</a>
         </div>
       </div>
     );
