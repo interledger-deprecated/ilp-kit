@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router';
-import { CounterButton, GithubButton } from 'components';
+import { CounterButton } from 'components';
 import config from '../../config';
 
 export default class Home extends Component {
