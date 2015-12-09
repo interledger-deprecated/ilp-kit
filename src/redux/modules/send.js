@@ -3,7 +3,9 @@ const SEND_SUCCESS = 'redux-example/send/SEND_SUCCESS';
 const SEND_FAIL = 'redux-example/send/SEND_FAIL';
 
 const initialState = {
-  sending: false
+  sending: false,
+  success: false,
+  error: false
 };
 
 export default function reducer(state = initialState, action = {}) {
@@ -11,25 +13,30 @@ export default function reducer(state = initialState, action = {}) {
     case SENDING:
       return {
         ...state,
-        sending: true
+        sending: true,
+        success: false,
+        error: false
       };
     case SEND_SUCCESS:
       return {
         ...state,
-        sending: false
+        sending: false,
+        success: true,
+        error: false
       };
     case SEND_FAIL:
       return {
         ...state,
         sending: false,
-        sendError: action.error
+        success: false,
+        error: action.error
       };
     default:
       return state;
   }
 }
 
-export function send(recipient, amount, password) {
+export function transfer(recipient, amount, password) {
   return {
     types: [SENDING, SEND_SUCCESS, SEND_FAIL],
     promise: (client) => client.post('/send', {

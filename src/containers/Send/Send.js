@@ -1,31 +1,38 @@
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import DocumentMeta from 'react-document-meta';
+import { Alert } from 'react-bootstrap';
 import * as sendActions from 'redux/modules/send';
 import config from '../../config';
 
-
 @connect(
-  state => ({send: state.send}),
+  state => ({
+    send: state.send,
+    success: state.send.success,
+    error: state.send.error
+  }),
   sendActions)
 
 export default class Send extends Component {
 
   static propTypes = {
-    send: PropTypes.func
+    transfer: PropTypes.func,
+    sending: PropTypes.bool,
+    success: PropTypes.bool,
+    error: PropTypes.optionalObject
   }
 
   handleSubmit = (event) => {
-    console.log('this.props', this.props);
-
     event.preventDefault();
     const recipient = this.refs.recipient.value;
     const amount = this.refs.amount.value;
     const password = this.refs.password.value;
-    this.props.send(recipient, amount, password);
+    this.props.transfer(recipient, amount, password);
   }
 
   render() {
+    const { success, error, sending } = this.props;
+    console.log('tjis', this.props);
     return (
       <div className="container">
         <h1>Send</h1>
@@ -33,6 +40,16 @@ export default class Send extends Component {
 
         <div className="row">
           <div className="col-sm-4">
+            {success &&
+            <Alert bsStyle="success">
+              <strong>Holy guacamole!</strong> You've just sent some money!
+            </Alert>}
+
+            {error &&
+            <Alert bsStyle="danger">
+              <strong>Woops!</strong> Something went wrong
+            </Alert>}
+
             <form onSubmit={this.handleSubmit}>
               <div className="form-group">
                 <label>Recipient</label>
@@ -46,7 +63,9 @@ export default class Send extends Component {
                 <label>Password</label>
                 <input type="password" ref="password" className="form-control" />
               </div>
-              <button type="submit" className="btn btn-success">Send</button>
+              <button type="submit" className="btn btn-success" disabled={sending}>
+                {sending ? 'Sending...' : 'Send'}
+              </button>
             </form>
           </div>
         </div>
