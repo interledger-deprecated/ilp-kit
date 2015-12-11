@@ -1,25 +1,29 @@
 import React, {Component, PropTypes} from 'react';
-import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
-// import sendValidation, {colors} from './sendValidation';
-import * as sendActions from 'redux/modules/send';
+import sendValidation from './sendValidation';
 
 import {Alert} from 'react-bootstrap';
 
 @reduxForm({
   form: 'send',
-  fields: ['recipient', 'amount', 'password']
+  fields: ['recipient', 'amount', 'password'],
+  validate: sendValidation
 })
 
 export default class SendForm extends Component {
   static propTypes = {
     fields: PropTypes.object.isRequired,
+    invalid: PropTypes.bool.isRequired,
+    pristine: PropTypes.bool.isRequired,
+    submitting: PropTypes.bool.isRequired,
     handleSubmit: PropTypes.func.isRequired,
-    submitting: PropTypes.bool.isRequired
+    transfer: PropTypes.func.isRequired,
+    success: PropTypes.bool,
+    fail: PropTypes.string
   };
 
   render() {
-    const { success, error, submitting, transfer, fields: {recipient, amount, password}, handleSubmit } = this.props;
+    const { pristine, invalid, handleSubmit, transfer, submitting, success, fail, fields: {recipient, amount, password} } = this.props;
 
     return (
       <div className="row">
@@ -29,25 +33,28 @@ export default class SendForm extends Component {
             <strong>Holy guacamole!</strong> You've just sent some money!
           </Alert>}
 
-          {error &&
+          {fail &&
           <Alert bsStyle="danger">
-            <strong>Woops!</strong> Something went wrong
+            <strong>Woops!</strong> {fail}
           </Alert>}
 
           <form name="example" onSubmit={handleSubmit(transfer)}>
             <div className="form-group">
               <label>Recipient</label>
               <input type="text" className="form-control" {...recipient} />
+              {recipient.error && recipient.touched && <div className="text-danger">{recipient.error}</div>}
             </div>
             <div className="form-group">
               <label>Amount</label>
               <input type="text" className="form-control" {...amount} />
+              {amount.error && amount.touched && <div className="text-danger">{amount.error}</div>}
             </div>
             <div className="form-group">
               <label>Password</label>
               <input type="password" className="form-control" {...password} />
+              {password.error && password.touched && <div className="text-danger">{password.error}</div>}
             </div>
-            <button type="submit" className="btn btn-success" disabled={submitting}>
+            <button type="submit" className="btn btn-success" disabled={pristine || invalid || submitting}>
               {submitting ? 'Sending...' : 'Send'}
             </button>
           </form>
