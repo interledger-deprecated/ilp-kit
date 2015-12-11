@@ -1,4 +1,4 @@
-import superagent from 'superagent'
+import superagent from 'superagent';
 import config from '../src/config';
 import uuid from 'uuid4';
 
@@ -6,8 +6,8 @@ export default function getUser(user) {
   return new Promise((resolve, reject) => {
     superagent
       .get(config.ledgerHost + ':' + config.ledgerPort + '/accounts/' + user.name)
-      .end((err, { body } = {}) => err ? reject(body || err) : resolve(body))
-  })
+      .end((err, { body } = {}) => err ? reject(body || err) : resolve(body));
+  });
 }
 
 export function create(user) {
@@ -20,13 +20,13 @@ export function create(user) {
         balance: '1000'
       })
       .auth(config.ledgerAdminName, config.ledgerAdminPass)
-      .end((err, { body } = {}) => err ? reject(body || err) : resolve(body))
-  })
+      .end((err, { body } = {}) => err ? reject(body || err) : resolve(body));
+  });
 }
 
 export function transfer(options) {
-  let ledgerUrl = 'http://' + config.ledgerHost + ':' + config.ledgerPort;
-  let paymentId = uuid();
+  const ledgerUrl = 'http://' + config.ledgerHost + ':' + config.ledgerPort;
+  const paymentId = uuid();
 
   return new Promise((resolve, reject) => {
     superagent
@@ -44,6 +44,6 @@ export function transfer(options) {
         expires_at: "2016-06-16T00:00:01.000Z"
       })
       .auth(options.username, options.password)
-      .end((err, { body } = {}) => err ? reject(body || err) : resolve(body))
-  })
+      .end((err, { body } = {}) => err ? reject(body || err) : resolve(body));
+  });
 }
