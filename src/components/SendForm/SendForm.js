@@ -1,6 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 import {reduxForm} from 'redux-form';
-import sendValidation from './sendValidation';
+import sendValidation from './SendValidation';
 
 import {Alert} from 'react-bootstrap';
 
