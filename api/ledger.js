@@ -6,6 +6,7 @@ export default function getUser(user) {
   return new Promise((resolve, reject) => {
     superagent
       .get(config.ledgerHost + ':' + config.ledgerPort + '/accounts/' + user.name)
+      .auth(config.ledgerAdminName, config.ledgerAdminPass)
       .end((err, { body } = {}) => err ? reject(err) : resolve(body));
   });
 }
