@@ -1,7 +1,7 @@
 {
   "name": "five-bells-ledger-ui",
   "version": "1.0.0",
-  "description": "Basic UI on top of five-bells-ledger",
+  "description": "Example UI implementation for Five Bells Ledger",
   "main": "bin/server.js",
   "license": "MIT",
   "repository": {
