@@ -39,6 +39,11 @@ export default class Widget extends Component {
     fail: PropTypes.string
   }
 
+  handleClose = (event) => {
+    event.preventDefault();
+    parent.postMessage('close', '*');
+  }
+
   render() {
     let accountName = this.props.location.query.account.split('/');
     accountName = accountName[accountName.length - 1];
@@ -55,8 +60,7 @@ export default class Widget extends Component {
       <div>
         <div className={styles.before}></div>
         <div className={styles.container}>
-          {/* TODO Make this work */}
-          <a href="" className={'fa fa-close ' + styles.close}> </a>
+          <a href="" className={'fa fa-close ' + styles.close} onClick={this.handleClose}> </a>
           <div className={styles.title}>LedgerUI.com</div>
           <div className={styles.description}>
             So you wanna pay {data.currencyCode} {data.amount} to {data.accountName}
