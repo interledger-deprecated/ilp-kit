@@ -48,6 +48,10 @@ export default class App extends Component {
     }
   }
 
+  handleDefaultPayment = () => {
+    navigator.registerPaymentHandler('interledger', 'http://' + config.host + ':' + config.port + '/widget');
+  }
+
   handleLogout = (event) => {
     event.preventDefault();
     this.props.logout();
@@ -58,6 +62,7 @@ export default class App extends Component {
     const styles = require('./App.scss');
     return (
       <div className={styles.app}>
+        <script src="https://web-payments.net/polyfill.js"></script>
         <DocumentMeta {...config.app}/>
         <Navbar fixedTop toggleNavKey={0}>
           <NavBrand>
@@ -106,6 +111,10 @@ export default class App extends Component {
           {this.props.children}
         </div>
         <InfoBar/>
+
+        <div className="well text-center">
+          <button className="btn btn-success" onClick={this.handleDefaultPayment}>Make me your favorite payment provider</button>
+        </div>
 
         <div className="well text-center">
           <a href="https://github.com/interledger/five-bells-ledger-ui" target="_blank">Five Bells Ledger UI</a>

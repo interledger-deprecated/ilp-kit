@@ -11,7 +11,7 @@ const environment = {
 
 module.exports = Object.assign({
   host: process.env.HOST || 'localhost',
-  port: process.env.PORT,
+  port: process.env.PORT || '3010',
   apiHost: process.env.APIHOST || 'localhost',
   apiPort: process.env.APIPORT,
   ledgerHost: process.env.LEDGERHOST || 'localhost',

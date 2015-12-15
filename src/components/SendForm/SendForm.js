@@ -19,15 +19,17 @@ export default class SendForm extends Component {
     handleSubmit: PropTypes.func.isRequired,
     transfer: PropTypes.func.isRequired,
     success: PropTypes.bool,
-    fail: PropTypes.string
+    fail: PropTypes.string,
+    type: PropTypes.string,
+    data: PropTypes.object
   };
 
   render() {
-    const { pristine, invalid, handleSubmit, transfer, submitting, success, fail, fields: {recipient, amount, password} } = this.props;
+    const { pristine, invalid, handleSubmit, transfer, submitting, success, fail, type, fields: {recipient, amount, password}, data } = this.props;
 
     return (
       <div className="row">
-        <div className="col-sm-4">
+        <div className={type === 'widget' ? 'col-sm-12' : 'col-sm-4'}>
           {success &&
           <Alert bsStyle="success">
             <strong>Holy guacamole!</strong> You've just sent some money!
@@ -41,12 +43,12 @@ export default class SendForm extends Component {
           <form name="example" onSubmit={handleSubmit(transfer)}>
             <div className="form-group">
               <label>Recipient</label>
-              <input type="text" className="form-control" {...recipient} />
+              <input type="text" className="form-control" value={data && data.accountName || ''} {...recipient} />
               {recipient.error && recipient.touched && <div className="text-danger">{recipient.error}</div>}
             </div>
             <div className="form-group">
               <label>Amount</label>
-              <input type="text" className="form-control" {...amount} />
+              <input type="text" className="form-control" value={data && data.amount || ''} {...amount} />
               {amount.error && amount.touched && <div className="text-danger">{amount.error}</div>}
             </div>
             <div className="form-group">

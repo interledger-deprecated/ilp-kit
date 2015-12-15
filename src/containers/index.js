@@ -8,3 +8,4 @@ export Register from './Register/Register';
 export Survey from './Survey/Survey';
 export Send from './Send/Send';
 export NotFound from './NotFound/NotFound';
+export Widget from './Widget/Widget';

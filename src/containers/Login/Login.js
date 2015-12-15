@@ -4,6 +4,8 @@ import DocumentMeta from 'react-document-meta';
 import * as authActions from 'redux/modules/auth';
 import config from '../../config';
 
+import { LoginForm } from 'components';
+
 @connect(
   state => ({user: state.auth.user}),
   authActions)
@@ -14,31 +16,15 @@ export default class Login extends Component {
     logout: PropTypes.func
   }
 
-  handleSubmit = (event) => {
-    event.preventDefault();
-    const nameInput = this.refs.name;
-    // const passwordInput = this.refs.password;
-    this.props.login(nameInput.value, '');
-  }
-
   render() {
-    // const {user, logout} = this.props;
+    const {login} = this.props;
     const styles = require('./Login.scss');
     return (
       <div className={styles.loginPage + ' container'}>
         <DocumentMeta title={config.app.title + ': Login'}/>
         <h1>Login</h1>
-        <form onSubmit={this.handleSubmit}>
-          <div className="row">
-            <div className="col-sm-4">
-              <div className="form-group">
-                <label>Name</label>
-                <input type="text" ref="name" placeholder="Name" className="form-control"/>
-              </div>
-            </div>
-          </div>
-          <button type="submit" className="btn btn-success"><i className="fa fa-sign-in"/>{' '}Log In</button>
-        </form>
+
+        <LoginForm login={login} />
       </div>
     );
   }
