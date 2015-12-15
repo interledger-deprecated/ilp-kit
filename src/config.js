@@ -11,7 +11,7 @@ const environment = {
 
 module.exports = Object.assign({
   host: process.env.HOST || 'localhost',
-  port: process.env.PORT || '3010',
+  port: process.env.PORT,
   apiHost: process.env.APIHOST || 'localhost',
   apiPort: process.env.APIPORT,
   ledgerHost: process.env.LEDGERHOST || 'localhost',
@@ -20,7 +20,7 @@ module.exports = Object.assign({
   ledgerAdminPass: process.env.LEDGERADMINPASS,
   app: {
     title: 'Five Bells Ledger UI',
-    description: 'We\'ll change this later.',
+    description: '',
     meta: {
       charSet: 'utf-8',
       property: {
