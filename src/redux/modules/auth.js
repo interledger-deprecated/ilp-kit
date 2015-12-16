@@ -121,7 +121,7 @@ export function login(fields) {
     promise: (client) => client.post('/login', {
       data: {
         name: fields.name,
-        password: fields.password || ''
+        password: fields.password
       }
     })
   };

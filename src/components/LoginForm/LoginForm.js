@@ -7,7 +7,7 @@ import styles from './LoginForm.scss';
 
 @reduxForm({
   form: 'login',
-  fields: ['name']
+  fields: ['name', 'password']
 })
 
 export default class LoginForm extends Component {
@@ -21,7 +21,7 @@ export default class LoginForm extends Component {
   };
 
   render() {
-    const { handleSubmit, login, success, fail, type, fields: {name} } = this.props;
+    const { handleSubmit, login, success, fail, type, fields: {name, password} } = this.props;
 
     return (
       <form onSubmit={handleSubmit(login)} className={styles[type]}>
@@ -39,6 +39,10 @@ export default class LoginForm extends Component {
           <div className="form-group">
             <label className={styles.label}>Name</label>
             <input type="text" placeholder="Name" className="form-control" {...name} />
+          </div>
+          <div className="form-group">
+            <label className={styles.label}>Password</label>
+            <input type="password" placeholder="Password" className="form-control" {...password} />
           </div>
         </div>
         <button type="submit" className="btn btn-success"><i className="fa fa-sign-in"/>{' '}Log In</button>
