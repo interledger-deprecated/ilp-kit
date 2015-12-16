@@ -6,7 +6,7 @@ import {Alert} from 'react-bootstrap';
 
 @reduxForm({
   form: 'send',
-  fields: ['recipient', 'amount', 'password'],
+  fields: ['recipient', 'amount'],
   validate: sendValidation
 })
 
@@ -25,7 +25,7 @@ export default class SendForm extends Component {
   };
 
   render() {
-    const { pristine, invalid, handleSubmit, transfer, submitting, success, fail, type, fields: {recipient, amount, password}, data } = this.props;
+    const { pristine, invalid, handleSubmit, transfer, submitting, success, fail, type, fields: {recipient, amount}, data } = this.props;
 
     return (
       <div className="row">
@@ -50,11 +50,6 @@ export default class SendForm extends Component {
               <label>Amount</label>
               <input type="text" className="form-control" value={data && data.amount || ''} {...amount} />
               {amount.error && amount.touched && <div className="text-danger">{amount.error}</div>}
-            </div>
-            <div className="form-group">
-              <label>Password</label>
-              <input type="password" className="form-control" {...password} />
-              {password.error && password.touched && <div className="text-danger">{password.error}</div>}
             </div>
             <button type="submit" className="btn btn-success" disabled={pristine || invalid || submitting}>
               {submitting ? 'Sending...' : 'Send'}

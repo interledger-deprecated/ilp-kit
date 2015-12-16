@@ -9,7 +9,14 @@ export default function login(req) {
   };
   return getUser(user)
     .then((user) => {
+      // TODO temporary
+      user.password = req.body.password;
       req.session.user = user;
-      return user;
+      
+      return {
+        name: user.name,
+        balance: user.balance,
+        id: user.id
+      };
     });
 }

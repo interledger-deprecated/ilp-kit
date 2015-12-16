@@ -38,8 +38,7 @@ export function transfer(values) {
     promise: (client) => client.post('/send', {
       data: {
         recipient: values.recipient,
-        amount: values.amount,
-        password: values.password
+        amount: values.amount
       }
     })
   };

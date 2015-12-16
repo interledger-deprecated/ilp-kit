@@ -5,7 +5,7 @@ export default function send(req) {
     recipient: req.body.recipient,
     amount: req.body.amount,
     username: req.session.user.name,
-    password: req.body.password
+    password: req.session.user.password
   }
   return transfer(options)
 }
