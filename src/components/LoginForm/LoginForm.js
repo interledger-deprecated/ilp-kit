@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 import {reduxForm} from 'redux-form';
+import loginValidation from './LoginValidation';
 
 import {Alert} from 'react-bootstrap';
 
@@ -7,21 +8,25 @@ import styles from './LoginForm.scss';
 
 @reduxForm({
   form: 'login',
-  fields: ['name', 'password']
+  fields: ['name', 'password'],
+  validate: loginValidation
 })
 
 export default class LoginForm extends Component {
   static propTypes = {
     fields: PropTypes.object.isRequired,
+    invalid: PropTypes.bool.isRequired,
+    pristine: PropTypes.bool.isRequired,
+    submitting: PropTypes.bool.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     login: PropTypes.func.isRequired,
     success: PropTypes.bool,
-    fail: PropTypes.string,
+    fail: PropTypes.object,
     type: PropTypes.string
   };
 
   render() {
-    const { handleSubmit, login, success, fail, type, fields: {name, password} } = this.props;
+    const { handleSubmit, login, success, fail, type, fields: {name, password}, pristine, invalid, submitting } = this.props;
 
     return (
       <form onSubmit={handleSubmit(login)} className={styles[type]}>
@@ -30,22 +35,27 @@ export default class LoginForm extends Component {
           <strong>Holy guacamole!</strong> You've just sent some money!
         </Alert>}
 
-        {fail &&
+        {fail && fail.status === 403 &&
         <Alert bsStyle="danger">
-          <strong>Woops!</strong> {fail}
+          <strong>Woops!</strong> Invalid username/password
         </Alert>}
 
         <div className={styles.fields}>
           <div className="form-group">
             <label className={styles.label}>Name</label>
             <input type="text" placeholder="Name" className="form-control" {...name} />
+            {name.error && name.touched && <div className="text-danger">{name.error}</div>}
           </div>
           <div className="form-group">
             <label className={styles.label}>Password</label>
             <input type="password" placeholder="Password" className="form-control" {...password} />
+            {password.error && password.touched && <div className="text-danger">{password.error}</div>}
           </div>
         </div>
-        <button type="submit" className="btn btn-success"><i className="fa fa-sign-in"/>{' '}Log In</button>
+        <button type="submit" className="btn btn-success" disabled={pristine || invalid || submitting}>
+          <i className="fa fa-sign-in"/>
+          {submitting ? ' Logging In...' : ' Login'}
+        </button>
       </form>
     );
   }

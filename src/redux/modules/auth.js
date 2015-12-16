@@ -54,7 +54,7 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         loggingIn: false,
         user: null,
-        loginError: action.error
+        fail: action.error
       };
     case REGISTER:
       return {

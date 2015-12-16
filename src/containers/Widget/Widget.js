@@ -24,7 +24,8 @@ function fetchData(getState, dispatch) {
     user: state.auth.user,
     send: state.send,
     success: state.send.success,
-    fail: state.send.fail
+    fail: state.send.fail,
+    loginFail: state.auth.fail
   }),
   // Is this cool? Seems like it could be a bad idea
   { ...authActions, ...sendActions })
@@ -33,6 +34,7 @@ export default class Widget extends Component {
     user: PropTypes.object,
     login: PropTypes.func,
     location: PropTypes.object,
+    loginFail: PropTypes.object,
 
     transfer: PropTypes.func,
     success: PropTypes.bool,
@@ -54,7 +56,7 @@ export default class Widget extends Component {
       accountName: accountName
     };
 
-    const { user, login, success, fail, transfer } = this.props;
+    const { user, login, success, fail, loginFail, transfer } = this.props;
 
     return (
       <div>
@@ -76,7 +78,7 @@ export default class Widget extends Component {
           />}
 
           {!user &&
-          <LoginForm login={login} type="widget" />}
+          <LoginForm login={login} fail={loginFail} type="widget" />}
         </div>
       </div>
     );
