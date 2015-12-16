@@ -6,26 +6,31 @@ import config from '../../config';
 
 import { LoginForm } from 'components';
 
+import styles from './Login.scss';
+
 @connect(
-  state => ({user: state.auth.user}),
+  state => ({
+    user: state.auth.user,
+    fail: state.auth.fail
+  }),
   authActions)
 export default class Login extends Component {
   static propTypes = {
     user: PropTypes.object,
     login: PropTypes.func,
-    logout: PropTypes.func
+    logout: PropTypes.func,
+    fail: PropTypes.object
   }
 
   render() {
-    const {login} = this.props;
-    const styles = require('./Login.scss');
+    const {login, fail} = this.props;
     return (
       <div className={styles.loginPage + ' container'}>
         <DocumentMeta title={config.app.title + ': Login'}/>
         <div className="col-sm-4">
           <h1>Login</h1>
 
-          <LoginForm login={login} />
+          <LoginForm login={login} fail={fail} />
         </div>
       </div>
     );

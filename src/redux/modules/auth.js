@@ -72,7 +72,7 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         registering: false,
         user: null,
-        registerError: action.error
+        fail: action.error
       };
     case LOGOUT:
       return {
@@ -127,13 +127,13 @@ export function login(fields) {
   };
 }
 
-export function register(name, password) {
+export function register(fields) {
   return {
     types: [REGISTER, REGISTER_SUCCESS, REGISTER_FAIL],
     promise: (client) => client.post('/register', {
       data: {
-        name: name,
-        password: password
+        name: fields.name,
+        password: fields.password
       }
     })
   };
