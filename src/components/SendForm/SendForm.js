@@ -21,8 +21,19 @@ export default class SendForm extends Component {
     success: PropTypes.bool,
     fail: PropTypes.string,
     type: PropTypes.string,
-    data: PropTypes.object
+    data: PropTypes.object,
+    initializeForm: PropTypes.func
   };
+
+  componentDidMount() {
+    const { data, initializeForm } = this.props;
+    if (data && data.accountName && data.amount) {
+      initializeForm({
+        recipient: data.accountName,
+        amount: data.amount
+      });
+    }
+  }
 
   render() {
     const { pristine, invalid, handleSubmit, transfer, submitting, success, fail, type, fields: {recipient, amount}, data } = this.props;
@@ -43,15 +54,15 @@ export default class SendForm extends Component {
           <form name="example" onSubmit={handleSubmit(transfer)}>
             <div className="form-group">
               <label>Recipient</label>
-              <input type="text" className="form-control" value={data && data.accountName || ''} {...recipient} />
+              <input type="text" className="form-control" {...recipient} />
               {recipient.error && recipient.touched && <div className="text-danger">{recipient.error}</div>}
             </div>
             <div className="form-group">
               <label>Amount</label>
-              <input type="text" className="form-control" value={data && data.amount || ''} {...amount} />
+              <input type="text" className="form-control" {...amount} />
               {amount.error && amount.touched && <div className="text-danger">{amount.error}</div>}
             </div>
-            <button type="submit" className="btn btn-success" disabled={pristine || invalid || submitting}>
+            <button type="submit" className="btn btn-success" disabled={(!data && pristine) || invalid || submitting}>
               {submitting ? 'Sending...' : 'Send'}
             </button>
           </form>
