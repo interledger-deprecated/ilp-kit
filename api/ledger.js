@@ -1,12 +1,12 @@
 import superagent from 'superagent';
-import config from '../src/config';
 import uuid from 'uuid4';
+import config from '../src/config';
 
-export default function getUser(user) {
+export function getUser(user, admin) {
   return new Promise((resolve, reject) => {
     superagent
       .get(config.ledgerHost + ':' + config.ledgerPort + '/accounts/' + user.name)
-      .auth(user.name, user.password)
+      .auth(admin ? config.ledgerAdminName : user.name, admin ? config.ledgerAdminPass : user.password)
       .end((err, { body } = {}) => err ? reject(err) : resolve(body));
   });
 }

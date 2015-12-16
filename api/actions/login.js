@@ -1,4 +1,4 @@
-import getUser from '../ledger';
+import {getUser} from '../ledger';
 
 export default function login(req) {
   req.session.user = '';
@@ -12,7 +12,7 @@ export default function login(req) {
       // TODO temporary
       user.password = req.body.password;
       req.session.user = user;
-      
+
       return {
         name: user.name,
         balance: user.balance,

@@ -6,6 +6,7 @@ import {Alert} from 'react-bootstrap';
 
 import styles from './RegisterForm.scss';
 
+// TODO async validation on username
 @reduxForm({
   form: 'register',
   fields: ['name', 'password'],
@@ -35,9 +36,12 @@ export default class RegisterForm extends Component {
           <strong>Holy guacamole!</strong> You've just sent some money!
         </Alert>}
 
-        {fail && fail.status === 403 &&
+        {fail &&
         <Alert bsStyle="danger">
-          <strong>Woops!</strong> Invalid username/password
+          {fail.status === 400 &&
+          <div><strong>Woops!</strong> Input data is invalid</div>}
+          {fail.status === 409 &&
+          <div><strong>Woops!</strong> Username is already taken</div>}
         </Alert>}
 
         <div className={styles.fields}>
