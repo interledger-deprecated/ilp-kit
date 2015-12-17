@@ -18,7 +18,7 @@ export default class Home extends Component {
   static propTypes = {
     user: PropTypes.object,
     success: PropTypes.bool,
-    fail: PropTypes.string,
+    fail: PropTypes.object,
     transfer: PropTypes.func
   }
 

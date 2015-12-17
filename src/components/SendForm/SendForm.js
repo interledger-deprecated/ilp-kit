@@ -19,7 +19,7 @@ export default class SendForm extends Component {
     handleSubmit: PropTypes.func.isRequired,
     transfer: PropTypes.func.isRequired,
     success: PropTypes.bool,
-    fail: PropTypes.string,
+    fail: PropTypes.object,
     type: PropTypes.string,
     data: PropTypes.object,
     initializeForm: PropTypes.func
@@ -46,9 +46,9 @@ export default class SendForm extends Component {
             <strong>Holy guacamole!</strong> You've just sent some money!
           </Alert>}
 
-          {fail &&
+          {fail && fail.status === 422 &&
           <Alert bsStyle="danger">
-            <strong>Woops!</strong> {fail}
+            <strong>Woops!</strong> Account doesn't exist
           </Alert>}
 
           <form name="example" onSubmit={handleSubmit(transfer)}>

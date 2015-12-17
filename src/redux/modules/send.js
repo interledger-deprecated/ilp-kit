@@ -4,7 +4,7 @@ const SEND_FAIL = 'redux-example/send/SEND_FAIL';
 
 const initialState = {
   success: false,
-  fail: ''
+  fail: {}
 };
 
 export default function reducer(state = initialState, action = {}) {
@@ -13,19 +13,19 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         success: false,
-        fail: ''
+        fail: {}
       };
     case SEND_SUCCESS:
       return {
         ...state,
         success: true,
-        fail: ''
+        fail: {}
       };
     case SEND_FAIL:
       return {
         ...state,
         success: false,
-        fail: action.error.message
+        fail: action.error
       };
     default:
       return state;
