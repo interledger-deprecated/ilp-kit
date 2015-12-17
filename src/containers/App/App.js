@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { IndexLink } from 'react-router';
 import { LinkContainer } from 'react-router-bootstrap';
-import { Navbar, NavBrand, Nav, NavItem, CollapsibleNav } from 'react-bootstrap';
+import { NavItem } from 'react-bootstrap';
 import DocumentMeta from 'react-document-meta';
 import { isLoaded as isAuthLoaded, load as loadAuth, logout } from 'redux/modules/auth';
 import { pushState } from 'redux-router';
@@ -36,7 +36,7 @@ export default class App extends Component {
   componentWillReceiveProps(nextProps) {
     if (!this.props.user && nextProps.user) {
       // login
-      this.props.pushState(null, '/loginSuccess');
+      this.props.pushState(null, '/');
     } else if (this.props.user && !nextProps.user) {
       // logout
       this.props.pushState(null, '/');
@@ -56,63 +56,49 @@ export default class App extends Component {
     const {user} = this.props;
     const styles = require('./App.scss');
     return (
-      <div className={styles.app}>
+      <div className={styles.container + ' container'}>
         <script src="https://web-payments.net/polyfill.js"></script>
         <DocumentMeta {...config.app}/>
-        <Navbar fixedTop toggleNavKey={0}>
-          <NavBrand>
-            <IndexLink to="/" activeStyle={{color: '#33e0ff'}}>
-              <div className={styles.brand}/>
-              <span>{config.app.title}</span>
-            </IndexLink>
-          </NavBrand>
-
-          <CollapsibleNav eventKey={0}>
-            {user &&
-              <p className="navbar-text">Balance: {user.balance}</p>}
-            <Nav navbar>
+        <div className={styles.header + ' clearfix'}>
+          <nav>
+            <ul className="nav nav-pills pull-right">
               {user &&
-              <LinkContainer to="/send">
-                <NavItem eventKey={3}>Send</NavItem>
-              </LinkContainer>}
-            </Nav>
-            <Nav navbar right>
-              <NavItem eventKey={1} target="_blank" title="View on Github" href="https://github.com/interledger/five-bells-ledger-ui">
-                <i className="fa fa-github"/>
-              </NavItem>
-            </Nav>
-            <Nav navbar right>
+              <li role="presentation" className={styles.navText}>
+                Hi <strong>{user.name}</strong>.
+              </li>}
+              <li role="presentation">
+                <IndexLink to="/">
+                  <span>Home</span>
+                </IndexLink>
+              </li>
               {!user &&
               <LinkContainer to="/login">
-                <NavItem eventKey={6}>Login</NavItem>
+                <NavItem>Login</NavItem>
               </LinkContainer>}
               {!user &&
               <LinkContainer to="/register">
-                <NavItem eventKey={7}>Register</NavItem>
+                <NavItem>Register</NavItem>
               </LinkContainer>}
               {user &&
-              <p className={styles.loggedInMessage + ' navbar-text'}>Logged in as <strong>{user.name}</strong>.</p>}
-              {user &&
               <LinkContainer to="/logout">
-                <NavItem eventKey={8} className="logout-link" onClick={this.handleLogout}>
+                <NavItem className="logout-link" onClick={this.handleLogout}>
                   Logout
                 </NavItem>
               </LinkContainer>}
-            </Nav>
-          </CollapsibleNav>
-        </Navbar>
+            </ul>
+          </nav>
+          <h3 className="text-muted">
+            <p>{config.app.title}</p>
+          </h3>
+        </div>
 
         <div className={styles.appContent}>
           {this.props.children}
         </div>
 
-        <div className="well text-center">
-          <button className="btn btn-success" onClick={this.handleDefaultPayment}>Make me your favorite payment provider</button>
-        </div>
-
-        <div className="well text-center">
-          <a href="https://github.com/interledger/five-bells-ledger-ui" target="_blank">Five Bells Ledger UI</a>
-        </div>
+        <footer className={styles.footer}>
+          <p>&copy; 2015 <a href="http://interledger.org/">Interledger</a>.</p>
+        </footer>
       </div>
     );
   }

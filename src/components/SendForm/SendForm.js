@@ -40,7 +40,7 @@ export default class SendForm extends Component {
 
     return (
       <div className="row">
-        <div className={type === 'widget' ? 'col-sm-12' : 'col-sm-4'}>
+        <div className={type === 'widget' ? 'col-sm-12' : 'col-sm-8'}>
           {success &&
           <Alert bsStyle="success">
             <strong>Holy guacamole!</strong> You've just sent some money!
