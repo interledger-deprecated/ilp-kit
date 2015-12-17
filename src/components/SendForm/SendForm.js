@@ -18,6 +18,7 @@ export default class SendForm extends Component {
     submitting: PropTypes.bool.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     transfer: PropTypes.func.isRequired,
+    unmount: PropTypes.func.isRequired,
     success: PropTypes.bool,
     fail: PropTypes.object,
     type: PropTypes.string,
@@ -35,13 +36,18 @@ export default class SendForm extends Component {
     }
   }
 
-  // Reset form after a successful transfer
+  // Reset the form after a successful transfer
   shouldComponentUpdate(nextProps) {
     if (!this.props.success && nextProps.success) {
       this.props.initializeForm();
       return false;
     }
     return true;
+  }
+
+  // Remove the success/error messages on unmount
+  componentWillUnmount() {
+    this.props.unmount();
   }
 
   render() {

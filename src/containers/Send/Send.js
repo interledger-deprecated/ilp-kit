@@ -18,19 +18,20 @@ export default class Send extends Component {
 
   static propTypes = {
     transfer: PropTypes.func,
+    unmount: PropTypes.func,
     success: PropTypes.bool,
     fail: PropTypes.string
   }
 
   render() {
-    const {success, fail, transfer} = this.props;
+    const {success, fail, transfer, unmount} = this.props;
 
     return (
       <div className="container">
         <h1>Send</h1>
         <DocumentMeta title={config.app.title + ': Send'} />
 
-        <SendForm transfer={transfer} success={success} fail={fail} />
+        <SendForm transfer={transfer} unmount={unmount} success={success} fail={fail} />
       </div>
     );
   }

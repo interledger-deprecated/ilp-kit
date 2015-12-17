@@ -37,6 +37,7 @@ export default class Widget extends Component {
     loginFail: PropTypes.object,
 
     transfer: PropTypes.func,
+    unmount: PropTypes.func,
     success: PropTypes.bool,
     fail: PropTypes.string
   }
@@ -56,7 +57,7 @@ export default class Widget extends Component {
       accountName: accountName
     };
 
-    const { user, login, success, fail, loginFail, transfer } = this.props;
+    const { user, login, success, fail, loginFail, transfer, unmount } = this.props;
 
     return (
       <div>
@@ -71,6 +72,7 @@ export default class Widget extends Component {
           {user &&
           <SendForm
             transfer={transfer}
+            unmount={unmount}
             success={success}
             fail={fail}
             type="widget"

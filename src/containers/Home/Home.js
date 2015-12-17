@@ -21,11 +21,12 @@ export default class Home extends Component {
     success: PropTypes.bool,
     fail: PropTypes.object,
     transfer: PropTypes.func,
+    unmount: PropTypes.func,
     reload: PropTypes.func
   }
 
   render() {
-    const {user, success, fail, transfer, reload} = this.props;
+    const {user, success, fail, transfer, unmount, reload} = this.props;
 
     return (
       <div>
@@ -46,7 +47,7 @@ export default class Home extends Component {
             <button className="btn btn-primary" onClick={reload}>Get More</button>
           </div>
           <div className="col-sm-6">
-            <SendForm transfer={transfer} success={success} fail={fail} />
+            <SendForm transfer={transfer} unmount={unmount} success={success} fail={fail} />
           </div>
         </div>}
       </div>

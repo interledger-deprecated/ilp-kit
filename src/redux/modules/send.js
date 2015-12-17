@@ -1,6 +1,7 @@
 const SENDING = 'redux-example/send/SENDING';
 const SEND_SUCCESS = 'redux-example/send/SEND_SUCCESS';
 const SEND_FAIL = 'redux-example/send/SEND_FAIL';
+const DESTROY = 'redux-example/send/DESTROY';
 
 const initialState = {
   success: false,
@@ -27,6 +28,12 @@ export default function reducer(state = initialState, action = {}) {
         success: false,
         fail: action.error
       };
+    case DESTROY:
+      return {
+        ...state,
+        success: false,
+        fail: {}
+      };
     default:
       return state;
   }
@@ -41,5 +48,12 @@ export function transfer(values) {
         amount: values.amount
       }
     })
+  };
+}
+
+// TODO there's gotta be a way to automate this somehow (fallback to default state)
+export function unmount() {
+  return {
+    type: DESTROY
   };
 }
