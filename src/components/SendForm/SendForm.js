@@ -35,6 +35,15 @@ export default class SendForm extends Component {
     }
   }
 
+  // Reset form after a successful transfer
+  shouldComponentUpdate(nextProps) {
+    if (!this.props.success && nextProps.success) {
+      this.props.initializeForm();
+      return false;
+    }
+    return true;
+  }
+
   render() {
     const { pristine, invalid, handleSubmit, transfer, submitting, success, fail, type, fields: {recipient, amount}, data } = this.props;
 
