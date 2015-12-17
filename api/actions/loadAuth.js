@@ -1,7 +1,14 @@
+import {getUser} from '../ledger';
+
 export default function loadAuth(req) {
-  return Promise.resolve(req.session.user && {
+  // There's no active session
+  if (!req.session.user) {
+    return Promise.resolve(null);
+  }
+
+  // Get some fresh data
+  return getUser({
     name: req.session.user.name,
-    balance: req.session.user.balance,
-    id: req.session.user.id
-  } || null);
+    password: req.session.user.password
+  })
 }
