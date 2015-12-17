@@ -39,7 +39,7 @@ export default class Widget extends Component {
     transfer: PropTypes.func,
     unmount: PropTypes.func,
     success: PropTypes.bool,
-    fail: PropTypes.string
+    fail: PropTypes.object
   }
 
   handleClose = (event) => {
