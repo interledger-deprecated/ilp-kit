@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
+import * as authActions from 'redux/modules/auth';
 import * as sendActions from 'redux/modules/send';
 
 import { SendForm } from 'components';
@@ -13,21 +14,18 @@ import styles from './Home.scss';
     success: state.send.success,
     fail: state.send.fail
   }),
-  sendActions)
+  { ...authActions, ...sendActions })
 export default class Home extends Component {
   static propTypes = {
     user: PropTypes.object,
     success: PropTypes.bool,
     fail: PropTypes.object,
-    transfer: PropTypes.func
-  }
-
-  getMore = () => {
-    // TODO
+    transfer: PropTypes.func,
+    reload: PropTypes.func
   }
 
   render() {
-    const {user, success, fail, transfer} = this.props;
+    const {user, success, fail, transfer, reload} = this.props;
 
     return (
       <div>
@@ -45,7 +43,7 @@ export default class Home extends Component {
             <div className={styles.balance}>
               {user.balance}
             </div>
-            {/* <button className="btn btn-lg btn-primary" onClick={this.getMore}>Get More</button> */}
+            <button className="btn btn-primary" onClick={reload}>Get More</button>
           </div>
           <div className="col-sm-6">
             <SendForm transfer={transfer} success={success} fail={fail} />

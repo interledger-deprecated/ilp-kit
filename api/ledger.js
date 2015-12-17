@@ -18,7 +18,7 @@ export function create(user) {
       .send({
         name: user.name,
         password: user.password,
-        balance: '1000'
+        balance: user.balance || '1000'
       })
       .auth(config.ledgerAdminName, config.ledgerAdminPass)
       .end((err, { body } = {}) => err ? reject(err) : resolve(body));

@@ -10,6 +10,9 @@ const REGISTER_FAIL = 'redux-example/auth/REGISTER_FAIL';
 const LOGOUT = 'redux-example/auth/LOGOUT';
 const LOGOUT_SUCCESS = 'redux-example/auth/LOGOUT_SUCCESS';
 const LOGOUT_FAIL = 'redux-example/auth/LOGOUT_FAIL';
+const RELOADING = 'redux-example/auth/RELOADING_MORE';
+const RELOAD_SUCCESS = 'redux-example/auth/RELOAD_SUCCESS';
+const RELOAD_FAIL = 'redux-example/auth/RELOAD_FAIL';
 
 const SEND_SUCCESS = 'redux-example/send/SEND_SUCCESS';
 
@@ -99,6 +102,15 @@ export default function reducer(state = initialState, action = {}) {
           balance: state.user.balance - action.result.debits[0].amount
         }
       };
+    // TODO Handle RELOADING and RELOAD_FAIL
+    case RELOAD_SUCCESS:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          balance: action.result.balance
+        }
+      };
     default:
       return state;
   }
@@ -143,5 +155,12 @@ export function logout() {
   return {
     types: [LOGOUT, LOGOUT_SUCCESS, LOGOUT_FAIL],
     promise: (client) => client.get('/logout')
+  };
+}
+
+export function reload() {
+  return {
+    types: [RELOADING, RELOAD_SUCCESS, RELOAD_FAIL],
+    promise: (client) => client.post('/reload')
   };
 }
