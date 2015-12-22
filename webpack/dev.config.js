@@ -46,7 +46,7 @@ babelLoaderQuery.extra['react-transform'].transforms.push({
 });
 
 module.exports = {
-  devtool: 'inline-source-map',
+  devtool: 'eval',
   context: path.resolve(__dirname, '..'),
   entry: {
     'main': [
