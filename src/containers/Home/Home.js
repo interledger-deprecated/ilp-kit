@@ -2,9 +2,9 @@ import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import * as authActions from 'redux/modules/auth';
 import * as sendActions from 'redux/modules/send';
-import * as historyActions from 'redux/modules/history';
 
 import { SendForm } from 'components';
+import { History } from 'containers';
 
 import styles from './Home.scss';
 
@@ -13,10 +13,9 @@ import styles from './Home.scss';
     user: state.auth.user,
     send: state.send,
     success: state.send.success,
-    fail: state.send.fail,
-    history: state.history.history
+    fail: state.send.fail
   }),
-  { ...authActions, ...sendActions, ...historyActions }) // TODO this is definitely wrong
+  { ...authActions, ...sendActions }) // TODO this is definitely wrong
 export default class Home extends Component {
   static propTypes = {
     user: PropTypes.object,
@@ -24,13 +23,11 @@ export default class Home extends Component {
     fail: PropTypes.object,
     transfer: PropTypes.func,
     unmount: PropTypes.func,
-    reload: PropTypes.func,
-    load: PropTypes.func,
-    history: PropTypes.array
+    reload: PropTypes.func
   }
 
   render() {
-    const {user, success, fail, transfer, unmount, reload, load, history} = this.props;
+    const {user, success, fail, transfer, unmount, reload} = this.props;
 
     return (
       <div>
@@ -57,16 +54,7 @@ export default class Home extends Component {
         </div>}
 
         {/* History */}
-        {user &&
-        <div>
-          <h3>History</h3>
-          <ul>
-          {history.map((item) => {
-            return <li>{item.amount}</li>;
-          })}
-          </ul>
-          <button onClick={load}>load</button>
-        </div>}
+        {user && <History />}
       </div>
     );
   }
