@@ -4,3 +4,4 @@ export send from './send';
 export register from './register';
 export logout from './logout';
 export reload from './reload';
+export history from './history';
