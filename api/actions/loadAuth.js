@@ -1,4 +1,4 @@
-import {getUser} from '../ledger';
+import * as ledger from '../ledger';
 
 export default function loadAuth(req) {
   // There's no active session
@@ -7,7 +7,7 @@ export default function loadAuth(req) {
   }
 
   // Get some fresh data
-  return getUser({
+  return ledger.getUser({
     name: req.session.user.name,
     password: req.session.user.password
   })

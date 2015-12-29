@@ -1,4 +1,4 @@
-import {getUser} from '../ledger';
+import * as ledger from '../ledger';
 
 export default function login(req) {
   req.session.user = '';
@@ -7,7 +7,7 @@ export default function login(req) {
     name: req.body.name,
     password: req.body.password
   };
-  return getUser(user)
+  return ledger.getUser(user)
     .then((user) => {
       // TODO temporary
       user.password = req.body.password;
