@@ -99,7 +99,7 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         user: {
           ...state.user,
-          balance: state.user.balance - action.result.debits[0].amount
+          balance: state.user.balance - action.result.source_amount
         }
       };
     // TODO Handle RELOADING and RELOAD_FAIL
