@@ -26,8 +26,9 @@ export default function register(req) {
             // TODO catch exceptions
             return User.create({
               name: user.name
-            }).then(() => {
+            }).then((localUser) => {
               req.session.user = user;
+              req.session.user.local = localUser;
 
               return {
                 name: user.name,

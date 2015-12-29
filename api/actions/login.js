@@ -1,4 +1,5 @@
 import * as ledger from '../ledger';
+import {User} from '../models/user'
 
 export default function login(req) {
   req.session.user = '';
@@ -13,10 +14,15 @@ export default function login(req) {
       user.password = req.body.password;
       req.session.user = user;
 
-      return {
-        name: user.name,
-        balance: user.balance,
-        id: user.id
-      };
+      return User.findOne({where:{name: user.name}})
+        .then((localUser) => {
+          req.session.user.local = localUser;
+
+          return {
+            name: user.name,
+            balance: user.balance,
+            id: user.id
+          };
+        });
     });
 }
