@@ -45,8 +45,8 @@ PersistentModelMixin(Payment, sequelize, {
     type: Sequelize.UUID,
     primaryKey: true
   },
-  source_user: Sequelize.UUID,
-  destination_user: Sequelize.UUID,
+  source_user: Sequelize.INTEGER,
+  destination_user: Sequelize.INTEGER,
   destination_account: Sequelize.STRING(1024),
   transfers: Sequelize.ARRAY(Sequelize.UUID),
   state: Sequelize.ENUM('pending', 'success', 'fail'),

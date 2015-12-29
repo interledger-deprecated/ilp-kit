@@ -35,9 +35,9 @@ User.validateExternal = validator.create('User')
 
 PersistentModelMixin(User, sequelize, {
   id: {
-    type: Sequelize.UUID,
+    type: Sequelize.INTEGER,
     primaryKey: true,
-    defaultValue: Sequelize.UUIDV4
+    autoIncrement: true
   },
   name: {
     type: Sequelize.STRING,
