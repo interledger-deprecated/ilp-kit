@@ -7,10 +7,19 @@ export default function history(req) {
     return Promise.resolve(null);
   }
 
-  return Payment.findAll()
-    .then((data) => {
-      return _.map(data, (payment) => {
-        return payment.getDataExternal()
-      });
+  const user = req.session.user.local;
+
+  return Payment.findAll({
+    where: {
+      $or: [
+        {source_user: user.id},
+        {destination_user: user.id}
+      ]
+    }
+  })
+  .then((data) => {
+    return _.map(data, (payment) => {
+      return payment.getDataExternal()
     });
+  });
 }
