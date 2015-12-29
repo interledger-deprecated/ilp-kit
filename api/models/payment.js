@@ -43,7 +43,8 @@ Payment.validateExternal = validator.create('Payment')
 PersistentModelMixin(Payment, sequelize, {
   id: {
     type: Sequelize.UUID,
-    primaryKey: true
+    primaryKey: true,
+    defaultValue: Sequelize.UUIDV4
   },
   source_user: Sequelize.INTEGER,
   destination_user: Sequelize.INTEGER,
