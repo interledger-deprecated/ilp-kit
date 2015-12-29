@@ -10,7 +10,7 @@ export default class HistoryItem extends Component {
 
     return (
       <div>
-        {item.amount}
+        {item.source_amount}
       </div>
     );
   }

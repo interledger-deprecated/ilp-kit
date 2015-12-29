@@ -16,7 +16,7 @@ export default class Home extends Component {
   }
 
   // Load the history
-  componentWillMount() {
+  componentDidMount() {
     this.props.load();
   }
 
@@ -28,7 +28,7 @@ export default class Home extends Component {
         <h3>History</h3>
         <ul>
           {history.map((item) => {
-            return <HistoryItem item={item} />;
+            return <HistoryItem key={item.id} item={item} />;
           })}
         </ul>
       </div>
