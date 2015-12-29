@@ -36,7 +36,7 @@ export default function reducer(state = initialState, action = {}) {
     case SEND_SUCCESS:
       return {
         ...state,
-        history: state.history.concat([{source_amount: action.result.source_amount}])
+        history: state.history.concat([action.result])
       };
     default:
       return state;

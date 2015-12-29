@@ -9,8 +9,11 @@ export default class HistoryItem extends Component {
     const { item } = this.props;
 
     return (
-      <div>
-        {item.source_amount}
+      <div className="row">
+        <div className="col-sm-3">{item.source_user}</div>
+        <div className="col-sm-3">{item.destination_account}</div>
+        <div className="col-sm-3">{item.source_amount}</div>
+        <div className="col-sm-3">{item.destination_amount}</div>
       </div>
     );
   }

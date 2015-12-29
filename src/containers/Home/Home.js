@@ -47,14 +47,15 @@ export default class Home extends Component {
               {user.balance}
             </div>
             <button className="btn btn-primary" onClick={reload}>Get More</button>
+
+            <hr />
+            {/* History */}
+            <History />
           </div>
           <div className="col-sm-6">
             <SendForm transfer={transfer} unmount={unmount} success={success} fail={fail} />
           </div>
         </div>}
-
-        {/* History */}
-        {user && <History />}
       </div>
     );
   }
