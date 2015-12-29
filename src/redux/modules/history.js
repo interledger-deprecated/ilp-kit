@@ -1,6 +1,7 @@
 const LOAD = 'redux-example/history/LOAD';
 const LOAD_SUCCESS = 'redux-example/history/LOAD_SUCCESS';
 const LOAD_FAIL = 'redux-example/history/LOAD_FAIL';
+const SEND_SUCCESS = 'redux-example/send/SEND_SUCCESS';
 
 const initialState = {
   success: false,
@@ -30,6 +31,12 @@ export default function reducer(state = initialState, action = {}) {
         success: false,
         history: [],
         fail: action.error
+      };
+    // TODO maybe reload history on SEND_SUCCESS?
+    case SEND_SUCCESS:
+      return {
+        ...state,
+        history: state.history.concat([{source_amount: action.result.source_amount}])
       };
     default:
       return state;
