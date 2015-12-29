@@ -61,9 +61,16 @@ export default class SendForm extends Component {
             <strong>Holy guacamole!</strong> You've just sent some money!
           </Alert>}
 
-          {fail && fail.status === 422 &&
+          {fail && fail.id &&
           <Alert bsStyle="danger">
-            <strong>Woops!</strong> Account doesn't exist
+            <strong>Woops! </strong>
+            {(() => {
+              switch (fail.id) {
+                case 'InsufficientFundsError': return 'You have insufficient funds to make the payment';
+                case 'UnprocessableEntityError': return 'Recipient account doesn\'t exist';
+                default: return 'Something went wrong';
+              }
+            })()}
           </Alert>}
 
           <form name="example" onSubmit={handleSubmit(transfer)}>

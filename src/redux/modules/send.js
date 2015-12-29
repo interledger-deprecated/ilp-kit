@@ -26,7 +26,7 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         success: false,
-        fail: action.error
+        fail: JSON.parse(action.error.response.text)
       };
     case DESTROY:
       return {
