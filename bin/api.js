@@ -9,4 +9,4 @@ if (process.env.NODE_ENV !== 'production') {
   }
 }
 require('../api.babel'); // babel registration (runtime transpilation for node)
-require('../api/api');
+require('../api');
