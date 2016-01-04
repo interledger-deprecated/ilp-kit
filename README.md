@@ -14,6 +14,18 @@ npm install
 npm run dev
 ```
 
+If you create a database, you must run the migration files
+```bash
+export postgres://<user>:<password>@localhost/<db_name>
+```
+```bash
+npm run migrate
+```
+```bash
+LEDGER_UI_DB_URI=postgres://<user>:<password>@localhost/<db_name> npm run dev
+```
+
+
 ### Using Redux DevTools
 
 In development, Redux Devtools are enabled by default. You can toggle visibility and move the dock around using the following keyboard shortcuts:
