@@ -64,7 +64,7 @@ export default class App extends Component {
             <ul className="nav nav-pills pull-right">
               {user &&
               <li role="presentation" className={styles.navText}>
-                Hi <strong>{user.name}</strong>.
+                Hi <strong>{user.username}</strong>.
               </li>}
               <li role="presentation">
                 <IndexLink to="/">

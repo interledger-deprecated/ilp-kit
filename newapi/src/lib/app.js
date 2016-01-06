@@ -1,5 +1,8 @@
 import koa from 'koa'
+import bodyParser from 'koa-body'
 import logger from 'koa-mag'
+import session from 'koa-session'
+import cors from 'kcors'
 import errorHandler from 'five-bells-shared/middlewares/error-handler'
 import { Validator } from 'five-bells-shared'
 import Config from './config'
@@ -24,8 +27,27 @@ export default class App {
 
     const app = this.app = koa()
 
+    app.use(bodyParser())
+    app.use(function *(next) {
+      if (this.request.method == 'POST') {
+        // the parsed body will store in this.request.body
+        // if nothing was parsed, body will be an empty object {}
+        this.body = this.request.body
+      }
+      yield next
+    });
+
     app.use(logger({mag: log('http')}))
     app.use(errorHandler({log: log('error-handler')}))
+    app.use(cors({origin: '*'}))
+
+    app.proxy = true
+
+    // TODO guess what
+    app.keys = ['sesssecret']
+    app.use(session(app))
+
+    auth.attach(app)
 
     router.setupDefaultRoutes()
     router.attach(app)

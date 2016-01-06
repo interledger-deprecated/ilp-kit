@@ -123,16 +123,16 @@ export function isLoaded(globalState) {
 export function load() {
   return {
     types: [LOAD, LOAD_SUCCESS, LOAD_FAIL],
-    promise: (client) => client.get('/loadAuth')
+    promise: (client) => client.get('/auth/load')
   };
 }
 
 export function login(fields) {
   return {
     types: [LOGIN, LOGIN_SUCCESS, LOGIN_FAIL],
-    promise: (client) => client.post('/login', {
+    promise: (client) => client.post('/auth/login', {
       data: {
-        name: fields.name,
+        username: fields.username,
         password: fields.password
       }
     })
@@ -142,9 +142,9 @@ export function login(fields) {
 export function register(fields) {
   return {
     types: [REGISTER, REGISTER_SUCCESS, REGISTER_FAIL],
-    promise: (client) => client.post('/register', {
+    promise: (client) => client.put('/users/' + fields.username, {
       data: {
-        name: fields.name,
+        username: fields.username,
         password: fields.password
       }
     })
@@ -154,7 +154,7 @@ export function register(fields) {
 export function logout() {
   return {
     types: [LOGOUT, LOGOUT_SUCCESS, LOGOUT_FAIL],
-    promise: (client) => client.get('/logout')
+    promise: (client) => client.get('/auth/logout')
   };
 }
 

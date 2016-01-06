@@ -16,6 +16,8 @@ export default function UserFactory (sequelize, validator, container, config) {
     }
 
     static convertToExternal (data) {
+      delete data.password
+
       return data
     }
 
@@ -42,7 +44,8 @@ export default function UserFactory (sequelize, validator, container, config) {
     name: {
       type: Sequelize.STRING,
       unique: true
-    }
+    },
+    password: Sequelize.STRING
   })
 
   // We use a post constructor in order to avoid issues with circular

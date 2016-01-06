@@ -27,7 +27,7 @@ export default class RegisterForm extends Component {
   };
 
   render() {
-    const { handleSubmit, register, success, fail, type, fields: {name, password}, pristine, invalid, submitting } = this.props;
+    const { handleSubmit, register, success, fail, type, fields: {username, password}, pristine, invalid, submitting } = this.props;
 
     return (
       <form onSubmit={handleSubmit(register)} className={styles[type]}>
@@ -46,9 +46,9 @@ export default class RegisterForm extends Component {
 
         <div className={styles.fields}>
           <div className="form-group">
-            <label className={styles.label}>Name</label>
-            <input type="text" placeholder="Enter a name" className="form-control" {...name} />
-            {name.error && name.touched && <div className="text-danger">{name.error}</div>}
+            <label className={styles.label}>Username</label>
+            <input type="text" placeholder="Enter a username" className="form-control" {...username} />
+            {username.error && username.touched && <div className="text-danger">{username.error}</div>}
           </div>
           <div className="form-group">
             <label className={styles.label}>Password</label>
