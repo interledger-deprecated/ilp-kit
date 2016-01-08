@@ -5,6 +5,7 @@ const uuid = require ('uuid4')
 
 const Config = require('../lib/config')
 
+// TODO exception handling
 module.exports = class Ledger {
   static constitute () { return [Config] }
   constructor (config) {
@@ -12,7 +13,6 @@ module.exports = class Ledger {
     this.ledgerUrl = this.config.ledger.host + ':' + this.config.ledger.port
   }
 
-  // TODO exception handling
   * getAccount (user, admin) {
     const response = yield superagent
       .get(this.ledgerUrl + '/accounts/' + user.username)
@@ -22,15 +22,15 @@ module.exports = class Ledger {
     return response.body
   }
 
-  * create(user) {
+  * createAccount(user) {
     const response = yield superagent
-      .put(this.ledgerUrl + '/accounts/' + user.name)
+      .put(this.ledgerUrl + '/accounts/' + user.username)
       .send({
-        name: user.name,
+        name: user.username,
         password: user.password,
         balance: user.balance || '1000'
       })
-      .auth(this.config.ledger.admin.name, this.config.ledger.admin.password)
+      .auth(this.config.ledger.admin.name, this.config.ledger.admin.pass)
 
     return response.body
   }

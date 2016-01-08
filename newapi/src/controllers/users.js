@@ -9,10 +9,11 @@ const Auth = require('../lib/auth')
 const Log = require('../lib/log')
 const DB = require('../lib/db')
 const Config = require('../lib/config')
+const Ledger = require('../lib/ledger')
 const UnauthorizedError = require('five-bells-shared/errors/unauthorized-error')
 
-UsersControllerFactory.constitute = [UserFactory, Auth, Log, DB, Config]
-function UsersControllerFactory (User, auth, log, db, config) {
+UsersControllerFactory.constitute = [UserFactory, Auth, Log, DB, Config, Ledger]
+function UsersControllerFactory (User, auth, log, db, config, ledger) {
   log = log('users')
 
   return class UsersController {
@@ -42,7 +43,6 @@ function UsersControllerFactory (User, auth, log, db, config) {
       this.body = user.getDataExternal()
     }*/
 
-    // TODO create a ledger account
     static * putResource () {
       const self = this
       let id = this.params.id || ''
@@ -61,10 +61,16 @@ function UsersControllerFactory (User, auth, log, db, config) {
         } else {
           yield User.createExternal(self.body, { transaction })
         }
-
-        // TODO callbacks?
-        self.req.logIn(self.body, function (err) {})
       })
+
+      // Create a ledger account
+      const ledgerUser = yield ledger.createAccount(self.body);
+
+      // TODO load balance in req.login
+      self.body.balance = ledgerUser.balance
+
+      // TODO callbacks?
+      self.req.logIn(self.body, function (err) {})
 
       log.debug((existed ? 'updated' : 'created') + ' user ID ' + id)
 
