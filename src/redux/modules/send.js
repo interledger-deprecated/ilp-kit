@@ -1,3 +1,5 @@
+import uuid4 from 'uuid4';
+
 const SENDING = 'redux-example/send/SENDING';
 const SEND_SUCCESS = 'redux-example/send/SEND_SUCCESS';
 const SEND_FAIL = 'redux-example/send/SEND_FAIL';
@@ -42,10 +44,11 @@ export default function reducer(state = initialState, action = {}) {
 export function transfer(values) {
   return {
     types: [SENDING, SEND_SUCCESS, SEND_FAIL],
-    promise: (client) => client.post('/send', {
+    promise: (client) => client.put('/payments/' + uuid4(), {
       data: {
-        recipient: values.recipient,
-        amount: values.amount
+        destination_user: values.recipient,
+        source_amount: values.amount,
+        destination_amount: values.amount
       }
     })
   };

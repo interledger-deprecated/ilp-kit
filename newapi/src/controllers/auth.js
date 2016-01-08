@@ -1,3 +1,7 @@
+"use strict"
+
+module.exports = AuthsControllerFactory
+
 const request = require('five-bells-shared/utils/request')
 const passport = require('koa-passport')
 const UserFactory = require('../models/user')
@@ -6,7 +10,7 @@ const DB = require('../lib/db')
 const Config = require('../lib/config')
 
 AuthsControllerFactory.constitute = [UserFactory, Log, DB, Config]
-export default function AuthsControllerFactory (User, log, db, config) {
+function AuthsControllerFactory (User, log, db, config) {
   log = log('auth')
 
   return class AuthController {
@@ -16,8 +20,13 @@ export default function AuthsControllerFactory (User, log, db, config) {
       router.post('/auth/login', passport.authenticate('local'))
     }
 
+    // TODO load the ledger balance
     static load () {
       this.body = this.req.user
+
+      if (!this.req.user) {
+        this.status = 404;
+      }
     }
 
     static logout () {

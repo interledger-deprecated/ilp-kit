@@ -1,11 +1,12 @@
-import passport from 'koa-passport'
-//import { BasicStrategy } from 'passport-http'
-import LocalStrategy from 'passport-local'
-import { Strategy } from 'passport-anonymous'
-import UserFactory from '../models/user'
-import UnauthorizedError from 'five-bells-shared/errors/unauthorized-error'
+"use strict"
 
-export default class Auth {
+const passport = require('koa-passport')
+const LocalStrategy = require('passport-local')
+const Strategy = require('passport-anonymous').Strategy
+const UserFactory = require('../models/user')
+const UnauthorizedError = require('five-bells-shared/errors/unauthorized-error')
+
+module.exports = class Auth {
   static constitute () { return [ UserFactory ] }
   constructor (User) {
     passport.use(new LocalStrategy(
@@ -15,7 +16,7 @@ export default class Auth {
         if (!username) {
           return done(null, false)
         }
-        User.findOne({where:{name: username}})
+        User.findOne({where:{username: username}})
           .then(function (userObj) {
             if (userObj && password && userObj.password === password) {
               return done(null, userObj)
@@ -42,9 +43,9 @@ export default class Auth {
     app.use(passport.session())
   }
 
-  async isAuth (next){
+  * isAuth (next){
     if (this.isAuthenticated()){
-      await next
+      yield next
     } else {
       console.log('no auth')
     }

@@ -22,6 +22,7 @@ export default class Register extends Component {
     fail: PropTypes.object
   }
 
+  // TODO don't show register page if there's an active session
   render() {
     const {register, fail} = this.props;
     return (

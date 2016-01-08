@@ -1,6 +1,8 @@
-import hub from 'mag-hub'
-import mag from 'mag'
-import { Log } from 'five-bells-shared'
-import { ValueFactory } from 'constitute'
+"use strict"
 
-export default new ValueFactory(Log(mag, hub))
+const hub = require('mag-hub')
+const mag = require('mag')
+const Log = require('five-bells-shared').Log
+const ValueFactory = require('constitute').ValueFactory
+
+module.exports = new ValueFactory(Log(mag, hub))

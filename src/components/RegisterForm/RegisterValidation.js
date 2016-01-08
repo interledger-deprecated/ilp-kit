@@ -1,7 +1,7 @@
 import {createValidator, required} from 'utils/validation';
 
 const RegisterValidation = createValidator({
-  name: [required],
+  username: [required],
   password: [required]
 });
 export default RegisterValidation;

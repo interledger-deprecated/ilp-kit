@@ -9,7 +9,7 @@ import styles from './RegisterForm.scss';
 // TODO async validation on username
 @reduxForm({
   form: 'register',
-  fields: ['name', 'password'],
+  fields: ['username', 'password'],
   validate: registerValidation
 })
 

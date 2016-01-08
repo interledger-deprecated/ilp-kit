@@ -1,11 +1,12 @@
-import Sequelize from 'sequelize'
-import Config from './config'
-import Log from './log'
-import { DB } from 'five-bells-shared'
+"use strict"
 
-const AbstractDatabase = DB(Sequelize)
+const Sequelize = require('sequelize')
+const Config = require('./config')
+const Log = require('./log')
 
-export default class Database extends AbstractDatabase {
+const AbstractDatabase = require('five-bells-shared').DB(Sequelize)
+
+module.exports = class Database extends AbstractDatabase {
   static constitute () { return [ Config, Log ] }
   constructor (config, log) {
     super(config.db.uri, {

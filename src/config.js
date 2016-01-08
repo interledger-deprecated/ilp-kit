@@ -13,7 +13,7 @@ module.exports = Object.assign({
   host: process.env.HOST || 'localhost',
   port: process.env.PORT,
   apiHost: process.env.APIHOST || 'localhost',
-  apiPort: process.env.APIPORT,
+  apiPort: process.env.APIPORT || 3100, // TODO doesn't take from env
   ledgerHost: process.env.LEDGERHOST || 'localhost',
   ledgerPort: process.env.LEDGERPORT,
   ledgerAdminName: process.env.LEDGERADMINNAME,

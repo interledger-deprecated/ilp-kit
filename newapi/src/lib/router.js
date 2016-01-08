@@ -1,11 +1,13 @@
-import { Container } from 'constitute'
-import makeRouter from 'koa-router'
+"use strict"
 
-import AuthController from '../controllers/auth'
-import UsersController from '../controllers/users'
-import PaymentsController from '../controllers/payments'
+const Container = require('constitute').Container
+const makeRouter = require('koa-router')
 
-export default class Router {
+const AuthController = require('../controllers/auth')
+const UsersController = require('../controllers/users')
+const PaymentsController = require('../controllers/payments')
+
+module.exports = class Router {
   static constitute () { return [ Container ] }
   constructor (container) {
     this.container = container

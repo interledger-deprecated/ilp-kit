@@ -1,17 +1,20 @@
-import koa from 'koa'
-import bodyParser from 'koa-body'
-import logger from 'koa-mag'
-import session from 'koa-session'
-import cors from 'kcors'
-import errorHandler from 'five-bells-shared/middlewares/error-handler'
-import { Validator } from 'five-bells-shared'
-import Config from './config'
-import Auth from './auth'
-import Router from './router'
-import DB from './db'
-import Log from './log'
+"use strict"
 
-export default class App {
+const co = require('co')
+const Koa = require('koa')
+const bodyParser = require('koa-body')
+const logger = require('koa-mag')
+const session = require('koa-session')
+const cors = require('kcors')
+const errorHandler = require('five-bells-shared/middlewares/error-handler')
+const Validator = require('five-bells-shared').Validator
+const Config = require('./config')
+const Auth = require('./auth')
+const Router = require('./router')
+const DB = require('./db')
+const Log = require('./log')
+
+module.exports = class App {
   // TODO use decorators
   static constitute () { return [ Config, Auth, Router, Validator, DB, Log ] }
   constructor (config, auth, router, validator, db, log ) {
@@ -22,14 +25,13 @@ export default class App {
     this.db = db
     this.log = log('app')
 
-    validator.loadSharedSchemas()
     validator.loadSchemasFromDirectory(__dirname + '/../../schemas')
 
-    const app = this.app = koa()
+    const app = this.app = new Koa()
 
     app.use(bodyParser())
     app.use(function *(next) {
-      if (this.request.method == 'POST') {
+      if (this.request.method === 'POST' || this.request.method === 'PUT') {
         // the parsed body will store in this.request.body
         // if nothing was parsed, body will be an empty object {}
         this.body = this.request.body
@@ -53,17 +55,14 @@ export default class App {
     router.attach(app)
   }
 
-  async start () {
-    try {
-      await this._start()
-    }
-    catch (err) {
+  start () {
+    co(this._start.bind(this)).catch((err) => {
       this.log.critical(err)
-    }
+    })
   }
 
-  async _start () {
-    await this.db.sync()
+  * _start () {
+    yield this.db.sync()
     this.listen()
   }
 

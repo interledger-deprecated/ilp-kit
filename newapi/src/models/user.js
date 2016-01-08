@@ -1,3 +1,7 @@
+"use strict"
+
+module.exports = UserFactory
+
 const _ = require('lodash')
 
 const Container = require('constitute').Container
@@ -9,7 +13,7 @@ const Validator = require('five-bells-shared/lib/validator')
 const Sequelize = require('sequelize')
 
 UserFactory.constitute = [Database, Validator, Container, Config]
-export default function UserFactory (sequelize, validator, container, config) {
+function UserFactory (sequelize, validator, container, config) {
   class User extends Model {
     static convertFromExternal (data) {
       return data
@@ -31,6 +35,27 @@ export default function UserFactory (sequelize, validator, container, config) {
     static convertToPersistent (data) {
       return data
     }
+
+    static createBodyParser () {
+      const Self = this
+
+      return function * (next) {
+        let json = this.body
+        const validationResult = Self.validateExternal(json)
+        if (validationResult.valid !== true) {
+          const message = validationResult.schema
+            ? 'Body did not match schema ' + validationResult.schema
+            : 'Body did not pass validation'
+          throw new InvalidBodyError(message, validationResult.errors)
+        }
+
+        const model = new Self()
+        model.setDataExternal(json)
+        this.body = model
+
+        yield next
+      }
+    }
   }
 
   User.validateExternal = validator.create('User')
@@ -41,7 +66,7 @@ export default function UserFactory (sequelize, validator, container, config) {
       primaryKey: true,
       autoIncrement: true
     },
-    name: {
+    username: {
       type: Sequelize.STRING,
       unique: true
     },

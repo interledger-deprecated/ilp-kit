@@ -22,6 +22,7 @@ export default class Login extends Component {
     fail: PropTypes.object
   }
 
+  // TODO don't show login page if there's an active session
   render() {
     const {login, fail} = this.props;
     return (

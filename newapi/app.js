@@ -1,5 +1,6 @@
-import constitute from 'constitute'
-import App from './src/lib/app'
+"use strict"
+
+const constitute = require('constitute')
+const App = require('./src/lib/app')
 
 constitute(App).start()
-// TODO remove unused dependencies in package.json

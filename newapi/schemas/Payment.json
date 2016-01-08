@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "Payment",
+  "description": "Payment",
+  "type": "object",
+  "properties": {
+    "id": {
+      "description": "Resource identifier",
+      "$ref": "Iri.json"
+    },
+    "destination_user": {
+      "description": "Destination user",
+      "type": "string"
+    },
+    "source_amount": {
+      "description": "Source amount",
+      "type": "string"
+    },
+    "destination_amount": {
+      "description": "Destination amount",
+      "type": "string"
+    }
+  },
+  "required": ["destination_user", "source_amount", "destination_amount"]
+}

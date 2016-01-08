@@ -1,5 +1,10 @@
+"use strict"
+
+module.exports = PaymentFactory
+
 const Container = require('constitute').Container
 const Model = require('five-bells-shared').Model
+const InvalidBodyError = require('five-bells-shared/errors/invalid-body-error')
 const PersistentModelMixin = require('five-bells-shared').PersistentModelMixin
 const Database = require('../lib/db')
 const Config = require('../lib/config')
@@ -7,20 +12,13 @@ const Validator = require('five-bells-shared/lib/validator')
 const Sequelize = require('sequelize')
 
 PaymentFactory.constitute = [Database, Validator, Container, Config]
-export default function PaymentFactory (sequelize, validator, container, config) {
+function PaymentFactory (sequelize, validator, container, config) {
   class Payment extends Model {
     static convertFromExternal (data) {
-      // ID is optional on the incoming side
-      if (data.id) {
-        data.id = uri.parse(data.id, 'payment').id.toLowerCase()
-      }
-
       return data
     }
 
     static convertToExternal (data) {
-      data.id = uri.make('payment', data.id.toLowerCase())
-
       return data
     }
 
@@ -33,6 +31,27 @@ export default function PaymentFactory (sequelize, validator, container, config)
 
     static convertToPersistent (data) {
       return data
+    }
+
+    static createBodyParser () {
+      const Self = this
+
+      return function * (next) {
+        let json = this.body
+        const validationResult = Self.validateExternal(json)
+        if (validationResult.valid !== true) {
+          const message = validationResult.schema
+            ? 'Body did not match schema ' + validationResult.schema
+            : 'Body did not pass validation'
+          throw new InvalidBodyError(message, validationResult.errors)
+        }
+
+        const model = new Self()
+        model.setDataExternal(json)
+        this.body = model
+
+        yield next
+      }
     }
   }
 

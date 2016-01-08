@@ -1,6 +1,8 @@
-import { Config } from 'five-bells-shared'
+"use strict"
 
-export default class LedgerUIConfig extends Config {
+const Config = require('five-bells-shared').Config
+
+module.exports = class LedgerUIConfig extends Config {
   constructor () {
     super('ledgerui')
     this.parseServerConfig()
