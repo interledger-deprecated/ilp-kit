@@ -6,6 +6,7 @@ module.exports = class LedgerUIConfig extends Config {
   constructor () {
     super('ledgerui')
     this.parseServerConfig()
+    this.parseLedgerConfig()
     this.parseDatabaseConfig()
     this.parseKeyConfig()
 
@@ -16,5 +17,15 @@ module.exports = class LedgerUIConfig extends Config {
       this.db.uri = 'sqlite://'
       this.updateDerivativeServerConfig()
     }
+  }
+
+  parseLedgerConfig () {
+    this.ledger = {
+      admin: {}
+    }
+    this.ledger.host = this.getEnv('LEDGER_HOST')
+    this.ledger.port = this.getEnv('LEDGER_PORT')
+    this.ledger.admin.name = this.getEnv('ADMIN_NAME')
+    this.ledger.admin.pass = this.getEnv('ADMIN_PASS')
   }
 }
