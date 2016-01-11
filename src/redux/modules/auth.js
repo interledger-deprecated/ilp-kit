@@ -139,6 +139,13 @@ export function login(fields) {
   };
 }
 
+export function logout() {
+  return {
+    types: [LOGOUT, LOGOUT_SUCCESS, LOGOUT_FAIL],
+    promise: (client) => client.get('/auth/logout')
+  };
+}
+
 export function register(fields) {
   return {
     types: [REGISTER, REGISTER_SUCCESS, REGISTER_FAIL],
@@ -151,16 +158,9 @@ export function register(fields) {
   };
 }
 
-export function logout() {
-  return {
-    types: [LOGOUT, LOGOUT_SUCCESS, LOGOUT_FAIL],
-    promise: (client) => client.get('/auth/logout')
-  };
-}
-
-export function reload() {
+export function reload(opts) {
   return {
     types: [RELOADING, RELOAD_SUCCESS, RELOAD_FAIL],
-    promise: (client) => client.post('/reload')
+    promise: (client) => client.post('/users/' + opts.username + '/reload')
   };
 }

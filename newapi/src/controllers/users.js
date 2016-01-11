@@ -20,6 +20,7 @@ function UsersControllerFactory (User, auth, log, db, config, ledger) {
     static init (router) {
       //router.get('/users/:id', auth.isAuth, this.getResource)
       router.put('/users/:id', User.createBodyParser(), this.putResource)
+      router.post('/users/:id/reload', User.createBodyParser(), this.reload)
     }
 
     /*static * getResource () {
@@ -76,6 +77,34 @@ function UsersControllerFactory (User, auth, log, db, config, ledger) {
 
       this.body = this.body.getDataExternal()
       this.status = existed ? 200 : 201
+    }
+
+    static * reload () {
+      const self = this
+      let id = this.params.id || ''
+      request.validateUriParameter('id', id, 'Identifier')
+      id = id.toLowerCase()
+
+      // SQLite's implementation of upsert does not tell you whether it created the
+      // row or whether it already existed. Since we need to know to return the
+      // correct HTTP status code we unfortunately have to do this in two steps.
+      let existed
+      yield db.transaction(function * (transaction) {
+        existed = yield User.findOne({where: {username: id}}, { transaction })
+      })
+
+      // Load the ledger account
+      let ledgerUser = yield ledger.getAccount(this.req.user)
+
+      self.req.user.balance = parseInt(ledgerUser.balance) + 1000
+
+      // Reload the ledger account
+      ledgerUser = yield ledger.createAccount(self.req.user)
+
+      existed.balance = ledgerUser.balance
+
+      this.body = existed.getDataExternal()
+      this.status = 200
     }
   }
 }

@@ -47,6 +47,7 @@ export function transfer(values) {
     promise: (client) => client.put('/payments/' + uuid4(), {
       data: {
         destination_user: values.recipient,
+        destination_account: values.recipient,
         source_amount: values.amount,
         destination_amount: values.amount
       }

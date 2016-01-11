@@ -26,8 +26,12 @@ export default class Home extends Component {
     reload: PropTypes.func
   }
 
+  reload = () => {
+    this.props.reload({username: this.props.user.username});
+  }
+
   render() {
-    const {user, success, fail, transfer, unmount, reload} = this.props;
+    const {user, success, fail, transfer, unmount} = this.props;
 
     return (
       <div>
@@ -46,7 +50,7 @@ export default class Home extends Component {
             <div className={styles.balance}>
               {user.balance}
             </div>
-            <button className="btn btn-primary" onClick={reload}>Get More</button>
+            <button className="btn btn-primary" onClick={this.reload}>Get More</button>
 
             <hr />
             {/* History */}

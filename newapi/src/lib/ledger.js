@@ -10,7 +10,7 @@ module.exports = class Ledger {
   static constitute () { return [Config] }
   constructor (config) {
     this.config = config
-    this.ledgerUrl = this.config.ledger.host + ':' + this.config.ledger.port
+    this.ledgerUrl = 'http://' + this.config.ledger.host + ':' + this.config.ledger.port
   }
 
   * getAccount (user, admin) {
@@ -23,16 +23,19 @@ module.exports = class Ledger {
   }
 
   * createAccount(user) {
-    const response = yield superagent
-      .put(this.ledgerUrl + '/accounts/' + user.username)
-      .send({
-        name: user.username,
-        password: user.password,
-        balance: user.balance || '1000'
-      })
-      .auth(this.config.ledger.admin.name, this.config.ledger.admin.pass)
-
-    return response.body
+    try {
+      const response = yield superagent
+        .put(this.ledgerUrl + '/accounts/' + user.username)
+        .send({
+          name: user.username,
+          password: user.password,
+          balance: ''+user.balance || '1000'
+        })
+        .auth(this.config.ledger.admin.name, this.config.ledger.admin.pass)
+      return response.body
+    } catch (e) {
+      // TODO handle
+    }
   }
 
   * transfer(options) {

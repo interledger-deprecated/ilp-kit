@@ -13,9 +13,10 @@ const PaymentFactory = require('../models/payment')
 const Log = require('../lib/log')
 const DB = require('../lib/db')
 const Config = require('../lib/config')
+const Ledger = require('../lib/ledger')
 
-PaymentsControllerFactory.constitute = [PaymentFactory, Log, DB, Config]
-function PaymentsControllerFactory (Payment, log, db, config) {
+PaymentsControllerFactory.constitute = [PaymentFactory, Log, DB, Config, Ledger]
+function PaymentsControllerFactory (Payment, log, db, config, ledger) {
   log = log('payments')
 
   return class PaymentsController {
@@ -62,7 +63,6 @@ function PaymentsControllerFactory (Payment, log, db, config) {
 
       payment.id = id
 
-      // TODO do a ledger transaction
       // TODO store source and destinations users
       delete payment.destination_user
 
@@ -71,7 +71,17 @@ function PaymentsControllerFactory (Payment, log, db, config) {
         created = yield payment.create({ transaction })
       })
 
-      log.debug((created ? 'created' : 'updated') + ' payment ID ' + id)
+      // TODO cleanup 
+      const options = {
+        recipient: payment.destination_account,
+        amount: payment.source_amount,
+        username: this.req.user.username,
+        password: this.req.user.password
+      }
+
+      const transfer = yield ledger.transfer(options)
+
+      log.debug('Ledger transfer payment ID ' + id)
 
       this.body = payment.getDataExternal()
     }
