@@ -2,6 +2,7 @@
 
 module.exports = PaymentFactory
 
+const _ = require('lodash')
 const Container = require('constitute').Container
 const Model = require('five-bells-shared').Model
 const InvalidBodyError = require('five-bells-shared/errors/invalid-body-error')

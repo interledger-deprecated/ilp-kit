@@ -29,7 +29,7 @@ module.exports = class Ledger {
         .send({
           name: user.username,
           password: user.password,
-          balance: ''+user.balance || '1000'
+          balance: user.balance ? ''+user.balance : '1000'
         })
         .auth(this.config.ledger.admin.name, this.config.ledger.admin.pass)
       return response.body

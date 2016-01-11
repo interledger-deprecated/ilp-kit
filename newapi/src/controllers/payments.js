@@ -3,6 +3,7 @@
 module.exports = PaymentsControllerFactory
 
 const co = require('co')
+const _ = require('lodash')
 const request = require('five-bells-shared/utils/request')
 const passport = require('koa-passport')
 const requestUtil = require('five-bells-shared/utils/request')
@@ -20,12 +21,36 @@ function PaymentsControllerFactory (Payment, log, db, config, ledger) {
   log = log('payments')
 
   return class PaymentsController {
+    // TODO check auth for all the routes
     static init (router) {
       let self = this;
-      router.get('/payments/:id', passport.authenticate(['basic'], { session: false }), this.getResource)
-      //router.get('/payments/history/:userId', this.getHistory)
+      router.get('/payments', this.getHistory)
+      //router.get('/payments/:id', passport.authenticate(['basic'], { session: false }), this.getResource)
       router.put('/payments/:id', Payment.createBodyParser(), self.putResource)
       //router.put('/payments/:id/fulfillment', Model.createBodyParser(), this.putFulfillmentResource)
+    }
+
+    static * getHistory () {
+      const self = this
+      // TODO pagination
+      const payments = yield Payment.findAll({
+        where: {
+          $or: [
+            {source_user: self.req.user.id},
+            {destination_user: self.req.user.id},
+            {destination_account: self.req.user.username}
+          ]
+        }
+      })
+
+      if (!payments) {
+        this.status = 404
+        return
+      }
+
+      this.body = _.map(payments, (payment) => {
+        return payment.getDataExternal()
+      });
     }
 
     static * getResource () {
@@ -71,7 +96,7 @@ function PaymentsControllerFactory (Payment, log, db, config, ledger) {
         created = yield payment.create({ transaction })
       })
 
-      // TODO cleanup 
+      // TODO cleanup
       const options = {
         recipient: payment.destination_account,
         amount: payment.source_amount,
