@@ -9,4 +9,4 @@ if (process.env.NODE_ENV !== 'production') {
   }
 }
 
-require('../newapi/app');
+require('../api/app');
