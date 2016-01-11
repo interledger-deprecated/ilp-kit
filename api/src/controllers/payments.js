@@ -91,6 +91,8 @@ function PaymentsControllerFactory (Payment, log, db, config, ledger) {
       // TODO store source and destinations users
       delete payment.destination_user
 
+      payment.source_user = this.req.user.id
+
       let created
       yield db.transaction(function * (transaction) {
         created = yield payment.create({ transaction })

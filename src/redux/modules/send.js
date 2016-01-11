@@ -45,6 +45,7 @@ export function transfer(values) {
   return {
     types: [SENDING, SEND_SUCCESS, SEND_FAIL],
     promise: (client) => client.put('/payments/' + uuid4(), {
+      // TODO source user set here or in api?
       data: {
         destination_user: values.recipient,
         destination_account: values.recipient,
