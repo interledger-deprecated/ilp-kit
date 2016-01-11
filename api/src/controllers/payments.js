@@ -33,15 +33,7 @@ function PaymentsControllerFactory (Payment, log, db, config, ledger) {
     static * getHistory () {
       const self = this
       // TODO pagination
-      const payments = yield Payment.findAll({
-        where: {
-          $or: [
-            {source_user: self.req.user.id},
-            {destination_user: self.req.user.id},
-            {destination_account: self.req.user.username}
-          ]
-        }
-      })
+      const payments = yield Payment.getUserPayments(self.req.user)
 
       if (!payments) {
         this.status = 404
@@ -68,16 +60,6 @@ function PaymentsControllerFactory (Payment, log, db, config, ledger) {
       this.body = item.getDataExternal()
     }
 
-    /*static async getHistory () {
-      let userId = this.params.userId
-      // TODO
-      // request.validateUriParameter('id', id, 'Uuid')
-      userId = userId.toLowerCase()
-
-      // TODO only external data
-      this.body = yield Payment.findAll({where: {source_user: userId}})
-    }*/
-
     static * putResource () {
       const _this = this
 
@@ -99,6 +81,7 @@ function PaymentsControllerFactory (Payment, log, db, config, ledger) {
       })
 
       // TODO cleanup
+      // TODO fill the destination_user
       const options = {
         recipient: payment.destination_account,
         amount: payment.source_amount,

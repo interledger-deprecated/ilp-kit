@@ -3,7 +3,6 @@
 module.exports = UserFactory
 
 const _ = require('lodash')
-
 const Container = require('constitute').Container
 const Model = require('five-bells-shared').Model
 const PersistentModelMixin = require('five-bells-shared').PersistentModelMixin
@@ -72,19 +71,6 @@ function UserFactory (sequelize, validator, container, config) {
     },
     password: Sequelize.STRING
   })
-
-  // We use a post constructor in order to avoid issues with circular
-  // dependencies.
-  /*container.schedulePostConstructor((Notary, CaseNotary) => {
-    Case.DbModel.belongsToMany(Notary.DbModel, {
-      through: {
-        model: CaseNotary.DbModel,
-        unique: false
-      },
-      foreignKey: 'case_id',
-      constraints: false
-    })
-  }, [ NotaryFactory, CaseNotaryFactory ])*/
 
   return User
 }

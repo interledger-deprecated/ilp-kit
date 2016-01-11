@@ -31,7 +31,7 @@ function AuthsControllerFactory (User, log, db, config, ledger) {
         return;
       }
 
-      // Get account the balance
+      // Get account balance
       const ledgerUser = yield ledger.getAccount(user)
       user.balance = ledgerUser.balance
 

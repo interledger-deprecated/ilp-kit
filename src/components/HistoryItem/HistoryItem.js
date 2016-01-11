@@ -10,8 +10,8 @@ export default class HistoryItem extends Component {
 
     return (
       <div className="row">
-        <div className="col-sm-3">{item.source_user}</div>
-        <div className="col-sm-3">{item.destination_account}</div>
+        <div className="col-sm-3">{item.sourceUserUsername}</div>
+        <div className="col-sm-3">{item.destinationUserUsername || item.destination_account}</div>
         <div className="col-sm-3">{item.source_amount}</div>
         <div className="col-sm-3">{item.destination_amount}</div>
       </div>
