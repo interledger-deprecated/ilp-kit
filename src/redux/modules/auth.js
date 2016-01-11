@@ -10,7 +10,7 @@ const REGISTER_FAIL = 'redux-example/auth/REGISTER_FAIL';
 const LOGOUT = 'redux-example/auth/LOGOUT';
 const LOGOUT_SUCCESS = 'redux-example/auth/LOGOUT_SUCCESS';
 const LOGOUT_FAIL = 'redux-example/auth/LOGOUT_FAIL';
-const RELOADING = 'redux-example/auth/RELOADING_MORE';
+const RELOADING = 'redux-example/auth/RELOADING';
 const RELOAD_SUCCESS = 'redux-example/auth/RELOAD_SUCCESS';
 const RELOAD_FAIL = 'redux-example/auth/RELOAD_FAIL';
 
