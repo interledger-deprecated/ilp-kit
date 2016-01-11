@@ -6,6 +6,8 @@ import * as sendActions from 'redux/modules/send';
 import { SendForm } from 'components';
 import { History } from 'containers';
 
+import config from '../../config';
+
 import styles from './Home.scss';
 
 @connect(
@@ -28,6 +30,11 @@ export default class Home extends Component {
 
   reload = () => {
     this.props.reload({username: this.props.user.username});
+  }
+
+  handleDefaultPayment = () => {
+    console.log('Home.js:36', config)
+    navigator.registerPaymentHandler('interledger', 'http://' + config.host + ':' + config.port + '/widget');
   }
 
   render() {

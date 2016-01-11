@@ -43,10 +43,6 @@ export default class App extends Component {
     }
   }
 
-  handleDefaultPayment = () => {
-    navigator.registerPaymentHandler('interledger', 'http://' + config.host + ':' + config.port + '/widget');
-  }
-
   handleLogout = (event) => {
     event.preventDefault();
     this.props.logout();
