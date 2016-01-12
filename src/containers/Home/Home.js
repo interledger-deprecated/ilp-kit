@@ -33,7 +33,6 @@ export default class Home extends Component {
   }
 
   handleDefaultPayment = () => {
-    console.log('Home.js:36', config)
     navigator.registerPaymentHandler('interledger', 'http://' + config.host + ':' + config.port + '/widget');
   }
 
