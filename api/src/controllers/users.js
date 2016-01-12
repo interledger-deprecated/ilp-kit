@@ -54,13 +54,14 @@ function UsersControllerFactory (User, auth, log, db, config, ledger) {
       // row or whether it already existed. Since we need to know to return the
       // correct HTTP status code we unfortunately have to do this in two steps.
       let existed
+      let user
       yield db.transaction(function * (transaction) {
         existed = yield User.findOne({where: {username: id}}, { transaction })
         if (existed) {
           existed.setDataExternal(self.body)
-          yield existed.save({ transaction })
+          user = yield existed.save({ transaction })
         } else {
-          yield User.createExternal(self.body, { transaction })
+          user = yield User.createExternal(self.body, { transaction })
         }
       })
 
@@ -69,13 +70,15 @@ function UsersControllerFactory (User, auth, log, db, config, ledger) {
 
       // TODO load balance in req.login
       self.body.balance = ledgerUser.balance
+      self.body.id = user.id
 
       // TODO callbacks?
+      // TODO this might be an admin creating an account, shouldn't always login
       self.req.logIn(self.body, function (err) {})
 
       log.debug((existed ? 'updated' : 'created') + ' user ID ' + id)
 
-      this.body = this.body.getDataExternal()
+      this.body = self.body.getDataExternal()
       this.status = existed ? 200 : 201
     }
 
