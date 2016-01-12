@@ -10,14 +10,10 @@ const environment = {
 }[process.env.NODE_ENV || 'development'];
 
 module.exports = Object.assign({
-  host: process.env.HOST || 'localhost',
-  port: process.env.PORT || 3010, // TODO doesn't take from env
-  apiHost: process.env.APIHOST || 'localhost',
-  apiPort: process.env.APIPORT || 3100, // TODO doesn't take from env
-  ledgerHost: process.env.LEDGERHOST || 'localhost',
-  ledgerPort: process.env.LEDGERPORT,
-  ledgerAdminName: process.env.LEDGERADMINNAME,
-  ledgerAdminPass: process.env.LEDGERADMINPASS,
+  host: process.env.CLIENT_HOST,
+  port: process.env.CLIENT_PORT,
+  apiHost: process.env.API_HOSTNAME,
+  apiPort: process.env.API_PORT,
   app: {
     title: 'Five Bells Ledger UI',
     description: '',

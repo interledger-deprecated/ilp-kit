@@ -37,34 +37,28 @@
       "command": "node ./bin/server.js",
       "env": {
         "NODE_PATH": "./src",
-        "NODE_ENV": "production",
-        "PORT": 8080,
-        "APIPORT": 3100
+        "NODE_ENV": "production"
       }
     },
     "start-prod-api": {
       "command": "node ./bin/api.js",
       "env": {
         "NODE_PATH": "./api",
-        "NODE_ENV": "production",
-        "APIPORT": 3100
+        "NODE_ENV": "production"
       }
     },
     "start-dev": {
       "command": "node ./bin/server.js",
       "env": {
         "NODE_PATH": "./src",
-        "NODE_ENV": "development",
-        "PORT": 3010,
-        "APIPORT": 3100
+        "NODE_ENV": "development"
       }
     },
     "start-dev-api": {
       "command": "node ./bin/api.js",
       "env": {
         "NODE_PATH": "./api",
-        "NODE_ENV": "development",
-        "APIPORT": 3100
+        "NODE_ENV": "development"
       }
     },
     "watch-client": {

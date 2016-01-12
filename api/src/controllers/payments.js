@@ -93,6 +93,7 @@ function PaymentsControllerFactory (Payment, log, db, config, ledger) {
 
       log.debug('Ledger transfer payment ID ' + id)
 
+      // TODO Should be in the same format as historyItem
       this.body = payment.getDataExternal()
     }
   }

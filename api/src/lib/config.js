@@ -4,7 +4,7 @@ const Config = require('five-bells-shared').Config
 
 module.exports = class LedgerUIConfig extends Config {
   constructor () {
-    super('ledgerui')
+    super('api')
     this.parseServerConfig()
     this.parseLedgerConfig()
     this.parseDatabaseConfig()
@@ -25,7 +25,7 @@ module.exports = class LedgerUIConfig extends Config {
     }
     this.ledger.host = this.getEnv('LEDGER_HOST')
     this.ledger.port = this.getEnv('LEDGER_PORT')
-    this.ledger.admin.name = this.getEnv('ADMIN_NAME')
-    this.ledger.admin.pass = this.getEnv('ADMIN_PASS')
+    this.ledger.admin.name = this.getEnv('LEDGER_ADMIN_NAME')
+    this.ledger.admin.pass = this.getEnv('LEDGER_ADMIN_PASS')
   }
 }
