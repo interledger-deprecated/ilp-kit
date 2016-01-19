@@ -80,6 +80,20 @@ function PaymentFactory (sequelize, validator, container, config, User) {
         ]
       })
     }
+
+    static * getPayment (paymentId) {
+      return Payment.findOne({
+        attributes: {include: [
+          [Sequelize.col('SourceUser.username'), 'sourceUserUsername']
+        ]},
+        where: {
+          id: paymentId
+        },
+        include: [{
+          model: User.DbModel, as: 'SourceUser', attributes: []
+        }]
+      })
+    }
   }
 
   Payment.validateExternal = validator.create('Payment')

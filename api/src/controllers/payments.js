@@ -25,7 +25,7 @@ function PaymentsControllerFactory (Payment, log, db, config, ledger) {
     static init (router) {
       let self = this;
       router.get('/payments', this.getHistory)
-      //router.get('/payments/:id', passport.authenticate(['basic'], { session: false }), this.getResource)
+      router.get('/payments/:id', this.getResource)
       router.put('/payments/:id', Payment.createBodyParser(), self.putResource)
       //router.put('/payments/:id/fulfillment', Model.createBodyParser(), this.putFulfillmentResource)
     }
@@ -50,7 +50,7 @@ function PaymentsControllerFactory (Payment, log, db, config, ledger) {
       request.validateUriParameter('id', id, 'Uuid')
       id = id.toLowerCase()
 
-      const item = yield Payment.findById(this.params.id)
+      const item = yield Payment.getPayment(this.params.id)
 
       if (!item) {
         this.status = 404
@@ -79,6 +79,8 @@ function PaymentsControllerFactory (Payment, log, db, config, ledger) {
       yield db.transaction(function * (transaction) {
         created = yield payment.create({ transaction })
       })
+
+      payment = yield Payment.getPayment(payment.id);
 
       // TODO cleanup
       // TODO fill the destination_user
