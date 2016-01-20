@@ -38,7 +38,7 @@ export default class Home extends Component {
             </div>
           </li>
           {history.map((item) => {
-            return <li><HistoryItem key={item.id} item={item} /></li>;
+            return <li key={item.id}><HistoryItem item={item} /></li>;
           })}
         </ul>
       </div>
