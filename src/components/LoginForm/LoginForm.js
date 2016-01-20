@@ -20,10 +20,15 @@ export default class LoginForm extends Component {
     submitting: PropTypes.bool.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     login: PropTypes.func.isRequired,
+    unmount: PropTypes.func,
     success: PropTypes.bool,
     fail: PropTypes.object,
     type: PropTypes.string
   };
+
+  componentWillUnmount() {
+    this.props.unmount();
+  }
 
   render() {
     const { handleSubmit, login, success, fail, type, fields: {username, password}, pristine, invalid, submitting } = this.props;

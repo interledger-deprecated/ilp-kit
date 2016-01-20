@@ -19,19 +19,20 @@ export default class Login extends Component {
     user: PropTypes.object,
     login: PropTypes.func,
     logout: PropTypes.func,
+    unmount: PropTypes.func,
     fail: PropTypes.object
   }
 
   // TODO don't show login page if there's an active session
   render() {
-    const {login, fail} = this.props;
+    const {login, fail, unmount} = this.props;
     return (
       <div className={styles.loginPage + ' container'}>
         <DocumentMeta title={config.app.title + ': Login'}/>
         <div className="col-sm-4">
           <h1>Login</h1>
 
-          <LoginForm login={login} fail={fail} />
+          <LoginForm login={login} fail={fail} unmount={unmount} />
         </div>
       </div>
     );

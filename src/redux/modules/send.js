@@ -31,11 +31,7 @@ export default function reducer(state = initialState, action = {}) {
         fail: action.error
       };
     case DESTROY:
-      return {
-        ...state,
-        success: false,
-        fail: {}
-      };
+      return initialState;
     default:
       return state;
   }

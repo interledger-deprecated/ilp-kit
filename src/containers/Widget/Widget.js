@@ -37,6 +37,7 @@ export default class Widget extends Component {
     loginFail: PropTypes.object,
 
     transfer: PropTypes.func,
+    // TODO there are two unmount functions. One in authActions one in sendActions
     unmount: PropTypes.func,
     success: PropTypes.bool,
     fail: PropTypes.object
@@ -80,7 +81,7 @@ export default class Widget extends Component {
           />}
 
           {!user &&
-          <LoginForm login={login} fail={loginFail} type="widget" />}
+          <LoginForm login={login} fail={loginFail} unmount={unmount} type="widget" />}
         </div>
       </div>
     );

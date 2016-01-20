@@ -19,19 +19,20 @@ export default class Register extends Component {
     user: PropTypes.object,
     register: PropTypes.func,
     logout: PropTypes.func,
+    unmount: PropTypes.func,
     fail: PropTypes.object
   }
 
   // TODO don't show register page if there's an active session
   render() {
-    const {register, fail} = this.props;
+    const {register, fail, unmount} = this.props;
     return (
       <div className={styles.registerPage + ' container'}>
         <DocumentMeta title={config.app.title + ': Register'}/>
         <div className="col-sm-4">
           <h1>Register</h1>
 
-          <RegisterForm register={register} fail={fail} />
+          <RegisterForm register={register} fail={fail} unmount={unmount} />
         </div>
       </div>
     );

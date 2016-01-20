@@ -13,6 +13,7 @@ const LOGOUT_FAIL = 'redux-example/auth/LOGOUT_FAIL';
 const RELOADING = 'redux-example/auth/RELOADING';
 const RELOAD_SUCCESS = 'redux-example/auth/RELOAD_SUCCESS';
 const RELOAD_FAIL = 'redux-example/auth/RELOAD_FAIL';
+const DESTROY = 'redux-example/auth/DESTROY';
 
 const SEND_SUCCESS = 'redux-example/send/SEND_SUCCESS';
 
@@ -102,6 +103,11 @@ export default function reducer(state = initialState, action = {}) {
           balance: state.user.balance - action.result.source_amount
         }
       };
+    case DESTROY:
+      return {
+        ...state,
+        fail: null
+      };
     // TODO Handle RELOADING and RELOAD_FAIL
     case RELOAD_SUCCESS:
       return {
@@ -114,6 +120,12 @@ export default function reducer(state = initialState, action = {}) {
     default:
       return state;
   }
+}
+
+export function unmount() {
+  return {
+    type: DESTROY
+  };
 }
 
 export function isLoaded(globalState) {
