@@ -48,13 +48,13 @@ export default class LoginForm extends Component {
         <div className={styles.fields}>
           <div className="form-group">
             <label className={styles.label}>Name</label>
-            <input type="text" placeholder="Username" className="form-control" {...username} />
-            {username.error && username.touched && <div className="text-danger">{username.error}</div>}
+            <input type="text" placeholder="Username" className="form-control" autoFocus {...username} />
+            {username.dirty && username.error && <div className="text-danger">{username.error}</div>}
           </div>
           <div className="form-group">
             <label className={styles.label}>Password</label>
             <input type="password" placeholder="Password" className="form-control" {...password} />
-            {password.error && password.touched && <div className="text-danger">{password.error}</div>}
+            {password.dirty && password.error && <div className="text-danger">{password.error}</div>}
           </div>
         </div>
         <button type="submit" className="btn btn-success" disabled={pristine || invalid || submitting}>

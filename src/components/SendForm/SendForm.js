@@ -76,13 +76,13 @@ export default class SendForm extends Component {
           <form name="example" onSubmit={handleSubmit(transfer)}>
             <div className="form-group">
               <label>Recipient</label>
-              <input type="text" className="form-control" {...recipient} />
-              {recipient.dirty && recipient.error && recipient.touched && <div className="text-danger">{recipient.error}</div>}
+              <input type="text" className="form-control" autoFocus {...recipient} />
+              {recipient.dirty && recipient.error && <div className="text-danger">{recipient.error}</div>}
             </div>
             <div className="form-group">
               <label>Amount</label>
               <input type="text" className="form-control" {...amount} />
-              {amount.dirty && amount.error && amount.touched && <div className="text-danger">{amount.error}</div>}
+              {amount.dirty && amount.error && <div className="text-danger">{amount.error}</div>}
             </div>
             <button type="submit" className="btn btn-success" disabled={(!data && pristine) || invalid || submitting}>
               {submitting ? 'Sending...' : 'Send'}
