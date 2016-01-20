@@ -35,7 +35,7 @@ export default class LoginForm extends Component {
           <strong>Holy guacamole!</strong> You've just sent some money!
         </Alert>}
 
-        {fail && fail.status === 403 &&
+        {fail && fail.id === 'UnauthorizedError' &&
         <Alert bsStyle="danger">
           <strong>Woops!</strong> Invalid username/password
         </Alert>}
