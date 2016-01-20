@@ -67,7 +67,7 @@ export default class SendForm extends Component {
             {(() => {
               switch (fail.id) {
                 case 'InsufficientFundsError': return 'You have insufficient funds to make the payment';
-                case 'UnprocessableEntityError': return 'Recipient account doesn\'t exist';
+                case 'InvalidLedgerAccountError': return 'Recipient account doesn\'t exist';
                 default: return 'Something went wrong';
               }
             })()}

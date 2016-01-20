@@ -7,8 +7,7 @@ const _ = require('lodash')
 const request = require('five-bells-shared/utils/request')
 const passport = require('koa-passport')
 const requestUtil = require('five-bells-shared/utils/request')
-const UnprocessableEntityError = require('five-bells-shared').UnprocessableEntityError
-const UnmetConditionError = require('five-bells-shared').UnmetConditionError
+const InvalidLedgerAccountError = require('../errors/invalid-ledger-account-error')
 const Model = require('five-bells-shared').Model
 const PaymentFactory = require('../models/payment')
 const Log = require('../lib/log')
@@ -75,13 +74,6 @@ function PaymentsControllerFactory (Payment, log, db, config, ledger) {
 
       payment.source_user = this.req.user.id
 
-      let created
-      yield db.transaction(function * (transaction) {
-        created = yield payment.create({ transaction })
-      })
-
-      payment = yield Payment.getPayment(payment.id);
-
       // TODO cleanup
       // TODO fill the destination_user
       const options = {
@@ -91,9 +83,23 @@ function PaymentsControllerFactory (Payment, log, db, config, ledger) {
         password: this.req.user.password
       }
 
-      const transfer = yield ledger.transfer(options)
+      try {
+        const transfer = yield ledger.transfer(options)
 
-      log.debug('Ledger transfer payment ID ' + id)
+        log.debug('Ledger transfer payment ID ' + id)
+      } catch (e) {
+        let error = JSON.parse(e.response.error.text);
+        if (error.id === 'UnprocessableEntityError') {
+          throw new InvalidLedgerAccountError(error.message);
+        }
+      }
+
+      let created
+      yield db.transaction(function * (transaction) {
+        created = yield payment.create({ transaction })
+      })
+
+      payment = yield Payment.getPayment(payment.id);
 
       // TODO Should be in the same format as historyItem
       this.body = payment.getDataExternal()
