@@ -77,12 +77,12 @@ export default class SendForm extends Component {
             <div className="form-group">
               <label>Recipient</label>
               <input type="text" className="form-control" {...recipient} />
-              {recipient.error && recipient.touched && <div className="text-danger">{recipient.error}</div>}
+              {recipient.dirty && recipient.error && recipient.touched && <div className="text-danger">{recipient.error}</div>}
             </div>
             <div className="form-group">
               <label>Amount</label>
               <input type="text" className="form-control" {...amount} />
-              {amount.error && amount.touched && <div className="text-danger">{amount.error}</div>}
+              {amount.dirty && amount.error && amount.touched && <div className="text-danger">{amount.error}</div>}
             </div>
             <button type="submit" className="btn btn-success" disabled={(!data && pristine) || invalid || submitting}>
               {submitting ? 'Sending...' : 'Send'}
