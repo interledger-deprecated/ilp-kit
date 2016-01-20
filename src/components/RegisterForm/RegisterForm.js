@@ -38,9 +38,7 @@ export default class RegisterForm extends Component {
 
         {fail &&
         <Alert bsStyle="danger">
-          {fail.status === 400 &&
-          <div><strong>Woops!</strong> Input data is invalid</div>}
-          {fail.status === 409 &&
+          {fail.id === 'UsernameTakenError' &&
           <div><strong>Woops!</strong> Username is already taken</div>}
         </Alert>}
 

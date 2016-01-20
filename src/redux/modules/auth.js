@@ -149,7 +149,7 @@ export function logout() {
 export function register(fields) {
   return {
     types: [REGISTER, REGISTER_SUCCESS, REGISTER_FAIL],
-    promise: (client) => client.put('/users/' + fields.username, {
+    promise: (client) => client.post('/auth/register', {
       data: {
         username: fields.username,
         password: fields.password
