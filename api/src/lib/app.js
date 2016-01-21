@@ -15,7 +15,6 @@ const DB = require('./db')
 const Log = require('./log')
 
 module.exports = class App {
-  // TODO use decorators
   static constitute () { return [ Config, Auth, Router, Validator, DB, Log ] }
   constructor (config, auth, router, validator, db, log ) {
     this.config = config

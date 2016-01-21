@@ -3,6 +3,7 @@
 const Container = require('constitute').Container
 const makeRouter = require('koa-router')
 
+const HealthController = require('../controllers/health')
 const AuthController = require('../controllers/auth')
 const UsersController = require('../controllers/users')
 const PaymentsController = require('../controllers/payments')
@@ -15,6 +16,9 @@ module.exports = class Router {
   }
 
   setupDefaultRoutes () {
+    const health = this.container.constitute(HealthController)
+    health.init(this.router)
+
     const auth = this.container.constitute(AuthController)
     auth.init(this.router)
 
