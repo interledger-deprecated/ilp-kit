@@ -8,7 +8,6 @@ module.exports = class LedgerUIConfig extends Config {
     this.parseServerConfig()
     this.parseLedgerConfig()
     this.parseDatabaseConfig()
-    this.parseKeyConfig()
 
     if (process.env.NODE_ENV === 'unit') {
       this.server.public_host = 'localhost'
