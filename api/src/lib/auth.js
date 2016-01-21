@@ -47,7 +47,7 @@ module.exports = class Auth {
     if (this.isAuthenticated()){
       yield next
     } else {
-      console.log('no auth')
+      this.status = 404
     }
   }
 }

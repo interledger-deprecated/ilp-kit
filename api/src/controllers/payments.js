@@ -8,25 +8,23 @@ const request = require('five-bells-shared/utils/request')
 const passport = require('koa-passport')
 const requestUtil = require('five-bells-shared/utils/request')
 const InvalidLedgerAccountError = require('../errors/invalid-ledger-account-error')
-const Model = require('five-bells-shared').Model
+const Auth = require('../lib/auth')
 const PaymentFactory = require('../models/payment')
 const Log = require('../lib/log')
 const DB = require('../lib/db')
 const Config = require('../lib/config')
 const Ledger = require('../lib/ledger')
 
-PaymentsControllerFactory.constitute = [PaymentFactory, Log, DB, Config, Ledger]
-function PaymentsControllerFactory (Payment, log, db, config, ledger) {
+PaymentsControllerFactory.constitute = [Auth, PaymentFactory, Log, DB, Config, Ledger]
+function PaymentsControllerFactory (Auth, Payment, log, db, config, ledger) {
   log = log('payments')
 
   return class PaymentsController {
-    // TODO check auth for all the routes
     static init (router) {
       let self = this;
-      router.get('/payments', this.getHistory)
-      router.get('/payments/:id', this.getResource)
-      router.put('/payments/:id', Payment.createBodyParser(), self.putResource)
-      //router.put('/payments/:id/fulfillment', Model.createBodyParser(), this.putFulfillmentResource)
+      router.get('/payments', Auth.isAuth, this.getHistory)
+      router.get('/payments/:id', Auth.isAuth, this.getResource)
+      router.put('/payments/:id', Auth.isAuth, Payment.createBodyParser(), self.putResource)
     }
 
     static * getHistory () {
