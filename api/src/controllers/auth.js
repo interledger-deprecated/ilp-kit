@@ -4,16 +4,14 @@ module.exports = AuthsControllerFactory
 
 const request = require('five-bells-shared/utils/request')
 const passport = require('koa-passport')
-const UserFactory = require('../models/user')
-const Log = require('../lib/log')
-const DB = require('../lib/db')
 const Auth = require('../lib/auth')
-const Config = require('../lib/config')
+const Log = require('../lib/log')
 const Ledger = require('../lib/ledger')
+const UserFactory = require('../models/user')
 const UsernameTakenError = require('../errors/username-taken-error')
 
-AuthsControllerFactory.constitute = [Auth, UserFactory, Log, DB, Config, Ledger]
-function AuthsControllerFactory (Auth, User, log, db, config, ledger) {
+AuthsControllerFactory.constitute = [Auth, UserFactory, Log, Ledger]
+function AuthsControllerFactory (Auth, User, log, ledger) {
   log = log('auth')
 
   return class AuthController {
@@ -25,12 +23,11 @@ function AuthsControllerFactory (Auth, User, log, db, config, ledger) {
     }
 
     static * register () {
-      const self = this
-      let id = this.body.username || ''
-      request.validateUriParameter('id', id, 'Identifier')
-      id = id.toLowerCase()
+      let username = this.body.username
+      request.validateUriParameter('username', username, 'Identifier')
+      username = username.toLowerCase()
 
-      let user = yield User.findOne({where: {username: id}})
+      let user = yield User.findOne({where: {username: username}})
 
       // Username is already taken
       if (user) {
@@ -38,22 +35,21 @@ function AuthsControllerFactory (Auth, User, log, db, config, ledger) {
       }
 
       // Create a ledger account
-      const ledgerUser = yield ledger.createAccount(self.body);
+      // TODO handle exceptions
+      const ledgerUser = yield ledger.createAccount(this.body)
 
-      yield db.transaction(function * (transaction) {
-        user = yield User.createExternal(self.body, { transaction })
-      })
+      user = yield User.createExternal(this.body)
 
       // TODO load balance in req.login
-      self.body.balance = ledgerUser.balance
-      self.body.id = user.id
+      this.body.balance = ledgerUser.balance
+      this.body.id = user.id
 
       // TODO callbacks?
-      self.req.logIn(self.body, function (err) {})
+      this.req.logIn(this.body, function (err) {})
 
-      log.debug('created user ID ' + id)
+      log.debug('created user ' + username)
 
-      this.body = self.body.getDataExternal()
+      this.body = this.body.getDataExternal()
       this.status = 201
     }
 
@@ -63,8 +59,8 @@ function AuthsControllerFactory (Auth, User, log, db, config, ledger) {
 
       // There's no active session
       if (!user) {
-        this.status = 404;
-        return;
+        this.status = 404
+        return
       }
 
       // Get account balance

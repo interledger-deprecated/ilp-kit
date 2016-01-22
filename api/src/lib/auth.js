@@ -2,7 +2,6 @@
 
 const passport = require('koa-passport')
 const LocalStrategy = require('passport-local')
-const Strategy = require('passport-anonymous').Strategy
 const UserFactory = require('../models/user')
 const UnauthorizedError = require('five-bells-shared/errors/unauthorized-error')
 
@@ -25,8 +24,6 @@ module.exports = class Auth {
             }
           })
       }))
-
-    //passport.use(new Strategy())
 
     passport.serializeUser(function(user, done) {
       done(null, user)

@@ -3,16 +3,14 @@
 module.exports = UserFactory
 
 const _ = require('lodash')
-const Container = require('constitute').Container
 const Model = require('five-bells-shared').Model
 const PersistentModelMixin = require('five-bells-shared').PersistentModelMixin
 const Database = require('../lib/db')
-const Config = require('../lib/config')
 const Validator = require('five-bells-shared/lib/validator')
 const Sequelize = require('sequelize')
 
-UserFactory.constitute = [Database, Validator, Container, Config]
-function UserFactory (sequelize, validator, container, config) {
+UserFactory.constitute = [Database, Validator]
+function UserFactory (sequelize, validator) {
   class User extends Model {
     static convertFromExternal (data) {
       return data

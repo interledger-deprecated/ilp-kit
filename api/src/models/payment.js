@@ -8,13 +8,12 @@ const Model = require('five-bells-shared').Model
 const InvalidBodyError = require('five-bells-shared/errors/invalid-body-error')
 const PersistentModelMixin = require('five-bells-shared').PersistentModelMixin
 const Database = require('../lib/db')
-const Config = require('../lib/config')
 const Validator = require('five-bells-shared/lib/validator')
 const Sequelize = require('sequelize')
 const UserFactory = require('./user')
 
-PaymentFactory.constitute = [Database, Validator, Container, Config, UserFactory]
-function PaymentFactory (sequelize, validator, container, config, User) {
+PaymentFactory.constitute = [Database, Validator, Container, UserFactory]
+function PaymentFactory (sequelize, validator, container, User) {
   class Payment extends Model {
     static convertFromExternal (data) {
       return data

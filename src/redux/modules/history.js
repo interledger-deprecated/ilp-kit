@@ -32,7 +32,6 @@ export default function reducer(state = initialState, action = {}) {
         history: [],
         fail: action.error
       };
-    // TODO maybe reload history on SEND_SUCCESS?
     case SEND_SUCCESS:
       return {
         ...state,

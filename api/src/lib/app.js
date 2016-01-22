@@ -36,7 +36,7 @@ module.exports = class App {
         this.body = this.request.body
       }
       yield next
-    });
+    })
 
     app.use(logger({mag: log('http')}))
     app.use(errorHandler({log: log('error-handler')}))

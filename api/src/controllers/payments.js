@@ -2,44 +2,33 @@
 
 module.exports = PaymentsControllerFactory
 
-const co = require('co')
 const _ = require('lodash')
 const request = require('five-bells-shared/utils/request')
 const passport = require('koa-passport')
-const requestUtil = require('five-bells-shared/utils/request')
-const InvalidLedgerAccountError = require('../errors/invalid-ledger-account-error')
 const Auth = require('../lib/auth')
-const PaymentFactory = require('../models/payment')
 const Log = require('../lib/log')
-const DB = require('../lib/db')
-const Config = require('../lib/config')
 const Ledger = require('../lib/ledger')
+const PaymentFactory = require('../models/payment')
+const InvalidLedgerAccountError = require('../errors/invalid-ledger-account-error')
 
-PaymentsControllerFactory.constitute = [Auth, PaymentFactory, Log, DB, Config, Ledger]
-function PaymentsControllerFactory (Auth, Payment, log, db, config, ledger) {
+PaymentsControllerFactory.constitute = [Auth, PaymentFactory, Log, Ledger]
+function PaymentsControllerFactory (Auth, Payment, log, ledger) {
   log = log('payments')
 
   return class PaymentsController {
     static init (router) {
-      let self = this;
       router.get('/payments', Auth.isAuth, this.getHistory)
       router.get('/payments/:id', Auth.isAuth, this.getResource)
-      router.put('/payments/:id', Auth.isAuth, Payment.createBodyParser(), self.putResource)
+      router.put('/payments/:id', Auth.isAuth, Payment.createBodyParser(), this.putResource)
     }
 
     static * getHistory () {
-      const self = this
       // TODO pagination
-      const payments = yield Payment.getUserPayments(self.req.user)
-
-      if (!payments) {
-        this.status = 404
-        return
-      }
+      const payments = yield Payment.getUserPayments(this.req.user)
 
       this.body = _.map(payments, (payment) => {
         return payment.getDataExternal()
-      });
+      })
     }
 
     static * getResource () {
@@ -47,7 +36,7 @@ function PaymentsControllerFactory (Auth, Payment, log, db, config, ledger) {
       request.validateUriParameter('id', id, 'Uuid')
       id = id.toLowerCase()
 
-      const item = yield Payment.getPayment(this.params.id)
+      const item = yield Payment.getPayment(id)
 
       if (!item) {
         this.status = 404
@@ -61,7 +50,7 @@ function PaymentsControllerFactory (Auth, Payment, log, db, config, ledger) {
       const _this = this
 
       let id = _this.params.id
-      requestUtil.validateUriParameter('id', id, 'Uuid')
+      request.validateUriParameter('id', id, 'Uuid')
       id = id.toLowerCase()
       let payment = this.body
 
@@ -72,7 +61,6 @@ function PaymentsControllerFactory (Auth, Payment, log, db, config, ledger) {
 
       payment.source_user = this.req.user.id
 
-      // TODO cleanup
       // TODO fill the destination_user
       const options = {
         recipient: payment.destination_account,
@@ -81,25 +69,24 @@ function PaymentsControllerFactory (Auth, Payment, log, db, config, ledger) {
         password: this.req.user.password
       }
 
+      // Try doing the ledger transaction
       try {
         const transfer = yield ledger.transfer(options)
 
         log.debug('Ledger transfer payment ID ' + id)
       } catch (e) {
-        let error = JSON.parse(e.response.error.text);
+        let error = JSON.parse(e.response.error.text)
         if (error.id === 'UnprocessableEntityError') {
-          throw new InvalidLedgerAccountError(error.message);
+          throw new InvalidLedgerAccountError(error.message)
         }
       }
 
-      let created
-      yield db.transaction(function * (transaction) {
-        created = yield payment.create({ transaction })
-      })
+      // Store the payment in db
+      yield payment.create()
 
-      payment = yield Payment.getPayment(payment.id);
+      // Get the payment with the associations
+      payment = yield Payment.getPayment(payment.id)
 
-      // TODO Should be in the same format as historyItem
       this.body = payment.getDataExternal()
     }
   }
