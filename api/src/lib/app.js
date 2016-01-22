@@ -42,10 +42,9 @@ module.exports = class App {
     app.use(errorHandler({log: log('error-handler')}))
     app.use(cors({origin: '*'}))
 
-    app.proxy = true
+    app.proxy = true;
 
-    // TODO guess what
-    app.keys = config.sessionSecret
+    app.keys = [config.sessionSecret]
     app.use(session(app))
 
     auth.attach(app)
