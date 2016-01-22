@@ -45,7 +45,7 @@ module.exports = class App {
     app.proxy = true
 
     // TODO guess what
-    app.keys = ['sesssecret']
+    app.keys = config.sessionSecret
     app.use(session(app))
 
     auth.attach(app)
