@@ -1,0 +1,32 @@
+.item {
+  margin-top: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f3f3f3;
+}
+.counterparty {
+  font-size: 18px;
+  line-height: 22px;
+}
+.date {
+  font: 13px 'OpenSansLight';
+  color: #b0b0b0;
+  line-height: 15px;
+}
+.amount {
+  font: 22px 'OpenSansLight';
+  text-align: right;
+  line-height: 37px;
+}
+.negative {
+  color: red;
+}
+.negative:before {
+  content: "– ";
+}
+.positive {
+  color: green;
+}
+.positive:before {
+  content: "+ ";
+  padding: 0 0 10px;
+}

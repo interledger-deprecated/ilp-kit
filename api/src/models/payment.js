@@ -24,7 +24,6 @@ function PaymentFactory (sequelize, validator, container, User) {
     }
 
     static convertFromPersistent (data) {
-      delete data.created_at
       delete data.updated_at
       data = _.omit(data, _.isNull)
       return data
@@ -55,9 +54,6 @@ function PaymentFactory (sequelize, validator, container, User) {
       }
     }
 
-    /**
-     * Collection methods
-     */
     static getUserPayments (user) {
       return Payment.findAll({
         // This is how we get a flat object that includes user username

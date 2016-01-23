@@ -1,8 +1,30 @@
+@font-face {
+  font-family: 'OpenSansLight';
+  src: url('/fonts/OpenSans-Light-webfont.eot');
+  src: url('/fonts/OpenSans-Light-webfont.eot?#iefix') format('embedded-opentype'),
+  url('/fonts/OpenSans-Light-webfont.woff2') format('woff2'),
+  url('/fonts/OpenSans-Light-webfont.woff') format('woff'),
+  url('/fonts/OpenSans-Light-webfont.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'OpenSansRegular';
+  src: url('/fonts/OpenSans-Regular-webfont.eot');
+  src: url('/fonts/OpenSans-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+  url('/fonts/OpenSans-Regular-webfont.woff2') format('woff2'),
+  url('/fonts/OpenSans-Regular-webfont.woff') format('woff'),
+  url('/fonts/OpenSans-Regular-webfont.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 body {
   background: #fff;
   /* Space out content a bit */
   padding-top: 20px;
   padding-bottom: 20px;
+  font-family: 'OpenSansRegular', sans-serif;
 }
 
 /* Everything but the jumbotron gets side spacing for mobile first views */

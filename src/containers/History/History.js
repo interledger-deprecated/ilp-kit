@@ -8,13 +8,15 @@ import styles from './History.scss';
 
 @connect(
   state => ({
-    history: state.history.history
+    history: state.history.history,
+    user: state.auth.user
   }),
   historyActions)
 export default class Home extends Component {
   static propTypes = {
     load: PropTypes.func,
-    history: PropTypes.array
+    history: PropTypes.array,
+    user: PropTypes.object
   }
 
   // Load the history
@@ -23,22 +25,13 @@ export default class Home extends Component {
   }
 
   render() {
-    const {history} = this.props;
+    const {history, user} = this.props;
 
     return (
       <div>
-        <h3>History</h3>
         <ul className={styles.list}>
-          <li className={styles.head}>
-            <div className="row">
-              <div className="col-sm-3">Sender</div>
-              <div className="col-sm-3">Receiver</div>
-              <div className="col-sm-3">Sent</div>
-              <div className="col-sm-3">Received</div>
-            </div>
-          </li>
           {history.map((item) => {
-            return <li key={item.id}><HistoryItem item={item} /></li>;
+            return <li key={item.id}><HistoryItem item={item} user={user} /></li>;
           })}
         </ul>
       </div>

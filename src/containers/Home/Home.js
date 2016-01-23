@@ -49,14 +49,18 @@ export default class Home extends Component {
         {/* Balance Send widget */}
         {user &&
         <div className="row">
-          <div className={styles.balanceContainer + ' col-sm-6'}>
-            <div className={styles.balanceDescription}>Balance</div>
-            <div className={styles.balance}>
-              {user.balance}
-            </div>
-            <button className="btn btn-primary" onClick={this.reload}>Get More</button>
+          <div className="col-sm-6">
+            {/* Balance */}
+            <div className={styles.balanceContainer}>
+              <div className={styles.balanceDescription}>Your Balance</div>
+              <div className={styles.balance}>
+                {user.balance}
+              </div>
+              <button className="btn btn-primary" onClick={this.reload}>Get More</button>
 
-            <hr />
+              <hr />
+            </div>
+
             {/* History */}
             <History />
           </div>
