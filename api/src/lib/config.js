@@ -15,8 +15,7 @@ module.exports = class LedgerUIConfig extends Config {
     this.ledger = {
       admin: {}
     }
-    this.ledger.host = this.getEnv('LEDGER_HOST')
-    this.ledger.port = this.getEnv('LEDGER_PORT')
+    this.ledger.uri = this.getEnv('LEDGER_URI')
     this.ledger.admin.name = this.getEnv('LEDGER_ADMIN_NAME')
     this.ledger.admin.pass = this.getEnv('LEDGER_ADMIN_PASS')
   }

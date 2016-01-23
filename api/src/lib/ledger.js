@@ -10,12 +10,12 @@ module.exports = class Ledger {
   static constitute () { return [Config] }
   constructor (config) {
     this.config = config
-    this.ledgerUrl = 'http://' + this.config.ledger.host + ':' + this.config.ledger.port
+    this.ledgerUri = this.config.ledger.uri
   }
 
   * getAccount (user, admin) {
     const response = yield superagent
-      .get(this.ledgerUrl + '/accounts/' + user.username)
+      .get(this.ledgerUri + '/accounts/' + user.username)
       .auth(admin ? this.config.ledger.admin.name : user.username, admin ? this.config.ledger.admin.pass : user.password)
       .end()
 
@@ -25,7 +25,7 @@ module.exports = class Ledger {
   * createAccount(user) {
     try {
       const response = yield superagent
-        .put(this.ledgerUrl + '/accounts/' + user.username)
+        .put(this.ledgerUri + '/accounts/' + user.username)
         .send({
           name: user.username,
           password: user.password,
@@ -42,15 +42,15 @@ module.exports = class Ledger {
     const paymentId = uuid()
 
     const response = yield superagent
-      .put(this.ledgerUrl + '/transfers/' + paymentId)
+      .put(this.ledgerUri + '/transfers/' + paymentId)
       .send({
         debits: [{
-          account: this.ledgerUrl + '/accounts/' + options.username,
+          account: this.ledgerUri + '/accounts/' + options.username,
           amount: options.amount,
           authorized: true
         }],
         credits: [{
-          account: this.ledgerUrl + '/accounts/' + options.recipient,
+          account: this.ledgerUri + '/accounts/' + options.recipient,
           amount: options.amount
         }],
         expires_at: "2016-06-16T00:00:01.000Z"
