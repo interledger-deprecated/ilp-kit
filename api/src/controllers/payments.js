@@ -10,6 +10,7 @@ const Log = require('../lib/log')
 const Ledger = require('../lib/ledger')
 const PaymentFactory = require('../models/payment')
 const InvalidLedgerAccountError = require('../errors/invalid-ledger-account-error')
+const LedgerInsufficientFundsError = require('../errors/ledger-insufficient-funds-error')
 
 PaymentsControllerFactory.constitute = [Auth, PaymentFactory, Log, Ledger]
 function PaymentsControllerFactory (Auth, Payment, log, ledger) {
@@ -76,8 +77,14 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger) {
         log.debug('Ledger transfer payment ID ' + id)
       } catch (e) {
         let error = JSON.parse(e.response.error.text)
+
         if (error.id === 'UnprocessableEntityError') {
           throw new InvalidLedgerAccountError(error.message)
+        } else if (error.id === 'InsufficientFundsError') {
+          throw new LedgerInsufficientFundsError(error.message)
+        } else {
+          // TODO more meaningful error
+          throw new Error()
         }
       }
 
