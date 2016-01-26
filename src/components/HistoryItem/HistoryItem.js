@@ -2,7 +2,9 @@ import React, {Component, PropTypes} from 'react';
 import moment from 'moment';
 import { contextualizePayment } from '../../utils/api';
 
+import classNames from 'classnames/bind';
 import styles from './HistoryItem.scss';
+const cx = classNames.bind(styles);
 
 export default class HistoryItem extends Component {
   static propTypes = {
@@ -16,13 +18,13 @@ export default class HistoryItem extends Component {
     const amountClass = item.counterpartyAccount === item.destination_account ? 'negative' : 'positive';
 
     return (
-      <div className={styles.item + ' row'}>
+      <div className={cx('item', 'row')}>
         <div className="col-sm-8">
-          <div className={styles.counterparty}>{item.counterpartyAccount}</div>
-          <div className={styles.date}>{moment(item.created_at).format('LL')}</div>
+          <div className={cx('counterparty')}>{item.counterpartyAccount}</div>
+          <div className={cx('date')}>{moment(item.created_at).format('LL')}</div>
         </div>
         <div className="col-sm-4">
-          <div className={styles.amount + ' ' + styles[amountClass]}>
+          <div className={cx('amount', amountClass)}>
             {item.source_amount}
           </div>
         </div>

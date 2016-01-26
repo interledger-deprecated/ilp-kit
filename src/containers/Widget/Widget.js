@@ -8,7 +8,9 @@ import connectData from 'helpers/connectData';
 import { SendForm } from 'components';
 import { LoginForm } from 'components';
 
+import classNames from 'classnames/bind';
 import styles from './Widget.scss';
+const cx = classNames.bind(styles);
 
 function fetchData(getState, dispatch) {
   const promises = [];
@@ -62,11 +64,11 @@ export default class Widget extends Component {
 
     return (
       <div>
-        <div className={styles.before}></div>
-        <div className={styles.container}>
-          <a href="" className={'fa fa-close ' + styles.close} onClick={this.handleClose}> </a>
-          <div className={styles.title}>LedgerUI.com</div>
-          <div className={styles.description}>
+        <div className={cx('before')}></div>
+        <div className={cx('container')}>
+          <a href="" className={cx('fa', 'fa-close', 'close')} onClick={this.handleClose}> </a>
+          <div className={cx('title')}>LedgerUI.com</div>
+          <div className={cx('description')}>
             So you wanna pay {data.currencyCode} {data.amount} to {data.accountName}
           </div>
 

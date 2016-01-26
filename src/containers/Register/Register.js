@@ -6,7 +6,9 @@ import config from '../../config';
 
 import { RegisterForm } from 'components';
 
+import classNames from 'classnames/bind';
 import styles from './Register.scss';
+const cx = classNames.bind(styles);
 
 @connect(
   state => ({
@@ -27,7 +29,7 @@ export default class Register extends Component {
   render() {
     const {register, fail, unmount} = this.props;
     return (
-      <div className={styles.registerPage + ' container'}>
+      <div className={cx('registerPage', 'container')}>
         <DocumentMeta title={config.app.title + ': Register'}/>
         <div className="col-sm-4">
           <h1>Register</h1>

@@ -6,7 +6,9 @@ import config from '../../config';
 
 import { LoginForm } from 'components';
 
+import classNames from 'classnames/bind';
 import styles from './Login.scss';
+const cx = classNames.bind(styles);
 
 @connect(
   state => ({
@@ -27,7 +29,7 @@ export default class Login extends Component {
   render() {
     const {login, fail, unmount} = this.props;
     return (
-      <div className={styles.loginPage + ' container'}>
+      <div className={cx('loginPage', 'container')}>
         <DocumentMeta title={config.app.title + ': Login'}/>
         <div className="col-sm-4">
           <h1>Login</h1>

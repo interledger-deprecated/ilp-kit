@@ -7,7 +7,9 @@ import { RegisterForm } from 'components';
 import { SendForm } from 'components';
 import { History } from 'containers';
 
+import classNames from 'classnames/bind';
 import styles from './Home.scss';
+const cx = classNames.bind(styles);
 
 @connect(
   state => ({
@@ -65,9 +67,9 @@ export default class Home extends Component {
           </div>
           <div className="col-sm-6">
             {/* Balance */}
-            <div className={styles.balanceContainer}>
-              <div className={styles.balanceDescription}>Your Balance</div>
-              <div className={styles.balance}>
+            <div className={cx('balanceContainer')}>
+              <div className={cx('balanceDescription')}>Your Balance</div>
+              <div className={cx('balance')}>
                 {user.balance}
               </div>
               <button className="btn btn-primary" onClick={this.reload}>Get More</button>

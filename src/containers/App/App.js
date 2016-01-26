@@ -9,6 +9,10 @@ import { pushState } from 'redux-router';
 import connectData from 'helpers/connectData';
 import config from '../../config';
 
+import classNames from 'classnames/bind';
+import styles from './App.scss';
+const cx = classNames.bind(styles);
+
 function fetchData(getState, dispatch) {
   const promises = [];
   if (!isAuthLoaded(getState())) {
@@ -50,16 +54,16 @@ export default class App extends Component {
 
   render() {
     const {user} = this.props;
-    const styles = require('./App.scss');
+
     return (
-      <div className={styles.container + ' container'}>
+      <div className={cx('container')}>
         <script src="https://web-payments.net/polyfill.js"></script>
         <DocumentMeta {...config.app}/>
-        <div className={styles.header + ' clearfix'}>
+        <div className={cx('header', 'clearfix')}>
           <nav>
             <ul className="nav nav-pills pull-right">
               {user &&
-              <li role="presentation" className={styles.navText}>
+              <li role="presentation" className={cx('navText')}>
                 Hi <strong>{user.username}</strong>.
               </li>}
               <li role="presentation">
@@ -88,11 +92,11 @@ export default class App extends Component {
           </h3>
         </div>
 
-        <div className={styles.appContent}>
+        <div className={cx('appContent')}>
           {this.props.children}
         </div>
 
-        <footer className={styles.footer}>
+        <footer className={cx('footer')}>
           <p>&copy; 2015 <a href="http://interledger.org/">Interledger</a>.</p>
         </footer>
       </div>

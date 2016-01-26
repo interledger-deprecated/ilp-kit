@@ -4,7 +4,9 @@ import * as historyActions from 'redux/modules/history';
 
 import { HistoryItem } from 'components';
 
+import classNames from 'classnames/bind';
 import styles from './History.scss';
+const cx = classNames.bind(styles);
 
 @connect(
   state => ({
@@ -29,7 +31,7 @@ export default class Home extends Component {
 
     return (
       <div>
-        <ul className={styles.list}>
+        <ul className={cx('list')}>
           {history.map((item) => {
             return <li key={item.id}><HistoryItem item={item} user={user} /></li>;
           })}
