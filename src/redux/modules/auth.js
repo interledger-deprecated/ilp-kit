@@ -18,7 +18,8 @@ const DESTROY = 'redux-example/auth/DESTROY';
 const SEND_SUCCESS = 'redux-example/send/SEND_SUCCESS';
 
 const initialState = {
-  loaded: false
+  loaded: false,
+  fail: {}
 };
 
 export default function reducer(state = initialState, action = {}) {
@@ -106,7 +107,7 @@ export default function reducer(state = initialState, action = {}) {
     case DESTROY:
       return {
         ...state,
-        fail: null
+        fail: {}
       };
     // TODO Handle RELOADING and RELOAD_FAIL
     case RELOAD_SUCCESS:

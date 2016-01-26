@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import * as authActions from 'redux/modules/auth';
 import * as sendActions from 'redux/modules/send';
 
+import { RegisterForm } from 'components';
 import { SendForm } from 'components';
 import { History } from 'containers';
 
@@ -13,7 +14,8 @@ import styles from './Home.scss';
     user: state.auth.user,
     send: state.send,
     success: state.send.success,
-    fail: state.send.fail
+    fail: state.send.fail,
+    registerFail: state.auth.fail
   }),
   { ...authActions, ...sendActions }) // TODO this is definitely wrong
 export default class Home extends Component {
@@ -21,7 +23,9 @@ export default class Home extends Component {
     user: PropTypes.object,
     success: PropTypes.bool,
     fail: PropTypes.object,
+    registerFail: PropTypes.object,
     transfer: PropTypes.func,
+    register: PropTypes.func,
     unmount: PropTypes.func,
     reload: PropTypes.func
   }
@@ -35,20 +39,30 @@ export default class Home extends Component {
   }
 
   render() {
-    const {user, success, fail, transfer, unmount} = this.props;
+    const {user, success, fail, registerFail, transfer, unmount, register} = this.props;
+    const family = require('./family.jpg');
 
     return (
       <div>
         {!user &&
-        <div className="jumbotron">
-          <h1>Make me the default</h1>
-          <p className="lead">Some text about settings this payment provider as your default</p>
-          <button className="btn btn-lg btn-success" onClick={this.handleDefaultPayment}>Make me your default payment provider</button>
+        <div className="row">
+          <div className="col-xs-9">
+            <img src={family}/>
+          </div>
+          <div className="col-xs-3">
+            <h1>Register</h1>
+            <RegisterForm register={register} fail={registerFail} unmount={unmount} />
+          </div>
         </div>}
 
         {/* Balance Send widget */}
         {user &&
         <div className="row">
+          <div className="jumbotron">
+            <h1>Make me the default</h1>
+            <p className="lead">Some text about settings this payment provider as your default</p>
+            <button className="btn btn-lg btn-success" onClick={this.handleDefaultPayment}>Make me your default payment provider</button>
+          </div>
           <div className="col-sm-6">
             {/* Balance */}
             <div className={styles.balanceContainer}>

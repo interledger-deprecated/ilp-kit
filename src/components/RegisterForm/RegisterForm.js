@@ -41,7 +41,7 @@ export default class RegisterForm extends Component {
           <strong>Holy guacamole!</strong> You've just sent some money!
         </Alert>}
 
-        {fail &&
+        {fail && fail.id &&
         <Alert bsStyle="danger">
           {fail.id === 'UsernameTakenError' &&
           <div><strong>Woops!</strong> Username is already taken</div>}
