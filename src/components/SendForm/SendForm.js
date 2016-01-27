@@ -4,6 +4,10 @@ import sendValidation from './SendValidation';
 
 import {Alert} from 'react-bootstrap';
 
+import classNames from 'classnames/bind';
+import inputStyles from '../../containers/App/Inputs.scss';
+const cx = classNames.bind(inputStyles);
+
 @reduxForm({
   form: 'send',
   fields: ['recipient', 'amount'],
@@ -76,12 +80,12 @@ export default class SendForm extends Component {
           <form name="example" onSubmit={handleSubmit(transfer)}>
             <div className="form-group">
               <label>Recipient</label>
-              <input type="text" className="form-control input-lg" autoFocus {...recipient} />
+              <input type="text" className={cx('form-control', 'lu-form-control', 'lu-input-lg')} autoFocus {...recipient} />
               {recipient.dirty && recipient.error && <div className="text-danger">{recipient.error}</div>}
             </div>
             <div className="form-group">
               <label>Amount</label>
-              <input type="text" className="form-control input-lg" {...amount} />
+              <input type="text" className={cx('form-control', 'lu-form-control', 'lu-input-lg')} {...amount} />
               {amount.dirty && amount.error && <div className="text-danger">{amount.error}</div>}
             </div>
             <button type="submit" className="btn btn-success" disabled={(!data && pristine) || invalid || submitting}>

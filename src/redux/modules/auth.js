@@ -14,12 +14,14 @@ const RELOADING = 'redux-example/auth/RELOADING';
 const RELOAD_SUCCESS = 'redux-example/auth/RELOAD_SUCCESS';
 const RELOAD_FAIL = 'redux-example/auth/RELOAD_FAIL';
 const DESTROY = 'redux-example/auth/DESTROY';
+const CHANGE_TAB = 'redux-example/auth/CHANGE_TAB';
 
 const SEND_SUCCESS = 'redux-example/send/SEND_SUCCESS';
 
 const initialState = {
   loaded: false,
-  fail: {}
+  fail: {},
+  activeTab: 'login'
 };
 
 export default function reducer(state = initialState, action = {}) {
@@ -109,6 +111,11 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         fail: {}
       };
+    case CHANGE_TAB:
+      return {
+        ...state,
+        activeTab: action.tab
+      };
     // TODO Handle RELOADING and RELOAD_FAIL
     case RELOAD_SUCCESS:
       return {
@@ -121,6 +128,13 @@ export default function reducer(state = initialState, action = {}) {
     default:
       return state;
   }
+}
+
+export function changeTab(tab) {
+  return {
+    type: CHANGE_TAB,
+    tab: tab
+  };
 }
 
 export function unmount() {

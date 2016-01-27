@@ -5,8 +5,9 @@ import registerValidation from './RegisterValidation';
 import {Alert} from 'react-bootstrap';
 
 import classNames from 'classnames/bind';
+import inputStyles from '../../containers/App/Inputs.scss';
 import styles from './RegisterForm.scss';
-const cx = classNames.bind(styles);
+const cx = classNames.bind({...inputStyles, ...styles});
 
 // TODO async validation on username
 @reduxForm({
@@ -52,12 +53,12 @@ export default class RegisterForm extends Component {
         <div className={cx('fields')}>
           <div className="form-group">
             <label className={cx('label')}>Username</label>
-            <input type="text" placeholder="Enter a username" className="form-control input-lg" autoFocus {...username} />
+            <input type="text" placeholder="Username" className={cx('form-control', 'lu-form-control', 'lu-input-lg')} autoFocus {...username} />
             {username.dirty && username.error && <div className="text-danger">{username.error}</div>}
           </div>
           <div className="form-group">
             <label className={cx('label')}>Password</label>
-            <input type="password" placeholder="Enter a password" className="form-control input-lg" {...password} />
+            <input type="password" placeholder="Password" className={cx('form-control', 'lu-form-control', 'lu-input-lg')} {...password} />
             {password.dirty && password.error && <div className="text-danger">{password.error}</div>}
           </div>
         </div>

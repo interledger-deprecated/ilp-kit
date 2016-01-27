@@ -1,0 +1,17 @@
+.lu-form-control {
+  background: #f6f6f6;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+.lu-form-control:focus {
+  background: #fafafa;
+  outline: 0px !important;
+  -webkit-appearance: none;
+  box-shadow: none;
+  -webkit-box-shadow: none;
+}
+.lu-input-lg {
+  font-size: 15px;
+  padding: 25px 20px;
+}

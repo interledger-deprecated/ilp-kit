@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import * as authActions from 'redux/modules/auth';
 import * as sendActions from 'redux/modules/send';
 
+import { LoginForm } from 'components';
 import { RegisterForm } from 'components';
 import { SendForm } from 'components';
 import { History } from 'containers';
@@ -17,7 +18,8 @@ const cx = classNames.bind(styles);
     send: state.send,
     success: state.send.success,
     fail: state.send.fail,
-    registerFail: state.auth.fail
+    authFail: state.auth.fail,
+    activeTab: state.auth.activeTab
   }),
   { ...authActions, ...sendActions }) // TODO this is definitely wrong
 export default class Home extends Component {
@@ -25,11 +27,14 @@ export default class Home extends Component {
     user: PropTypes.object,
     success: PropTypes.bool,
     fail: PropTypes.object,
-    registerFail: PropTypes.object,
+    authFail: PropTypes.object,
     transfer: PropTypes.func,
+    login: PropTypes.func,
     register: PropTypes.func,
     unmount: PropTypes.func,
-    reload: PropTypes.func
+    reload: PropTypes.func,
+    changeTab: PropTypes.func,
+    activeTab: PropTypes.string
   }
 
   reload = () => {
@@ -40,20 +45,37 @@ export default class Home extends Component {
     navigator.registerPaymentHandler('interledger', location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/widget');
   }
 
+  handleChangeTab = (tab, event) => {
+    event.preventDefault();
+    this.props.changeTab(tab);
+  }
+
   render() {
-    const {user, success, fail, registerFail, transfer, unmount, register} = this.props;
+    const {user, success, fail, authFail, transfer, unmount, login, register, activeTab} = this.props;
     const family = require('./family.jpg');
 
     return (
       <div>
         {!user &&
         <div className="row">
-          <div className="col-xs-9">
-            <img src={family}/>
+          <div className="col-xs-8">
+            <img src={family} width="100%"/>
           </div>
-          <div className="col-xs-3">
-            <h1>Register</h1>
-            <RegisterForm register={register} fail={registerFail} unmount={unmount} />
+          <div className="col-xs-4">
+            <div className={cx('authTabs', 'clearfix')}>
+              {activeTab === 'login' &&
+              <span className={cx('authTab', 'active')}>Login</span>}
+              {activeTab === 'register' &&
+              <a href="" onClick={this.handleChangeTab.bind(this, 'login')} className={cx('authTab')}>Login</a>}
+              {activeTab === 'login' &&
+              <a href="" onClick={this.handleChangeTab.bind(this, 'register')} className={cx('authTab')}>Register</a>}
+              {activeTab === 'register' &&
+              <span className={cx('authTab', 'active')}>Register</span>}
+            </div>
+            {activeTab === 'login' &&
+            <LoginForm login={login} fail={authFail} unmount={unmount} />}
+            {activeTab === 'register' &&
+            <RegisterForm register={register} fail={authFail} unmount={unmount} />}
           </div>
         </div>}
 

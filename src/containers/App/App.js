@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { IndexLink } from 'react-router';
 import { LinkContainer } from 'react-router-bootstrap';
 import { NavItem } from 'react-bootstrap';
 import DocumentMeta from 'react-document-meta';
@@ -66,19 +65,6 @@ export default class App extends Component {
               <li role="presentation" className={cx('navText')}>
                 Hi <strong>{user.username}</strong>.
               </li>}
-              <li role="presentation">
-                <IndexLink to="/">
-                  <span>Home</span>
-                </IndexLink>
-              </li>
-              {!user &&
-              <LinkContainer to="/login">
-                <NavItem>Login</NavItem>
-              </LinkContainer>}
-              {!user &&
-              <LinkContainer to="/register">
-                <NavItem>Register</NavItem>
-              </LinkContainer>}
               {user &&
               <LinkContainer to="/logout">
                 <NavItem className="logout-link" onClick={this.handleLogout}>

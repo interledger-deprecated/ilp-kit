@@ -9,3 +9,26 @@
     font-size: 60px;
   }
 }
+.authTabs {
+  margin: 0 0 30px;
+}
+.authTab {
+  color: #868686;
+  width: 50%;
+  background: #f6f6f6;
+  padding: 20px 10px;
+  margin: 0;
+  float: left;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-align: center;
+}
+.authTab:hover, .authTab:visited, .authTab:active {
+  text-decoration: none;
+  color: #868686;
+}
+.authTab.active {
+  color: #000;
+  background: #fff;
+}
