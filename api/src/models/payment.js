@@ -72,6 +72,9 @@ function PaymentFactory (sequelize, validator, container, User) {
           // attributes: [] because we want a flat object. See above
           { model: User.DbModel, as: 'SourceUser', attributes: [] },
           { model: User.DbModel, as: 'DestinationUser', attributes: [] }
+        ],
+        order: [
+          ['created_at', 'DESC']
         ]
       })
     }
