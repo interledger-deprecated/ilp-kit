@@ -9,8 +9,11 @@
 }
 .date {
   font: 13px 'OpenSansLight';
-  color: #b0b0b0;
   line-height: 15px;
+
+  a {
+    color: #b0b0b0;
+  }
 }
 .amount {
   font: 22px 'OpenSansLight';
@@ -29,4 +32,7 @@
 .positive:before {
   content: "+ ";
   padding: 0 0 10px;
+}
+.jsonContainer {
+  margin-top: 10px;
 }

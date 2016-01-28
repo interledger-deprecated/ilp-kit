@@ -4,6 +4,9 @@ import config from '../config';
 const methods = ['get', 'post', 'put', 'patch', 'del'];
 
 function formatUrl(path) {
+  // Used for non api calls (ex. ledger transfer json retrieval)
+  if (path.startsWith('http')) return path;
+
   const adjustedPath = path[0] !== '/' ? '/' + path : path;
   if (__SERVER__) {
     // Prepend host and port of the API server to the path.

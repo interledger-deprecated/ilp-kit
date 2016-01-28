@@ -18,7 +18,8 @@ export default class Home extends Component {
   static propTypes = {
     load: PropTypes.func,
     history: PropTypes.array,
-    user: PropTypes.object
+    user: PropTypes.object,
+    showJson: PropTypes.func
   }
 
   // Load the history
@@ -27,13 +28,13 @@ export default class Home extends Component {
   }
 
   render() {
-    const {history, user} = this.props;
+    const {history, user, showJson} = this.props;
 
     return (
       <div>
         <ul className={cx('list')}>
-          {history.map((item) => {
-            return <li key={item.id}><HistoryItem item={item} user={user} /></li>;
+          {history && history.map(item => {
+            return <li key={item.id}><HistoryItem item={item} user={user} showJson={showJson} /></li>;
           })}
         </ul>
       </div>

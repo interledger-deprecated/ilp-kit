@@ -74,6 +74,8 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger) {
       try {
         const transfer = yield ledger.transfer(options)
 
+        payment.transfers = [transfer.id]
+
         log.debug('Ledger transfer payment ID ' + id)
       } catch (e) {
         let error = JSON.parse(e.response.error.text)
