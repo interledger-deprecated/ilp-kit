@@ -73,8 +73,9 @@ export default class App extends Component {
               </LinkContainer>}
             </ul>
           </nav>
-          <h3 className="text-muted">
-            <p>{config.app.title}</p>
+          <h3 className={cx('logo')}>
+            <span className={cx('first')}>Five Bells</span>
+            <span className={cx('second')}>Ledger UI</span>
           </h3>
         </div>
 

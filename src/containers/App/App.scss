@@ -85,6 +85,25 @@ body {
   margin-top: 28px;
 }
 
+.logo {
+  width: 150px;
+  color: #272727;
+  text-align: center;
+
+  .first {
+    display: block;
+    line-height: 25px;
+  }
+  .second {
+    display: block;
+    line-height: 20px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: #656565;
+  }
+}
+
 /* Responsive: Portrait tablets and up */
 @media screen and (min-width: 768px) {
   /* Remove the padding we set earlier */
