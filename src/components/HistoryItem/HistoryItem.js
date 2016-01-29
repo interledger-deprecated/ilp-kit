@@ -12,13 +12,13 @@ export default class HistoryItem extends Component {
   static propTypes = {
     item: PropTypes.object,
     user: PropTypes.object,
-    showJson: PropTypes.func
+    toggleJson: PropTypes.func
   };
 
   toggleLedgerTransfer = (event) => {
     event.preventDefault();
 
-    this.props.showJson(this.props.item.id, this.props.item.transfers[0]);
+    this.props.toggleJson(this.props.item.id, this.props.item.transfers[0]);
   }
 
   render() {
@@ -29,16 +29,19 @@ export default class HistoryItem extends Component {
     return (
       <div className={cx('item')}>
         <div className="row">
-          <div className="col-sm-8">
+          <div className="col-sm-7">
             <div className={cx('counterparty')}>{item.counterpartyAccount}</div>
             <div className={cx('date')}>
-              <a href="" onClick={this.toggleLedgerTransfer} title="See the ledger payment">{moment(item.created_at).format('LL')}</a>
+              <span>{moment(item.created_at).format('LL')}</span>
             </div>
           </div>
           <div className="col-sm-4">
             <div className={cx('amount', amountClass)}>
               {item.source_amount}
             </div>
+          </div>
+          <div className={cx('col-sm-1', 'expand')}>
+            <a href="" onClick={this.toggleLedgerTransfer} title="View the ledger payment" className={cx('fa', 'fa-file-code-o', {'active': item.showJson})} />
           </div>
         </div>
         {item.showJson && item.json &&

@@ -19,7 +19,7 @@ export default class Home extends Component {
     load: PropTypes.func,
     history: PropTypes.array,
     user: PropTypes.object,
-    showJson: PropTypes.func
+    toggleJson: PropTypes.func
   }
 
   // Load the history
@@ -28,13 +28,13 @@ export default class Home extends Component {
   }
 
   render() {
-    const {history, user, showJson} = this.props;
+    const {history, user, toggleJson} = this.props;
 
     return (
       <div>
         <ul className={cx('list')}>
           {history && history.map(item => {
-            return <li key={item.id}><HistoryItem item={item} user={user} showJson={showJson} /></li>;
+            return <li key={item.id}><HistoryItem item={item} user={user} toggleJson={toggleJson} /></li>;
           })}
         </ul>
       </div>

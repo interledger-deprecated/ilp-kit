@@ -10,10 +10,7 @@
 .date {
   font: 13px 'OpenSansLight';
   line-height: 15px;
-
-  a {
-    color: #b0b0b0;
-  }
+  color: #b0b0b0;
 }
 .amount {
   font: 22px 'OpenSansLight';
@@ -32,6 +29,25 @@
 .positive:before {
   content: "+ ";
   padding: 0 0 10px;
+}
+.expand {
+  a {
+    display: block;
+    margin: 0 0 0 -20px;
+    line-height: 40px;
+    font-size: 22px;
+    color: #fff;
+    background: #2aa2e8;
+    text-align: center;
+    border-radius: 3px;
+  }
+  a:hover, a:active, a:focus {
+    text-decoration: none;
+  }
+  a.active {
+    color: #3a3a3a;
+    background: #f6f6f6;
+  }
 }
 .jsonContainer {
   margin-top: 10px;

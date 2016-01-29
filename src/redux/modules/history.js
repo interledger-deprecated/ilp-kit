@@ -4,6 +4,8 @@ const LOAD_FAIL = 'redux-example/history/LOAD_FAIL';
 const PAYMENT_JSON_LOADING = 'redux-example/history/PAYMENT_JSON_LOADING';
 const PAYMENT_JSON_SUCCESS = 'redux-example/history/PAYMENT_JSON_SUCCESS';
 const PAYMENT_JSON_FAIL = 'redux-example/history/PAYMENT_JSON_FAIL';
+const PAYMENT_JSON_SHOW = 'redux-example/history/PAYMENT_JSON_SHOW';
+const PAYMENT_JSON_HIDE = 'redux-example/history/PAYMENT_JSON_HIDE';
 const SEND_SUCCESS = 'redux-example/send/SEND_SUCCESS';
 
 const initialState = {
@@ -13,6 +15,22 @@ const initialState = {
 };
 
 export default function reducer(state = initialState, action = {}) {
+  function updateInHistory(paymentId, update) {
+    return {
+      ...state,
+      history: state.history.map(payment => {
+        if (payment.id === paymentId) {
+          return {
+            ...payment,
+            ...update
+          };
+        }
+
+        return payment;
+      })
+    };
+  }
+
   switch (action.type) {
     case LOAD:
       return {
@@ -38,20 +56,14 @@ export default function reducer(state = initialState, action = {}) {
     // case PAYMENT_JSON_LOADING
     // case PAYMENT_JSON_FAIL
     case PAYMENT_JSON_SUCCESS:
-      return {
-        ...state,
-        history: state.history.map(payment => {
-          if (payment.id === action.id) {
-            return {
-              ...payment,
-              showJson: true,
-              json: action.result
-            };
-          }
-
-          return payment;
-        })
-      };
+      return updateInHistory(action.id, {
+        showJson: true,
+        json: action.result
+      });
+    case PAYMENT_JSON_SHOW:
+      return updateInHistory(action.id, {showJson: true});
+    case PAYMENT_JSON_HIDE:
+      return updateInHistory(action.id, {showJson: false});
     case SEND_SUCCESS:
       return {
         ...state,
@@ -63,11 +75,31 @@ export default function reducer(state = initialState, action = {}) {
 }
 
 // TODO shouldn't ask for transfer link
-export function showJson(id, transfer) {
-  return {
-    types: [PAYMENT_JSON_LOADING, PAYMENT_JSON_SUCCESS, PAYMENT_JSON_FAIL],
-    promise: (client) => client.get(transfer),
-    id
+export function toggleJson(id, transfer) {
+  return (dispatch, getState) => {
+    const payment = getState().history.history.filter((item) => {
+      return item.id === id;
+    })[0];
+
+    // Hide the json
+    if (payment.showJson) {
+      return dispatch({
+        type: PAYMENT_JSON_HIDE,
+        id
+      });
+    } else if (payment.json) { // Show the json
+      return dispatch({
+        type: PAYMENT_JSON_SHOW,
+        id
+      });
+    }
+
+    // Load the json
+    return dispatch({
+      types: [PAYMENT_JSON_LOADING, PAYMENT_JSON_SUCCESS, PAYMENT_JSON_FAIL],
+      promise: (client) => client.get(transfer),
+      id
+    });
   };
 }
 
