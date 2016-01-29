@@ -84,37 +84,42 @@ export default class Home extends Component {
 
         {/* Balance Send widget */}
         {user &&
-        <div className="row">
-          <div className={cx('col-xs-12')}>
-            <div className={cx('jumbotron', 'jumbo', 'box')}>
-              <h1>Make me the default</h1>
-              <p className="lead">This will use the <a href="https://github.com/justmoon/webpayments-polyfill">webpayments-polyfill</a> to set Five Bells Ledger UI as your default payment provider</p>
-              <button className="btn btn-lg btn-success" onClick={this.handleDefaultPayment}>Make me your default payment provider</button>
-            </div>
-          </div>
-          <div className={cx('col-sm-8')}>
-            <div className={cx('box')}>
-              {/* Balance */}
-              <div className={cx('balanceContainer')}>
-                <div className={cx('balanceDescription')}>Your Balance</div>
-                <div className={cx('balance')}>
-                  {user.balance}
-                  <span className={cx('but')}>*</span>
-                </div>
-                <button className={cx('btn', 'btn-primary', 'lu-btn-primary')} onClick={this.reload}>Get More</button>
-                <div className={cx('balanceFake')}>* Don't get too excited, this is fake money</div>
+        <div>
+          <div className={cx('box', 'defaultPPBar')}>
+            <div className="row">
+              <div className={cx('col-xs-3')}>
+                <button className="btn btn-success btn-block" onClick={this.handleDefaultPayment}>Set as default payment provider</button>
+              </div>
+              <div className={cx('col-xs-9')}>
+                (This will use the <a href="https://github.com/justmoon/webpayments-polyfill">webpayments-polyfill</a> to set Five Bells Ledger UI as your default payment provider)
               </div>
             </div>
-            <div className={cx('box')}>
-              <span className={cx('boxTitle')}>Payment history</span>
-              {/* History */}
-              <History />
-            </div>
           </div>
-          <div className={cx('col-sm-4')}>
-            <div className={cx('box')}>
-              <span className={cx('boxTitle')}>Send money</span>
-              <SendForm transfer={transfer} unmount={unmount} success={success} fail={fail} />
+          <div className="row">
+            <div className={cx('col-sm-8')}>
+              <div className={cx('box')}>
+                {/* Balance */}
+                <div className={cx('balanceContainer')}>
+                  <div className={cx('balanceDescription')}>Your Balance</div>
+                  <div className={cx('balance')}>
+                    {user.balance}
+                    <span className={cx('but')}>*</span>
+                  </div>
+                  <button className={cx('btn', 'btn-primary', 'lu-btn-primary')} onClick={this.reload}>Get More</button>
+                  <div className={cx('balanceFake')}>* Don't get too excited, this is fake money</div>
+                </div>
+              </div>
+              <div className={cx('box')}>
+                <span className={cx('boxTitle')}>Payment history</span>
+                {/* History */}
+                <History />
+              </div>
+            </div>
+            <div className={cx('col-sm-4')}>
+              <div className={cx('box')}>
+                <span className={cx('boxTitle')}>Send money</span>
+                <SendForm transfer={transfer} unmount={unmount} success={success} fail={fail} />
+              </div>
             </div>
           </div>
         </div>}

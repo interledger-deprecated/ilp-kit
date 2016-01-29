@@ -1,3 +1,8 @@
+.defaultPPBar {
+  & > div {
+    line-height: 32px;
+  }
+}
 .balanceContainer {
   text-align: center;
 
@@ -41,13 +46,6 @@
 .authTab.active {
   color: #000;
   background: #fff;
-}
-.jumbo {
-  padding: 50px !important;
-
-  h1 {
-    margin-top: 0;
-  }
 }
 .box {
   padding: 20px;
