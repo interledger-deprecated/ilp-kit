@@ -19,26 +19,47 @@
   font-style: normal;
 }
 
-body {
-  background: #fff;
-  /* Space out content a bit */
-  padding-top: 20px;
-  padding-bottom: 20px;
+html, body {
+  height: 100%;
+  background: #eaf4f9;
+  padding: 0;
   font-family: 'OpenSansRegular', sans-serif;
 }
 
-/* Everything but the jumbotron gets side spacing for mobile first views */
-.header,
-.marketing,
-.footer {
-  padding-right: 15px;
-  padding-left: 15px;
+body > div {
+  min-height: 100%;
+  position: relative;
 }
 
+.header,
+.footer {
+  left: 0;
+  right: 0;
+  background: #454f65;
+  color: #e0eaf4;
+  padding-right: 15px;
+  padding-left: 15px;
+
+  a {
+    color: #fff;
+  }
+  a:hover {
+    color: #000;
+    background-color: #fff !important;
+    text-decoration: none;
+  }
+}
 /* Custom page header */
 .header {
-  padding-bottom: 20px;
-  border-bottom: 1px solid #e5e5e5;
+  position: fixed;
+  z-index: 100000;
+  padding-bottom: 0;
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 20px 0 10px;
 }
 /* Make the masthead heading the same height as the navigation */
 .header h3 {
@@ -51,38 +72,15 @@ body {
   padding: 10px 15px;
 }
 
-/* Custom page footer */
-.footer {
-  padding-top: 19px;
-  color: #777;
-  border-top: 1px solid #e5e5e5;
-}
-.container {
-
-}
 .appContent {
-  margin-bottom: 30px;
+  margin-top: 80px;
+  margin-bottom: 60px;
 }
 .container-narrow > hr {
   margin: 30px 0;
 }
-
-/* Main marketing message and sign up button */
-.jumbotron {
-  text-align: center;
-  border-bottom: 1px solid #e5e5e5;
-}
-.jumbotron .btn {
-  padding: 14px 24px;
-  font-size: 21px;
-}
-
-/* Supporting marketing content */
-.marketing {
-  margin: 40px 0;
-}
-.marketing p + h4 {
-  margin-top: 28px;
+.headerContainer {
+  padding: 10px 0;
 }
 
 .logo {
@@ -93,6 +91,7 @@ body {
   .first {
     display: block;
     line-height: 25px;
+    color: #fff;
   }
   .second {
     display: block;
@@ -100,7 +99,7 @@ body {
     font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 3px;
-    color: #656565;
+    color: #e0eaf4;
   }
 }
 

@@ -15,3 +15,14 @@
   font-size: 15px;
   padding: 25px 20px;
 }
+.lu-btn-primary {
+  background: #2aa2e8;
+  border: 1px solid darken(#2aa2e8, 3%);
+  border-radius: 3px;
+
+  &:hover {
+    background: lighten(#2aa2e8, 5%);
+    border: 1px solid #2aa2e8;
+    border-radius: 3px;
+  }
+}

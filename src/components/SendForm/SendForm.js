@@ -25,7 +25,6 @@ export default class SendForm extends Component {
     unmount: PropTypes.func.isRequired,
     success: PropTypes.bool,
     fail: PropTypes.object,
-    type: PropTypes.string,
     data: PropTypes.object,
     initializeForm: PropTypes.func
   };
@@ -55,11 +54,11 @@ export default class SendForm extends Component {
   }
 
   render() {
-    const { pristine, invalid, handleSubmit, transfer, submitting, success, fail, type, fields: {recipient, amount}, data } = this.props;
+    const { pristine, invalid, handleSubmit, transfer, submitting, success, fail, fields: {recipient, amount}, data } = this.props;
 
     return (
       <div className="row">
-        <div className={type === 'widget' ? 'col-sm-12' : 'col-sm-8'}>
+        <div className={cx('col-sm-12')}>
           {success &&
           <Alert bsStyle="success">
             <strong>Holy guacamole!</strong> You've just sent some money!

@@ -59,7 +59,7 @@ export default class App extends Component {
         <script src="https://web-payments.net/polyfill.js"></script>
         <DocumentMeta {...config.app}/>
         <div className={cx('header', 'clearfix')}>
-          <nav>
+          <nav className={cx('headerContainer', 'container')}>
             <ul className="nav nav-pills pull-right">
               {user &&
               <li role="presentation" className={cx('navText')}>
@@ -72,11 +72,12 @@ export default class App extends Component {
                 </NavItem>
               </LinkContainer>}
             </ul>
+
+            <h3 className={cx('logo')}>
+              <span className={cx('first')}>Five Bells</span>
+              <span className={cx('second')}>Ledger UI</span>
+            </h3>
           </nav>
-          <h3 className={cx('logo')}>
-            <span className={cx('first')}>Five Bells</span>
-            <span className={cx('second')}>Ledger UI</span>
-          </h3>
         </div>
 
         <div className={cx('appContent')}>
@@ -84,7 +85,9 @@ export default class App extends Component {
         </div>
 
         <footer className={cx('footer')}>
-          <p>&copy; 2015 <a href="http://interledger.org/">Interledger</a>.</p>
+          <div className="container">
+            <p>&copy; 2015 <a href="http://interledger.org/">Interledger</a>.</p>
+          </div>
         </footer>
       </div>
     );

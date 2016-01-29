@@ -8,9 +8,19 @@
   .balance {
     font-size: 60px;
   }
+  .but {
+    font-size: 17px;
+    vertical-align: top;
+    line-height: 50px;
+  }
+}
+.balanceFake {
+  color: #b0b0b0;
+  font-size: 12px;
+  margin: 10px;
 }
 .authTabs {
-  margin: 0 0 30px;
+  margin: -20px -20px 30px -20px;
 }
 .authTab {
   color: #868686;
@@ -31,4 +41,28 @@
 .authTab.active {
   color: #000;
   background: #fff;
+}
+.jumbo {
+  padding: 50px !important;
+
+  h1 {
+    margin-top: 0;
+  }
+}
+.box {
+  padding: 20px;
+  background: #fff;
+  margin-bottom: 30px;
+  border-radius: 3px;
+  box-shadow: 0px 0px 5px 1px #EEF0F7;
+
+  .boxTitle {
+    margin: -20px -20px 20px -20px;
+    padding: 20px;
+    display: block;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    background: #2aa2e8;
+    color: #fff;
+  }
 }
