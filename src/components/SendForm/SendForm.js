@@ -87,7 +87,7 @@ export default class SendForm extends Component {
               <input type="text" className={cx('form-control', 'lu-form-control', 'lu-input-lg')} {...amount} />
               {amount.dirty && amount.error && <div className="text-danger">{amount.error}</div>}
             </div>
-            <button type="submit" className="btn btn-success" disabled={(!data && pristine) || invalid || submitting}>
+            <button type="submit" className={cx('btn', 'lu-btn')} disabled={(!data && pristine) || invalid || submitting}>
               {submitting ? 'Sending...' : 'Send'}
             </button>
           </form>

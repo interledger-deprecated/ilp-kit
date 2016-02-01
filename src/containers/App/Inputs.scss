@@ -1,11 +1,13 @@
+@import '../../theme/variables.scss';
+
 .lu-form-control {
-  background: #f6f6f6;
+  background: $input-background-color;
   border: none;
   border-radius: 0;
   box-shadow: none;
 }
 .lu-form-control:focus {
-  background: #fafafa;
+  background: $input-focus-background-color;
   outline: 0px !important;
   -webkit-appearance: none;
   box-shadow: none;
@@ -15,14 +17,12 @@
   font-size: 15px;
   padding: 25px 20px;
 }
-.lu-btn-primary {
-  background: #2aa2e8;
-  border: 1px solid darken(#2aa2e8, 3%);
-  border-radius: 3px;
+.lu-btn {
+  color: $btn-text-color;
+  background: $btn-background-color;
 
-  &:hover {
-    background: lighten(#2aa2e8, 5%);
-    border: 1px solid #2aa2e8;
-    border-radius: 3px;
+  &:hover, &:active, &:focus {
+    color: $btn-hover-text-color;
+    background: lighten($btn-background-color, 5%);
   }
 }

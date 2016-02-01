@@ -1,24 +1,41 @@
-/**
- *  Define scss variables here.
- *
- *  Available options for Bootstrap:
- *  http://getbootstrap.com/customize/
- *
- */
+// Main colors
+$yellow: #F7F1C1;
+$light-green: #BBCEB0;
+$green: #649990;
+$grey: #526667;
+$brown: #8F6A61;
 
-// Custom Colors
-$cyan: #33e0ff;
-$humility: #777;
+$container-background-color: #eaf4f9;
 
-// Bootstrap Variables
-$brand-primary: darken(#428bca, 6.5%);
-$brand-secondary: #e25139;
-$brand-success: #5cb85c;
-$brand-warning: #f0ad4e;
-$brand-danger: #d9534f;
-$brand-info: #5bc0de;
+// Header
+$header-background-color: $grey;
+$header-text-color: #e0eaf4;
+$header-link-color: #fff;
+$header-link-hover-color: #000;
+$header-link-background-color: #fff;
+$header-logo-color: #fff;
 
-$text-color: #333;
+// Forms
+$input-background-color: #f6f6f6;
+$input-focus-background-color: #fafafa;
+$btn-background-color: #526667;
+$btn-text-color: #fff;
+$btn-hover-text-color: #fff;
 
-$font-size-base: 14px;
-$font-family-sans-serif: "Helvetica Neue", Helvetica, sans-serif;
+// Box
+$box-background-color: #fff;
+$box-shadow-color: #EEF0F7;
+$box-title-background-color: $light-green;
+$box-title-text-color: #444444;
+
+// Content
+$text-color: #000;
+$faded-text-color: #b0b0b0;
+
+// Pages
+$history-payment-separator-color: #f0f0f0;
+$history-date-text-color: #b0b0b0;
+$history-expand-text-color: #fff;
+$history-expand-background-color: $light-green;
+$history-positive: green;
+$history-negative: red;

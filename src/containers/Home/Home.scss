@@ -1,3 +1,5 @@
+@import '../../theme/variables.scss';
+
 .defaultPPBar {
   & > div {
     line-height: 32px;
@@ -20,7 +22,7 @@
   }
 }
 .balanceFake {
-  color: #b0b0b0;
+  color: $faded-text-color;
   font-size: 12px;
   margin: 10px;
 }
@@ -28,9 +30,8 @@
   margin: -20px -20px 30px -20px;
 }
 .authTab {
-  color: #868686;
   width: 50%;
-  background: #f6f6f6;
+  background: $container-background-color;
   padding: 20px 10px;
   margin: 0;
   float: left;
@@ -41,18 +42,17 @@
 }
 .authTab:hover, .authTab:visited, .authTab:active {
   text-decoration: none;
-  color: #868686;
+  color: $text-color;
 }
 .authTab.active {
-  color: #000;
-  background: #fff;
+  background: $box-background-color;
 }
 .box {
   padding: 20px;
-  background: #fff;
+  background: $box-background-color;
   margin-bottom: 30px;
   border-radius: 3px;
-  box-shadow: 0px 0px 5px 1px #EEF0F7;
+  box-shadow: 0px 0px 5px 1px $box-shadow-color;
 
   .boxTitle {
     margin: -20px -20px 20px -20px;
@@ -60,7 +60,7 @@
     display: block;
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
-    background: #2aa2e8;
-    color: #fff;
+    background: $box-title-background-color;
+    color: $box-title-text-color;
   }
 }

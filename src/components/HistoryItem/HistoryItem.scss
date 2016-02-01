@@ -1,7 +1,9 @@
+@import '../../theme/variables.scss';
+
 .item {
   margin-top: 15px;
   padding-bottom: 15px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid $history-payment-separator-color;
 }
 .counterparty {
   font-size: 18px;
@@ -10,7 +12,7 @@
 .date {
   font: 13px 'OpenSansLight';
   line-height: 15px;
-  color: #b0b0b0;
+  color: $history-date-text-color;
 }
 .amount {
   font: 22px 'OpenSansLight';
@@ -18,13 +20,13 @@
   line-height: 37px;
 }
 .negative {
-  color: red;
+  color: $history-negative;
 }
 .negative:before {
   content: "– ";
 }
 .positive {
-  color: green;
+  color: $history-positive;
 }
 .positive:before {
   content: "+ ";
@@ -36,8 +38,8 @@
     margin: 0 0 0 -20px;
     line-height: 40px;
     font-size: 22px;
-    color: #fff;
-    background: #2aa2e8;
+    color: $history-expand-text-color;
+    background: $history-expand-background-color;
     text-align: center;
     border-radius: 3px;
   }
@@ -45,8 +47,8 @@
     text-decoration: none;
   }
   a.active {
-    color: #3a3a3a;
-    background: #f6f6f6;
+    color: $text-color;
+    background: $container-background-color;
   }
 }
 .jsonContainer {

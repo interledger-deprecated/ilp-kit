@@ -1,3 +1,5 @@
+@import '../../theme/variables.scss';
+
 @font-face {
   font-family: 'OpenSansLight';
   src: url('/fonts/OpenSans-Light-webfont.eot');
@@ -21,7 +23,7 @@
 
 html, body {
   height: 100%;
-  background: #eaf4f9;
+  background: $container-background-color;
   padding: 0;
   font-family: 'OpenSansRegular', sans-serif;
 }
@@ -35,17 +37,17 @@ body > div {
 .footer {
   left: 0;
   right: 0;
-  background: #454f65;
-  color: #e0eaf4;
+  background: $header-background-color;
+  color: $header-text-color;
   padding-right: 15px;
   padding-left: 15px;
 
   a {
-    color: #fff;
+    color: $header-link-color;
   }
   a:hover {
-    color: #000;
-    background-color: #fff !important;
+    color: $header-link-hover-color;
+    background-color: $header-link-background-color !important;
     text-decoration: none;
   }
 }
@@ -85,13 +87,12 @@ body > div {
 
 .logo {
   width: 150px;
-  color: #272727;
+  color: $header-logo-color;
   text-align: center;
 
   .first {
     display: block;
     line-height: 25px;
-    color: #fff;
   }
   .second {
     display: block;
@@ -99,7 +100,7 @@ body > div {
     font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 3px;
-    color: #e0eaf4;
+    color: $header-text-color;
   }
 }
 

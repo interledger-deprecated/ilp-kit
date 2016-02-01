@@ -62,7 +62,7 @@ export default class RegisterForm extends Component {
             {password.dirty && password.error && <div className="text-danger">{password.error}</div>}
           </div>
         </div>
-        <button type="submit" className="btn btn-success" disabled={pristine || invalid || submitting}>
+        <button type="submit" className={cx('btn', 'lu-btn')} disabled={pristine || invalid || submitting}>
           <i className="fa fa-sign-in"/>
           {submitting ? ' Registering...' : ' Register'}
         </button>
