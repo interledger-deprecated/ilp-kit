@@ -16,7 +16,7 @@ module.exports = Object.assign({
   apiPort: process.env.API_PORT,
   app: {
     title: 'Five Bells Ledger UI',
-    description: '',
+    description: 'UI for creating accounts and sending money on five bells ledger',
     meta: {
       charSet: 'utf-8'
     }
