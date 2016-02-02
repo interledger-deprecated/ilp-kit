@@ -32,6 +32,7 @@ Use the following configuration options as environment variables:
 * `API_LEDGER_ADMIN_PASS` Ledger admin password
 * `CLIENT_HOST` Publicly visible hostname
 * `CLIENT_PORT` Publicly visible port
+* `SENTRY_URI` Sentry tracking uri (getsentry.com)
 
 ### Using Redux DevTools
 

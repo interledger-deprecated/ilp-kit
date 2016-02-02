@@ -1,3 +1,5 @@
+/* globals Raven */
+
 /**
  * THIS IS THE ENTRY POINT FOR THE CLIENT, JUST LIKE server.js IS THE ENTRY POINT FOR THE SERVER.
  */
@@ -15,6 +17,12 @@ import getRoutes from './routes';
 import makeRouteHooksSafe from './helpers/makeRouteHooksSafe';
 
 const client = new ApiClient();
+
+client.get('/config')
+  .then((config) => {
+    // Remote log service
+    Raven.config(config.sentryUri).install();
+  });
 
 // Three different types of scroll behavior available.
 // Documented here: https://github.com/rackt/scroll-behavior
