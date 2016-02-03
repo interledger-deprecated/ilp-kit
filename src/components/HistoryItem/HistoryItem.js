@@ -47,6 +47,7 @@ export default class HistoryItem extends Component {
         {item.showJson && item.json &&
         <div className="row">
           <div className={cx('col-sm-12', 'jsonContainer')}>
+            <div>Ledger transaction</div>
             <PrettyJson json={item.json} />
           </div>
         </div>}
