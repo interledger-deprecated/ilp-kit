@@ -54,16 +54,12 @@ export default class Home extends Component {
 
   render() {
     const {user, success, fail, authFail, transfer, unmount, login, register, activeTab} = this.props;
-    const family = require('./family.jpg');
 
     return (
       <div>
         {!user &&
         <div className="row">
-          <div className="col-xs-8">
-            <img src={family} width="100%"/>
-          </div>
-          <div className="col-xs-4">
+          <div className="col-xs-12 col-sm-offset-4 col-sm-4">
             <div className={cx('box')}>
               <div className={cx('authTabs', 'clearfix')}>
                 {activeTab === 'login' &&
