@@ -23,9 +23,11 @@
 
 html, body {
   height: 100%;
-  background: $container-background-color;
   padding: 0;
   font-family: 'OpenSansRegular', sans-serif;
+}
+body {
+  background-color: $container-background-color;
 }
 
 body > div {
@@ -45,10 +47,17 @@ body > div {
   a {
     color: $header-link-color;
   }
-  a:hover {
-    color: $header-link-hover-color;
-    background-color: $header-link-background-color !important;
-    text-decoration: none;
+
+  nav {
+    a:hover {
+      color: $header-link-hover-color;
+      background-color: $header-link-background-color !important;
+      text-decoration: none;
+    }
+
+    .active a {
+      background-color: $header-link-background-color !important;
+    }
   }
 }
 /* Custom page header */
@@ -76,7 +85,7 @@ body > div {
 
 .appContent {
   margin-top: 80px;
-  margin-bottom: 60px;
+  margin-bottom: 80px;
 }
 .container-narrow > hr {
   margin: 30px 0;

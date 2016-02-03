@@ -45,6 +45,13 @@ export default class Widget extends Component {
     fail: PropTypes.object
   }
 
+  componentDidMount() {
+    // TODO find a better place for this
+    if (document) {
+      document.body.style.backgroundColor = 'rgba(0,0,0,0.5)';
+    }
+  }
+
   handleClose = (event) => {
     event.preventDefault();
     parent.postMessage('close', '*');

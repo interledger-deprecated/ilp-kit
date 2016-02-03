@@ -8,6 +8,7 @@ import {
     Login,
     LoginSuccess,
     Register,
+    Button,
     NotFound,
     Widget
   } from 'containers';
@@ -49,6 +50,7 @@ export default (store) => {
         <Route path="login" component={Login}/>
         <Route path="register" component={Register}/>
         <Route path="send" component={Send}/>
+        <Route path="button" component={Button}/>
 
         { /* Catch all route */ }
         <Route path="*" component={NotFound} status={404} />

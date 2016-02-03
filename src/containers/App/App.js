@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { LinkContainer } from 'react-router-bootstrap';
+import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap';
 import { NavItem } from 'react-bootstrap';
 import DocumentMeta from 'react-document-meta';
 import { isLoaded as isAuthLoaded, load as loadAuth, logout } from 'redux/modules/auth';
@@ -66,6 +66,15 @@ export default class App extends Component {
                 Hi <strong>{user.username}</strong>.
               </li>}
               {user &&
+              <IndexLinkContainer to="/">
+                <NavItem>Home</NavItem>
+              </IndexLinkContainer>
+              }
+              {user &&
+              <LinkContainer to="/button">
+                <NavItem>Pay Button</NavItem>
+              </LinkContainer>}
+              {user &&
               <LinkContainer to="/logout">
                 <NavItem className="logout-link" onClick={this.handleLogout}>
                   Logout
@@ -86,7 +95,7 @@ export default class App extends Component {
 
         <footer className={cx('footer')}>
           <div className="container">
-            <p>&copy; 2015 <a href="http://interledger.org/">Interledger</a>.</p>
+            <p>&copy; 2016 <a href="http://interledger.org/">Interledger</a>.</p>
           </div>
         </footer>
       </div>

@@ -1,16 +1,11 @@
 /**
  * Override Bootstrap styles that you can't modify via variables here.
- *
  */
 
-.navbar-brand {
-  position: relative;
-  padding-left: 50px;
-}
-
-.navbar-default .navbar-nav > .active > a,
-.navbar-default .navbar-nav > .active > a:hover,
-.navbar-default .navbar-nav > .active > a:focus {
-  color: #33e0ff;
-  background-color: transparent;
+.nav li.active a,
+.nav li.active a:active,
+.nav li.active a:hover,
+.nav li.active a:focus {
+  background: #fff;
+  color: #000;
 }

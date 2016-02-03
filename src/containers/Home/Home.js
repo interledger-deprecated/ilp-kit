@@ -9,9 +9,10 @@ import { SendForm } from 'components';
 import { History } from 'containers';
 
 import classNames from 'classnames/bind';
+import sharedStyles from '../App/Shared.scss';
 import inputStyles from '../App/Inputs.scss';
 import styles from './Home.scss';
-const cx = classNames.bind({...inputStyles, ...styles});
+const cx = classNames.bind({...sharedStyles, ...inputStyles, ...styles});
 
 @connect(
   state => ({

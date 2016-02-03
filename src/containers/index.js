@@ -7,3 +7,4 @@ export Send from './Send/Send';
 export NotFound from './NotFound/NotFound';
 export Widget from './Widget/Widget';
 export History from './History/History';
+export Button from './Button/Button';

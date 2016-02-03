@@ -47,20 +47,3 @@
 .authTab.active {
   background: $box-background-color;
 }
-.box {
-  padding: 20px;
-  background: $box-background-color;
-  margin-bottom: 30px;
-  border-radius: 3px;
-  box-shadow: 0px 0px 5px 1px $box-shadow-color;
-
-  .boxTitle {
-    margin: -20px -20px 20px -20px;
-    padding: 20px;
-    display: block;
-    border-top-left-radius: 3px;
-    border-top-right-radius: 3px;
-    background: $box-title-background-color;
-    color: $box-title-text-color;
-  }
-}
