@@ -2,7 +2,7 @@ import React, {Component, PropTypes} from 'react';
 import {reduxForm} from 'redux-form';
 import registerValidation from './RegisterValidation';
 
-import {Alert} from 'react-bootstrap';
+import Alert from 'react-bootstrap/lib/Alert';
 
 import classNames from 'classnames/bind';
 import inputStyles from '../../containers/App/Inputs.scss';

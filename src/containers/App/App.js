@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap';
-import { NavItem } from 'react-bootstrap';
+import NavItem from 'react-bootstrap/lib/NavItem';
 import DocumentMeta from 'react-document-meta';
 import { isLoaded as isAuthLoaded, load as loadAuth, logout } from 'redux/modules/auth';
 import { pushState } from 'redux-router';
