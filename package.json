@@ -93,7 +93,7 @@
     "lodash": "^3.10.1",
     "mag": "^0.9.1",
     "mag-hub": "^0.1.1",
-    "node-sass": "^3.4.2",
+    "node-sass": "^3.3.3",
     "passport-local": "^1.0.0",
     "pg": "^4.4.4",
     "piping": "^0.3.0",
