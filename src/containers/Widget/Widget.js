@@ -52,6 +52,7 @@ export default class Widget extends Component {
     }
   }
 
+  // TODO should also close on ESC
   handleClose = (event) => {
     event.preventDefault();
     parent.postMessage('close', '*');

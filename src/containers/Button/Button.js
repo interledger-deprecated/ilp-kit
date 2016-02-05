@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 
+import { PayButton } from 'components';
+
 import classNames from 'classnames/bind';
 import sharedStyles from '../App/Shared.scss';
 import inputStyles from '../App/Inputs.scss';
@@ -7,32 +9,9 @@ import styles from './Button.scss';
 const cx = classNames.bind({...sharedStyles, ...inputStyles, ...styles});
 
 export default class Button extends Component {
-  componentDidMount() {
-    window.addEventListener('message', () => {
-      if (document.getElementsByName('payments_polyfill')[0]) {
-        document.getElementsByName('payments_polyfill')[0].remove();
-      }
-    });
-  }
-
-  makePayment = (amount, event) => {
-    event.preventDefault();
-
-    navigator.requestPayment(['interledger'], {
-      amount: amount,
-      currencyCode: 'USD',
-      countryCode: 'US'
-    }, {
-      interledger: {
-        account: 'http://localhost.com/accounts/mellie'
-      }
-    });
-  };
-
   render() {
     return (
       <div className={cx('box')}>
-        <script src="https://web-payments.net/polyfill.js"></script>
         <h2>Pay Button</h2>
         <div>
           Pay Button is the best payment flow, on web and mobile.
@@ -44,7 +23,8 @@ export default class Button extends Component {
             <h3>Demo</h3>
             <p>Try the demo below</p>
             <div>
-              <button className={cx('btn', 'lu-btn')} onClick={this.makePayment.bind(this, 10)}>Make Payment</button>
+              <PayButton account="http://localhost.com/accounts/mellie" amount="10"
+                currencyCode="USD" countryCode="US">Make Payment</PayButton>
             </div>
           </div>
         </div>
