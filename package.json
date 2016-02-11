@@ -77,6 +77,7 @@
     "constitute": "^1.6.2",
     "express": "^4.13.3",
     "file-loader": "^0.8.5",
+    "five-bells-sender": "^4.1.0",
     "five-bells-shared": "^8.5.0",
     "history": "^1.17.0",
     "http-proxy": "^1.12.0",

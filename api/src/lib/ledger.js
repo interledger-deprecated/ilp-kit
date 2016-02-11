@@ -2,6 +2,7 @@
 
 const superagent = require('superagent-promise')(require('superagent'), Promise)
 const uuid = require ('uuid4')
+const sender = require('five-bells-sender').default
 
 const Config = require('../lib/config')
 
@@ -39,24 +40,46 @@ module.exports = class Ledger {
   }
 
   * transfer(options) {
-    const paymentId = uuid()
+    let response
 
-    const response = yield superagent
-      .put(this.ledgerUri + '/transfers/' + paymentId)
-      .send({
-        debits: [{
-          account: this.ledgerUri + '/accounts/' + options.username,
-          amount: options.amount,
-          authorized: true
-        }],
-        credits: [{
-          account: this.ledgerUri + '/accounts/' + options.recipient,
-          amount: options.amount
-        }],
-        expires_at: "2016-06-16T00:00:01.000Z"
+    // Interledger
+    // TODO Use a better mechanism to check if the recipient is in a different ledger
+    if (!options.recipient.indexOf('http://')) {
+      // TODO make sure it was a successful transaction
+      response = yield sender({
+        sourceAccount: this.ledgerUri + '/accounts/' + options.username,
+        sourcePassword: options.password,
+        destinationAccount: options.recipient,
+        destinationAmount: options.amount
       })
-      .auth(options.username, options.password)
 
-    return response.body
+      response = {
+        transfers: [response[0].source_transfers, response[0].destination_transfers],
+        id: response[0].id
+      }
+    }
+    else {
+      const paymentId = uuid()
+
+      response = yield superagent
+        .put(this.ledgerUri + '/transfers/' + paymentId)
+        .send({
+          debits: [{
+            account: this.ledgerUri + '/accounts/' + options.username,
+            amount: options.amount,
+            authorized: true
+          }],
+          credits: [{
+            account: this.ledgerUri + '/accounts/' + options.recipient,
+            amount: options.amount
+          }],
+          expires_at: "2016-06-16T00:00:01.000Z"
+        })
+        .auth(options.username, options.password)
+
+      response = response.body
+    }
+
+    return response
   }
 }
