@@ -1,7 +1,7 @@
 import {createValidator, required, integer} from 'utils/validation';
 
 const sendValidation = createValidator({
-  recipient: [required],
-  amount: [required, integer]
+  destination: [required],
+  destinationAmount: [required, integer]
 });
 export default sendValidation;

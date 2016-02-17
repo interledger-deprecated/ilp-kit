@@ -8,12 +8,14 @@ const passport = require('koa-passport')
 const Auth = require('../lib/auth')
 const Log = require('../lib/log')
 const Ledger = require('../lib/ledger')
+const Config = require('../lib/config')
+const utils = require('../lib/utils')
 const PaymentFactory = require('../models/payment')
 const InvalidLedgerAccountError = require('../errors/invalid-ledger-account-error')
 const LedgerInsufficientFundsError = require('../errors/ledger-insufficient-funds-error')
 
-PaymentsControllerFactory.constitute = [Auth, PaymentFactory, Log, Ledger]
-function PaymentsControllerFactory (Auth, Payment, log, ledger) {
+PaymentsControllerFactory.constitute = [Auth, PaymentFactory, Log, Ledger, Config]
+function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
   log = log('payments')
 
   return class PaymentsController {
@@ -21,6 +23,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger) {
       router.get('/payments', Auth.isAuth, this.getHistory)
       router.get('/payments/:id', Auth.isAuth, this.getResource)
       router.put('/payments/:id', Auth.isAuth, Payment.createBodyParser(), this.putResource)
+      router.post('/payments/findPath', Auth.isAuth, this.findPath)
     }
 
     static * getHistory () {
@@ -64,8 +67,10 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger) {
 
       // TODO fill the destination_user
       const options = {
-        recipient: payment.destination_account,
-        amount: payment.source_amount,
+        sourceAmount: payment.source_amount,
+        destinationAccount: payment.destination_account,
+        destinationAmount: payment.destination_amount,
+        path: payment.path,
         username: this.req.user.username,
         password: this.req.user.password
       }
@@ -75,6 +80,18 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger) {
         const transfer = yield ledger.transfer(options)
 
         payment.transfers = [transfer.id]
+
+        // Interledger
+        if (transfer.source_transfers) {
+          payment.source_amount = transfer.source_transfers[0].debits[0].amount;
+          payment.destination_amount = transfer.destination_transfers[0].debits[0].amount;
+        }
+
+        // Same ledger
+        else {
+          payment.source_amount = transfer.debits[0].amount;
+          payment.destination_amount = transfer.credits[0].amount;
+        }
 
         log.debug('Ledger transfer payment ID ' + id)
       } catch (e) {
@@ -97,6 +114,29 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger) {
       payment = yield Payment.getPayment(payment.id)
 
       this.body = payment.getDataExternal()
+    }
+
+    static * findPath () {
+      let destination = utils.parseDestination(this.body.destination, config.ledger.uri);
+
+      if (destination.type === 'local') {
+        let amount = this.body.source_amount || this.body.destination_amount
+
+        this.body = {
+          sourceAmount: amount,
+          destinationAmount: amount
+        }
+
+        return
+      }
+
+      const options = {
+        destinationAccount: destination.accountUri,
+        destinationAmount: this.body.destination_amount,
+        username: this.req.user.username
+      }
+
+      this.body = yield ledger.findPath(options);
     }
   }
 }

@@ -6,11 +6,12 @@ import Alert from 'react-bootstrap/lib/Alert';
 
 import classNames from 'classnames/bind';
 import inputStyles from '../../containers/App/Inputs.scss';
-const cx = classNames.bind(inputStyles);
+import styles from './SendForm.scss';
+const cx = classNames.bind({...inputStyles, ...styles});
 
 @reduxForm({
   form: 'send',
-  fields: ['recipient', 'amount'],
+  fields: ['destination', 'destinationAmount'],
   validate: sendValidation
 })
 
@@ -21,9 +22,12 @@ export default class SendForm extends Component {
     pristine: PropTypes.bool.isRequired,
     submitting: PropTypes.bool.isRequired,
     handleSubmit: PropTypes.func.isRequired,
+    values: PropTypes.object,
     transfer: PropTypes.func.isRequired,
+    findPath: PropTypes.func.isRequired,
     unmount: PropTypes.func.isRequired,
     success: PropTypes.bool,
+    path: PropTypes.object.isRequired,
     fail: PropTypes.object,
     data: PropTypes.object,
     initializeForm: PropTypes.func
@@ -31,20 +35,32 @@ export default class SendForm extends Component {
 
   componentDidMount() {
     const { data, initializeForm } = this.props;
-    if (data && data.accountName && data.amount) {
+    if (data && data.accountName && data.destinationAmount) {
       initializeForm({
-        recipient: data.accountName,
-        amount: data.amount
+        destination: data.accountName,
+        amount: data.destinationAmount
       });
     }
   }
 
-  // Reset the form after a successful transfer
+  // TODO doesn't handle the initial render
+  componentWillReceiveProps(nextProps) {
+    // TODO also findPath on destination change
+    // TODO sendingAmount should also be changeable
+    // Pathfind on amount change
+    if (nextProps.values.destination && nextProps.values.destinationAmount
+      && this.props.values.destinationAmount !== nextProps.values.destinationAmount) {
+      this.props.findPath(nextProps.values);
+    }
+  }
+
   shouldComponentUpdate(nextProps) {
+    // Reset the form after a successful transfer
     if (!this.props.success && nextProps.success) {
       this.props.initializeForm();
       return false;
     }
+
     return true;
   }
 
@@ -54,7 +70,7 @@ export default class SendForm extends Component {
   }
 
   render() {
-    const { pristine, invalid, handleSubmit, transfer, submitting, success, fail, fields: {recipient, amount}, data } = this.props;
+    const { pristine, invalid, handleSubmit, transfer, submitting, success, path, fail, fields: {destination, destinationAmount}, data } = this.props;
 
     return (
       <div className="row">
@@ -70,7 +86,7 @@ export default class SendForm extends Component {
             {(() => {
               switch (fail.id) {
                 case 'LedgerInsufficientFundsError': return 'You have insufficient funds to make the payment';
-                case 'InvalidLedgerAccountError': return 'Recipient account doesn\'t exist';
+                case 'InvalidLedgerAccountError': return 'Destination account doesn\'t exist';
                 default: return 'Something went wrong';
               }
             })()}
@@ -79,13 +95,22 @@ export default class SendForm extends Component {
           <form name="example" onSubmit={handleSubmit(transfer)}>
             <div className="form-group">
               <label>Recipient</label>
-              <input type="text" className={cx('form-control', 'lu-form-control', 'lu-input-lg')} autoFocus {...recipient} />
-              {recipient.dirty && recipient.error && <div className="text-danger">{recipient.error}</div>}
+              <input type="text" className={cx('form-control', 'lu-form-control', 'lu-input-lg')} autoFocus {...destination} />
+              {destination.dirty && destination.error && <div className="text-danger">{destination.error}</div>}
             </div>
-            <div className="form-group">
-              <label>Amount</label>
-              <input type="text" className={cx('form-control', 'lu-form-control', 'lu-input-lg')} {...amount} />
-              {amount.dirty && amount.error && <div className="text-danger">{amount.error}</div>}
+            <div className="row">
+              <div className="col-sm-6 form-group">
+                <label>Sending Amount</label>
+                {path.sourceAmount &&
+                  <div className={cx('pathFindAmount')}>{path.sourceAmount}</div>}
+                {/* <input type="text" className={cx('form-control', 'lu-form-control', 'lu-input-lg')} {...amount} /> */}
+                {/* {amount.dirty && amount.error && <div className="text-danger">{amount.error}</div>} */}
+              </div>
+              <div className="col-sm-6 form-group">
+                <label>Receiving Amount</label>
+                <input type="text" className={cx('form-control', 'lu-form-control', 'lu-input-lg')} {...destinationAmount} />
+                {destinationAmount.dirty && destinationAmount.error && <div className="text-danger">{destinationAmount.error}</div>}
+              </div>
             </div>
             <button type="submit" className={cx('btn', 'lu-btn')} disabled={(!data && pristine) || invalid || submitting}>
               {submitting ? 'Sending...' : 'Send'}

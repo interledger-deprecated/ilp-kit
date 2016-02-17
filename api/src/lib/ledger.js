@@ -2,7 +2,7 @@
 
 const superagent = require('superagent-promise')(require('superagent'), Promise)
 const uuid = require ('uuid4')
-const sender = require('five-bells-sender').default
+const sender = require('five-bells-sender')
 
 const Config = require('../lib/config')
 
@@ -39,24 +39,27 @@ module.exports = class Ledger {
     }
   }
 
+  * findPath(options) {
+    return sender.findPath({
+      sourceAccount: this.ledgerUri + '/accounts/' + options.username,
+      destinationAccount: options.destinationAccount,
+      destinationAmount: options.destinationAmount
+    })
+  }
+
   * transfer(options) {
     let response
 
     // Interledger
-    // TODO Use a better mechanism to check if the recipient is in a different ledger
-    if (!options.recipient.indexOf('http://')) {
-      // TODO make sure it was a successful transaction
-      response = yield sender({
+    // TODO Use a better mechanism to check if the destinationAccount is in a different ledger
+    if (!options.destinationAccount.indexOf('http://')) {
+      response = yield sender.executePayment(options.path, {
         sourceAccount: this.ledgerUri + '/accounts/' + options.username,
         sourcePassword: options.password,
-        destinationAccount: options.recipient,
-        destinationAmount: options.amount
+        destinationAccount: options.destinationAccount
       })
 
-      response = {
-        transfers: [response[0].source_transfers, response[0].destination_transfers],
-        id: response[0].id
-      }
+      response = response[0]
     }
     else {
       const paymentId = uuid()
@@ -66,12 +69,12 @@ module.exports = class Ledger {
         .send({
           debits: [{
             account: this.ledgerUri + '/accounts/' + options.username,
-            amount: options.amount,
+            amount: options.destinationAmount,
             authorized: true
           }],
           credits: [{
-            account: this.ledgerUri + '/accounts/' + options.recipient,
-            amount: options.amount
+            account: this.ledgerUri + '/accounts/' + options.destinationAccount,
+            amount: options.destinationAmount
           }],
           expires_at: "2016-06-16T00:00:01.000Z"
         })

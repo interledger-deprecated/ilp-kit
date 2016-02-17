@@ -37,6 +37,7 @@ export default class HistoryItem extends Component {
           </div>
           <div className="col-sm-4">
             <div className={cx('amount', amountClass)}>
+              {/* TODO Show both source and destination amounts */}
               {item.source_amount}
             </div>
           </div>

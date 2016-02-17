@@ -20,6 +20,7 @@ const cx = classNames.bind({...sharedStyles, ...inputStyles, ...styles});
     send: state.send,
     success: state.send.success,
     fail: state.send.fail,
+    path: state.send.path,
     authFail: state.auth.fail,
     activeTab: state.auth.activeTab
   }),
@@ -31,6 +32,8 @@ export default class Home extends Component {
     fail: PropTypes.object,
     authFail: PropTypes.object,
     transfer: PropTypes.func,
+    findPath: PropTypes.func,
+    path: PropTypes.object,
     login: PropTypes.func,
     register: PropTypes.func,
     unmount: PropTypes.func,
@@ -53,7 +56,7 @@ export default class Home extends Component {
   }
 
   render() {
-    const {user, success, fail, authFail, transfer, unmount, login, register, activeTab} = this.props;
+    const {user, success, fail, authFail, transfer, findPath, path, unmount, login, register, activeTab} = this.props;
 
     return (
       <div>
@@ -115,7 +118,7 @@ export default class Home extends Component {
             <div className={cx('col-sm-4')}>
               <div className={cx('box')}>
                 <span className={cx('boxTitle')}>Send money</span>
-                <SendForm transfer={transfer} unmount={unmount} success={success} fail={fail} />
+                <SendForm transfer={transfer} findPath={findPath} path={path} unmount={unmount} success={success} fail={fail} />
               </div>
             </div>
           </div>
