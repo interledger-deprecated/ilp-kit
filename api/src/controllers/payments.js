@@ -132,6 +132,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
 
       const options = {
         destinationAccount: destination.accountUri,
+        sourceAmount: this.body.source_amount,
         destinationAmount: this.body.destination_amount,
         username: this.req.user.username
       }

@@ -11,7 +11,7 @@ const cx = classNames.bind({...inputStyles, ...styles});
 
 @reduxForm({
   form: 'send',
-  fields: ['destination', 'destinationAmount'],
+  fields: ['destination', 'sourceAmount', 'destinationAmount'],
   validate: sendValidation
 })
 
@@ -35,6 +35,7 @@ export default class SendForm extends Component {
 
   componentDidMount() {
     const { data, initializeForm } = this.props;
+    // TODO sourceAmount
     if (data && data.accountName && data.destinationAmount) {
       initializeForm({
         destination: data.accountName,
@@ -45,12 +46,17 @@ export default class SendForm extends Component {
 
   // TODO doesn't handle the initial render
   componentWillReceiveProps(nextProps) {
-    // TODO also findPath on destination change
-    // TODO sendingAmount should also be changeable
-    // Pathfind on amount change
-    if (nextProps.values.destination && nextProps.values.destinationAmount
-      && this.props.values.destinationAmount !== nextProps.values.destinationAmount) {
-      this.props.findPath(nextProps.values);
+    if (nextProps.path
+      && (nextProps.path.sourceAmount && nextProps.path.sourceAmount !== this.props.path.sourceAmount)
+      || (nextProps.path.destinationAmount && nextProps.path.destinationAmount !== this.props.path.destinationAmount)) {
+
+      if (!nextProps.fields.sourceAmount.active) {
+        this.props.fields.sourceAmount.onChange(nextProps.path.sourceAmount);
+      }
+
+      if (!nextProps.fields.destinationAmount.active) {
+        this.props.fields.destinationAmount.onChange(nextProps.path.destinationAmount);
+      }
     }
   }
 
@@ -69,8 +75,28 @@ export default class SendForm extends Component {
     this.props.unmount();
   }
 
+  handleSourceAmountChange = (event) => {
+    this.props.fields.sourceAmount.onChange(event);
+    if (!this.props.values.destination) return;
+
+    this.props.findPath({
+      destination: this.props.values.destination,
+      sourceAmount: event.target.value
+    });
+  }
+
+  handleDestinationAmountChange = (event) => {
+    this.props.fields.destinationAmount.onChange(event);
+    if (!this.props.values.destination) return;
+
+    this.props.findPath({
+      destination: this.props.values.destination,
+      destinationAmount: event.target.value
+    });
+  }
+
   render() {
-    const { pristine, invalid, handleSubmit, transfer, submitting, success, path, fail, fields: {destination, destinationAmount}, data } = this.props;
+    const { pristine, invalid, handleSubmit, transfer, submitting, success, fail, fields: {destination, sourceAmount, destinationAmount}, data } = this.props;
 
     return (
       <div className="row">
@@ -101,14 +127,14 @@ export default class SendForm extends Component {
             <div className="row">
               <div className="col-sm-6 form-group">
                 <label>Sending Amount</label>
-                {path.sourceAmount &&
-                  <div className={cx('pathFindAmount')}>{path.sourceAmount}</div>}
-                {/* <input type="text" className={cx('form-control', 'lu-form-control', 'lu-input-lg')} {...amount} /> */}
-                {/* {amount.dirty && amount.error && <div className="text-danger">{amount.error}</div>} */}
+                {/* {path.sourceAmount &&
+                  <div className={cx('pathFindAmount')}>{path.sourceAmount}</div>}*/}
+                <input type="text" className={cx('form-control', 'lu-form-control', 'lu-input-lg')} {...sourceAmount} onChange={this.handleSourceAmountChange} disabled={!destination.value} />
+                {sourceAmount.dirty && sourceAmount.error && <div className="text-danger">{sourceAmount.error}</div>}
               </div>
               <div className="col-sm-6 form-group">
                 <label>Receiving Amount</label>
-                <input type="text" className={cx('form-control', 'lu-form-control', 'lu-input-lg')} {...destinationAmount} />
+                <input type="text" className={cx('form-control', 'lu-form-control', 'lu-input-lg')} {...destinationAmount} onChange={this.handleDestinationAmountChange} disabled={!destination.value} />
                 {destinationAmount.dirty && destinationAmount.error && <div className="text-danger">{destinationAmount.error}</div>}
               </div>
             </div>

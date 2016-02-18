@@ -40,11 +40,18 @@ module.exports = class Ledger {
   }
 
   * findPath(options) {
-    return sender.findPath({
+    let pathOptions = {
       sourceAccount: this.ledgerUri + '/accounts/' + options.username,
-      destinationAccount: options.destinationAccount,
-      destinationAmount: options.destinationAmount
-    })
+      destinationAccount: options.destinationAccount
+    }
+
+    if (options.sourceAmount) {
+      pathOptions.sourceAmount = options.sourceAmount
+    } else {
+      pathOptions.destinationAmount = options.destinationAmount
+    }
+
+    return sender.findPath(pathOptions)
   }
 
   * transfer(options) {

@@ -1,7 +1,9 @@
-import {createValidator, required, integer} from 'utils/validation';
+import {createValidator, required} from 'utils/validation';
 
 const sendValidation = createValidator({
   destination: [required],
-  destinationAmount: [required, integer]
+  // TODO number validation
+  sourceAmount: [required],
+  destinationAmount: [required]
 });
 export default sendValidation;

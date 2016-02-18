@@ -41,15 +41,20 @@ export default function reducer(state = initialState, action = {}) {
       };
     // TODO Handle findPath fail
     case PATHFIND_SUCCESS:
-      // No path
-      if (!action.result.length) return state;
+      if (action.result.length && action.result[0].source_transfers) {
+        return {
+          ...state,
+          path: {
+            sourceAmount: action.result[0].source_transfers[0].debits[0].amount,
+            destinationAmount: action.result[0].destination_transfers[0].debits[0].amount
+          },
+          pathRaw: action.result
+        };
+      }
 
       return {
         ...state,
-        path: {
-          sourceAmount: action.result[0].source_transfers[0].debits[0].amount,
-          destinationAmount: action.result[0].destination_transfers[0].debits[0].amount
-        },
+        path: action.result,
         pathRaw: action.result
       };
     case DESTROY:
