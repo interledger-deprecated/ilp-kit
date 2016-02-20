@@ -25,13 +25,18 @@ module.exports = class Ledger {
 
   * createAccount(user) {
     try {
+      let data = {
+        name: user.username,
+        balance: user.balance ? ''+user.balance : '1000'
+      }
+
+      if (user.password) {
+        data.password = user.password
+      }
+
       const response = yield superagent
         .put(this.ledgerUri + '/accounts/' + user.username)
-        .send({
-          name: user.username,
-          password: user.password,
-          balance: user.balance ? ''+user.balance : '1000'
-        })
+        .send(data)
         .auth(this.config.ledger.admin.name, this.config.ledger.admin.pass)
       return response.body
     } catch (e) {

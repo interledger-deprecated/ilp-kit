@@ -31,7 +31,10 @@ function UsersControllerFactory (Auth, User, log, ledger) {
       this.req.user.balance = parseInt(ledgerUser.balance) + 1000
 
       // Reload the ledger account
-      ledgerUser = yield ledger.createAccount(this.req.user)
+      ledgerUser = yield ledger.createAccount({
+        username: this.req.user.username,
+        balance: this.req.user.balance
+      })
 
       user.balance = ledgerUser.balance
 
