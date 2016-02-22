@@ -12,11 +12,12 @@ module.exports = class Ledger {
   constructor (config) {
     this.config = config
     this.ledgerUri = this.config.ledger.uri
+    this.ledgerUriPrivate = this.config.ledger.uriPrivate
   }
 
   * getAccount (user, admin) {
     const response = yield superagent
-      .get(this.ledgerUri + '/accounts/' + user.username)
+      .get(this.ledgerUriPrivate + '/accounts/' + user.username)
       .auth(admin ? this.config.ledger.admin.name : user.username, admin ? this.config.ledger.admin.pass : user.password)
       .end()
 
@@ -35,7 +36,7 @@ module.exports = class Ledger {
       }
 
       const response = yield superagent
-        .put(this.ledgerUri + '/accounts/' + user.username)
+        .put(this.ledgerUriPrivate + '/accounts/' + user.username)
         .send(data)
         .auth(this.config.ledger.admin.name, this.config.ledger.admin.pass)
       return response.body
@@ -77,7 +78,7 @@ module.exports = class Ledger {
       const paymentId = uuid()
 
       response = yield superagent
-        .put(this.ledgerUri + '/transfers/' + paymentId)
+        .put(this.ledgerUriPrivate + '/transfers/' + paymentId)
         .send({
           debits: [{
             account: this.ledgerUri + '/accounts/' + options.username,

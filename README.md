@@ -28,6 +28,7 @@ Use the following configuration options as environment variables:
 * `API_DB_URI` (e.g.: postgres://root:password@localhost/ledgerui) URI for connecting to a database.    
 * `API_SESSION_SECRET` App session secret
 * `API_LEDGER_URI` Ledger URI
+* `API_LEDGER_URI_PRIVATE` Ledger URI private (requests go to this uri)
 * `API_LEDGER_ADMIN_NAME` Ledger admin username
 * `API_LEDGER_ADMIN_PASS` Ledger admin password
 * `CLIENT_HOST` Publicly visible hostname
