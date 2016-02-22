@@ -27,6 +27,10 @@ const proxy = httpProxy.createProxyServer({
   target: 'http://' + config.apiHost + ':' + config.apiPort,
   ws: true
 });
+const proxyLedger = httpProxy.createProxyServer({
+  target: config.ledgerUriPrivate,
+  ws: true
+});
 
 app.use(compression());
 app.use(favicon(path.join(__dirname, '..', 'static', 'favicon.ico')));
@@ -40,6 +44,11 @@ app.use('/api/config', (req, res) => {
 // Proxy to API server
 app.use('/api', (req, res) => {
   proxy.web(req, res);
+});
+
+// Proxy to ledger
+app.use('/ledger', (req, res) => {
+  proxyLedger.web(req, res);
 });
 
 // added the error handling to avoid https://github.com/nodejitsu/node-http-proxy/issues/527
