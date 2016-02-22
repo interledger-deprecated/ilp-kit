@@ -114,6 +114,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
     }
 
     // TODO handle account doesn't exist exception
+    // TODO handle not supplied params
     static * findPath () {
       let destination = utils.parseDestination(this.body.destination, config.ledger.uri);
 

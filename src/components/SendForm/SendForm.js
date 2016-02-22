@@ -41,6 +41,12 @@ export default class SendForm extends Component {
         destination: data.destination,
         destinationAmount: data.destinationAmount
       });
+
+      // Find path
+      this.props.findPath({
+        destination: data.destination,
+        destinationAmount: data.destinationAmount
+      });
     }
   }
 
