@@ -95,22 +95,9 @@ body > div {
 }
 
 .logo {
-  width: 150px;
+  width: 300px;
   color: $header-logo-color;
   text-align: center;
-
-  .first {
-    display: block;
-    line-height: 25px;
-  }
-  .second {
-    display: block;
-    line-height: 20px;
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    color: $header-text-color;
-  }
 }
 
 /* Responsive: Portrait tablets and up */

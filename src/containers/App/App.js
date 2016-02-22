@@ -83,8 +83,7 @@ export default class App extends Component {
             </ul>
 
             <h3 className={cx('logo')}>
-              <span className={cx('first')}>Five Bells</span>
-              <span className={cx('second')}>Ledger UI</span>
+              {config.app.title}
             </h3>
           </nav>
         </div>
