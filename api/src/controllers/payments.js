@@ -79,7 +79,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
       try {
         const transfer = yield ledger.transfer(options)
 
-        payment.transfers = [transfer.id]
+        payment.transfers = transfer.id
 
         // Interledger
         if (transfer.source_transfers) {

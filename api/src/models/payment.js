@@ -105,7 +105,7 @@ function PaymentFactory (sequelize, validator, container, User) {
     source_user: Sequelize.INTEGER,
     destination_user: Sequelize.INTEGER,
     destination_account: Sequelize.STRING(1024),
-    transfers: Sequelize.ARRAY(Sequelize.STRING(1024)),
+    transfers: Sequelize.STRING(1024),
     state: Sequelize.ENUM('pending', 'success', 'fail'),
     source_amount: Sequelize.STRING(1024), // TODO put the right type
     destination_amount: Sequelize.STRING(1024), // TODO put the right type
