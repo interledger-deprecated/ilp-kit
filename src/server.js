@@ -23,7 +23,8 @@ import getStatusFromRoutes from './helpers/getStatusFromRoutes';
 const pretty = new PrettyError();
 const app = new Express();
 const server = new http.Server(app);
-const proxy = httpProxy.createProxyServer({
+
+const proxyApi = httpProxy.createProxyServer({
   target: 'http://' + config.apiHost + ':' + config.apiPort,
   ws: true
 });
@@ -43,16 +44,11 @@ app.use('/api/config', (req, res) => {
 
 // Proxy to API server
 app.use('/api', (req, res) => {
-  proxy.web(req, res);
-});
-
-// Proxy to ledger
-app.use('/ledger', (req, res) => {
-  proxyLedger.web(req, res);
+  proxyApi.web(req, res);
 });
 
 // added the error handling to avoid https://github.com/nodejitsu/node-http-proxy/issues/527
-proxy.on('error', (error, req, res) => {
+proxyApi.on('error', (error, req, res) => {
   let json;
   if (error.code !== 'ECONNRESET') {
     console.error('proxy error', error);
@@ -61,7 +57,26 @@ proxy.on('error', (error, req, res) => {
     res.writeHead(500, {'content-type': 'application/json'});
   }
 
-  json = {error: 'proxy_error', reason: error.message};
+  json = {error: 'server_error', reason: 'API is unavailable'};
+  res.end(JSON.stringify(json));
+});
+
+// Proxy to ledger
+app.use('/ledger', (req, res) => {
+  proxyLedger.web(req, res);
+});
+
+// added the error handling to avoid https://github.com/nodejitsu/node-http-proxy/issues/527
+proxyLedger.on('error', (error, req, res) => {
+  let json;
+  if (error.code !== 'ECONNRESET') {
+    console.error('proxy error', error);
+  }
+  if (!res.headersSent) {
+    res.writeHead(500, {'content-type': 'application/json'});
+  }
+
+  json = {error: 'server_error', reason: 'Ledger is unavailable'};
   res.end(JSON.stringify(json));
 });
 
