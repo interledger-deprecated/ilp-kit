@@ -18,7 +18,7 @@ export default class HistoryItem extends Component {
   toggleLedgerTransfer = (event) => {
     event.preventDefault();
 
-    this.props.toggleJson(this.props.item.id, this.props.item.transfers[0]);
+    this.props.toggleJson(this.props.item.id, this.props.item.transfers);
   }
 
   render() {
