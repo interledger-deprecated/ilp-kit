@@ -23,7 +23,7 @@ export default class Button extends Component {
             <h3>Demo</h3>
             <p>Try the demo below</p>
             <div>
-              <PayButton account="http://localhost.com/accounts/mellie" amount="10"
+              <PayButton destination="http://localhost.com/accounts/mellie" amount="10"
                 currencyCode="USD" countryCode="US">Make Payment</PayButton>
             </div>
           </div>

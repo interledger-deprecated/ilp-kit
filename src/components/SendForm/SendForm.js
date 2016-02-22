@@ -27,7 +27,7 @@ export default class SendForm extends Component {
     findPath: PropTypes.func.isRequired,
     unmount: PropTypes.func.isRequired,
     success: PropTypes.bool,
-    path: PropTypes.object.isRequired,
+    path: PropTypes.object,
     fail: PropTypes.object,
     data: PropTypes.object,
     initializeForm: PropTypes.func
@@ -36,10 +36,10 @@ export default class SendForm extends Component {
   componentDidMount() {
     const { data, initializeForm } = this.props;
     // TODO sourceAmount
-    if (data && data.accountName && data.destinationAmount) {
+    if (data && data.destination && data.destinationAmount) {
       initializeForm({
-        destination: data.accountName,
-        amount: data.destinationAmount
+        destination: data.destination,
+        destinationAmount: data.destinationAmount
       });
     }
   }
@@ -47,8 +47,8 @@ export default class SendForm extends Component {
   // TODO doesn't handle the initial render
   componentWillReceiveProps(nextProps) {
     if (nextProps.path
-      && (nextProps.path.sourceAmount && nextProps.path.sourceAmount !== this.props.path.sourceAmount)
-      || (nextProps.path.destinationAmount && nextProps.path.destinationAmount !== this.props.path.destinationAmount)) {
+      && ((nextProps.path.sourceAmount && nextProps.path.sourceAmount !== this.props.path.sourceAmount)
+      || (nextProps.path.destinationAmount && nextProps.path.destinationAmount !== this.props.path.destinationAmount))) {
 
       if (!nextProps.fields.sourceAmount.active) {
         this.props.fields.sourceAmount.onChange(nextProps.path.sourceAmount);

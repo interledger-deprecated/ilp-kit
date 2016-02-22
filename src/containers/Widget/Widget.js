@@ -26,6 +26,7 @@ function fetchData(getState, dispatch) {
     user: state.auth.user,
     send: state.send,
     success: state.send.success,
+    path: state.send.path,
     fail: state.send.fail,
     loginFail: state.auth.fail
   }),
@@ -39,6 +40,8 @@ export default class Widget extends Component {
     loginFail: PropTypes.object,
 
     transfer: PropTypes.func,
+    findPath: PropTypes.func,
+    path: PropTypes.object,
     // TODO there are two unmount functions. One in authActions one in sendActions
     unmount: PropTypes.func,
     success: PropTypes.bool,
@@ -59,16 +62,15 @@ export default class Widget extends Component {
   }
 
   render() {
-    let accountName = this.props.location.query.account.split('/');
-    accountName = accountName[accountName.length - 1];
+    let destinationName = this.props.location.query.account.split('/');
+    destinationName = destinationName[destinationName.length - 1];
     const data = {
       currencyCode: this.props.location.query.currencyCode,
-      amount: this.props.location.query.amount,
-      account: this.props.location.query.account,
-      accountName: accountName
+      destinationAmount: this.props.location.query.amount,
+      destination: this.props.location.query.account
     };
 
-    const { user, login, success, fail, loginFail, transfer, unmount } = this.props;
+    const { user, login, success, fail, loginFail, transfer, findPath, path, unmount } = this.props;
 
     return (
       <div>
@@ -77,12 +79,14 @@ export default class Widget extends Component {
           <a href="" className={cx('fa', 'fa-close', 'close')} onClick={this.handleClose}> </a>
           <div className={cx('title')}>LedgerUI.com</div>
           <div className={cx('description')}>
-            So you wanna pay {data.currencyCode} {data.amount} to {data.accountName}
+            So you wanna pay {data.currencyCode} {data.amount} to {destinationName}
           </div>
 
           {user &&
           <SendForm
             transfer={transfer}
+            findPath={findPath}
+            path={path}
             unmount={unmount}
             success={success}
             fail={fail}

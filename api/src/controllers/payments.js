@@ -60,9 +60,6 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
 
       payment.id = id
 
-      // TODO store source and destinations users
-      delete payment.destination_user
-
       payment.source_user = this.req.user.id
 
       // TODO fill the destination_user
@@ -116,6 +113,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
       this.body = payment.getDataExternal()
     }
 
+    // TODO handle account doesn't exist exception
     static * findPath () {
       let destination = utils.parseDestination(this.body.destination, config.ledger.uri);
 

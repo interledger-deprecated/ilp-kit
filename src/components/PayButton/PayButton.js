@@ -8,7 +8,7 @@ export default class PayButton extends Component {
   // TODO better validation
   static propTypes = {
     children: PropTypes.string,
-    account: PropTypes.string,
+    destination: PropTypes.string,
     amount: PropTypes.string,
     currencyCode: PropTypes.string,
     countryCode: PropTypes.string
@@ -32,7 +32,7 @@ export default class PayButton extends Component {
       countryCode: this.props.countryCode
     }, {
       interledger: {
-        account: this.props.account
+        account: this.props.destination
       }
     });
   };
