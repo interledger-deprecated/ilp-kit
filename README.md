@@ -42,3 +42,7 @@ In development, Redux Devtools are enabled by default. You can toggle visibility
 - <kbd>Ctrl+H</kbd> Toggle DevTools Dock
 - <kbd>Ctrl+Q</kbd> Move Dock Position
 - see [redux-devtools-dock-monitor](https://github.com/gaearon/redux-devtools-dock-monitor) for more detail information.
+
+### Theme customization
+
+`npm install` generates a `src/theme/variables.scss` which contains the theme colors. You can manually edit it. 
