@@ -50,6 +50,8 @@ module.exports = class Ledger extends EventEmitter {
         return uri.slice(this.ledgerUri.length + 10)
       })
 
+    // TODO who should emit this events? might make more sense if the event
+    // has the payment object, not transfer
     this.log.debug('posting notification to accounts ' + affectedAccounts.join(','))
     affectedAccounts.forEach((account) => this.emit('transfer_' + account, transfer))
   }
@@ -104,7 +106,7 @@ module.exports = class Ledger extends EventEmitter {
 
     // Interledger
     // TODO Use a better mechanism to check if the destinationAccount is in a different ledger
-    if (!options.destinationAccount.indexOf('http://')) {
+    if (!options.destinationAccount.indexOf('http://') || !options.destinationAccount.indexOf('https://')) {
       response = yield sender.executePayment(options.path, {
         sourceAccount: this.ledgerUri + '/accounts/' + options.username,
         sourcePassword: options.password,
