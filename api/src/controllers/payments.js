@@ -77,10 +77,9 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
       try {
         const transfer = yield ledger.transfer(options)
 
-        payment.transfers = transfer.source_transfers[0].id
-
         // Interledger
         if (transfer.source_transfers) {
+          payment.transfers = transfer.source_transfers[0].id
           payment.source_account = transfer.source_transfers[0].debits[0].account;
           payment.source_amount = transfer.source_transfers[0].debits[0].amount;
           payment.destination_account = transfer.destination_transfers[0].credits[0].account;
@@ -89,6 +88,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
 
         // Same ledger
         else {
+          payment.transfers = transfer.id
           payment.source_account = transfer.debits[0].account;
           payment.source_amount = transfer.debits[0].amount;
           payment.destination_account = transfer.credits[0].account;

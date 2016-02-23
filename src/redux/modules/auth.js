@@ -108,11 +108,15 @@ export default function reducer(state = initialState, action = {}) {
         }
       };
     case WS_PAYMENT:
+      const balance = state.user.account === action.result.destination_account
+        ? Number(state.user.balance) + Number(action.result.destination_amount)
+        : Number(state.user.balance) - Number(action.result.destination_amount);
+
       return {
         ...state,
         user: {
           ...state.user,
-          balance: Number(state.user.balance) + Number(action.result.destination_amount)
+          balance: balance
         }
       };
     case CHANGE_TAB:
