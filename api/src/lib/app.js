@@ -14,10 +14,11 @@ const Router = require('./router')
 const DB = require('./db')
 const Log = require('./log')
 const Ledger = require('./ledger')
+const PaymentFactory = require('../models/payment')
 
 module.exports = class App {
-  static constitute () { return [ Config, Auth, Router, Validator, Ledger, DB, Log ] }
-  constructor (config, auth, router, validator, ledger, db, log ) {
+  static constitute () { return [ Config, Auth, Router, Validator, Ledger, DB, Log, PaymentFactory ] }
+  constructor (config, auth, router, validator, ledger, db, log, Payment ) {
     this.config = config
     this.auth = auth
     this.router = router
@@ -51,14 +52,23 @@ module.exports = class App {
       yield* next;
     });
 
+    let listeners = {}
+
     // TODO ensure the username is the currently logged in user
     app.io.route('subscribe', function* (next, username) {
-      self.ledger.on('transfer_' + username, (transfer) => {
+      listeners[this.socket.id] = (transfer) => {
         // TODO move this logic somewhere else
-        // TODO get the payment object
+        Payment.findOne({where: {transfers: transfer.id}})
+          .then(function(data){
+            app.io.emit('payment', data)
+          })
+      }
 
-        app.io.emit('payment', transfer);
-      })
+      self.ledger.on('transfer_' + username, listeners[this.socket.id])
+    });
+
+    app.io.route('unsubscribe', function* (next, username) {
+      self.ledger.removeListener('transfer_' + username, listeners[this.socket.id])
     });
 
     app.proxy = true;

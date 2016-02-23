@@ -38,7 +38,8 @@ export default class App extends Component {
   };
 
   componentDidMount() {
-    if (socket) {
+    if (socket && this.props.user) {
+      socket.emit('subscribe', this.props.user.username);
       socket.on('payment', this.onMessageReceived);
     }
   }
@@ -54,7 +55,9 @@ export default class App extends Component {
   }
 
   componentWillUnmount() {
-    if (socket) {
+    // TODO unsubscribe doesn't work?
+    if (socket && this.props.user) {
+      socket.emit('unsubscribe', this.props.user.username);
       socket.removeListener('payment', this.onMessageReceived);
     }
   }
