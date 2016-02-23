@@ -13,14 +13,17 @@ const Auth = require('./auth')
 const Router = require('./router')
 const DB = require('./db')
 const Log = require('./log')
+const Ledger = require('./ledger')
+const superagent = require('superagent-promise')(require('superagent'), Promise)
 
 module.exports = class App {
-  static constitute () { return [ Config, Auth, Router, Validator, DB, Log ] }
-  constructor (config, auth, router, validator, db, log ) {
+  static constitute () { return [ Config, Auth, Router, Validator, Ledger, DB, Log ] }
+  constructor (config, auth, router, validator, ledger, db, log ) {
     this.config = config
     this.auth = auth
     this.router = router
     this.validator = validator
+    this.ledger = ledger
     this.db = db
     this.log = log('app')
 
@@ -68,6 +71,13 @@ module.exports = class App {
 
   * _start () {
     yield this.db.sync()
+    // Ensure ledger subscription exists
+    yield this.ledger.subscribe()
+
+    this.ledger.on('transfer_alice', (transfer) => {
+      console.log('Alice was involved in transfer ' + transfer.id)
+    })
+
     this.listen()
   }
 
