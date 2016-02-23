@@ -88,7 +88,7 @@ export default class Home extends Component {
           <div className={cx('box', 'defaultPPBar')}>
             <div className="row">
               <div className={cx('col-xs-3')}>
-                <button className={cx('btn', 'lu-btn', 'btn-block')} onClick={this.handleDefaultPayment}>Set as default payment provider</button>
+                <button className={cx('btn', 'lu-btn', 'btn-block')} onClick={this.handleDefaultPayment}>Set as default</button>
               </div>
               <div className={cx('col-xs-9')}>
                 (This will use the <a href="https://github.com/justmoon/webpayments-polyfill">webpayments-polyfill</a> to set Five Bells Ledger UI as your default payment provider)
