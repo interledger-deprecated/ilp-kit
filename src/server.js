@@ -24,13 +24,14 @@ const pretty = new PrettyError();
 const app = new Express();
 const server = new http.Server(app);
 
+const targetUrl = 'http://' + config.apiHost + ':' + config.apiPort;
+
 const proxyApi = httpProxy.createProxyServer({
-  target: 'http://' + config.apiHost + ':' + config.apiPort,
+  target: targetUrl,
   ws: true
 });
 const proxyLedger = httpProxy.createProxyServer({
-  target: config.ledgerUriPrivate,
-  ws: true
+  target: config.ledgerUriPrivate
 });
 
 app.use(compression());
@@ -44,7 +45,15 @@ app.use('/api/config', (req, res) => {
 
 // Proxy to API server
 app.use('/api', (req, res) => {
-  proxyApi.web(req, res);
+  proxyApi.web(req, res, {target: targetUrl});
+});
+
+app.use('/socket.io', (req, res) => {
+  proxyApi.web(req, res, {target: targetUrl + '/socket.io'});
+});
+
+server.on('upgrade', (req, socket, head) => {
+  proxyApi.ws(req, socket, head, {target: targetUrl + '/socket.io'});
 });
 
 // added the error handling to avoid https://github.com/nodejitsu/node-http-proxy/issues/527

@@ -1,7 +1,7 @@
 "use strict"
 
 const co = require('co')
-const Koa = require('koa')
+const Koa = require('koa.io')
 const bodyParser = require('koa-body')
 const logger = require('koa-mag')
 const session = require('koa-session')
@@ -41,6 +41,13 @@ module.exports = class App {
     app.use(logger({mag: log('http')}))
     app.use(errorHandler({log: log('error-handler')}))
     app.use(cors({origin: '*'}))
+
+    // Socket
+    app.io.use(function* (next) {
+      // on connect
+      yield* next;
+      // on disconnect
+    });
 
     app.proxy = true;
 
