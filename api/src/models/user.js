@@ -67,6 +67,10 @@ function UserFactory (sequelize, validator) {
       type: Sequelize.STRING,
       unique: true
     },
+    account: {
+      type: Sequelize.STRING,
+      unique: true
+    },
     password: Sequelize.STRING
   })
 

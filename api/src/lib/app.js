@@ -14,7 +14,6 @@ const Router = require('./router')
 const DB = require('./db')
 const Log = require('./log')
 const Ledger = require('./ledger')
-const superagent = require('superagent-promise')(require('superagent'), Promise)
 
 module.exports = class App {
   static constitute () { return [ Config, Auth, Router, Validator, Ledger, DB, Log ] }
@@ -26,6 +25,8 @@ module.exports = class App {
     this.ledger = ledger
     this.db = db
     this.log = log('app')
+
+    let self = this
 
     validator.loadSchemasFromDirectory(__dirname + '/../../schemas')
 
@@ -47,9 +48,17 @@ module.exports = class App {
 
     // Socket
     app.io.use(function* (next) {
-      // on connect
       yield* next;
-      // on disconnect
+    });
+
+    // TODO ensure the username is the currently logged in user
+    app.io.route('subscribe', function* (next, username) {
+      self.ledger.on('transfer_' + username, (transfer) => {
+        // TODO move this logic somewhere else
+        // TODO get the payment object
+
+        app.io.emit('payment', transfer);
+      })
     });
 
     app.proxy = true;
@@ -73,10 +82,6 @@ module.exports = class App {
     yield this.db.sync()
     // Ensure ledger subscription exists
     yield this.ledger.subscribe()
-
-    this.ledger.on('transfer_alice', (transfer) => {
-      console.log('Alice was involved in transfer ' + transfer.id)
-    })
 
     this.listen()
   }

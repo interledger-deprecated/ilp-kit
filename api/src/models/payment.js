@@ -64,8 +64,9 @@ function PaymentFactory (sequelize, validator, container, User) {
         where: {
           $or: [
             {source_user: user.id},
+            {source_account: user.account},
             {destination_user: user.id},
-            {destination_account: user.username}
+            {destination_account: user.account}
           ]
         },
         include: [
@@ -79,13 +80,13 @@ function PaymentFactory (sequelize, validator, container, User) {
       })
     }
 
-    static * getPayment (paymentId) {
+    static * getPayment (transfer) {
       return Payment.findOne({
         attributes: {include: [
           [Sequelize.col('SourceUser.username'), 'sourceUserUsername']
         ]},
         where: {
-          id: paymentId
+          transfers: transfer
         },
         include: [{
           model: User.DbModel, as: 'SourceUser', attributes: []
@@ -103,9 +104,13 @@ function PaymentFactory (sequelize, validator, container, User) {
       defaultValue: Sequelize.UUIDV4
     },
     source_user: Sequelize.INTEGER,
+    source_account: Sequelize.STRING(1024),
     destination_user: Sequelize.INTEGER,
     destination_account: Sequelize.STRING(1024),
-    transfers: Sequelize.STRING(1024),
+    transfers: {
+      type: Sequelize.STRING(1024),
+      unique: true
+    },
     state: Sequelize.ENUM('pending', 'success', 'fail'),
     source_amount: Sequelize.STRING(1024), // TODO put the right type
     destination_amount: Sequelize.STRING(1024), // TODO put the right type

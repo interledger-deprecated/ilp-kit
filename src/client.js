@@ -33,9 +33,7 @@ const dest = document.getElementById('content');
 const store = createStore(reduxReactRouter, makeRouteHooksSafe(getRoutes), scrollablehistory, client, window.__data);
 
 function initSocket() {
-  const socket = io('', {path: '/api/socket.io'});
-
-  return socket;
+  return io('', {path: '/api/socket.io'});
 }
 
 global.socket = initSocket();

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap';
 import NavItem from 'react-bootstrap/lib/NavItem';
 import DocumentMeta from 'react-document-meta';
-import { isLoaded as isAuthLoaded, load as loadAuth, logout } from 'redux/modules/auth';
+import { isLoaded as isAuthLoaded, load as loadAuth, logout, payment } from 'redux/modules/auth';
 import { pushState } from 'redux-router';
 import connectData from 'helpers/connectData';
 import config from '../../config';
@@ -23,18 +23,25 @@ function fetchData(getState, dispatch) {
 @connectData(fetchData)
 @connect(
   state => ({user: state.auth.user}),
-  {logout, pushState})
+  {logout, pushState, payment})
 export default class App extends Component {
   static propTypes = {
     children: PropTypes.object.isRequired,
     user: PropTypes.object,
     logout: PropTypes.func.isRequired,
+    payment: PropTypes.func.isRequired,
     pushState: PropTypes.func.isRequired
   };
 
   static contextTypes = {
     store: PropTypes.object.isRequired
   };
+
+  componentDidMount() {
+    if (socket) {
+      socket.on('payment', this.onMessageReceived);
+    }
+  }
 
   componentWillReceiveProps(nextProps) {
     if (!this.props.user && nextProps.user) {
@@ -44,6 +51,16 @@ export default class App extends Component {
       // logout
       this.props.pushState(null, '/');
     }
+  }
+
+  componentWillUnmount() {
+    if (socket) {
+      socket.removeListener('payment', this.onMessageReceived);
+    }
+  }
+
+  onMessageReceived = (data) => {
+    this.props.payment(data);
   }
 
   handleLogout = (event) => {

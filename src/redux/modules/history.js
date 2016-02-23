@@ -7,6 +7,7 @@ const PAYMENT_JSON_FAIL = 'redux-example/history/PAYMENT_JSON_FAIL';
 const PAYMENT_JSON_SHOW = 'redux-example/history/PAYMENT_JSON_SHOW';
 const PAYMENT_JSON_HIDE = 'redux-example/history/PAYMENT_JSON_HIDE';
 const SEND_SUCCESS = 'redux-example/send/SEND_SUCCESS';
+const WS_PAYMENT = 'redux-example/ws/PAYMENT';
 
 const initialState = {
   success: false,
@@ -65,6 +66,11 @@ export default function reducer(state = initialState, action = {}) {
     case PAYMENT_JSON_HIDE:
       return updateInHistory(action.id, {showJson: false});
     case SEND_SUCCESS:
+      return {
+        ...state,
+        history: [action.result].concat(state.history)
+      };
+    case WS_PAYMENT:
       return {
         ...state,
         history: [action.result].concat(state.history)

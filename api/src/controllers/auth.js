@@ -30,6 +30,7 @@ function AuthsControllerFactory (Auth, User, log, ledger) {
       let user = yield User.findOne({where: {username: username}})
 
       // Username is already taken
+      // TODO check if the http://account already exists
       if (user) {
         throw new UsernameTakenError("Username is already taken")
       }
@@ -37,6 +38,8 @@ function AuthsControllerFactory (Auth, User, log, ledger) {
       // Create a ledger account
       // TODO handle exceptions
       const ledgerUser = yield ledger.createAccount(this.body)
+
+      this.body.account = ledgerUser.id
 
       user = yield User.createExternal(this.body)
 

@@ -13,10 +13,11 @@ const LOGOUT_FAIL = 'redux-example/auth/LOGOUT_FAIL';
 const RELOADING = 'redux-example/auth/RELOADING';
 const RELOAD_SUCCESS = 'redux-example/auth/RELOAD_SUCCESS';
 const RELOAD_FAIL = 'redux-example/auth/RELOAD_FAIL';
-const DESTROY = 'redux-example/auth/DESTROY';
 const CHANGE_TAB = 'redux-example/auth/CHANGE_TAB';
+const DESTROY = 'redux-example/auth/DESTROY';
 
 const SEND_SUCCESS = 'redux-example/send/SEND_SUCCESS';
+const WS_PAYMENT = 'redux-example/ws/PAYMENT';
 
 const initialState = {
   loaded: false,
@@ -106,10 +107,13 @@ export default function reducer(state = initialState, action = {}) {
           balance: state.user.balance - action.result.source_amount
         }
       };
-    case DESTROY:
+    case WS_PAYMENT:
       return {
         ...state,
-        fail: {}
+        user: {
+          ...state.user,
+          balance: Number(state.user.balance) + Number(action.result.destination_amount)
+        }
       };
     case CHANGE_TAB:
       return {
@@ -124,6 +128,11 @@ export default function reducer(state = initialState, action = {}) {
           ...state.user,
           balance: action.result.balance
         }
+      };
+    case DESTROY:
+      return {
+        ...state,
+        fail: {}
       };
     default:
       return state;
@@ -189,5 +198,21 @@ export function reload(opts) {
   return {
     types: [RELOADING, RELOAD_SUCCESS, RELOAD_FAIL],
     promise: (client) => client.post('/users/' + opts.username + '/reload')
+  };
+}
+
+// TODO separate module for WS stuff?
+export function payment(data) {
+  return (dispatch, getState) => {
+    const duplicate = getState().history.history.filter((item) => {
+      return item.id === data.id;
+    })[0];
+
+    if (duplicate) return false;
+
+    return dispatch({
+      type: WS_PAYMENT,
+      result: data
+    });
   };
 }

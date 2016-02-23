@@ -21,7 +21,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
   return class PaymentsController {
     static init (router) {
       router.get('/payments', Auth.isAuth, this.getHistory)
-      router.get('/payments/:id', Auth.isAuth, this.getResource)
+      //router.get('/payments/:id', Auth.isAuth, this.getResource)
       router.put('/payments/:id', Auth.isAuth, Payment.createBodyParser(), this.putResource)
       router.post('/payments/findPath', Auth.isAuth, this.findPath)
     }
@@ -50,6 +50,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
       this.body = item.getDataExternal()
     }
 
+    // TODO handle payment creation. Shouldn't rely on notification seriv
     static * putResource () {
       const _this = this
 
@@ -80,13 +81,17 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
 
         // Interledger
         if (transfer.source_transfers) {
+          payment.source_account = transfer.source_transfers[0].debits[0].account;
           payment.source_amount = transfer.source_transfers[0].debits[0].amount;
-          payment.destination_amount = transfer.destination_transfers[0].debits[0].amount;
+          payment.destination_account = transfer.destination_transfers[0].credits[0].account;
+          payment.destination_amount = transfer.destination_transfers[0].credits[0].amount;
         }
 
         // Same ledger
         else {
+          payment.source_account = transfer.debits[0].account;
           payment.source_amount = transfer.debits[0].amount;
+          payment.destination_account = transfer.credits[0].account;
           payment.destination_amount = transfer.credits[0].amount;
         }
 
@@ -105,10 +110,16 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
       }
 
       // Store the payment in db
-      yield payment.create()
+      // Notification service creates the payment
+      try {
+        yield payment.create()
+      } catch (e) {
+        // TODO handle
+      }
 
       // Get the payment with the associations
-      payment = yield Payment.getPayment(payment.id)
+      // TODO get by transfer or paymentId
+      payment = yield Payment.getPayment(payment.transfers)
 
       this.body = payment.getDataExternal()
     }
