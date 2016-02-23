@@ -68,7 +68,7 @@ function AuthsControllerFactory (Auth, User, log, ledger) {
 
       // Get account balance
       const ledgerUser = yield ledger.getAccount(user)
-      user.balance = ledgerUser.balance
+      user.balance = Math.round(ledgerUser.balance * 100) / 100
 
       this.body = user
     }
