@@ -14,10 +14,8 @@ const RELOADING = 'redux-example/auth/RELOADING';
 const RELOAD_SUCCESS = 'redux-example/auth/RELOAD_SUCCESS';
 const RELOAD_FAIL = 'redux-example/auth/RELOAD_FAIL';
 const CHANGE_TAB = 'redux-example/auth/CHANGE_TAB';
+const UPDATE_BALANCE = 'redux-example/auth/UPDATE_BALANCE';
 const DESTROY = 'redux-example/auth/DESTROY';
-
-const SEND_SUCCESS = 'redux-example/send/SEND_SUCCESS';
-const WS_PAYMENT = 'redux-example/ws/PAYMENT';
 
 const initialState = {
   loaded: false,
@@ -99,39 +97,18 @@ export default function reducer(state = initialState, action = {}) {
         loggingOut: false,
         logoutError: action.error
       };
-    case SEND_SUCCESS:
+    case UPDATE_BALANCE:
       return {
         ...state,
         user: {
           ...state.user,
-          balance: state.user.balance - action.result.source_amount
-        }
-      };
-    case WS_PAYMENT:
-      const balance = state.user.account === action.result.destination_account
-        ? Number(state.user.balance) + Number(action.result.destination_amount)
-        : Number(state.user.balance) - Number(action.result.destination_amount);
-
-      return {
-        ...state,
-        user: {
-          ...state.user,
-          balance: balance
+          balance: state.user.balance + action.change
         }
       };
     case CHANGE_TAB:
       return {
         ...state,
         activeTab: action.tab
-      };
-    // TODO Handle RELOADING and RELOAD_FAIL
-    case RELOAD_SUCCESS:
-      return {
-        ...state,
-        user: {
-          ...state.user,
-          balance: action.result.balance
-        }
       };
     case DESTROY:
       return {
@@ -199,24 +176,17 @@ export function register(fields) {
 }
 
 export function reload(opts) {
-  return {
-    types: [RELOADING, RELOAD_SUCCESS, RELOAD_FAIL],
-    promise: (client) => client.post('/users/' + opts.username + '/reload')
-  };
-}
-
-// TODO separate module for WS stuff?
-export function payment(data) {
-  return (dispatch, getState) => {
-    const duplicate = getState().history.history.filter((item) => {
-      return item.id === data.id;
-    })[0];
-
-    if (duplicate) return false;
-
+  return (dispatch) => {
     return dispatch({
-      type: WS_PAYMENT,
-      result: data
+      types: [RELOADING, RELOAD_SUCCESS, RELOAD_FAIL],
+      promise: (client) => client.post('/users/' + opts.username + '/reload')
+        .then(function() {
+          dispatch({
+            type: UPDATE_BALANCE,
+            // TODO don't hardcode
+            change: 1000
+          });
+        })
     });
   };
 }

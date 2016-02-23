@@ -6,8 +6,10 @@ const PAYMENT_JSON_SUCCESS = 'redux-example/history/PAYMENT_JSON_SUCCESS';
 const PAYMENT_JSON_FAIL = 'redux-example/history/PAYMENT_JSON_FAIL';
 const PAYMENT_JSON_SHOW = 'redux-example/history/PAYMENT_JSON_SHOW';
 const PAYMENT_JSON_HIDE = 'redux-example/history/PAYMENT_JSON_HIDE';
-const SEND_SUCCESS = 'redux-example/send/SEND_SUCCESS';
+
 const WS_PAYMENT = 'redux-example/ws/PAYMENT';
+
+const UPDATE_BALANCE = 'redux-example/auth/UPDATE_BALANCE';
 
 const initialState = {
   success: false,
@@ -65,11 +67,6 @@ export default function reducer(state = initialState, action = {}) {
       return updateInHistory(action.id, {showJson: true});
     case PAYMENT_JSON_HIDE:
       return updateInHistory(action.id, {showJson: false});
-    case SEND_SUCCESS:
-      return {
-        ...state,
-        history: [action.result].concat(state.history)
-      };
     case WS_PAYMENT:
       return {
         ...state,
@@ -113,5 +110,30 @@ export function load() {
   return {
     types: [LOAD, LOAD_SUCCESS, LOAD_FAIL],
     promise: (client) => client.get('/payments')
+  };
+}
+
+// TODO separate module for WS stuff?
+export function addPayment(data) {
+  return (dispatch, getState) => {
+    const duplicate = getState().history.history.filter((item) => {
+      return item.id === data.id;
+    })[0];
+
+    if (duplicate) return false;
+
+    const change = getState().auth.user.account === data.destination_account
+      ? Number(data.destination_amount)
+      : -Number(data.destination_amount);
+
+    dispatch({
+      type: UPDATE_BALANCE,
+      change: change
+    });
+
+    return dispatch({
+      type: WS_PAYMENT,
+      result: data
+    });
   };
 }

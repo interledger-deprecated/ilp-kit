@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap';
 import NavItem from 'react-bootstrap/lib/NavItem';
 import DocumentMeta from 'react-document-meta';
-import { isLoaded as isAuthLoaded, load as loadAuth, logout, payment } from 'redux/modules/auth';
+import { isLoaded as isAuthLoaded, load as loadAuth, logout } from 'redux/modules/auth';
+import { addPayment as historyAddPayment } from 'redux/modules/history';
 import { pushState } from 'redux-router';
 import connectData from 'helpers/connectData';
 import config from '../../config';
@@ -23,13 +24,13 @@ function fetchData(getState, dispatch) {
 @connectData(fetchData)
 @connect(
   state => ({user: state.auth.user}),
-  {logout, pushState, payment})
+  {logout, pushState, historyAddPayment})
 export default class App extends Component {
   static propTypes = {
     children: PropTypes.object.isRequired,
     user: PropTypes.object,
     logout: PropTypes.func.isRequired,
-    payment: PropTypes.func.isRequired,
+    historyAddPayment: PropTypes.func.isRequired,
     pushState: PropTypes.func.isRequired
   };
 
@@ -63,7 +64,7 @@ export default class App extends Component {
   }
 
   onMessageReceived = (data) => {
-    this.props.payment(data);
+    this.props.historyAddPayment(data);
   }
 
   handleLogout = (event) => {
