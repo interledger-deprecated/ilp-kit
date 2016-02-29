@@ -20,12 +20,12 @@ export default function createStore(reduxReactRouter, getRoutes, createHistory, 
 
   finalCreateStore = reduxReactRouter({ getRoutes, createHistory })(finalCreateStore);
 
-  const reducer = require('./modules/reducer');
+  const reducer = require('./reducer');
   const store = finalCreateStore(reducer, data);
 
   if (__DEVELOPMENT__ && module.hot) {
-    module.hot.accept('./modules/reducer', () => {
-      store.replaceReducer(require('./modules/reducer'));
+    module.hot.accept('./reducer', () => {
+      store.replaceReducer(require('./reducer'));
     });
   }
 

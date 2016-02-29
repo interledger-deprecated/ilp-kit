@@ -56,7 +56,6 @@ function AuthsControllerFactory (Auth, User, log, ledger) {
       this.status = 201
     }
 
-    // TODO load the ledger balance
     static * load () {
       let user = this.req.user
 

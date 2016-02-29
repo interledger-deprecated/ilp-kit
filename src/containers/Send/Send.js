@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import DocumentMeta from 'react-document-meta';
-import * as sendActions from 'redux/modules/send';
+import * as sendActions from 'redux/actions/send';
 import config from '../../config';
 
 import { SendForm } from 'components';

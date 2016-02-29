@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import DocumentMeta from 'react-document-meta';
-import * as authActions from 'redux/modules/auth';
+import * as authActions from 'redux/actions/auth';
 import config from '../../config';
 
 import { RegisterForm } from 'components';

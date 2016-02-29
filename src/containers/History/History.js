@@ -1,6 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
-import * as historyActions from 'redux/modules/history';
+import * as historyActions from 'redux/actions/history';
 
 import { HistoryItem } from 'components';
 

@@ -56,6 +56,8 @@ module.exports = class App {
 
     // TODO ensure the username is the currently logged in user
     app.io.route('subscribe', function* (next, username) {
+      self.log.info('WS: Subscribe ' + username)
+
       listeners[this.socket.id] = (transfer) => {
         // TODO move this logic somewhere else
         Payment.findOne({where: {transfers: transfer.id}})

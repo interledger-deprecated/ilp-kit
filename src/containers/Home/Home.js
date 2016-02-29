@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
-import * as authActions from 'redux/modules/auth';
-import * as sendActions from 'redux/modules/send';
+import * as authActions from 'redux/actions/auth';
+import * as sendActions from 'redux/actions/send';
 
 import { LoginForm } from 'components';
 import { RegisterForm } from 'components';

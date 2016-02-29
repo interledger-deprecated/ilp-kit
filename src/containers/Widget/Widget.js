@@ -1,8 +1,8 @@
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
-import * as authActions from 'redux/modules/auth';
-import * as sendActions from 'redux/modules/send';
-import { isLoaded as isAuthLoaded, load as loadAuth } from 'redux/modules/auth';
+import * as authActions from 'redux/actions/auth';
+import * as sendActions from 'redux/actions/send';
+import { isLoaded as isAuthLoaded, load as loadAuth } from 'redux/actions/auth';
 import connectData from 'helpers/connectData';
 
 import { SendForm } from 'components';
