@@ -56,7 +56,6 @@ export default class App extends Component {
   }
 
   componentWillUnmount() {
-    // TODO unsubscribe doesn't work?
     if (socket && this.props.user) {
       socket.emit('unsubscribe', this.props.user.username);
       socket.removeListener('payment', this.onMessageReceived);

@@ -56,20 +56,23 @@ module.exports = class App {
 
     // TODO ensure the username is the currently logged in user
     app.io.route('subscribe', function* (next, username) {
-      self.log.info('WS: Subscribe ' + username)
+      let socket = this.socket
 
-      listeners[this.socket.id] = (transfer) => {
+      self.log.info('WS:' + socket.id + ' Subscribe ' + username)
+
+      listeners[socket.id] = (transfer) => {
         // TODO move this logic somewhere else
         Payment.findOne({where: {transfers: transfer.id}})
           .then(function(data){
-            app.io.emit('payment', data)
+            socket.emit('payment', data)
           })
       }
 
-      self.ledger.on('transfer_' + username, listeners[this.socket.id])
+      self.ledger.on('transfer_' + username, listeners[socket.id])
     });
 
     app.io.route('unsubscribe', function* (next, username) {
+      self.log.info('WS:' + this.socket.id + ' Unsubscribe ' + username)
       self.ledger.removeListener('transfer_' + username, listeners[this.socket.id])
     });
 
