@@ -14,10 +14,10 @@ module.exports = class Ledger extends EventEmitter {
   static constitute () { return [Config, Log] }
   constructor (config, log) {
     super()
-    this.config = config
+    this.config = config.data
     this.log = log('ledger')
-    this.ledgerUri = this.config.ledger.uri
-    this.ledgerUriPrivate = this.config.ledger.uriPrivate
+    this.ledgerUri = this.config.getIn(['ledger', 'uri'])
+    this.ledgerUriPrivate = this.config.getIn(['ledger', 'uriPrivate'])
   }
 
   * subscribe () {
@@ -25,12 +25,12 @@ module.exports = class Ledger extends EventEmitter {
       this.log.info('subscribing to ledger ' + this.ledgerUri)
       const response = yield superagent
         .put(this.ledgerUriPrivate + '/subscriptions/' + uuid())
-        .auth(this.config.ledger.admin.name, this.config.ledger.admin.pass)
+        .auth(this.config.getIn(['ledger', 'admin', 'name']), this.config.getIn(['ledger', 'admin', 'pass']))
         .send({
-          'owner': this.config.ledger.admin.name,
+          'owner': this.config.getIn(['ledger', 'admin', 'name']),
           'event': '*',
           'subject': '*',
-          'target': this.config.server.base_uri + '/notifications'
+          'target': this.config.getIn(['server', 'base_uri']) + '/notifications' // TODO server.base_uri???
         })
         .end()
     } catch (err) {
@@ -59,7 +59,7 @@ module.exports = class Ledger extends EventEmitter {
   * getAccount (user, admin) {
     const response = yield superagent
       .get(this.ledgerUriPrivate + '/accounts/' + user.username)
-      .auth(admin ? this.config.ledger.admin.name : user.username, admin ? this.config.ledger.admin.pass : user.password)
+      .auth(admin ? this.config.getIn(['ledger', 'admin', 'name']) : user.username, admin ? this.config.getIn(['ledger', 'admin', 'pass']): user.password)
       .end()
 
     return response.body
@@ -79,7 +79,7 @@ module.exports = class Ledger extends EventEmitter {
       const response = yield superagent
         .put(this.ledgerUriPrivate + '/accounts/' + user.username)
         .send(data)
-        .auth(this.config.ledger.admin.name, this.config.ledger.admin.pass)
+        .auth(this.config.getIn(['ledger', 'admin', 'name']), this.config.getIn(['ledger', 'admin', 'pass']))
       return response.body
     } catch (e) {
       // TODO handle

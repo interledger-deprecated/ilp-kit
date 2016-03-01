@@ -1,34 +1,30 @@
 "use strict"
 
 const Config = require('five-bells-shared').Config
+const ledgerPrefix = 'ledger'
+const envPrefix = 'api'
 
-module.exports = class LedgerUIConfig extends Config {
+module.exports = class LedgerUIConfig {
   constructor () {
-    super('api')
-    this.parseServerConfig()
-    this.parseLedgerConfig()
-    this.parseDatabaseConfig()
-    this.parseSessionConfig()
-  }
-
-  parseLedgerConfig () {
-    this.ledger = {
-      admin: {}
-    }
-    this.ledger.uri = this.getEnv('LEDGER_URI')
-    this.ledger.uriPrivate = this.getEnv('LEDGER_URI_PRIVATE') || this.ledger.uri
-    this.ledger.admin.name = this.getEnv('LEDGER_ADMIN_NAME')
-    this.ledger.admin.pass = this.getEnv('LEDGER_ADMIN_PASS')
-  }
-
-  parseSessionConfig () {
-    this.sessionSecret = this.getEnv('SESSION_SECRET')
-
-    if (!this.sessionSecret) {
-      if (process.env.NODE_ENV === 'production') {
-        throw new Error('No ' + this.uppercasePrefix + 'SESSION_SECRET provided.')
+    let localConfig = {}
+    localConfig.ledger = {
+      uri: Config.getEnv(envPrefix, 'LEDGER_URI'),
+      uriPrivate: Config.getEnv(envPrefix, 'LEDGER_URI_PRIVATE') || Config.getEnv(envPrefix, 'LEDGER_URI'),
+      admin: {
+        name: Config.getEnv(envPrefix, 'LEDGER_ADMIN_NAME'),
+        pass: Config.getEnv(envPrefix, 'LEDGER_ADMIN_PASS')
       }
-      this.sessionSecret = 'dev'
     }
+
+    localConfig.sessionSecret = Config.getEnv(envPrefix, 'SESSION_SECRET')
+
+    if (!localConfig.sessionSecret) {
+      if (process.env.NODE_ENV === 'production') {
+        throw new Error('No ' + envPrefix.toUpperCase + 'SESSION_SECRET provided.')
+      }
+      localConfig.sessionSecret = 'dev'
+    }
+
+    this.data = Config.loadConfig(envPrefix, localConfig)
   }
 }

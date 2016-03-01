@@ -80,7 +80,7 @@ function PaymentFactory (sequelize, validator, container, User) {
       })
     }
 
-    static * getPayment (transfer) {
+    static getPayment (transfer) {
       return Payment.findOne({
         attributes: {include: [
           [Sequelize.col('SourceUser.username'), 'sourceUserUsername']

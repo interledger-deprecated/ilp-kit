@@ -19,7 +19,7 @@ const PaymentFactory = require('../models/payment')
 module.exports = class App {
   static constitute () { return [ Config, Auth, Router, Validator, Ledger, DB, Log, PaymentFactory ] }
   constructor (config, auth, router, validator, ledger, db, log, Payment ) {
-    this.config = config
+    this.config = config.data
     this.auth = auth
     this.router = router
     this.validator = validator
@@ -55,7 +55,7 @@ module.exports = class App {
     let listeners = {}
 
     // TODO ensure the username is the currently logged in user
-    app.io.route('subscribe', function* (next, username) {
+    app.io.route('subscribe', function (next, username) {
       let socket = this.socket
 
       self.log.info('WS:' + socket.id + ' Subscribe ' + username)
@@ -71,14 +71,14 @@ module.exports = class App {
       self.ledger.on('transfer_' + username, listeners[socket.id])
     });
 
-    app.io.route('unsubscribe', function* (next, username) {
+    app.io.route('unsubscribe', function (next, username) {
       self.log.info('WS:' + this.socket.id + ' Unsubscribe ' + username)
       self.ledger.removeListener('transfer_' + username, listeners[this.socket.id])
     });
 
     app.proxy = true;
 
-    app.keys = [config.sessionSecret]
+    app.keys = [this.config.get('sessionSecret')]
     app.use(session(app))
 
     auth.attach(app)
@@ -102,9 +102,9 @@ module.exports = class App {
   }
 
   listen () {
-    this.app.listen(this.config.server.port)
-    this.log.info('ledger-ui listening on ' + this.config.server.bind_ip +
-      ':' + this.config.server.port)
-    this.log.info('public at ' + this.config.server.base_uri)
+    this.app.listen(this.config.getIn(['server', 'port']))
+    this.log.info('ledger-ui listening on ' + this.config.getIn(['server', 'bind_ip']) +
+      ':' + this.config.getIn(['server', 'port']))
+    this.log.info('public at ' + this.config.getIn(['server', 'base_uri']))
   }
 }

@@ -1,7 +1,6 @@
 'use strict'
 
 const _ = require('lodash')
-const requestUtil = require('five-bells-shared/utils/request')
 const Ledger = require('../lib/ledger')
 const Auth = require('../lib/auth')
 const Config = require('../lib/config')
@@ -31,16 +30,16 @@ function NotificationsControllerFactory (ledger, Auth, Payment, User, Config) {
 
       // TODO move this logic somewhere else
       // Source user
-      if (_.startsWith(transfer.debits[0].account, Config.ledger.uri + '/accounts/')) {
-        let user = yield User.findOne({where: {username: transfer.debits[0].account.slice(Config.ledger.uri.length + 10)}})
+      if (_.startsWith(transfer.debits[0].account, Config.data.getIn(['ledger', 'uri']) + '/accounts/')) {
+        let user = yield User.findOne({where: {username: transfer.debits[0].account.slice(Config.data.getIn(['ledger', 'uri']).length + 10)}})
         if (user) {
           paymentObj.source_user = user.id
         }
       }
 
       // Destination user
-      if (_.startsWith(transfer.credits[0].account, Config.ledger.uri + '/accounts/')) {
-        let user = yield User.findOne({where: {username: transfer.credits[0].account.slice(Config.ledger.uri.length + 10)}})
+      if (_.startsWith(transfer.credits[0].account, Config.data.getIn(['ledger', 'uri']) + '/accounts/')) {
+        let user = yield User.findOne({where: {username: transfer.credits[0].account.slice(Config.data.getIn(['ledger', 'uri']).length + 10)}})
         if (user) {
           paymentObj.destination_user = user.id
         }
