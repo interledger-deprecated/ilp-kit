@@ -103,14 +103,21 @@ module.exports = class Ledger extends EventEmitter {
 
   * transfer(options) {
     let response
+    let sourceAccount = this.ledgerUri + '/accounts/' + options.username
 
     // Interledger
     // TODO Use a better mechanism to check if the destinationAccount is in a different ledger
     if (!options.destinationAccount.indexOf('http://') || !options.destinationAccount.indexOf('https://')) {
       response = yield sender.executePayment(options.path, {
-        sourceAccount: this.ledgerUri + '/accounts/' + options.username,
+        sourceAccount: sourceAccount,
         sourcePassword: options.password,
-        destinationAccount: options.destinationAccount
+        destinationAccount: options.destinationAccount,
+        additionalInfo: {
+          source_account: sourceAccount,
+          source_amount: options.path[0].source_transfers[0].debits[0].amount,
+          destination_account: options.destinationAccount,
+          destination_amount: options.path[0].destination_transfers[0].credits[0].amount
+        }
       })
 
       response = response[0]
@@ -122,7 +129,7 @@ module.exports = class Ledger extends EventEmitter {
         .put(this.ledgerUriPrivate + '/transfers/' + paymentId)
         .send({
           debits: [{
-            account: this.ledgerUri + '/accounts/' + options.username,
+            account: sourceAccount,
             amount: options.destinationAmount,
             authorized: true
           }],

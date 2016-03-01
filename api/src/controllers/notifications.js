@@ -22,10 +22,10 @@ function NotificationsControllerFactory (ledger, Auth, Payment, User, Config) {
 
       let paymentObj = {
         transfers: transfer.id,
-        source_account: transfer.debits[0].account,
-        destination_account: transfer.credits[0].account,
-        source_amount: transfer.debits[0].amount,
-        destination_amount: transfer.credits[0].amount
+        source_account: (transfer.additional_info && transfer.additional_info.source_account) || transfer.debits[0].account,
+        destination_account: (transfer.additional_info && transfer.additional_info.destination_account) || transfer.credits[0].account,
+        source_amount: (transfer.additional_info && transfer.additional_info.source_amount) || transfer.debits[0].amount,
+        destination_amount: (transfer.additional_info && transfer.additional_info.destination_amount) || transfer.credits[0].amount
       };
 
       // TODO move this logic somewhere else
