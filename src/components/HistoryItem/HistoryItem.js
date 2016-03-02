@@ -38,7 +38,7 @@ export default class HistoryItem extends Component {
           <div className="col-sm-4">
             <div className={cx('amount', amountClass)}>
               {/* TODO Show both source and destination amounts */}
-              {Math.round(item.source_amount * 100) / 100}
+              {amountClass === 'negative' ? Math.round(item.source_amount * 100) / 100 : Math.round(item.destination_amount * 100) / 100}
             </div>
           </div>
           <div className={cx('col-sm-1', 'expand')}>

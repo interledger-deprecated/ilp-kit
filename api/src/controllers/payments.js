@@ -81,19 +81,19 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
         // Interledger
         if (transfer.source_transfers) {
           payment.transfers = transfer.source_transfers[0].id
-          payment.source_account = transfer.source_transfers[0].debits[0].account;
-          payment.source_amount = transfer.source_transfers[0].debits[0].amount;
-          payment.destination_account = transfer.destination_transfers[0].credits[0].account;
-          payment.destination_amount = transfer.destination_transfers[0].credits[0].amount;
+          payment.source_account = transfer.source_transfers[0].debits[0].account
+          payment.source_amount = transfer.source_transfers[0].debits[0].amount
+          payment.destination_account = transfer.destination_transfers[0].credits[0].account
+          payment.destination_amount = transfer.destination_transfers[0].credits[0].amount
         }
 
         // Same ledger
         else {
           payment.transfers = transfer.id
-          payment.source_account = transfer.debits[0].account;
-          payment.source_amount = transfer.debits[0].amount;
-          payment.destination_account = transfer.credits[0].account;
-          payment.destination_amount = transfer.credits[0].amount;
+          payment.source_account = transfer.debits[0].account
+          payment.source_amount = transfer.debits[0].amount
+          payment.destination_account = transfer.credits[0].account
+          payment.destination_amount = transfer.credits[0].amount
         }
 
         log.debug('Ledger transfer payment ID ' + id)
@@ -128,7 +128,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
     // TODO handle account doesn't exist exception
     // TODO handle not supplied params
     static * findPath () {
-      let destination = utils.parseDestination(this.body.destination, config.data.getIn(['ledger', 'uri']));
+      let destination = utils.parseDestination(this.body.destination, config.data.getIn(['ledger', 'uri']))
 
       if (destination.type === 'local') {
         let amount = this.body.source_amount || this.body.destination_amount
@@ -155,6 +155,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
       }
 
       this.body = path
+
     }
   }
 }
