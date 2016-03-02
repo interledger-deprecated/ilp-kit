@@ -45,7 +45,15 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         path: action.result,
-        pathRaw: action.result
+        pathRaw: action.result,
+        fail: {}
+      };
+    case types.PATHFIND_FAIL:
+      return {
+        ...state,
+        path: {},
+        pathRaw: {},
+        fail: action.error
       };
     case types.DESTROY:
       return initialState;

@@ -86,7 +86,7 @@ module.exports = class Ledger extends EventEmitter {
     }
   }
 
-  * findPath(options) {
+  findPath(options) {
     let pathOptions = {
       sourceAccount: this.ledgerUri + '/accounts/' + options.username,
       destinationAccount: options.destinationAccount

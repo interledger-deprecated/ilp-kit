@@ -13,6 +13,7 @@ const utils = require('../lib/utils')
 const PaymentFactory = require('../models/payment')
 const InvalidLedgerAccountError = require('../errors/invalid-ledger-account-error')
 const LedgerInsufficientFundsError = require('../errors/ledger-insufficient-funds-error')
+const NoPathsError = require('../errors/no-paths-error')
 
 PaymentsControllerFactory.constitute = [Auth, PaymentFactory, Log, Ledger, Config]
 function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
@@ -147,7 +148,13 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
         username: this.req.user.username
       }
 
-      this.body = yield ledger.findPath(options);
+      let path = yield ledger.findPath(options)
+
+      if (!path) {
+        throw new NoPathsError("No paths to specified destination found")
+      }
+
+      this.body = path
     }
   }
 }

@@ -119,6 +119,7 @@ export default class SendForm extends Component {
               switch (fail.id) {
                 case 'LedgerInsufficientFundsError': return 'You have insufficient funds to make the payment';
                 case 'InvalidLedgerAccountError': return 'Destination account doesn\'t exist';
+                case 'NoPathsError': return 'Couldn\'t find paths to the destination account';
                 default: return 'Something went wrong';
               }
             })()}
