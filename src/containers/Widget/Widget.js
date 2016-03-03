@@ -1,11 +1,10 @@
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import * as authActions from 'redux/actions/auth';
-import * as sendActions from 'redux/actions/send';
 import { isLoaded as isAuthLoaded, load as loadAuth } from 'redux/actions/auth';
 import connectData from 'helpers/connectData';
 
-import { SendForm } from 'components';
+import { SendForm } from 'containers';
 import { LoginForm } from 'components';
 
 import classNames from 'classnames/bind';
@@ -24,14 +23,10 @@ function fetchData(getState, dispatch) {
 @connect(
   state => ({
     user: state.auth.user,
-    send: state.send,
-    success: state.send.success,
-    path: state.send.path,
-    fail: state.send.fail,
     loginFail: state.auth.fail
   }),
   // Is this cool? Seems like it could be a bad idea
-  { ...authActions, ...sendActions })
+  authActions)
 export default class Widget extends Component {
   static propTypes = {
     user: PropTypes.object,
@@ -42,7 +37,6 @@ export default class Widget extends Component {
     transfer: PropTypes.func,
     findPath: PropTypes.func,
     path: PropTypes.object,
-    // TODO there are two unmount functions. One in authActions one in sendActions
     unmount: PropTypes.func,
     success: PropTypes.bool,
     fail: PropTypes.object
@@ -70,7 +64,7 @@ export default class Widget extends Component {
       destination: this.props.location.query.account
     };
 
-    const { user, login, success, fail, loginFail, transfer, findPath, path, unmount } = this.props;
+    const { user, login, loginFail, unmount } = this.props;
 
     return (
       <div>
@@ -83,16 +77,7 @@ export default class Widget extends Component {
           </div>
 
           {user &&
-          <SendForm
-            transfer={transfer}
-            findPath={findPath}
-            path={path}
-            unmount={unmount}
-            success={success}
-            fail={fail}
-            type="widget"
-            data={data}
-          />}
+          <SendForm type="widget" data={data} />}
 
           {!user &&
           <LoginForm login={login} fail={loginFail} unmount={unmount} type="widget" />}

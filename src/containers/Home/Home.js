@@ -1,11 +1,10 @@
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import * as authActions from 'redux/actions/auth';
-import * as sendActions from 'redux/actions/send';
 
+import { SendForm } from 'containers';
 import { LoginForm } from 'components';
 import { RegisterForm } from 'components';
-import { SendForm } from 'components';
 import { History } from 'containers';
 
 import classNames from 'classnames/bind';
@@ -17,23 +16,14 @@ const cx = classNames.bind({...sharedStyles, ...inputStyles, ...styles});
 @connect(
   state => ({
     user: state.auth.user,
-    send: state.send,
-    success: state.send.success,
-    fail: state.send.fail,
-    path: state.send.path,
     authFail: state.auth.fail,
     activeTab: state.auth.activeTab
   }),
-  { ...authActions, ...sendActions }) // TODO this is definitely wrong
+  authActions) // TODO this is definitely wrong
 export default class Home extends Component {
   static propTypes = {
     user: PropTypes.object,
-    success: PropTypes.bool,
-    fail: PropTypes.object,
     authFail: PropTypes.object,
-    transfer: PropTypes.func,
-    findPath: PropTypes.func,
-    path: PropTypes.object,
     login: PropTypes.func,
     register: PropTypes.func,
     unmount: PropTypes.func,
@@ -56,7 +46,7 @@ export default class Home extends Component {
   }
 
   render() {
-    const {user, success, fail, authFail, transfer, findPath, path, unmount, login, register, activeTab} = this.props;
+    const {user, authFail, unmount, login, register, activeTab} = this.props;
 
     return (
       <div>
@@ -118,7 +108,7 @@ export default class Home extends Component {
             <div className={cx('col-sm-4')}>
               <div className={cx('box')}>
                 <span className={cx('boxTitle')}>Send money</span>
-                <SendForm transfer={transfer} findPath={findPath} path={path} unmount={unmount} success={success} fail={fail} />
+                <SendForm />
               </div>
             </div>
           </div>

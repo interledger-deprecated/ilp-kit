@@ -1,11 +1,13 @@
 import React, {Component, PropTypes} from 'react';
+import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
 import sendValidation from './SendValidation';
+import * as sendActions from 'redux/actions/send';
 
 import Alert from 'react-bootstrap/lib/Alert';
 
 import classNames from 'classnames/bind';
-import inputStyles from '../../containers/App/Inputs.scss';
+import inputStyles from '../App/Inputs.scss';
 import styles from './SendForm.scss';
 const cx = classNames.bind({...inputStyles, ...styles});
 
@@ -14,7 +16,15 @@ const cx = classNames.bind({...inputStyles, ...styles});
   fields: ['destination', 'sourceAmount', 'destinationAmount'],
   validate: sendValidation
 })
-
+@connect(
+  state => ({
+    user: state.auth.user,
+    send: state.send,
+    success: state.send.success,
+    fail: state.send.fail,
+    path: state.send.path
+  }),
+  sendActions)
 export default class SendForm extends Component {
   static propTypes = {
     fields: PropTypes.object.isRequired,

@@ -4,7 +4,6 @@ import { isLoaded as isAuthLoaded, load as loadAuth } from 'redux/actions/auth';
 import {
     App,
     Home,
-    Send,
     Login,
     LoginSuccess,
     Register,
@@ -49,7 +48,6 @@ export default (store) => {
         { /* Routes */ }
         <Route path="login" component={Login}/>
         <Route path="register" component={Register}/>
-        <Route path="send" component={Send}/>
         <Route path="button" component={Button}/>
 
         { /* Catch all route */ }

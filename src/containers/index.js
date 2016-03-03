@@ -3,7 +3,7 @@ export Home from './Home/Home';
 export Login from './Login/Login';
 export LoginSuccess from './LoginSuccess/LoginSuccess';
 export Register from './Register/Register';
-export Send from './Send/Send';
+export SendForm from './SendForm/SendForm';
 export NotFound from './NotFound/NotFound';
 export Widget from './Widget/Widget';
 export History from './History/History';
