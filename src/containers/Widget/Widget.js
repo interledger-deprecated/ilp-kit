@@ -2,7 +2,7 @@ import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import * as authActions from 'redux/actions/auth';
 import { isLoaded as isAuthLoaded, load as loadAuth } from 'redux/actions/auth';
-import connectData from 'helpers/connectData';
+import { asyncConnect } from 'redux-async-connect';
 
 import { SendForm } from 'containers';
 import { LoginForm } from 'components';
@@ -11,15 +11,14 @@ import classNames from 'classnames/bind';
 import styles from './Widget.scss';
 const cx = classNames.bind(styles);
 
-function fetchData(getState, dispatch) {
-  const promises = [];
-  if (!isAuthLoaded(getState())) {
-    promises.push(dispatch(loadAuth()));
+@asyncConnect([{
+  deferred: true,
+  promise: ({store: {dispatch, getState}}) => {
+    if (!isAuthLoaded(getState())) {
+      return dispatch(loadAuth());
+    }
   }
-  return Promise.all(promises);
-}
-
-@connectData(fetchData)
+}])
 @connect(
   state => ({
     user: state.auth.user,

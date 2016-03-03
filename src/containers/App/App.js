@@ -4,27 +4,29 @@ import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap';
 import NavItem from 'react-bootstrap/lib/NavItem';
 import DocumentMeta from 'react-document-meta';
 import { isLoaded as isAuthLoaded, load as loadAuth, logout } from 'redux/actions/auth';
+import { routeActions } from 'react-router-redux';
 import { addPayment as historyAddPayment } from 'redux/actions/history';
-import { pushState } from 'redux-router';
-import connectData from 'helpers/connectData';
 import config from '../../config';
+import { asyncConnect } from 'redux-async-connect';
 
 import classNames from 'classnames/bind';
 import styles from './App.scss';
 const cx = classNames.bind(styles);
 
-function fetchData(getState, dispatch) {
-  const promises = [];
-  if (!isAuthLoaded(getState())) {
-    promises.push(dispatch(loadAuth()));
-  }
-  return Promise.all(promises);
-}
+@asyncConnect([{
+  promise: ({store: {dispatch, getState}}) => {
+    const promises = [];
 
-@connectData(fetchData)
+    if (!isAuthLoaded(getState())) {
+      promises.push(dispatch(loadAuth()));
+    }
+
+    return Promise.all(promises);
+  }
+}])
 @connect(
   state => ({user: state.auth.user}),
-  {logout, pushState, historyAddPayment})
+  {logout, pushState: routeActions.push, historyAddPayment})
 export default class App extends Component {
   static propTypes = {
     children: PropTypes.object.isRequired,
@@ -48,10 +50,10 @@ export default class App extends Component {
   componentWillReceiveProps(nextProps) {
     if (!this.props.user && nextProps.user) {
       // login
-      this.props.pushState(null, '/');
+      this.props.pushState('/loginSuccess');
     } else if (this.props.user && !nextProps.user) {
       // logout
-      this.props.pushState(null, '/');
+      this.props.pushState('/');
     }
   }
 
