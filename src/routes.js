@@ -23,7 +23,7 @@ export default (store) => {
     }
 
     if (!isAuthLoaded(store.getState())) {
-      store.dispatch(loadAuth()).then(checkAuth);
+      store.dispatch(loadAuth()).then(checkAuth).catch(checkAuth);
     } else {
       checkAuth();
     }
@@ -42,7 +42,11 @@ export default (store) => {
         { /* Routes */ }
         <Route path="login" component={Login}/>
         <Route path="register" component={Register}/>
-        <Route path="button" component={Button}/>
+
+        { /* Routes requiring login */ }
+        <Route onEnter={requireLogin}>
+          <Route path="button" component={Button}/>
+        </Route>
 
         { /* Catch all route */ }
         <Route path="*" component={NotFound} status={404} />
