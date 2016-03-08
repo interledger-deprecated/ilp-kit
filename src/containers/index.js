@@ -1,7 +1,6 @@
 export App from './App/App';
 export Home from './Home/Home';
 export Login from './Login/Login';
-export LoginSuccess from './LoginSuccess/LoginSuccess';
 export Register from './Register/Register';
 export SendForm from './SendForm/SendForm';
 export NotFound from './NotFound/NotFound';

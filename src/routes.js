@@ -5,7 +5,6 @@ import {
     App,
     Home,
     Login,
-    LoginSuccess,
     Register,
     Button,
     NotFound,
@@ -39,11 +38,6 @@ export default (store) => {
       <Route path="/" component={App}>
         { /* Home (main) route */ }
         <IndexRoute component={Home}/>
-
-        { /* Routes requiring login */ }
-        <Route onEnter={requireLogin}>
-          <Route path="loginSuccess" component={LoginSuccess}/>
-        </Route>
 
         { /* Routes */ }
         <Route path="login" component={Login}/>
