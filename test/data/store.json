@@ -1,0 +1,49 @@
+{
+  "auth": {
+    "loaded": true,
+    "loading": false,
+    "fail": {},
+    "activeTab": "login",
+    "user": {
+      "id": 1,
+      "username": "alice",
+      "account": "http://localhost:3001/accounts/alice",
+      "password": "alice",
+      "balance": 1493852.96
+    }
+  },
+  "send": {
+    "success": false,
+    "fail": {}
+  },
+  "history": {
+    "success": true,
+    "fail": {},
+    "history": [
+      {
+        "id": "cf8c0577-bb6f-49fb-af2a-cc7a6d35859f",
+        "source_account": "http://localhost:3002/accounts/alice",
+        "destination_user": 1,
+        "destination_account": "http://localhost:3001/accounts/alice",
+        "transfers": "http://localhost:3001/transfers/cd23e131-46d3-4a00-98e5-df0afa84c5f5",
+        "source_amount": "14.1300",
+        "destination_amount": "10.9566",
+        "created_at": "2016-03-03T02:54:55.127Z",
+        "destinationUserUsername": "alice",
+        "counterpartyAccount": "http://localhost:3002/accounts/alice"
+      },
+      {
+        "id": "c9c7a32d-e89d-4fa5-948c-aaeb580314b0",
+        "source_user": 1,
+        "source_account": "http://localhost:3001/accounts/alice",
+        "destination_account": "http://localhost:3002/accounts/alice",
+        "transfers": "http://localhost:3001/transfers/65466f79-167b-4745-acea-f54176aa670f",
+        "source_amount": "11.0000",
+        "destination_amount": "14.1292",
+        "created_at": "2016-03-03T02:27:23.815Z",
+        "sourceUserUsername": "alice",
+        "counterpartyAccount": "http://localhost:3002/accounts/alice"
+      }
+    ]
+  }
+}
