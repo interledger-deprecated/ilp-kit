@@ -1,10 +1,10 @@
-import * as types from '../actionTypes';
+import * as types from '../actionTypes'
 
-const initialState = {
+export const initialState = {
   loaded: false,
   fail: {},
   activeTab: 'login'
-};
+}
 
 export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
