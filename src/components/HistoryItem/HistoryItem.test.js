@@ -10,28 +10,28 @@ const client = new ApiClient()
 import { HistoryItem } from '../'
 import mockStore from '../../../test/data/store'
 
-import classNames from 'classnames/bind';
+import classNames from 'classnames/bind'
 import styles from '../../components/HistoryItem/HistoryItem.scss'
 const cx = classNames.bind(styles);
 
-describe('HistoryItem', () => {
+describe('(component) HistoryItem', () => {
   let store, rendered
 
-  const historyItemMock = mockStore.history.history[0];
-  const userMock = mockStore.auth.user;
+  const historyItemMock = mockStore.history.history[0]
+  const userMock = mockStore.auth.user
 
-  store = createStore(browserHistory, client, mockStore);
+  store = createStore(browserHistory, client, mockStore)
   rendered = TestUtils.renderIntoDocument(
     <Provider store={store} key='provider'>
       <HistoryItem item={historyItemMock} user={userMock}/>
     </Provider>
   )
 
-  it('should render correctly', () => {
+  it('render correctly', () => {
     return expect(rendered).to.be.ok
   })
 
-  it('should render with correct counterparty', () => {
+  it('render with correct counterparty', () => {
     const element = TestUtils.findRenderedDOMComponentWithClass(rendered, cx('counterparty'))
 
     expect(element).to.exist

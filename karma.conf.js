@@ -55,7 +55,10 @@ module.exports = function (config) {
           __DEVELOPMENT__: true,
           __DEVTOOLS__: false  // <-------- DISABLE redux-devtools HERE
         })
-      ]
+      ],
+      node: {
+        fs: "empty"
+      }
     },
 
     webpackServer: {
