@@ -1,0 +1,25 @@
+{
+  "accounts": {
+    "admin": {
+      "id": 1,
+      "account": "http://localhost/accounts/admin",
+      "username": "admin",
+      "password": "admin",
+      "balance": 0
+    },
+    "alice": {
+      "id": 1,
+      "account": "http://localhost/accounts/alice",
+      "username": "alice",
+      "password": "alice",
+      "balance": 1000
+    },
+    "bob": {
+      "id": 1,
+      "account": "http://localhost/accounts/bob",
+      "username": "bob",
+      "password": "bob",
+      "balance": 1000
+    }
+  }
+}

@@ -1,4 +1,7 @@
-# Five Bells Ledger UI
+# Five Bells Ledger UI [![circle][circle-image]][circle-url]
+                      
+[circle-image]: https://circleci.com/gh/interledger/five-bells-ledger-ui.svg?style=shield&circle-token=65d802e1ea641aabcc95f8d28f2c6ade577716a9
+[circle-url]: https://circleci.com/gh/interledger/five-bells-ledger-ui
 
 An example UI implementation for Five Bells Ledger
 

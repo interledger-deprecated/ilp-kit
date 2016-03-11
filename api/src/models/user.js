@@ -17,8 +17,6 @@ function UserFactory (sequelize, validator) {
     }
 
     static convertToExternal (data) {
-      delete data.password
-
       return data
     }
 

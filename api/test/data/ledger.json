@@ -1,0 +1,29 @@
+{
+  "accounts": {
+    "admin": {
+      "id": "http://localhost/accounts/admin",
+      "name": "admin",
+      "balance": "0",
+      "password": "admin",
+      "is_admin": true,
+      "is_disabled": false,
+      "minimum_allowed_balance": "0"
+    },
+    "alice": {
+      "id": "http://localhost/accounts/alice",
+      "name": "alice",
+      "balance": "1000",
+      "password": "alice",
+      "is_disabled": false,
+      "minimum_allowed_balance": "0"
+    },
+    "bob": {
+      "id": "http://localhost/accounts/bob",
+      "name": "bob",
+      "balance": "1000",
+      "password": "bob",
+      "is_disabled": false,
+      "minimum_allowed_balance": "0"
+    }
+  }
+}

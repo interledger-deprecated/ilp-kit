@@ -29,7 +29,8 @@
     "start-dev-api": "better-npm-run start-dev-api",
     "watch-client": "better-npm-run watch-client",
     "dev": "concurrent --kill-others \"npm run watch-client\" \"npm run start-dev\" \"npm run start-dev-api\"",
-    "test": "karma start"
+    "test": "karma start && npm run test-api",
+    "test-api": "./node_modules/.bin/mocha"
   },
   "betterScripts": {
     "start-prod": {
@@ -110,6 +111,7 @@
     "lodash": "^3.10.1",
     "mag": "^0.9.1",
     "mag-hub": "^0.1.1",
+    "moment": "^2.12.0",
     "node-sass": "^3.3.3",
     "passport-local": "^1.0.0",
     "pg": "^4.4.4",
@@ -146,6 +148,7 @@
     "bootstrap-sass-loader": "^1.0.9",
     "chai": "^3.3.0",
     "clean-webpack-plugin": "^0.1.6",
+    "co-mocha": "^1.1.2",
     "concurrently": "^0.1.1",
     "css-loader": "^0.23.1",
     "eslint": "1.10.3",
@@ -163,7 +166,7 @@
     "karma-phantomjs-launcher": "^0.2.1",
     "karma-sourcemap-loader": "^0.3.5",
     "karma-webpack": "^1.7.0",
-    "mocha": "^2.3.3",
+    "mocha": "^2.4.5",
     "phantomjs": "^1.9.18",
     "phantomjs-polyfill": "0.0.1",
     "react-transform-catch-errors": "^1.0.0",
@@ -174,9 +177,11 @@
     "redux-devtools-log-monitor": "^1.0.1",
     "redux-mock-store": "0.0.6",
     "sass-loader": "^3.1.2",
+    "sqlite3": "^3.1.1",
     "strip-loader": "^0.1.0",
     "style-loader": "^0.13.0",
     "superagent-mocker": "^0.3.0",
+    "supertest": "^1.2.0",
     "webpack": "^1.12.2",
     "webpack-dev-middleware": "^1.2.0",
     "webpack-hot-middleware": "^2.4.1"
