@@ -1,9 +1,9 @@
-# Five Bells Ledger UI [![circle][circle-image]][circle-url]
+# Five Bells Wallet [![circle][circle-image]][circle-url]
                       
-[circle-image]: https://circleci.com/gh/interledger/five-bells-ledger-ui.svg?style=shield&circle-token=65d802e1ea641aabcc95f8d28f2c6ade577716a9
-[circle-url]: https://circleci.com/gh/interledger/five-bells-ledger-ui
+[circle-image]: https://circleci.com/gh/interledger/five-bells-wallet.svg?style=shield&circle-token=65d802e1ea641aabcc95f8d28f2c6ade577716a9
+[circle-url]: https://circleci.com/gh/interledger/five-bells-wallet
 
-An example UI implementation for Five Bells Ledger
+Five Bells Wallet
 
 ## Installation
 
@@ -28,7 +28,7 @@ Use the following configuration options as environment variables:
 
 * `API_HOSTNAME` Publicly visible API hostname
 * `API_PORT` Publicly visible API port
-* `API_DB_URI` (e.g.: postgres://root:password@localhost/ledgerui) URI for connecting to a database.    
+* `API_DB_URI` (e.g.: postgres://root:password@localhost/wallet) URI for connecting to a database.    
 * `API_SESSION_SECRET` App session secret
 * `API_LEDGER_URI` Ledger URI
 * `API_LEDGER_URI_PRIVATE` Ledger URI private (requests go to this uri)

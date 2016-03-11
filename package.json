@@ -1,19 +1,20 @@
 {
-  "name": "five-bells-ledger-ui",
+  "name": "five-bells-wallet",
   "version": "1.0.0",
-  "description": "Example UI implementation for Five Bells Ledger",
+  "description": "Five Bells Wallet",
   "main": "bin/server.js",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/interledger/five-bells-ledger-ui"
+    "url": "https://github.com/interledger/five-bells-wallet"
   },
   "author": "Interledger Team <info@interledger.org>",
-  "homepage": "https://github.com/interledger/five-bells-ledger-ui",
+  "homepage": "https://github.com/interledger/five-bells-wallet",
   "keywords": [
     "five-bells",
     "ilp",
     "ledger",
+    "wallet",
     "ui",
     "payments",
     "finance"

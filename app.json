@@ -1,12 +1,13 @@
 {
-  "name": "five-bells-ledger-ui",
-  "description": "Example UI implementation for Five Bells Ledger",
-  "repository": "https://github.com/interledger/five-bells-ledger-ui",
+  "name": "five-bells-wallet",
+  "description": "Five Bells Wallet",
+  "repository": "https://github.com/interledger/five-bells-wallet",
   "logo": "http://node-js-sample.herokuapp.com/node.svg",
   "keywords": [
     "five-bells",
     "ilp",
     "ledger",
+    "wallet",
     "ui",
     "payments",
     "finance"

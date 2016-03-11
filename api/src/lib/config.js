@@ -4,7 +4,7 @@ const Config = require('five-bells-shared').Config
 const ledgerPrefix = 'ledger'
 const envPrefix = 'api'
 
-module.exports = class LedgerUIConfig {
+module.exports = class WalletConfig {
   constructor () {
     let localConfig = {}
     localConfig.ledger = {

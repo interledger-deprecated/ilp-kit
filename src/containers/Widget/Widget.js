@@ -70,7 +70,7 @@ export default class Widget extends Component {
         <div className={cx('before')}></div>
         <div className={cx('container')}>
           <a href="" className={cx('fa', 'fa-close', 'close')} onClick={this.handleClose}> </a>
-          <div className={cx('title')}>LedgerUI.com</div>
+          <div className={cx('title')}>FiveBellsWallet.com</div>
           <div className={cx('description')}>
             So you wanna pay {data.currencyCode} {data.amount} to {destinationName}
           </div>

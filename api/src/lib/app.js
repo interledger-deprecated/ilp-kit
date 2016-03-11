@@ -103,7 +103,7 @@ module.exports = class App {
 
   listen () {
     this.app.listen(this.config.getIn(['server', 'port']))
-    this.log.info('ledger-ui listening on ' + this.config.getIn(['server', 'bind_ip']) +
+    this.log.info('wallet listening on ' + this.config.getIn(['server', 'bind_ip']) +
       ':' + this.config.getIn(['server', 'port']))
     this.log.info('public at ' + this.config.getIn(['server', 'base_uri']))
   }
