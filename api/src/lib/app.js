@@ -52,9 +52,13 @@ module.exports = class App {
       yield* next;
     });
 
+    // Enable CORS for socket.io
+    app.io.set('origins', '*')
+
     let listeners = {}
 
     // TODO ensure the username is the currently logged in user
+    // (and when doing this make sure there is an API-based login system for non-UI clients)
     app.io.route('subscribe', function (next, username) {
       let socket = this.socket
 
