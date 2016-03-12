@@ -51,7 +51,8 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
       this.body = item.getDataExternal()
     }
 
-    // TODO handle payment creation. Shouldn't rely on notification seriv
+    // TODO handle payment creation. Shouldn't rely on notification service
+    // TODO same ledger payment using webfinger shows two payments in history
     static * putResource () {
       const _this = this
 
@@ -64,10 +65,12 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
 
       payment.source_user = this.req.user.id
 
+      let destination = yield utils.parseDestination(payment.destination_account, config.data.getIn(['ledger', 'uri']))
+
       // TODO fill the destination_user
       const options = {
         sourceAmount: payment.source_amount,
-        destinationAccount: payment.destination_account,
+        destinationAccount: destination.accountUri,
         destinationAmount: payment.destination_amount,
         path: payment.path,
         username: this.req.user.username,
@@ -128,7 +131,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
     // TODO handle account doesn't exist exception
     // TODO handle not supplied params
     static * findPath () {
-      let destination = utils.parseDestination(this.body.destination, config.data.getIn(['ledger', 'uri']))
+      let destination = yield utils.parseDestination(this.body.destination, config.data.getIn(['ledger', 'uri']))
 
       if (destination.type === 'local') {
         let amount = this.body.source_amount || this.body.destination_amount
