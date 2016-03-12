@@ -8,6 +8,7 @@ const AuthController = require('../controllers/auth')
 const UsersController = require('../controllers/users')
 const PaymentsController = require('../controllers/payments')
 const NotificationsController = require('../controllers/notifications')
+const WebfingerController = require('../controllers/webfinger')
 
 module.exports = class Router {
   static constitute () { return [ Container ] }
@@ -31,6 +32,9 @@ module.exports = class Router {
 
     const notifications = this.container.constitute(NotificationsController)
     notifications.init(this.router)
+
+    const webfinger = this.container.constitute(WebfingerController)
+    webfinger.init(this.router)
   }
 
   attach (app) {

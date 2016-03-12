@@ -1,0 +1,13 @@
+{
+  "subject": "acct:alice@localhost",
+  "links": [
+    {
+      "rel": "http://webfinger.net/rel/ledgerUri",
+      "href": "http://localhost:3001"
+    },
+    {
+      "rel": "http://webfinger.net/rel/ledgerAccount",
+      "href": "http://localhost:3001/accounts/alice"
+    }
+  ]
+}

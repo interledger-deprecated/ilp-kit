@@ -8,7 +8,7 @@ module.exports = class WalletConfig {
   constructor () {
     let localConfig = {}
     localConfig.ledger = {
-      uri: Config.getEnv(envPrefix, 'LEDGER_URI'),
+      uri: Config.getEnv(envPrefix, 'LEDGER_URI') || 'http://localhost:3001',
       uriPrivate: Config.getEnv(envPrefix, 'LEDGER_URI_PRIVATE') || Config.getEnv(envPrefix, 'LEDGER_URI'),
       admin: {
         name: Config.getEnv(envPrefix, 'LEDGER_ADMIN_NAME'),

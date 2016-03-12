@@ -49,6 +49,10 @@ app.use('/socket.io', (req, res) => {
   proxyApi.web(req, res, {target: targetUrl + '/socket.io'});
 });
 
+app.use('/.well-known/webfinger', (req, res) => {
+  proxyApi.web(req, res, {target: targetUrl + '/webfinger'});
+});
+
 server.on('upgrade', (req, socket, head) => {
   proxyApi.ws(req, socket, head, {target: targetUrl + '/socket.io'});
 });
