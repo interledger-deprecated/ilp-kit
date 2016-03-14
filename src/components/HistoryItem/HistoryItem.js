@@ -21,6 +21,14 @@ export default class HistoryItem extends Component {
     this.props.toggleJson(this.props.item.id, this.props.item.transfers);
   }
 
+  // Amount formating
+  amount = (num) => {
+    let am = parseFloat(num)
+    am = am > 1 ? am.toFixed(2) : am.toPrecision(2)
+
+    return am.replace(/\.?0+$/, '')
+  }
+
   render() {
     const item = contextualizePayment(this.props.item, this.props.user);
 
@@ -38,7 +46,7 @@ export default class HistoryItem extends Component {
           <div className="col-sm-4">
             <div className={cx('amount', amountClass)}>
               {/* TODO Show both source and destination amounts */}
-              {amountClass === 'negative' ? Math.round(item.source_amount * 100) / 100 : Math.round(item.destination_amount * 100) / 100}
+              {amountClass === 'negative' ? this.amount(item.source_amount) : this.amount(item.destination_amount)}
             </div>
           </div>
           <div className={cx('col-sm-1', 'expand')}>
