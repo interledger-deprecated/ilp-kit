@@ -8,6 +8,10 @@
     {
       "rel": "http://webfinger.net/rel/ledgerAccount",
       "href": "http://localhost:3001/accounts/alice"
+    },
+    {
+      "rel": "http://webfinger.net/rel/socketIOUri",
+      "href": "http://localhost/socket.io"
     }
   ]
 }

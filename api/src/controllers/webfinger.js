@@ -45,11 +45,16 @@ function WebfingerControllerFactory (log, config) {
           {
             // TODO decide on rel names
             "rel" : "http://webfinger.net/rel/ledgerUri",
-            "href" : config.data.getIn(['ledger', 'uri'])
+            "href" : config.data.getIn(['ledger', 'public_uri'])
           },
           {
             "rel" : "http://webfinger.net/rel/ledgerAccount",
-            "href" : config.data.getIn(['ledger', 'uri']) + '/accounts/' + account
+            "href" : config.data.getIn(['ledger', 'public_uri']) + '/accounts/' + account
+          },
+          {
+            // TODO an actual rel to the docs
+            "rel" : "http://webfinger.net/rel/socketIOUri",
+            "href" : config.data.getIn(['server', 'base_uri']) + '/socket.io'
           }
         ]
       }

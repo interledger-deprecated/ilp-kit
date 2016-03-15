@@ -45,10 +45,6 @@ app.use('/api', (req, res) => {
   proxyApi.web(req, res, {target: targetUrl});
 });
 
-app.use('/socket.io', (req, res) => {
-  proxyApi.web(req, res, {target: targetUrl + '/socket.io'});
-});
-
 app.use('/.well-known/webfinger', (req, res) => {
   proxyApi.web(req, res, {target: targetUrl + '/webfinger'});
 });
