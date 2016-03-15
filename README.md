@@ -26,6 +26,7 @@ npm run start
 
 Use the following configuration options as environment variables:
 
+* `API_PRIVATE_HOSTNAME` Private API hostname
 * `API_HOSTNAME` Publicly visible API hostname
 * `API_PORT` Publicly visible API port
 * `API_DB_URI` (e.g.: postgres://root:password@localhost/wallet) URI for connecting to a database.    
