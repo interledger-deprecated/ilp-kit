@@ -33,6 +33,7 @@ function UsersControllerFactory (Auth, User, log, ledger) {
       // Reload the ledger account
       ledgerUser = yield ledger.createAccount({
         username: this.req.user.username,
+        password: this.req.user.password,
         balance: this.req.user.balance
       })
 
