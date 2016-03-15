@@ -28,7 +28,7 @@ const proxyApi = httpProxy.createProxyServer({
   ws: true
 });
 const proxyLedger = httpProxy.createProxyServer({
-  target: config.ledgerUriPrivate
+  target: config.ledgerUri
 });
 
 app.use(compression());

@@ -14,7 +14,7 @@ module.exports = Object.assign({
   port: process.env.CLIENT_PORT,
   apiHost: process.env.API_HOSTNAME || 'localhost',
   apiPort: process.env.API_PORT || '3000',
-  ledgerUriPrivate: process.env.API_LEDGER_URI_PRIVATE || process.env.API_LEDGER_URI,
+  ledgerUri: process.env.API_LEDGER_URI,
   app: {
     title: 'Five Bells Wallet',
     description: 'Five Bells Wallet',

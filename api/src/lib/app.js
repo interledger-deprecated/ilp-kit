@@ -54,6 +54,7 @@ module.exports = class App {
 
     let listeners = {}
 
+    // TODO move socket stuff somewhere else
     // TODO ensure the username is the currently logged in user
     app.io.route('subscribe', function (next, username) {
       let socket = this.socket

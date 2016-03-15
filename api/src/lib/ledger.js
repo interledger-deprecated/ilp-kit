@@ -17,14 +17,14 @@ module.exports = class Ledger extends EventEmitter {
     this.config = config.data
     this.log = log('ledger')
     this.ledgerUri = this.config.getIn(['ledger', 'uri'])
-    this.ledgerUriPrivate = this.config.getIn(['ledger', 'uriPrivate'])
+    this.ledgerUriPublic = this.config.getIn(['ledger', 'public_uri'])
   }
 
   * subscribe () {
     try {
       this.log.info('subscribing to ledger ' + this.ledgerUri)
       const response = yield superagent
-        .put(this.ledgerUriPrivate + '/subscriptions/' + uuid())
+        .put(this.ledgerUri + '/subscriptions/' + uuid())
         .auth(this.config.getIn(['ledger', 'admin', 'name']), this.config.getIn(['ledger', 'admin', 'pass']))
         .send({
           'owner': this.config.getIn(['ledger', 'admin', 'name']),
@@ -43,11 +43,11 @@ module.exports = class Ledger extends EventEmitter {
     const affectedAccounts = _.uniq(transfer.debits.map((debit) => debit.account)
       .concat(transfer.credits.map((credit) => credit.account)))
       .map((uri) => {
-        if (!_.startsWith(uri, this.ledgerUri + '/accounts/')) {
+        if (!_.startsWith(uri, this.ledgerUriPublic + '/accounts/')) {
           throw new Error('received an invalid notification')
         }
 
-        return uri.slice(this.ledgerUri.length + 10)
+        return uri.slice(this.ledgerUriPublic.length + 10)
       })
 
     // TODO who should emit this events? might make more sense if the event
@@ -58,7 +58,7 @@ module.exports = class Ledger extends EventEmitter {
 
   * getAccount (user, admin) {
     const response = yield superagent
-      .get(this.ledgerUriPrivate + '/accounts/' + user.username)
+      .get(this.ledgerUri + '/accounts/' + user.username)
       .auth(admin ? this.config.getIn(['ledger', 'admin', 'name']) : user.username, admin ? this.config.getIn(['ledger', 'admin', 'pass']): user.password)
       .end()
 
@@ -77,8 +77,9 @@ module.exports = class Ledger extends EventEmitter {
       }
 
       const response = yield superagent
-        .put(this.ledgerUriPrivate + '/accounts/' + user.username)
+        .put(this.ledgerUri + '/accounts/' + user.username)
         .send(data)
+        // TODO do we need auth?
         .auth(this.config.getIn(['ledger', 'admin', 'name']), this.config.getIn(['ledger', 'admin', 'pass']))
       return response.body
     } catch (e) {
@@ -88,7 +89,7 @@ module.exports = class Ledger extends EventEmitter {
 
   findPath(options) {
     let pathOptions = {
-      sourceAccount: this.ledgerUri + '/accounts/' + options.username,
+      sourceAccount: this.ledgerUriPublic + '/accounts/' + options.username,
       destinationAccount: options.destinationAccount
     }
 
@@ -103,7 +104,7 @@ module.exports = class Ledger extends EventEmitter {
 
   * transfer(options) {
     let response
-    let sourceAccount = this.ledgerUri + '/accounts/' + options.username
+    let sourceAccount = this.ledgerUriPublic + '/accounts/' + options.username
 
     // Interledger
     // TODO Use a better mechanism to check if the destinationAccount is in a different ledger
@@ -126,7 +127,7 @@ module.exports = class Ledger extends EventEmitter {
       const paymentId = uuid()
 
       response = yield superagent
-        .put(this.ledgerUriPrivate + '/transfers/' + paymentId)
+        .put(this.ledgerUri + '/transfers/' + paymentId)
         .send({
           debits: [{
             account: sourceAccount,
@@ -134,7 +135,7 @@ module.exports = class Ledger extends EventEmitter {
             authorized: true
           }],
           credits: [{
-            account: this.ledgerUri + '/accounts/' + options.destinationAccount,
+            account: this.ledgerUriPublic + '/accounts/' + options.destinationAccount,
             amount: options.destinationAmount
           }],
           expires_at: "2016-06-16T00:00:01.000Z"
