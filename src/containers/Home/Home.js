@@ -1,6 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import * as authActions from 'redux/actions/auth';
+import { amount } from '../../utils/amount';
 
 import { SendForm } from 'containers';
 import { LoginForm } from 'components';
@@ -92,7 +93,7 @@ export default class Home extends Component {
                 <div className={cx('balanceContainer')}>
                   <div className={cx('balanceDescription')}>Your Balance</div>
                   <div className={cx('balance')}>
-                    {user.balance}
+                    {amount(user.balance)}
                     <span className={cx('but')}>*</span>
                   </div>
                   <button className={cx('btn', 'lu-btn')} onClick={this.reload}>Get More</button>
