@@ -11,13 +11,15 @@ import ApiClient from './helpers/ApiClient'
 import io from 'socket.io-client'
 import {Provider} from 'react-redux'
 import { Router, browserHistory } from 'react-router'
-import { ReduxAsyncConnect } from 'redux-async-connect';
+import { ReduxAsyncConnect } from 'redux-async-connect'
 
 import getRoutes from './routes'
 const client = new ApiClient()
 
 client.get('/config')
   .then((config) => {
+    global.config = config
+
     // Remote log service
     Raven.config(config.sentryUri).install()
   })

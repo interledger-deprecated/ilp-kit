@@ -10,6 +10,8 @@ const cx = classNames.bind({...sharedStyles, ...inputStyles, ...styles});
 
 export default class Button extends Component {
   render() {
+    const config = global.config
+
     return (
       <div className={cx('box')}>
         <h2>Pay Button</h2>
@@ -23,7 +25,7 @@ export default class Button extends Component {
             <h3>Demo</h3>
             <p>Try the demo below</p>
             <div>
-              <PayButton destination="http://localhost:3002/accounts/bob" amount="10"
+              <PayButton destination={config.ledgerUri + '/accounts/bob'} amount="10"
                 currencyCode="USD" countryCode="US">Make Payment</PayButton>
             </div>
           </div>
@@ -50,7 +52,7 @@ export default class Button extends Component {
                 '    countryCode: "US"\n' +
                 '  }, {\n' +
                 '    interledger: {\n' +
-                '      account: "http://localhost.com/accounts/bob"\n' +
+                '      account: "' + config.ledgerUri + '/accounts/bob"\n' +
                 '    }\n' +
                 '  });\n' +
                 '};\n' +

@@ -23,6 +23,7 @@ module.exports = Object.assign({
     }
   },
   public: {
-    sentryUri: process.env.SENTRY_URI
+    sentryUri: process.env.SENTRY_URI,
+    ledgerUri: process.env.API_LEDGER_PUBLIC_URI
   }
 }, environment);
