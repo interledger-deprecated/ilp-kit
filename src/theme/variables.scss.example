@@ -32,6 +32,8 @@ $box-title-text-color: #444444;
 $text-color: #000;
 $faded-text-color: #b0b0b0;
 
+$success-background: #DFF0D8;
+
 // Pages
 $history-payment-separator-color: #f0f0f0;
 $history-date-text-color: #b0b0b0;

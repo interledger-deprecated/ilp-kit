@@ -2,8 +2,7 @@
 @import '../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss';
 
 .item {
-  margin-top: 15px;
-  padding-bottom: 15px;
+  padding: 15px;
   border-bottom: 1px solid $history-payment-separator-color;
 }
 .counterparty {

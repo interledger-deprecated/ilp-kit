@@ -1,4 +1,5 @@
 import React, {Component, PropTypes} from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import {connect} from 'react-redux';
 import * as historyActions from 'redux/actions/history';
 
@@ -31,13 +32,23 @@ export default class Home extends Component {
     const {history, user, toggleJson} = this.props;
 
     return (
-      <div>
-        <ul className={cx('list')}>
+      <ul className={cx('list')}>
+        {history && history.length &&
+          <ReactCSSTransitionGroup transitionName={{
+            enter: cx('enter'),
+            enterActive: cx('enter-active'),
+            leave: cx('leave'),
+            leaveActive: cx('leave-active')
+          }} transitionEnterTimeout={1000} transitionLeaveTimeout={300}>
           {history && history.map(item => {
-            return <li key={item.id}><HistoryItem item={item} user={user} toggleJson={toggleJson} /></li>;
+            return (
+              <li key={item.id}>
+                <HistoryItem item={item} user={user} toggleJson={toggleJson}/>
+              </li>
+            );
           })}
-        </ul>
-      </div>
-    );
+          </ReactCSSTransitionGroup>}
+      </ul>
+    )
   }
 }
