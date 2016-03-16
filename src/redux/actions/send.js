@@ -1,6 +1,19 @@
 import uuid4 from 'uuid4';
 import * as types from '../actionTypes';
 
+export function destinationChange(destination) {
+  // TODO cache
+  // TODO don't make a call for a local ledger destination
+  return {
+    types: [types.DESTINATION_CHANGE, types.DESTINATION_CHANGE_SUCCESS, types.DESTINATION_CHANGE_FAIL],
+    promise: (client) => client.get('/analyze/destination', {
+      params: {
+        destination: destination
+      }
+    })
+  };
+}
+
 export function findPath(values) {
   return {
     types: [types.PATHFIND, types.PATHFIND_SUCCESS, types.PATHFIND_FAIL],

@@ -2,14 +2,22 @@
 
 const _ = require('lodash')
 const WebFinger = require('webfinger.js')
+const superagent = require('superagent-promise')(require('superagent'), Promise)
 
 // TODO implement caching
+// TODO turn into a service
 module.exports = class utils {
-  static * parseDestination (destination, ledgerUri) {
+  static * parseDestination (options) {
+    let destination = options.destination
+    let currentLedgerUri = options.currentLedgerUri
+    let retrieveLedgerInfo = options.retrieveLedgerInfo
+
     // Ledger account URI
     // TODO Use a better mechanism to check if the destinationAccount is in a different ledger
     if (destination.indexOf('http://') > -1 || destination.indexOf('https://') > -1) {
       // TODO check if it's the current ledger. If yes, it's not an interledger transaction
+      // TODO should also parse the ledger info here
+      // TODO should also retrieve ledger info here
       return {
         type: 'foreign',
         accountUri: destination
@@ -27,22 +35,33 @@ module.exports = class utils {
       });
 
       try {
-        const accountUri = yield new Promise(function(resolve, reject){
+        const data = yield new Promise(function(resolve, reject){
           webfinger.lookup(destination,
             function(err, res){
               if (err) {
                 return reject(err)
               }
 
-              resolve(_.filter(res.object.links, {rel: 'http://webfinger.net/rel/ledgerAccount'})[0].href)
+              resolve(res.object)
             }
           )
         })
 
-        return {
+        let parsedDestination = {
           type: 'foreign',
-          accountUri: accountUri
+          accountUri: _.filter(data.links, {rel: 'http://webfinger.net/rel/ledgerAccount'})[0].href,
+          ledgerUri: _.filter(data.links, {rel: 'http://webfinger.net/rel/ledgerUri'})[0].href
         }
+
+        if (retrieveLedgerInfo) {
+          // TODO handle exceptions
+          parsedDestination.ledgerInfo = yield superagent
+            .get(parsedDestination.ledgerUri)
+            .end()
+          parsedDestination.ledgerInfo = parsedDestination.ledgerInfo.body
+        }
+
+        return parsedDestination
       }
       // TODO Handle
       catch (e) {
@@ -51,9 +70,20 @@ module.exports = class utils {
     }
 
     // Local account
-    return {
+    let parsedDestination = {
       type: 'local',
-      accountUri: ledgerUri + '/accounts/' + destination
+      accountUri: currentLedgerUri + '/accounts/' + destination,
+      ledgerUri: currentLedgerUri
     }
+
+    // TODO api should already know the current ledgerInfo at this point
+    if (retrieveLedgerInfo) {
+      parsedDestination.ledgerInfo = yield superagent
+        .get(parsedDestination.ledgerUri)
+        .end()
+      parsedDestination.ledgerInfo = parsedDestination.ledgerInfo.body
+    }
+
+    return parsedDestination
   }
 }

@@ -1,6 +1,6 @@
 @import '../../theme/variables.scss';
 
-.lu-form-control {
+.lu-form-control, .lu-input-group-addon {
   background: $input-background-color;
   border: none;
   border-radius: 0;
@@ -13,6 +13,7 @@
   box-shadow: none;
   -webkit-box-shadow: none;
 }
+
 .lu-input-lg {
   font-size: 15px;
   padding: 25px 20px;
@@ -24,5 +25,28 @@
   &:hover, &:active, &:focus {
     color: $btn-hover-text-color;
     background: lighten($btn-background-color, 5%);
+  }
+}
+
+// Input groups
+.lu-input-group {
+  .lu-input-group-addon {
+    background: $input-background-color;
+    font-size: 20px;
+    padding: 2px 2px 0 15px;
+  }
+
+  input {
+    padding: 25px 20px 25px 2px;
+  }
+}
+.disabled {
+  .lu-input-group-addon {
+    background: $input-disabled-background-color;
+  }
+}
+.focused {
+  .lu-input-group-addon {
+    background: $input-focus-background-color;
   }
 }

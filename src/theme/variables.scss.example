@@ -18,6 +18,7 @@ $header-logo-color: #fff;
 // Forms
 $input-background-color: #f6f6f6;
 $input-focus-background-color: #fafafa;
+$input-disabled-background-color: #eeeeee;
 $btn-background-color: #526667;
 $btn-text-color: #fff;
 $btn-hover-text-color: #fff;

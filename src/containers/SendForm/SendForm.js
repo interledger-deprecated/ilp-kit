@@ -1,15 +1,15 @@
-import React, {Component, PropTypes} from 'react';
-import {connect} from 'react-redux';
-import {reduxForm} from 'redux-form';
-import sendValidation from './SendValidation';
-import * as sendActions from 'redux/actions/send';
+import React, {Component, PropTypes} from 'react'
+import {connect} from 'react-redux'
+import {reduxForm} from 'redux-form'
+import sendValidation from './SendValidation'
+import * as sendActions from 'redux/actions/send'
 
-import Alert from 'react-bootstrap/lib/Alert';
+import Alert from 'react-bootstrap/lib/Alert'
 
-import classNames from 'classnames/bind';
-import inputStyles from '../App/Inputs.scss';
-import styles from './SendForm.scss';
-const cx = classNames.bind({...inputStyles, ...styles});
+import classNames from 'classnames/bind'
+import inputStyles from '../App/Inputs.scss'
+import styles from './SendForm.scss'
+const cx = classNames.bind({...inputStyles, ...styles})
 
 @reduxForm({
   form: 'send',
@@ -19,6 +19,7 @@ const cx = classNames.bind({...inputStyles, ...styles});
 @connect(
   state => ({
     user: state.auth.user,
+    destinationInfo: state.send.destinationInfo,
     send: state.send,
     success: state.send.success,
     fail: state.send.fail,
@@ -31,6 +32,8 @@ export default class SendForm extends Component {
     fields: PropTypes.object.isRequired,
     invalid: PropTypes.bool.isRequired,
     pristine: PropTypes.bool.isRequired,
+    destinationChange: PropTypes.func.isRequired,
+    destinationInfo: PropTypes.object,
     submitting: PropTypes.bool.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     values: PropTypes.object,
@@ -43,22 +46,22 @@ export default class SendForm extends Component {
     fail: PropTypes.object,
     data: PropTypes.object,
     initializeForm: PropTypes.func
-  };
+  }
 
   componentDidMount() {
-    const { data, initializeForm } = this.props;
+    const { data, initializeForm } = this.props
     // TODO sourceAmount
     if (data && data.destination && data.destinationAmount) {
       initializeForm({
         destination: data.destination,
         destinationAmount: data.destinationAmount
-      });
+      })
 
       // Find path
       this.props.findPath({
         destination: data.destination,
         destinationAmount: data.destinationAmount
-      });
+      })
     }
   }
 
@@ -69,11 +72,11 @@ export default class SendForm extends Component {
       || (nextProps.path.destinationAmount && nextProps.path.destinationAmount !== this.props.path.destinationAmount))) {
 
       if (!nextProps.fields.sourceAmount.active) {
-        this.props.fields.sourceAmount.onChange(nextProps.path.sourceAmount);
+        this.props.fields.sourceAmount.onChange(nextProps.path.sourceAmount)
       }
 
       if (!nextProps.fields.destinationAmount.active) {
-        this.props.fields.destinationAmount.onChange(nextProps.path.destinationAmount);
+        this.props.fields.destinationAmount.onChange(nextProps.path.destinationAmount)
       }
     }
   }
@@ -81,46 +84,55 @@ export default class SendForm extends Component {
   shouldComponentUpdate(nextProps) {
     // Reset the form after a successful transfer
     if (!this.props.success && nextProps.success) {
-      this.props.initializeForm();
-      return false;
+      this.props.initializeForm()
+      return false
     }
 
-    return true;
+    return true
   }
 
   // Remove the success/error messages on unmount
   componentWillUnmount() {
-    this.props.unmount();
+    this.props.unmount()
+  }
+
+  handleDestinationChange = (event) => {
+    this.props.fields.destination.onChange(event)
+
+    this.props.destinationChange(event.target.value)
   }
 
   // TODO there should be a feedback on a failed pathfinding
   handleSourceAmountChange = (event) => {
-    this.props.fields.sourceAmount.onChange(event);
-    if (!this.props.values.destination) return;
+    this.props.fields.sourceAmount.onChange(event)
+    if (!this.props.values.destination) return
 
     this.props.findPath({
       destination: this.props.values.destination,
       sourceAmount: event.target.value
-    });
+    })
 
     this.lastPathfindingField = 'source'
   }
 
   handleDestinationAmountChange = (event) => {
-    this.props.fields.destinationAmount.onChange(event);
-    if (!this.props.values.destination) return;
+    this.props.fields.destinationAmount.onChange(event)
+    if (!this.props.values.destination) return
 
     this.props.findPath({
       destination: this.props.values.destination,
       destinationAmount: event.target.value
-    });
+    })
 
     this.lastPathfindingField = 'destination'
   }
 
   render() {
-    const { pristine, invalid, handleSubmit, transfer, submitting, success, pathFinding, fail, fields: {destination, sourceAmount, destinationAmount}, data } = this.props;
+    const { pristine, invalid, handleSubmit, transfer, submitting, success, destinationInfo,
+      pathFinding, fail, data, fields: {destination, sourceAmount, destinationAmount} } = this.props
 
+    // TODO sending amount should also have a currency
+    // TODO initial render should show a currency
     return (
       <div className="row">
         <div className={cx('col-sm-12')}>
@@ -134,10 +146,10 @@ export default class SendForm extends Component {
             <strong>Woops! </strong>
             {(() => {
               switch (fail.id) {
-                case 'LedgerInsufficientFundsError': return 'You have insufficient funds to make the payment';
-                case 'InvalidLedgerAccountError': return 'Destination account doesn\'t exist';
-                case 'NoPathsError': return 'Couldn\'t find paths to the destination account';
-                default: return 'Something went wrong';
+                case 'LedgerInsufficientFundsError': return 'You have insufficient funds to make the payment'
+                case 'InvalidLedgerAccountError': return 'Destination account doesn\'t exist'
+                case 'NoPathsError': return 'Couldn\'t find paths to the destination account'
+                default: return 'Something went wrong'
               }
             })()}
           </Alert>}
@@ -145,31 +157,42 @@ export default class SendForm extends Component {
           <form name="example" onSubmit={handleSubmit(transfer)}>
             <div className="form-group">
               <label>Recipient</label>
-              <input type="text" className={cx('form-control', 'lu-form-control', 'lu-input-lg')} autoFocus {...destination} />
-              {destination.dirty && destination.error && <div className="text-danger">{destination.error}</div>}
+              <input type="text" className={cx('form-control', 'lu-form-control', 'lu-input-lg')}
+                autoFocus {...destination} onChange={this.handleDestinationChange} />
+              {destination.dirty && destination.error &&
+                <div className="text-danger">{destination.error}</div>}
             </div>
             <div className="row">
               <div className="col-sm-6 form-group">
                 <label>Sending Amount</label>
-                {/* {path.sourceAmount &&
-                  <div className={cx('pathFindAmount')}>{path.sourceAmount}</div>}*/}
                 <input type="text" className={cx('form-control', 'lu-form-control', 'lu-input-lg')}
-                  {...sourceAmount} onChange={this.handleSourceAmountChange} disabled={!destination.value || (pathFinding && this.lastPathfindingField === 'destination')} />
+                  {...sourceAmount} onChange={this.handleSourceAmountChange}
+                  disabled={!destination.value || (pathFinding && this.lastPathfindingField === 'destination')} />
                 {sourceAmount.dirty && sourceAmount.error && <div className="text-danger">{sourceAmount.error}</div>}
               </div>
               <div className="col-sm-6 form-group">
                 <label>Receiving Amount</label>
-                <input type="text" className={cx('form-control', 'lu-form-control', 'lu-input-lg')}
-                  {...destinationAmount} onChange={this.handleDestinationAmountChange} disabled={!destination.value || (pathFinding && this.lastPathfindingField === 'source')} />
+                <div className={cx('input-group', 'lu-input-group',
+                  {disabled: !destination.value || (pathFinding && this.lastPathfindingField === 'source')},
+                  {focused: destinationAmount.active})}>
+                  <span className={cx('input-group-addon', 'lu-input-group-addon')}>
+                    {destinationInfo && destinationInfo.ledger && destinationInfo.ledger.currencySymbol}
+                  </span>
+                  <input type="text" className={cx('form-control', 'lu-form-control', 'lu-input-lg')}
+                    {...destinationAmount} onChange={this.handleDestinationAmountChange}
+                    disabled={!destination.value || (pathFinding && this.lastPathfindingField === 'source')} />
+                </div>
+
                 {destinationAmount.dirty && destinationAmount.error && <div className="text-danger">{destinationAmount.error}</div>}
               </div>
             </div>
-            <button type="submit" className={cx('btn', 'lu-btn')} disabled={(!data && pristine) || invalid || submitting || pathFinding || fail.id}>
+            <button type="submit" className={cx('btn', 'lu-btn')}
+              disabled={(!data && pristine) || invalid || submitting || pathFinding || fail.id}>
               {submitting ? 'Sending...' : 'Send'}
             </button>
           </form>
         </div>
       </div>
-    );
+    )
   }
 }

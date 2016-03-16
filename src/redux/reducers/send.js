@@ -5,31 +5,18 @@ const initialState = {
   fail: {},
   path: {},
   pathFinding: false,
+  destinationInfo: {},
   pathRaw: {}
 };
 
 export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
-    case types.SEND:
+    case types.DESTINATION_CHANGE_SUCCESS:
+      // TODO handle the affect this has on source/destination amounts and pathfinding
       return {
         ...state,
-        success: false,
-        fail: {}
-      };
-    case types.SEND_SUCCESS:
-      return {
-        ...state,
-        success: true,
-        fail: {},
-        path: {},
-        pathRaw: {}
-      };
-    case types.SEND_FAIL:
-      return {
-        ...state,
-        success: false,
-        fail: action.error
-      };
+        destinationInfo: action.result
+      }
     case types.PATHFIND:
       return {
         ...state,
@@ -64,6 +51,26 @@ export default function reducer(state = initialState, action = {}) {
         path: {},
         pathRaw: {},
         pathFinding: false,
+        fail: action.error
+      };
+    case types.SEND:
+      return {
+        ...state,
+        success: false,
+        fail: {}
+      };
+    case types.SEND_SUCCESS:
+      return {
+        ...state,
+        success: true,
+        fail: {},
+        path: {},
+        pathRaw: {}
+      };
+    case types.SEND_FAIL:
+      return {
+        ...state,
+        success: false,
         fail: action.error
       };
     case types.DESTROY:

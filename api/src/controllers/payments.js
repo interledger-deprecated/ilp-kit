@@ -65,7 +65,10 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
 
       payment.source_user = this.req.user.id
 
-      let destination = yield utils.parseDestination(payment.destination_account, config.data.getIn(['ledger', 'public_uri']))
+      let destination = yield utils.parseDestination({
+        destination: payment.destination_account,
+        currentLedgerUri: config.data.getIn(['ledger', 'public_uri'])
+      })
 
       // TODO fill the destination_user
       const options = {
@@ -131,7 +134,10 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
     // TODO handle account doesn't exist exception
     // TODO handle not supplied params
     static * findPath () {
-      let destination = yield utils.parseDestination(this.body.destination, config.data.getIn(['ledger', 'public_uri']))
+      let destination = yield utils.parseDestination({
+        destination: this.body.destination,
+        currentLedgerUri: config.data.getIn(['ledger', 'public_uri'])
+      })
 
       if (destination.type === 'local') {
         let amount = this.body.source_amount || this.body.destination_amount
