@@ -2,6 +2,7 @@ import * as types from '../actionTypes';
 
 const initialState = {
   success: false,
+  loading: false,
   history: [],
   fail: {}
 };
@@ -28,6 +29,7 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         success: false,
+        loading: true,
         history: [],
         fail: {}
       };
@@ -35,6 +37,7 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         success: true,
+        loading: false,
         history: action.result,
         fail: {}
       };
@@ -42,6 +45,7 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         success: false,
+        loading: false,
         history: [],
         fail: action.error
       };

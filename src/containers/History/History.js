@@ -12,6 +12,7 @@ const cx = classNames.bind(styles);
 @connect(
   state => ({
     history: state.history.history,
+    loading: state.history.loading,
     user: state.auth.user
   }),
   historyActions)
@@ -20,6 +21,7 @@ export default class Home extends Component {
     load: PropTypes.func,
     history: PropTypes.array,
     user: PropTypes.object,
+    loading: PropTypes.bool,
     toggleJson: PropTypes.func
   }
 
@@ -29,7 +31,7 @@ export default class Home extends Component {
   }
 
   render() {
-    const {history, user, toggleJson} = this.props;
+    const {history, user, toggleJson, loading} = this.props;
 
     return (
       <ul className={cx('list')}>
@@ -48,6 +50,8 @@ export default class Home extends Component {
             );
           })}
           </ReactCSSTransitionGroup>}
+
+        {loading && <li className={cx('loading')}>Loading...</li>}
       </ul>
     )
   }
