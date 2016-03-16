@@ -4,6 +4,7 @@ const initialState = {
   success: false,
   fail: {},
   path: {},
+  pathFinding: false,
   pathRaw: {}
 };
 
@@ -29,7 +30,14 @@ export default function reducer(state = initialState, action = {}) {
         success: false,
         fail: action.error
       };
-    // TODO Handle findPath fail
+    case types.PATHFIND:
+      return {
+        ...state,
+        path: {},
+        pathRaw: {},
+        pathFinding: true,
+        fail: {}
+      };
     case types.PATHFIND_SUCCESS:
       if (action.result.length && action.result[0].source_transfers) {
         return {
@@ -38,7 +46,8 @@ export default function reducer(state = initialState, action = {}) {
             sourceAmount: action.result[0].source_transfers[0].debits[0].amount,
             destinationAmount: action.result[0].destination_transfers[0].debits[0].amount
           },
-          pathRaw: action.result
+          pathRaw: action.result,
+          pathFinding: false
         };
       }
 
@@ -46,6 +55,7 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         path: action.result,
         pathRaw: action.result,
+        pathFinding: false,
         fail: {}
       };
     case types.PATHFIND_FAIL:
@@ -53,6 +63,7 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         path: {},
         pathRaw: {},
+        pathFinding: false,
         fail: action.error
       };
     case types.DESTROY:

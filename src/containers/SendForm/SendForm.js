@@ -22,7 +22,8 @@ const cx = classNames.bind({...inputStyles, ...styles});
     send: state.send,
     success: state.send.success,
     fail: state.send.fail,
-    path: state.send.path
+    path: state.send.path,
+    pathFinding: state.send.pathFinding
   }),
   sendActions)
 export default class SendForm extends Component {
@@ -38,6 +39,7 @@ export default class SendForm extends Component {
     unmount: PropTypes.func.isRequired,
     success: PropTypes.bool,
     path: PropTypes.object,
+    pathFinding: PropTypes.bool,
     fail: PropTypes.object,
     data: PropTypes.object,
     initializeForm: PropTypes.func
@@ -91,6 +93,7 @@ export default class SendForm extends Component {
     this.props.unmount();
   }
 
+  // TODO there should be a feedback on a failed pathfinding
   handleSourceAmountChange = (event) => {
     this.props.fields.sourceAmount.onChange(event);
     if (!this.props.values.destination) return;
@@ -99,6 +102,8 @@ export default class SendForm extends Component {
       destination: this.props.values.destination,
       sourceAmount: event.target.value
     });
+
+    this.lastPathfindingField = 'source'
   }
 
   handleDestinationAmountChange = (event) => {
@@ -109,10 +114,12 @@ export default class SendForm extends Component {
       destination: this.props.values.destination,
       destinationAmount: event.target.value
     });
+
+    this.lastPathfindingField = 'destination'
   }
 
   render() {
-    const { pristine, invalid, handleSubmit, transfer, submitting, success, fail, fields: {destination, sourceAmount, destinationAmount}, data } = this.props;
+    const { pristine, invalid, handleSubmit, transfer, submitting, success, pathFinding, fail, fields: {destination, sourceAmount, destinationAmount}, data } = this.props;
 
     return (
       <div className="row">
@@ -146,16 +153,18 @@ export default class SendForm extends Component {
                 <label>Sending Amount</label>
                 {/* {path.sourceAmount &&
                   <div className={cx('pathFindAmount')}>{path.sourceAmount}</div>}*/}
-                <input type="text" className={cx('form-control', 'lu-form-control', 'lu-input-lg')} {...sourceAmount} onChange={this.handleSourceAmountChange} disabled={!destination.value} />
+                <input type="text" className={cx('form-control', 'lu-form-control', 'lu-input-lg')}
+                  {...sourceAmount} onChange={this.handleSourceAmountChange} disabled={!destination.value || (pathFinding && this.lastPathfindingField === 'destination')} />
                 {sourceAmount.dirty && sourceAmount.error && <div className="text-danger">{sourceAmount.error}</div>}
               </div>
               <div className="col-sm-6 form-group">
                 <label>Receiving Amount</label>
-                <input type="text" className={cx('form-control', 'lu-form-control', 'lu-input-lg')} {...destinationAmount} onChange={this.handleDestinationAmountChange} disabled={!destination.value} />
+                <input type="text" className={cx('form-control', 'lu-form-control', 'lu-input-lg')}
+                  {...destinationAmount} onChange={this.handleDestinationAmountChange} disabled={!destination.value || (pathFinding && this.lastPathfindingField === 'source')} />
                 {destinationAmount.dirty && destinationAmount.error && <div className="text-danger">{destinationAmount.error}</div>}
               </div>
             </div>
-            <button type="submit" className={cx('btn', 'lu-btn')} disabled={(!data && pristine) || invalid || submitting}>
+            <button type="submit" className={cx('btn', 'lu-btn')} disabled={(!data && pristine) || invalid || submitting || pathFinding || fail.id}>
               {submitting ? 'Sending...' : 'Send'}
             </button>
           </form>
