@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 import moment from 'moment';
+
 import { contextualizePayment } from '../../utils/api';
 import { amount } from '../../utils/amount';
 
@@ -32,9 +33,7 @@ export default class HistoryItem extends Component {
         <div className="row">
           <div className="col-sm-7">
             <div className={cx('counterparty')}>{item.counterpartyAccount}</div>
-            <div className={cx('date')}>
-              <span>{moment(item.created_at).format('LL')}</span>
-            </div>
+            <div className={cx('date')} title={moment(item.created_at).format('LLL')}>{moment(item.created_at).fromNow()}</div>
           </div>
           <div className="col-sm-4">
             <div className={cx('amount', amountClass)}>
