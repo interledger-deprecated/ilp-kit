@@ -33,7 +33,7 @@ export default class Home extends Component {
 
     return (
       <ul className={cx('list')}>
-        {history && history.length &&
+        {history && history.length > 0 &&
           <ReactCSSTransitionGroup transitionName={{
             enter: cx('enter'),
             enterActive: cx('enter-active'),
