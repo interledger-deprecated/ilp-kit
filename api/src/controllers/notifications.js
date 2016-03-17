@@ -20,6 +20,12 @@ function NotificationsControllerFactory (ledger, Auth, Payment, User, Config) {
       const notification = this.body
       const transfer = notification.resource
 
+      // Only handle executed payments for now
+      if (transfer.state !== 'executed') {
+        this.body = {'status': 'OK'}
+        return
+      }
+
       let paymentObj = {
         transfers: transfer.id,
         source_account: (transfer.additional_info && transfer.additional_info.source_account) || transfer.debits[0].account,
@@ -30,7 +36,7 @@ function NotificationsControllerFactory (ledger, Auth, Payment, User, Config) {
 
       // TODO move this logic somewhere else
       // Source user
-      if (_.startsWith(transfer.debits[0].account, Config.data.getIn(['ledger', 'public_uri']) + '/accounts/')) { 
+      if (_.startsWith(transfer.debits[0].account, Config.data.getIn(['ledger', 'public_uri']) + '/accounts/')) {
         let user = yield User.findOne({where: {username: transfer.debits[0].account.slice(Config.data.getIn(['ledger', 'public_uri']).length + 10)}})
         if (user) {
           paymentObj.source_user = user.id

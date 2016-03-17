@@ -84,24 +84,6 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
       try {
         const transfer = yield ledger.transfer(options)
 
-        // Interledger
-        if (transfer.source_transfers) {
-          payment.transfers = transfer.source_transfers[0].id
-          payment.source_account = transfer.source_transfers[0].debits[0].account
-          payment.source_amount = transfer.source_transfers[0].debits[0].amount
-          payment.destination_account = transfer.destination_transfers[0].credits[0].account
-          payment.destination_amount = transfer.destination_transfers[0].credits[0].amount
-        }
-
-        // Same ledger
-        else {
-          payment.transfers = transfer.id
-          payment.source_account = transfer.debits[0].account
-          payment.source_amount = transfer.debits[0].amount
-          payment.destination_account = transfer.credits[0].account
-          payment.destination_amount = transfer.credits[0].amount
-        }
-
         log.debug('Ledger transfer payment ID ' + id)
       } catch (e) {
         let error = JSON.parse(e.response.error.text)
@@ -116,19 +98,8 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
         }
       }
 
-      // Store the payment in db
-      // Notification service creates the payment
-      try {
-        yield payment.create()
-      } catch (e) {
-        // TODO handle
-      }
-
-      // Get the payment with the associations
-      // TODO get by transfer or paymentId
-      payment = yield Payment.getPayment(payment.transfers)
-
-      this.body = payment.getDataExternal()
+      // TODO should be something more meaningful
+      this.body = {'status': 'OK'}
     }
 
     // TODO handle account doesn't exist exception
