@@ -69,21 +69,23 @@ module.exports = class utils {
       }
     }
 
-    // Local account
-    let parsedDestination = {
-      type: 'local',
-      accountUri: currentLedgerUri + '/accounts/' + destination,
-      ledgerUri: currentLedgerUri
-    }
+    else {
+      // Local account
+      let parsedDestination = {
+        type: 'local',
+        accountUri: currentLedgerUri + '/accounts/' + destination,
+        ledgerUri: currentLedgerUri
+      }
 
-    // TODO api should already know the current ledgerInfo at this point
-    if (retrieveLedgerInfo) {
-      parsedDestination.ledgerInfo = yield superagent
-        .get(parsedDestination.ledgerUri)
-        .end()
-      parsedDestination.ledgerInfo = parsedDestination.ledgerInfo.body
-    }
+      // TODO api should already know the current ledgerInfo at this point
+      if (retrieveLedgerInfo) {
+        parsedDestination.ledgerInfo = yield superagent
+          .get(parsedDestination.ledgerUri)
+          .end()
+        parsedDestination.ledgerInfo = parsedDestination.ledgerInfo.body
+      }
 
-    return parsedDestination
+      return parsedDestination
+    }
   }
 }
