@@ -3,6 +3,10 @@ export const AUTH_LOAD_SUCCESS = 'AUTH_LOAD_SUCCESS';
 export const AUTH_LOAD_FAIL = 'AUTH_LOAD_FAIL';
 export const AUTH_CHANGE_TAB = 'AUTH_CHANGE_TAB';
 
+export const LOAD_CONFIG = 'LOAD_CONFIG';
+export const LOAD_CONFIG_SUCCESS = 'LOAD_CONFIG_SUCCESS';
+export const LOAD_CONFIG_FAIL = 'LOAD_CONFIG_FAIL';
+
 export const LOGIN = 'LOGIN';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_FAIL = 'LOGIN_FAIL';

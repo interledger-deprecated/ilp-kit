@@ -9,7 +9,7 @@ const UsersController = require('../controllers/users')
 const PaymentsController = require('../controllers/payments')
 const NotificationsController = require('../controllers/notifications')
 const WebfingerController = require('../controllers/webfinger')
-const AnalyzeController = require('../controllers/analyze')
+const MiscController = require('../controllers/misc')
 
 module.exports = class Router {
   static constitute () { return [ Container ] }
@@ -37,8 +37,8 @@ module.exports = class Router {
     const webfinger = this.container.constitute(WebfingerController)
     webfinger.init(this.router)
 
-    const analyze = this.container.constitute(AnalyzeController)
-    analyze.init(this.router)
+    const misc = this.container.constitute(MiscController)
+    misc.init(this.router)
   }
 
   attach (app) {

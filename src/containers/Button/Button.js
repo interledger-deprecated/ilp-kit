@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, PropTypes} from 'react';
 
 import { PayButton } from 'components';
 
@@ -9,8 +9,12 @@ import styles from './Button.scss';
 const cx = classNames.bind({...sharedStyles, ...inputStyles, ...styles});
 
 export default class Button extends Component {
+  static contextTypes = {
+    config: PropTypes.object
+  };
+
   render() {
-    const config = global.config
+    const config = this.context.config
 
     return (
       <div className={cx('box')}>

@@ -3,6 +3,7 @@ import * as types from '../actionTypes'
 export const initialState = {
   loaded: false,
   fail: {},
+  config: {},
   activeTab: 'login'
 }
 
@@ -26,6 +27,11 @@ export default function reducer(state = initialState, action = {}) {
         loading: false,
         loaded: false,
         error: action.error
+      };
+    case types.LOAD_CONFIG_SUCCESS:
+      return {
+        ...state,
+        config: action.result
       };
     case types.LOGIN:
       return {

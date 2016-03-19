@@ -21,9 +21,5 @@ module.exports = Object.assign({
     meta: {
       charSet: 'utf-8'
     }
-  },
-  public: {
-    sentryUri: process.env.SENTRY_URI,
-    ledgerUri: process.env.API_LEDGER_PUBLIC_URI
   }
 }, environment);

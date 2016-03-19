@@ -70,3 +70,10 @@ export function reload(opts) {
     });
   };
 }
+
+export function loadConfig() {
+  return {
+    types: [types.LOAD_CONFIG, types.LOAD_CONFIG_SUCCESS, types.LOAD_CONFIG_FAIL],
+    promise: (client) => client.get('/config')
+  };
+}

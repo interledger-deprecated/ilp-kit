@@ -16,13 +16,13 @@ import { ReduxAsyncConnect } from 'redux-async-connect'
 import getRoutes from './routes'
 const client = new ApiClient()
 
-client.get('/config')
+/* client.get('/config')
   .then((config) => {
     global.config = config
 
     // Remote log service
     Raven.config(config.sentryUri).install()
-  })
+  }) */
 
 const dest = document.getElementById('content')
 const store = createStore(browserHistory, client, window.__data)

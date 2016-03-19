@@ -1,6 +1,6 @@
 "use strict"
 
-module.exports = AnalyzeControllerFactory
+module.exports = MiscControllerFactory
 
 const request = require('five-bells-shared/utils/request')
 const passport = require('koa-passport')
@@ -9,13 +9,14 @@ const Log = require('../lib/log')
 const Config = require('../lib/config')
 const utils = require('../lib/utils')
 
-AnalyzeControllerFactory.constitute = [Auth, Log, Config]
-function AnalyzeControllerFactory (Auth, log, config) {
-  log = log('analyze')
+MiscControllerFactory.constitute = [Auth, Log, Config]
+function MiscControllerFactory (Auth, log, config) {
+  log = log('misc')
 
-  return class AnalyzeController {
+  return class MiscController {
     static init (router) {
       router.get('/analyze/destination', Auth.isAuth, this.destination)
+      router.get('/config', this.config)
     }
 
     static * destination () {
@@ -30,6 +31,12 @@ function AnalyzeControllerFactory (Auth, log, config) {
           currencyCode: destination.ledgerInfo && destination.ledgerInfo.currency_code,
           currencySymbol: destination.ledgerInfo && destination.ledgerInfo.currency_symbol
         }
+      }
+    }
+
+    static * config () {
+      this.body = {
+        ledgerUri: config.data.getIn(['ledger', 'public_uri'])
       }
     }
   }
