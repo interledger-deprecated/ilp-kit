@@ -163,7 +163,7 @@ export default class SendForm extends Component {
             <div className="form-group">
               <label>Recipient</label>
               <input type="text" className={cx('form-control', 'lu-form-control', 'lu-input-lg')}
-                autoFocus {...destination} onChange={this.handleDestinationChange} />
+                autoFocus {...destination} onChange={this.handleDestinationChange} placeholder="alice@wallet.com" />
               {destination.dirty && destination.error &&
                 <div className="text-danger">{destination.error}</div>}
             </div>

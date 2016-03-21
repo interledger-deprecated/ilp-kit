@@ -133,7 +133,7 @@ export default class App extends Component {
 
         <footer className={cx('footer')}>
           <div className="container">
-            <p>&copy 2016 <a href="http://interledger.org/">Interledger</a>.</p>
+            <p>&copy; 2016 <a href="http://interledger.org/">Interledger</a>.</p>
           </div>
         </footer>
       </div>

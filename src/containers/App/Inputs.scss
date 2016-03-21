@@ -13,6 +13,23 @@
   box-shadow: none;
   -webkit-box-shadow: none;
 }
+.lu-form-control::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+  color: lighten($faded-text-color, 15%);
+}
+.lu-form-control:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+  color: lighten($faded-text-color, 15%);
+  opacity: 1;
+}
+.lu-form-control::-moz-placeholder { /* Mozilla Firefox 19+ */
+  color: lighten($faded-text-color, 15%);
+  opacity: 1;
+}
+.lu-form-control:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: lighten($faded-text-color, 15%);
+}
+.lu-form-control:placeholder-shown { /* Standard (https://drafts.csswg.org/selectors-4/#placeholder) */
+  color: lighten($faded-text-color, 15%);
+}
 
 .lu-input-lg {
   font-size: 15px;
