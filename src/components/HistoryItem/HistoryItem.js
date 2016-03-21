@@ -1,32 +1,37 @@
-import React, {Component, PropTypes} from 'react';
-import moment from 'moment';
+import React, {Component, PropTypes} from 'react'
+import moment from 'moment'
 
-import { contextualizePayment } from '../../utils/api';
-import { amount } from '../../utils/amount';
+import { contextualizePayment } from '../../utils/api'
+import { amount } from '../../utils/amount'
 
-import { PrettyJson } from 'components';
+import { PrettyJson } from 'components'
 
-import classNames from 'classnames/bind';
-import styles from './HistoryItem.scss';
-const cx = classNames.bind(styles);
+import classNames from 'classnames/bind'
+import styles from './HistoryItem.scss'
+const cx = classNames.bind(styles)
 
 export default class HistoryItem extends Component {
   static propTypes = {
     item: PropTypes.object,
     user: PropTypes.object,
     toggleJson: PropTypes.func
-  };
+  }
+
+  static contextTypes = {
+    config: PropTypes.object
+  }
 
   toggleLedgerTransfer = (event) => {
-    event.preventDefault();
+    event.preventDefault()
 
-    this.props.toggleJson(this.props.item.id, this.props.item.transfers);
+    this.props.toggleJson(this.props.item.id, this.props.item.transfers)
   }
 
   render() {
-    const item = contextualizePayment(this.props.item, this.props.user);
+    const item = contextualizePayment(this.props.item, this.props.user)
+    const {config} = this.context
 
-    const amountClass = item.counterpartyAccount === item.destination_account ? 'negative' : 'positive';
+    const amountClass = item.counterpartyAccount === item.destination_account ? 'negative' : 'positive'
 
     return (
       <div className={cx('item')}>
@@ -38,7 +43,7 @@ export default class HistoryItem extends Component {
           <div className="col-sm-4">
             <div className={cx('amount', amountClass)}>
               {/* TODO Show both source and destination amounts */}
-              {amountClass === 'negative' ? amount(item.source_amount) : amount(item.destination_amount)}
+              {config.currency_symbol}{amountClass === 'negative' ? amount(item.source_amount) : amount(item.destination_amount)}
             </div>
           </div>
           <div className={cx('col-sm-1', 'expand')}>
@@ -53,6 +58,6 @@ export default class HistoryItem extends Component {
           </div>
         </div>}
       </div>
-    );
+    )
   }
 }
