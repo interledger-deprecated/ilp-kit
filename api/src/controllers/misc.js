@@ -40,8 +40,8 @@ function MiscControllerFactory (Auth, log, config, ledger) {
 
       this.body = {
         ledgerUri: config.data.getIn(['ledger', 'public_uri']),
-        currency_code: ledgerInfo.currency_code,
-        currency_symbol: ledgerInfo.currency_symbol
+        currencyCode: ledgerInfo.currency_code,
+        currencySymbol: ledgerInfo.currency_symbol
       }
     }
   }

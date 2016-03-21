@@ -48,6 +48,10 @@ export default class SendForm extends Component {
     initializeForm: PropTypes.func
   }
 
+  static contextTypes = {
+    config: PropTypes.object
+  }
+
   componentDidMount() {
     const { data, initializeForm } = this.props
     // TODO sourceAmount
@@ -130,6 +134,7 @@ export default class SendForm extends Component {
   render() {
     const { pristine, invalid, handleSubmit, transfer, submitting, success, destinationInfo,
       pathFinding, fail, data, fields: {destination, sourceAmount, destinationAmount} } = this.props
+    const { config } = this.context
 
     // TODO sending amount should also have a currency
     // TODO initial render should show a currency
@@ -165,9 +170,17 @@ export default class SendForm extends Component {
             <div className="row">
               <div className="col-sm-6 form-group">
                 <label>Sending Amount</label>
-                <input type="text" className={cx('form-control', 'lu-form-control', 'lu-input-lg')}
-                  {...sourceAmount} onChange={this.handleSourceAmountChange}
-                  disabled={!destination.value || (pathFinding && this.lastPathfindingField === 'destination')} />
+                <div className={cx('input-group', 'lu-input-group',
+                  {disabled: !destination.value || (pathFinding && this.lastPathfindingField === 'destination')},
+                  {focused: sourceAmount.active})}>
+                  <span className={cx('input-group-addon', 'lu-input-group-addon')}>
+                    {config.currencySymbol}
+                  </span>
+                  <input type="text" className={cx('form-control', 'lu-form-control', 'lu-input-lg')}
+                    {...sourceAmount} onChange={this.handleSourceAmountChange}
+                    disabled={!destination.value || (pathFinding && this.lastPathfindingField === 'destination')} />
+                </div>
+
                 {sourceAmount.dirty && sourceAmount.error && <div className="text-danger">{sourceAmount.error}</div>}
               </div>
               <div className="col-sm-6 form-group">

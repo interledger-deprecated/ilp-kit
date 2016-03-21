@@ -43,7 +43,7 @@ export default class HistoryItem extends Component {
           <div className="col-sm-4">
             <div className={cx('amount', amountClass)}>
               {/* TODO Show both source and destination amounts */}
-              {config.currency_symbol}{amountClass === 'negative' ? amount(item.source_amount) : amount(item.destination_amount)}
+              {config.currencySymbol}{amountClass === 'negative' ? amount(item.source_amount) : amount(item.destination_amount)}
             </div>
           </div>
           <div className={cx('col-sm-1', 'expand')}>
