@@ -35,21 +35,20 @@ export default class HistoryItem extends Component {
 
     return (
       <div className={cx('item')}>
-        <div className="row">
-          <div className="col-sm-7">
-            <div className={cx('counterparty')}>{item.counterpartyAccount}</div>
-            <div className={cx('date')} title={moment(item.created_at).format('LLL')}>{moment(item.created_at).fromNow()}</div>
-          </div>
-          <div className="col-sm-4">
-            <div className={cx('amount', amountClass)}>
-              {/* TODO Show both source and destination amounts */}
-              {config.currencySymbol}{amountClass === 'negative' ? amount(item.source_amount) : amount(item.destination_amount)}
+        <a href="" onClick={this.toggleLedgerTransfer} className={cx('link')}>
+          <div className="row">
+            <div className="col-sm-7">
+              <div className={cx('counterparty')}>{item.counterpartyAccount}</div>
+              <div className={cx('date')} title={moment(item.created_at).format('LLL')}>{moment(item.created_at).fromNow()}</div>
+            </div>
+            <div className="col-sm-5">
+              <div className={cx('amount', amountClass)}>
+                {/* TODO Show both source and destination amounts */}
+                {config.currencySymbol}{amountClass === 'negative' ? amount(item.source_amount) : amount(item.destination_amount)}
+              </div>
             </div>
           </div>
-          <div className={cx('col-sm-1', 'expand')}>
-            <a href="" onClick={this.toggleLedgerTransfer} title="View the ledger payment" className={cx('fa', 'fa-file-code-o', {'active': item.showJson})} />
-          </div>
-        </div>
+        </a>
         {item.showJson && item.json &&
         <div className="row">
           <div className={cx('col-sm-12', 'jsonContainer')}>

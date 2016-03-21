@@ -2,8 +2,15 @@
 @import '../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss';
 
 .item {
-  padding: 15px 20px;
   border-bottom: 1px solid $history-payment-separator-color;
+}
+.link, .link:hover, .link:active, .link:visited {
+  display: block;
+  color: $text-color;
+  padding: 15px 20px;
+}
+.link:hover {
+  background: darken($box-background-color, 3%);
 }
 .counterparty {
   font-size: 18px;
@@ -56,5 +63,5 @@
   }
 }
 .jsonContainer {
-  margin-top: 10px;
+  padding: 5px 35px 0;
 }
