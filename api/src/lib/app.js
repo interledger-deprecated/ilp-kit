@@ -14,20 +14,19 @@ const Router = require('./router')
 const DB = require('./db')
 const Log = require('./log')
 const Ledger = require('./ledger')
-const PaymentFactory = require('../models/payment')
+const Socket = require('./socket')
 
 module.exports = class App {
-  static constitute () { return [ Config, Auth, Router, Validator, Ledger, DB, Log, PaymentFactory ] }
-  constructor (config, auth, router, validator, ledger, db, log, Payment ) {
+  static constitute () { return [ Config, Auth, Router, Validator, Ledger, DB, Log, Socket ] }
+  constructor (config, auth, router, validator, ledger, db, log, socket ) {
     this.config = config.data
     this.auth = auth
     this.router = router
+    this.socket = socket
     this.validator = validator
     this.ledger = ledger
     this.db = db
     this.log = log('app')
-
-    let self = this
 
     validator.loadSchemasFromDirectory(__dirname + '/../../schemas')
 
@@ -47,41 +46,12 @@ module.exports = class App {
     app.use(errorHandler({log: log('error-handler')}))
     app.use(cors({origin: '*'}))
 
-    // Socket
-    app.io.use(function* (next) {
-      yield* next;
-    });
-
-    let listeners = {}
-
-    // TODO move socket stuff somewhere else
-    // TODO ensure the username is the currently logged in user
-    app.io.route('subscribe', function (next, username) {
-      let socket = this.socket
-
-      self.log.info('WS:' + socket.id + ' Subscribe ' + username)
-
-      listeners[socket.id] = (transfer) => {
-        // TODO move this logic somewhere else
-        Payment.findOne({where: {transfers: transfer.id}})
-          .then(function(data){
-            socket.emit('payment', data)
-          })
-      }
-
-      self.ledger.on('transfer_' + username, listeners[socket.id])
-    });
-
-    app.io.route('unsubscribe', function (next, username) {
-      self.log.info('WS:' + this.socket.id + ' Unsubscribe ' + username)
-      self.ledger.removeListener('transfer_' + username, listeners[this.socket.id])
-    });
-
     app.proxy = true;
 
     app.keys = [this.config.get('sessionSecret')]
     app.use(session(app))
 
+    socket.attach(app)
     auth.attach(app)
 
     router.setupDefaultRoutes()
@@ -96,6 +66,7 @@ module.exports = class App {
 
   * _start () {
     yield this.db.sync()
+    
     // Ensure ledger subscription exists
     yield this.ledger.subscribe()
 
