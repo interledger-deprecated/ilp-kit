@@ -20,6 +20,17 @@ module.exports = class Ledger extends EventEmitter {
     this.ledgerUriPublic = this.config.getIn(['ledger', 'public_uri'])
   }
 
+  * getInfo () {
+    try {
+      this.log.info('getting ledger info ' + this.ledgerUri)
+      const response = yield superagent.get(this.ledgerUri).end()
+
+      return response.body
+    } catch (err) {
+      if (err.status !== 422) throw err
+    }
+  }
+
   * subscribe () {
     try {
       this.log.info('subscribing to ledger ' + this.ledgerUri)

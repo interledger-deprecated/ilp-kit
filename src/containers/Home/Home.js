@@ -1,18 +1,18 @@
-import React, {Component, PropTypes} from 'react';
-import {connect} from 'react-redux';
-import * as authActions from 'redux/actions/auth';
-import { amount } from '../../utils/amount';
+import React, {Component, PropTypes} from 'react'
+import {connect} from 'react-redux'
+import * as authActions from 'redux/actions/auth'
+import { amount } from '../../utils/amount'
 
-import { SendForm } from 'containers';
-import { LoginForm } from 'components';
-import { RegisterForm } from 'components';
-import { History } from 'containers';
+import { SendForm } from 'containers'
+import { LoginForm } from 'components'
+import { RegisterForm } from 'components'
+import { History } from 'containers'
 
-import classNames from 'classnames/bind';
-import sharedStyles from '../App/Shared.scss';
-import inputStyles from '../App/Inputs.scss';
-import styles from './Home.scss';
-const cx = classNames.bind({...sharedStyles, ...inputStyles, ...styles});
+import classNames from 'classnames/bind'
+import sharedStyles from '../App/Shared.scss'
+import inputStyles from '../App/Inputs.scss'
+import styles from './Home.scss'
+const cx = classNames.bind({...sharedStyles, ...inputStyles, ...styles})
 
 @connect(
   state => ({
@@ -33,21 +33,26 @@ export default class Home extends Component {
     activeTab: PropTypes.string
   }
 
+  static contextTypes = {
+    config: PropTypes.object
+  }
+
   reload = () => {
-    this.props.reload({username: this.props.user.username});
+    this.props.reload({username: this.props.user.username})
   }
 
   handleDefaultPayment = () => {
-    navigator.registerPaymentHandler('interledger', location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/widget');
+    navigator.registerPaymentHandler('interledger', location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/widget')
   }
 
   handleChangeTab = (tab, event) => {
-    event.preventDefault();
-    this.props.changeTab(tab);
+    event.preventDefault()
+    this.props.changeTab(tab)
   }
 
   render() {
-    const {user, authFail, unmount, login, register, activeTab} = this.props;
+    const {user, authFail, unmount, login, register, activeTab} = this.props
+    const {config} = this.context
 
     return (
       <div>
@@ -93,7 +98,7 @@ export default class Home extends Component {
                 <div className={cx('balanceContainer')}>
                   <div className={cx('balanceDescription')}>Your Balance</div>
                   <div className={cx('balance')}>
-                    {amount(user.balance)}
+                    {config.currency_symbol}{amount(user.balance)}
                     <span className={cx('but')}>*</span>
                   </div>
                   <button className={cx('btn', 'lu-btn')} onClick={this.reload}>Get More</button>
@@ -115,6 +120,6 @@ export default class Home extends Component {
           </div>
         </div>}
       </div>
-    );
+    )
   }
 }

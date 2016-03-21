@@ -7,10 +7,11 @@ const passport = require('koa-passport')
 const Auth = require('../lib/auth')
 const Log = require('../lib/log')
 const Config = require('../lib/config')
+const Ledger = require('../lib/ledger')
 const utils = require('../lib/utils')
 
-MiscControllerFactory.constitute = [Auth, Log, Config]
-function MiscControllerFactory (Auth, log, config) {
+MiscControllerFactory.constitute = [Auth, Log, Config, Ledger]
+function MiscControllerFactory (Auth, log, config, ledger) {
   log = log('misc')
 
   return class MiscController {
@@ -35,8 +36,12 @@ function MiscControllerFactory (Auth, log, config) {
     }
 
     static * config () {
+      const ledgerInfo = yield ledger.getInfo()
+
       this.body = {
-        ledgerUri: config.data.getIn(['ledger', 'public_uri'])
+        ledgerUri: config.data.getIn(['ledger', 'public_uri']),
+        currency_code: ledgerInfo.currency_code,
+        currency_symbol: ledgerInfo.currency_symbol
       }
     }
   }
