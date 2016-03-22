@@ -1,5 +1,6 @@
 "use strict"
 
+const co = require('co')
 const _ = require('lodash')
 
 const Config = require('./config')
@@ -13,7 +14,7 @@ module.exports = class Socket {
     this.log = log('socket')
     this.ledger = ledger
     this.Payment = Payment
-    this.listeners = {}
+    this.subscribers = {}
   }
 
   attach (app) {
@@ -21,31 +22,65 @@ module.exports = class Socket {
 
     // TODO ensure the username is the currently logged in user
     app.io.route('subscribe', function (next, username) {
-      let socket = this.socket
-
-      self.log.info('WS:' + socket.id + ' Subscribe ' + username)
-
-      self.listeners[socket.id] = (transfer) => {
-        // TODO move this logic somewhere else
-        self.Payment.findOne({where: {transfers: transfer.id}})
-          .then(function(data){
-            socket.emit('payment', data)
-          })
-      }
-
-      // TODO move this outside. Socket shouldn't know anything about the ledger
-      self.ledger.on('transfer_' + username, self.listeners[socket.id])
-    });
+      self.addSubscriber(username, this.socket)
+    })
 
     app.io.route('unsubscribe', function (next, username) {
-      self.log.info('WS:' + this.socket.id + ' Unsubscribe ' + username)
-      self.ledger.removeListener('transfer_' + username, listeners[this.socket.id])
-    });
+      // TODO implement
+    })
 
     app.io.use(function* (next) {
       // on conncet
-      yield* next;
+      yield* next
       // on disconnect
-    });
+    })
+  }
+
+  addSubscriber(username, socket) {
+    let self = this
+
+    self.log.info('Subscribe ' + username)
+
+    // Add the subscriber
+    let subscriber = self.subscribers[username] = self.subscribers[username] || { clients: {} }
+    subscriber.clients[socket.id] = socket
+
+    // should socket be aware of the ledger? may need to move this somwehere else
+    self.ledger.on('transfer_' + username, function(transfer){
+      self.transfer(username, transfer)
+    })
+  }
+
+  transfer(username, transfer) {
+    let self = this
+
+    // TODO move this logic somewhere else?
+    self.Payment.findOne({where: {transfers: transfer.id}})
+      .then(function (data) {
+        self.log.info('payment for ' + username)
+
+        _.map(self.subscribers[username].clients, function(client){
+          client.emit('payment', data)
+        })
+      })
+
+    // Fire a balance update event
+    // TODO move somewhere else
+    co(function *() {
+      var account = yield self.ledger.getAccount({username: username}, true)
+      self.updateBalance(username, account.balance)
+    }).catch((err) => {
+      // TODO handle
+    })
+  }
+
+  updateBalance(username, balance) {
+    let self = this
+
+    self.log.info('balance update for ' + username)
+
+    _.map(self.subscribers[username].clients, function(client){
+      client.emit('balance', balance)
+    })
   }
 }

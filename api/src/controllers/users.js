@@ -7,10 +7,11 @@ const passport = require('koa-passport')
 const Auth = require('../lib/auth')
 const Log = require('../lib/log')
 const Ledger = require('../lib/ledger')
+const Socket = require('../lib/socket')
 const UserFactory = require('../models/user')
 
-UsersControllerFactory.constitute = [Auth, UserFactory, Log, Ledger]
-function UsersControllerFactory (Auth, User, log, ledger) {
+UsersControllerFactory.constitute = [Auth, UserFactory, Log, Ledger, Socket]
+function UsersControllerFactory (Auth, User, log, ledger, socket) {
   log = log('users');
 
   return class UsersController {
@@ -39,6 +40,10 @@ function UsersControllerFactory (Auth, User, log, ledger) {
 
       user.balance = ledgerUser.balance
 
+      // Inform the client
+      socket.updateBalance(ledgerUser.name, ledgerUser.balance)
+
+      // do we need this?
       this.body = user.getDataExternal()
       this.status = 200
     }

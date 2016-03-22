@@ -68,12 +68,16 @@ module.exports = class Ledger extends EventEmitter {
   }
 
   * getAccount (user, admin) {
-    const response = yield superagent
-      .get(this.ledgerUri + '/accounts/' + user.username)
-      .auth(admin ? this.config.getIn(['ledger', 'admin', 'name']) : user.username, admin ? this.config.getIn(['ledger', 'admin', 'pass']): user.password)
-      .end()
+    try {
+      const response = yield superagent
+        .get(this.ledgerUri + '/accounts/' + user.username)
+        .auth(admin ? this.config.getIn(['ledger', 'admin', 'name']) : user.username, admin ? this.config.getIn(['ledger', 'admin', 'pass']): user.password)
+        .end()
 
-    return response.body
+      return response.body
+    } catch (e) {
+      this.log.critical(e)
+    }
   }
 
   * createAccount(user) {

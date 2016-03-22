@@ -18,12 +18,11 @@ describe('(action creator) Auth', () => {
     mockRequest.clearRoutes()
   })
 
-  it('.reload creates RELOADING, UPDATE_BALANCE, RELOAD_SUCCESS actions', (done) => {
+  it('.reload creates RELOADING, RELOAD_SUCCESS actions', (done) => {
     mockRequest.post('/api/users/alice/reload', function() {return {}})
 
     const expectedActions = [
       {type: types.RELOADING},
-      {type: types.UPDATE_BALANCE, change: 1000},
       {type: types.RELOAD_SUCCESS, result: undefined}
     ]
     const store = mockStore({}, expectedActions, done)

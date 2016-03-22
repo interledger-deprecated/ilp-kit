@@ -91,7 +91,7 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         user: {
           ...state.user,
-          balance: state.user.balance + action.change
+          balance: action.balance
         }
       };
     case types.AUTH_CHANGE_TAB:

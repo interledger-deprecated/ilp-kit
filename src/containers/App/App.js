@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap'
 import NavItem from 'react-bootstrap/lib/NavItem'
 import DocumentMeta from 'react-document-meta'
-import { isLoaded as isAuthLoaded, load as loadAuth, loadConfig, logout } from 'redux/actions/auth'
+import { isLoaded as isAuthLoaded, load as loadAuth, loadConfig, logout, updateBalance } from 'redux/actions/auth'
 import { routeActions } from 'react-router-redux'
 import { addPayment as historyAddPayment } from 'redux/actions/history'
 import config from '../../config'
@@ -32,7 +32,7 @@ const cx = classNames.bind(styles)
     user: state.auth.user,
     config: state.auth.config
   }),
-  {logout, pushState: routeActions.push, historyAddPayment})
+  {logout, pushState: routeActions.push, historyAddPayment, updateBalance})
 export default class App extends Component {
   static propTypes = {
     children: PropTypes.object.isRequired,
@@ -40,6 +40,7 @@ export default class App extends Component {
     config: PropTypes.object,
     logout: PropTypes.func.isRequired,
     historyAddPayment: PropTypes.func.isRequired,
+    updateBalance: PropTypes.func.isRequired,
     pushState: PropTypes.func.isRequired
   }
 
@@ -61,6 +62,7 @@ export default class App extends Component {
     if (socket && this.props.user) {
       socket.emit('subscribe', this.props.user.username)
       socket.on('payment', this.onMessageReceived)
+      socket.on('balance', this.props.updateBalance)
     }
   }
 

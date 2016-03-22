@@ -45,14 +45,14 @@ export function addPayment(data) {
 
     if (duplicate) return false;
 
-    const change = getState().auth.user.account === data.destination_account
+    /* const change = getState().auth.user.account === data.destination_account
       ? Number(data.destination_amount)
       : -Number(data.destination_amount);
 
     dispatch({
       type: types.UPDATE_BALANCE,
       change: change
-    });
+    }); */
 
     return dispatch({
       type: types.WS_PAYMENT,
