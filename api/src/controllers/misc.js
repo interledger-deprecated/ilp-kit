@@ -8,11 +8,11 @@ const Auth = require('../lib/auth')
 const Log = require('../lib/log')
 const Config = require('../lib/config')
 const Ledger = require('../lib/ledger')
-const utils = require('../lib/utils')
+const Utils = require('../lib/utils')
 const InvalidLedgerAccountError = require('../errors/invalid-ledger-account-error')
 
-MiscControllerFactory.constitute = [Auth, Log, Config, Ledger]
-function MiscControllerFactory (Auth, log, config, ledger) {
+MiscControllerFactory.constitute = [Auth, Log, Config, Ledger, Utils]
+function MiscControllerFactory (Auth, log, config, ledger, utils) {
   log = log('misc')
 
   return class MiscController {
@@ -27,7 +27,6 @@ function MiscControllerFactory (Auth, log, config, ledger) {
       try {
         destination = yield utils.parseDestination({
           destination: this.query.destination,
-          currentLedgerUri: config.data.getIn(['ledger', 'public_uri']),
           retrieveLedgerInfo: true
         })
       } catch(e) {

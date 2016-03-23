@@ -9,14 +9,14 @@ const Auth = require('../lib/auth')
 const Log = require('../lib/log')
 const Ledger = require('../lib/ledger')
 const Config = require('../lib/config')
-const utils = require('../lib/utils')
+const Utils = require('../lib/utils')
 const PaymentFactory = require('../models/payment')
 const InvalidLedgerAccountError = require('../errors/invalid-ledger-account-error')
 const LedgerInsufficientFundsError = require('../errors/ledger-insufficient-funds-error')
 const NoPathsError = require('../errors/no-paths-error')
 
-PaymentsControllerFactory.constitute = [Auth, PaymentFactory, Log, Ledger, Config]
-function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
+PaymentsControllerFactory.constitute = [Auth, PaymentFactory, Log, Ledger, Config, Utils]
+function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
   log = log('payments')
 
   return class PaymentsController {
@@ -66,8 +66,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
       payment.source_user = this.req.user.id
 
       let destination = yield utils.parseDestination({
-        destination: payment.destination_account,
-        currentLedgerUri: config.data.getIn(['ledger', 'public_uri'])
+        destination: payment.destination_account
       })
 
       // TODO fill the destination_user
@@ -111,8 +110,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
 
       try {
         destination = yield utils.parseDestination({
-          destination: this.body.destination,
-          currentLedgerUri: config.data.getIn(['ledger', 'public_uri'])
+          destination: this.body.destination
         })
       } catch (e) {
         // TODO differentiate doesn't exist from parsing error

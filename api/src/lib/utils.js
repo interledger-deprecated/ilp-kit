@@ -2,14 +2,24 @@
 
 const _ = require('lodash')
 const WebFinger = require('webfinger.js')
-const superagent = require('superagent-promise')(require('superagent'), Promise)
+
+const Config = require('./config')
+const Ledger = require('./ledger')
 
 // TODO implement caching
-// TODO turn into a service
-module.exports = class utils {
-  static * parseDestination (options) {
+module.exports = class Utils {
+  static constitute () { return [ Config, Ledger ] }
+  constructor (config, ledger) {
+    this.config = config.data
+    this.ledger = ledger
+    this.ledgerUri = this.config.getIn(['ledger', 'uri'])
+    this.ledgerUriPublic = this.config.getIn(['ledger', 'public_uri'])
+  }
+
+  * parseDestination (options) {
+    let self = this
+
     let destination = options.destination
-    let currentLedgerUri = options.currentLedgerUri
     let retrieveLedgerInfo = options.retrieveLedgerInfo
 
     // Ledger account URI
@@ -34,17 +44,23 @@ module.exports = class utils {
         request_timeout: 10000
       });
 
-      const data = yield new Promise(function(resolve, reject){
-        webfinger.lookup(destination,
-          function(err, res){
-            if (err) {
-              return reject(err)
-            }
+      let data
 
-            resolve(res.object)
-          }
-        )
-      })
+      try {
+        data = yield new Promise(function(resolve, reject){
+          webfinger.lookup(destination,
+            function(err, res){
+              if (err) {
+                return reject(err)
+              }
+
+              resolve(res.object)
+            }
+          )
+        })
+      } catch(e) {
+        // TODO handle
+      }
 
       let parsedDestination = {
         type: 'foreign',
@@ -53,10 +69,12 @@ module.exports = class utils {
       }
 
       if (retrieveLedgerInfo) {
-        // TODO handle exceptions
-        parsedDestination.ledgerInfo = yield superagent
-          .get(parsedDestination.ledgerUri)
-          .end()
+        try {
+          parsedDestination.ledgerInfo = yield self.ledger.getInfo(parsedDestination.ledgerUri)
+        } catch(e) {
+          // TODO handle
+        }
+
         parsedDestination.ledgerInfo = parsedDestination.ledgerInfo.body
       }
 
@@ -67,15 +85,18 @@ module.exports = class utils {
       // Local account
       let parsedDestination = {
         type: 'local',
-        accountUri: currentLedgerUri + '/accounts/' + destination,
-        ledgerUri: currentLedgerUri
+        accountUri: self.ledgerUriPublic + '/accounts/' + destination,
+        ledgerUri: self.ledgerUriPublic
       }
 
       // TODO api should already know the current ledgerInfo at this point
       if (retrieveLedgerInfo) {
-        parsedDestination.ledgerInfo = yield superagent
-          .get(parsedDestination.ledgerUri)
-          .end()
+        try {
+          parsedDestination.ledgerInfo = yield self.ledger.getInfo(parsedDestination.ledgerUri)
+        } catch(e) {
+          // TODO handle
+        }
+
         parsedDestination.ledgerInfo = parsedDestination.ledgerInfo.body
       }
 

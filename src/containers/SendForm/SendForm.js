@@ -85,6 +85,7 @@ export default class SendForm extends Component {
     }
   }
 
+  // TODO introduce a latency
   shouldComponentUpdate(nextProps) {
     // Reset the form after a successful transfer
     if (!this.props.success && nextProps.success) {
