@@ -17,6 +17,12 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         destinationInfo: action.result
       }
+    case types.DESTINATION_CHANGE_FAIL:
+      return {
+        ...state,
+        fail: action.error,
+        destinationInfo: {}
+      }
     case types.PATHFIND:
       return {
         ...state,

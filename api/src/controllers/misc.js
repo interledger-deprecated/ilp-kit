@@ -28,16 +28,16 @@ function MiscControllerFactory (Auth, log, config, ledger) {
           currentLedgerUri: config.data.getIn(['ledger', 'public_uri']),
           retrieveLedgerInfo: true
         })
+
+        this.body = {
+          ledger: {
+            currencyCode: destination.ledgerInfo && destination.ledgerInfo.currency_code,
+            currencySymbol: destination.ledgerInfo && destination.ledgerInfo.currency_symbol
+          }
+        }
       } catch(e) {
         // TODO differentiate doesn't exist from parsing error
         throw new InvalidLedgerAccountError("Account doesn't exist")
-      }
-
-      this.body = {
-        ledger: {
-          currencyCode: destination.ledgerInfo && destination.ledgerInfo.currency_code,
-          currencySymbol: destination.ledgerInfo && destination.ledgerInfo.currency_symbol
-        }
       }
     }
 
