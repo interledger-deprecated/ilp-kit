@@ -16,6 +16,23 @@ module.exports = class Utils {
     this.ledgerUriPublic = this.config.getIn(['ledger', 'public_uri'])
   }
 
+  isAccountUri (destination) {
+    return destination.indexOf('http://') > -1 || destination.indexOf('https://') > -1
+  }
+
+  getAccountType (accountUri) {
+    return this.isForeignAccountUri(accountUri) ? 'foreign' : 'local'
+  }
+
+  isForeignAccountUri (accountUri) {
+    return accountUri.indexOf(this.ledgerUriPublic) === -1
+  }
+
+  isWebfinger (destination) {
+    // TODO better email style checking
+    return destination.search('@') > -1
+  }
+
   * parseDestination (options) {
     let self = this
 
@@ -23,20 +40,17 @@ module.exports = class Utils {
     let retrieveLedgerInfo = options.retrieveLedgerInfo
 
     // Ledger account URI
-    // TODO Use a better mechanism to check if the destinationAccount is in a different ledger
-    if (destination.indexOf('http://') > -1 || destination.indexOf('https://') > -1) {
-      // TODO check if it's the current ledger. If yes, it's not an interledger transaction
+    if (self.isAccountUri(destination) && self.isForeignAccountUri(destination)) {
       // TODO should also parse the ledger info here
       // TODO should also retrieve ledger info here
       return {
-        type: 'foreign',
+        type: self.getAccountType(destination),
         accountUri: destination
       }
     }
 
     // Webfinger
-    // TODO better email style checking
-    else if (destination.search('@') > -1) {
+    else if (self.isWebfinger(destination)) {
       var webfinger = new WebFinger({
         webfist_fallback: true,
         tls_only: true,
@@ -62,10 +76,13 @@ module.exports = class Utils {
         // TODO handle
       }
 
+      let accountUri = _.filter(data.links, {rel: 'http://webfinger.net/rel/ledgerAccount'})[0].href
+      let ledgerUri = _.filter(data.links, {rel: 'http://webfinger.net/rel/ledgerUri'})[0].href
+
       let parsedDestination = {
-        type: 'foreign',
-        accountUri: _.filter(data.links, {rel: 'http://webfinger.net/rel/ledgerAccount'})[0].href,
-        ledgerUri: _.filter(data.links, {rel: 'http://webfinger.net/rel/ledgerUri'})[0].href
+        type: self.getAccountType(accountUri),
+        accountUri: accountUri,
+        ledgerUri: ledgerUri
       }
 
       if (retrieveLedgerInfo) {
@@ -82,10 +99,14 @@ module.exports = class Utils {
     }
 
     else {
+      let accountUri = self.isAccountUri(destination)
+        ? destination
+        : self.ledgerUriPublic + '/accounts/' + destination
+
       // Local account
       let parsedDestination = {
-        type: 'local',
-        accountUri: self.ledgerUriPublic + '/accounts/' + destination,
+        type: self.getAccountType(accountUri),
+        accountUri: accountUri,
         ledgerUri: self.ledgerUriPublic
       }
 
