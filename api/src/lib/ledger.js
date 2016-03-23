@@ -21,20 +21,22 @@ module.exports = class Ledger extends EventEmitter {
   }
 
   * getInfo () {
+    let response
+
     try {
       this.log.info('getting ledger info ' + this.ledgerUri)
-      const response = yield superagent.get(this.ledgerUri).end()
-
-      return response.body
+      response = yield superagent.get(this.ledgerUri).end()
     } catch (err) {
       if (err.status !== 422) throw err
     }
+
+    return response.body
   }
 
   * subscribe () {
     try {
       this.log.info('subscribing to ledger ' + this.ledgerUri)
-      const response = yield superagent
+      yield superagent
         .put(this.ledgerUri + '/subscriptions/' + uuid())
         .auth(this.config.getIn(['ledger', 'admin', 'name']), this.config.getIn(['ledger', 'admin', 'pass']))
         .send({
@@ -68,38 +70,43 @@ module.exports = class Ledger extends EventEmitter {
   }
 
   * getAccount (user, admin) {
+    let response
+
     try {
-      const response = yield superagent
+      response = yield superagent
         .get(this.ledgerUri + '/accounts/' + user.username)
         .auth(admin ? this.config.getIn(['ledger', 'admin', 'name']) : user.username, admin ? this.config.getIn(['ledger', 'admin', 'pass']): user.password)
         .end()
-
-      return response.body
     } catch (e) {
       this.log.critical(e)
     }
+
+    return response.body
   }
 
   * createAccount(user) {
+    let data = {
+      name: user.username,
+      balance: user.balance ? ''+user.balance : '1000'
+    }
+
+    if (user.password) {
+      data.password = user.password
+    }
+
+    let response
+
     try {
-      let data = {
-        name: user.username,
-        balance: user.balance ? ''+user.balance : '1000'
-      }
-
-      if (user.password) {
-        data.password = user.password
-      }
-
-      const response = yield superagent
+      response = yield superagent
         .put(this.ledgerUri + '/accounts/' + user.username)
         .send(data)
         // TODO do we need auth?
         .auth(this.config.getIn(['ledger', 'admin', 'name']), this.config.getIn(['ledger', 'admin', 'pass']))
-      return response.body
     } catch (e) {
       // TODO handle
     }
+
+    return response.body
   }
 
   findPath(options) {

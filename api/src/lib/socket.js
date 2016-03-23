@@ -79,6 +79,7 @@ module.exports = class Socket {
 
     self.log.info('balance update for ' + username)
 
+    // TODO signup click reload, gets you an exception
     _.map(self.subscribers[username].clients, function(client){
       client.emit('balance', balance)
     })

@@ -81,8 +81,10 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
       }
 
       // Try doing the ledger transaction
+      let transfer
+
       try {
-        const transfer = yield ledger.transfer(options)
+        transfer = yield ledger.transfer(options)
 
         log.debug('Ledger transfer payment ID ' + id)
       } catch (e) {
@@ -105,8 +107,10 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
     // TODO handle account doesn't exist exception
     // TODO handle not supplied params
     static * findPath () {
+      let destination
+
       try {
-        let destination = yield utils.parseDestination({
+        destination = yield utils.parseDestination({
           destination: this.body.destination,
           currentLedgerUri: config.data.getIn(['ledger', 'public_uri'])
         })
