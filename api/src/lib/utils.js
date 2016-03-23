@@ -34,39 +34,33 @@ module.exports = class utils {
         request_timeout: 10000
       });
 
-      try {
-        const data = yield new Promise(function(resolve, reject){
-          webfinger.lookup(destination,
-            function(err, res){
-              if (err) {
-                return reject(err)
-              }
-
-              resolve(res.object)
+      const data = yield new Promise(function(resolve, reject){
+        webfinger.lookup(destination,
+          function(err, res){
+            if (err) {
+              return reject(err)
             }
-          )
-        })
 
-        let parsedDestination = {
-          type: 'foreign',
-          accountUri: _.filter(data.links, {rel: 'http://webfinger.net/rel/ledgerAccount'})[0].href,
-          ledgerUri: _.filter(data.links, {rel: 'http://webfinger.net/rel/ledgerUri'})[0].href
-        }
+            resolve(res.object)
+          }
+        )
+      })
 
-        if (retrieveLedgerInfo) {
-          // TODO handle exceptions
-          parsedDestination.ledgerInfo = yield superagent
-            .get(parsedDestination.ledgerUri)
-            .end()
-          parsedDestination.ledgerInfo = parsedDestination.ledgerInfo.body
-        }
-
-        return parsedDestination
+      let parsedDestination = {
+        type: 'foreign',
+        accountUri: _.filter(data.links, {rel: 'http://webfinger.net/rel/ledgerAccount'})[0].href,
+        ledgerUri: _.filter(data.links, {rel: 'http://webfinger.net/rel/ledgerUri'})[0].href
       }
-      // TODO Handle
-      catch (e) {
 
+      if (retrieveLedgerInfo) {
+        // TODO handle exceptions
+        parsedDestination.ledgerInfo = yield superagent
+          .get(parsedDestination.ledgerUri)
+          .end()
+        parsedDestination.ledgerInfo = parsedDestination.ledgerInfo.body
       }
+
+      return parsedDestination
     }
 
     else {

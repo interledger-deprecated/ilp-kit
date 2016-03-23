@@ -105,10 +105,15 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
     // TODO handle account doesn't exist exception
     // TODO handle not supplied params
     static * findPath () {
-      let destination = yield utils.parseDestination({
-        destination: this.body.destination,
-        currentLedgerUri: config.data.getIn(['ledger', 'public_uri'])
-      })
+      try {
+        let destination = yield utils.parseDestination({
+          destination: this.body.destination,
+          currentLedgerUri: config.data.getIn(['ledger', 'public_uri'])
+        })
+      } catch (e) {
+        // TODO differentiate doesn't exist from parsing error
+        throw new InvalidLedgerAccountError("Account doesn't exist")
+      }
 
       if (destination.type === 'local') {
         let amount = this.body.source_amount || this.body.destination_amount
@@ -135,7 +140,6 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config) {
       }
 
       this.body = path
-
     }
   }
 }
