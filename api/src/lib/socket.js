@@ -25,7 +25,7 @@ module.exports = class Socket {
       self.addSubscriber(username, this.socket)
     })
 
-    app.io.route('unsubscribe', function (next, username) {
+    app.io.route('unsubscribe', function (next) {
       // TODO implement
     })
 
