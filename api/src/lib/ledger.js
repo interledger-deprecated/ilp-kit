@@ -114,7 +114,7 @@ module.exports = class Ledger extends EventEmitter {
   findPath(options) {
     let pathOptions = {
       sourceAccount: this.ledgerUriPublic + '/accounts/' + options.username,
-      destinationAccount: options.destinationAccount
+      destinationAccount: options.destination.accountUri
     }
 
     if (options.sourceAmount) {
@@ -131,16 +131,15 @@ module.exports = class Ledger extends EventEmitter {
     let sourceAccount = this.ledgerUriPublic + '/accounts/' + options.username
 
     // Interledger
-    // TODO Use a better mechanism to check if the destinationAccount is in a different ledger
-    if (!options.destinationAccount.indexOf('http://') || !options.destinationAccount.indexOf('https://')) {
+    if (options.destination.type === 'foreign') {
       response = yield sender.executePayment(options.path, {
         sourceAccount: sourceAccount,
         sourcePassword: options.password,
-        destinationAccount: options.destinationAccount,
+        destinationAccount: options.destination.accountUri,
         additionalInfo: {
           source_account: sourceAccount,
           source_amount: options.path[0].source_transfers[0].debits[0].amount,
-          destination_account: options.destinationAccount,
+          destination_account: options.destination.accountUri,
           destination_amount: options.path[0].destination_transfers[0].credits[0].amount
         }
       })
@@ -159,7 +158,7 @@ module.exports = class Ledger extends EventEmitter {
             authorized: true
           }],
           credits: [{
-            account: this.ledgerUriPublic + '/accounts/' + options.destinationAccount,
+            account: options.destination.accountUri,
             amount: options.destinationAmount
           }],
           expires_at: "2016-06-16T00:00:01.000Z"

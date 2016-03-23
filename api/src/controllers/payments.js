@@ -72,7 +72,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
       // TODO fill the destination_user
       const options = {
         sourceAmount: payment.source_amount,
-        destinationAccount: destination.accountUri,
+        destination: destination,
         destinationAmount: payment.destination_amount,
         path: payment.path,
         username: this.req.user.username,
@@ -103,7 +103,6 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
       this.body = {'status': 'OK'}
     }
 
-    // TODO handle account doesn't exist exception
     // TODO handle not supplied params
     static * findPath () {
       let destination
@@ -129,7 +128,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
       }
 
       const options = {
-        destinationAccount: destination.accountUri,
+        destination: destination,
         sourceAmount: this.body.source_amount,
         destinationAmount: this.body.destination_amount,
         username: this.req.user.username
