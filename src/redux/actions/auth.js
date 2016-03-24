@@ -55,6 +55,7 @@ export function updateBalance(balance) {
 // TODO move socket stuff somewhere else
 function socketSubscribe(dispatch, username) {
   if (socket) {
+    socket.connect()
     socket.emit('subscribe', username)
     socket.on('payment', (payment) => {
       dispatch(addPayment(payment))
@@ -62,14 +63,6 @@ function socketSubscribe(dispatch, username) {
     socket.on('balance', (balance) => {
       dispatch(updateBalance(balance))
     })
-  }
-}
-
-function socketUnsubscribe() {
-  if (socket) {
-    socket.emit('unsubscribe')
-    socket.removeAllListeners('payment')
-    socket.removeAllListeners('balance')
   }
 }
 
@@ -109,6 +102,10 @@ export function logout() {
   return {
     types: [types.LOGOUT, types.LOGOUT_SUCCESS, types.LOGOUT_FAIL],
     promise: (client) => client.get('/auth/logout')
-      .then(socketUnsubscribe)
+      .then(() => {
+        socket.disconnect()
+
+        return true
+      })
   }
 }

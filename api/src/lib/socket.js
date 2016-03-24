@@ -14,7 +14,77 @@ module.exports = class Socket {
     this.log = log('socket')
     this.ledger = ledger
     this.Payment = Payment
-    this.subscribers = {}
+
+    /**
+     * Format
+     *
+     * {
+     *   username: {
+     *     socketId: socket
+     *     socketId: socket
+     *     ...
+     *   }
+     *   {username}: {
+     *     socketId: socket
+     *     socketId: socket
+     *     ...
+     *   }
+     *   ...
+     * }
+     */
+    this.users = {}
+  }
+
+  // Add a subscribed user
+  addUser(username) {
+    let self = this
+
+    // TODO should socket be aware of the ledger? may need to move this somewhere else
+    self.ledger.on('transfer_' + username, function(transfer){
+      self.transfer(username, transfer)
+    })
+
+    return self.users[username] = self.users[username] || { subscriptions: {} }
+  }
+
+  // Remove the user if it doesn't have subscriptions
+  cleanup(username) {
+    let self = this
+
+    if (self.users[username] && _.isEmpty(self.users[username].subscriptions)) {
+      delete this.users[username]
+
+      self.ledger.removeAllListeners('transfer_' + username)
+    }
+  }
+
+  // Add a subscription under the user
+  addSubscription(username, socket) {
+    let self = this
+
+    self.log.info('Subscribe ' + username)
+
+    // Add the subscription
+    let user = self.users[username] || self.addUser(username)
+    user.subscriptions[socket.id] = socket
+  }
+
+  // Remove the subscription
+  removeSubscription(id) {
+    let self = this
+
+    _.map(self.users, function(s, key){
+      if (s.subscriptions[id]) {
+        delete s.subscriptions[id]
+        self.cleanup(key)
+      }
+    })
+  }
+
+  emitToUser(username, event, data) {
+    _.map(this.users[username].subscriptions, function(subscription){
+      subscription.emit(event, data)
+    })
   }
 
   attach (app) {
@@ -22,32 +92,14 @@ module.exports = class Socket {
 
     // TODO ensure the username is the currently logged in user
     app.io.route('subscribe', function (next, username) {
-      self.addSubscriber(username, this.socket)
-    })
-
-    app.io.route('unsubscribe', function (next) {
-      // TODO implement
+      self.addSubscription(username, this.socket)
     })
 
     app.io.use(function* (next) {
-      // on conncet
+      self.log.info('Connected ' + this.socket.id)
       yield* next
-      // on disconnect
-    })
-  }
-
-  addSubscriber(username, socket) {
-    let self = this
-
-    self.log.info('Subscribe ' + username)
-
-    // Add the subscriber
-    let subscriber = self.subscribers[username] = self.subscribers[username] || { clients: {} }
-    subscriber.clients[socket.id] = socket
-
-    // should socket be aware of the ledger? may need to move this somwehere else
-    self.ledger.on('transfer_' + username, function(transfer){
-      self.transfer(username, transfer)
+      self.log.info('Disconnected ' + this.socket.id)
+      self.removeSubscription(this.socket.id)
     })
   }
 
@@ -59,9 +111,7 @@ module.exports = class Socket {
       .then(function (data) {
         self.log.info('payment for ' + username)
 
-        _.map(self.subscribers[username].clients, function(client){
-          client.emit('payment', data)
-        })
+        self.emitToUser(username, 'payment', data)
       })
 
     // Fire a balance update event
@@ -80,8 +130,6 @@ module.exports = class Socket {
     self.log.info('balance update for ' + username)
 
     // TODO signup click reload, gets you an exception
-    _.map(self.subscribers[username].clients, function(client){
-      client.emit('balance', balance)
-    })
+    self.emitToUser(username, 'balance', balance)
   }
 }
