@@ -22,7 +22,9 @@ const cx = classNames.bind(styles)
     }
 
     // Server config
-    promises.push(dispatch(loadConfig()))
+    if (!getState().auth.config.ledgerUri) {
+      promises.push(dispatch(loadConfig()))
+    }
 
     return Promise.all(promises)
   }

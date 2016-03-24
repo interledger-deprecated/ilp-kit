@@ -1,13 +1,13 @@
-import React, {Component, PropTypes} from 'react';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import {connect} from 'react-redux';
-import * as historyActions from 'redux/actions/history';
+import React, {Component, PropTypes} from 'react'
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
+import {connect} from 'react-redux'
+import * as historyActions from 'redux/actions/history'
 
-import { HistoryItem } from 'components';
+import { HistoryItem } from 'components'
 
-import classNames from 'classnames/bind';
-import styles from './History.scss';
-const cx = classNames.bind(styles);
+import classNames from 'classnames/bind'
+import styles from './History.scss'
+const cx = classNames.bind(styles)
 
 @connect(
   state => ({
@@ -27,11 +27,13 @@ export default class Home extends Component {
 
   // Load the history
   componentDidMount() {
-    this.props.load();
+    if (!this.props.history.length) {
+      this.props.load()
+    }
   }
 
   render() {
-    const {history, user, toggleJson, loading} = this.props;
+    const {history, user, toggleJson, loading} = this.props
 
     return (
       <ul className={cx('list')}>
@@ -47,7 +49,7 @@ export default class Home extends Component {
               <li key={item.id}>
                 <HistoryItem item={item} user={user} toggleJson={toggleJson}/>
               </li>
-            );
+            )
           })}
           </ReactCSSTransitionGroup>}
 
