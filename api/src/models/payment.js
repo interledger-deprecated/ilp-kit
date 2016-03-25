@@ -55,7 +55,8 @@ function PaymentFactory (sequelize, validator, container, User) {
     }
 
     static getUserPayments (user, page, limit) {
-      page = page > 0 ? page : 1
+      page = page > 0 ? Number(page) : 1
+      limit = Number(limit)
 
       return Payment.DbModel.findAndCountAll({
         // This is how we get a flat object that includes user username
