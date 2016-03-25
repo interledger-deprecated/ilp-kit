@@ -32,11 +32,13 @@ const cx = classNames.bind(styles)
 @connect(
   state => ({
     user: state.auth.user,
-    config: state.auth.config
+    config: state.auth.config,
+    loaded: state.reduxAsyncConnect.loaded
   }),
   {logout, pushState: routeActions.push, historyAddPayment})
 export default class App extends Component {
   static propTypes = {
+    loaded: PropTypes.bool,
     children: PropTypes.object.isRequired,
     user: PropTypes.object,
     config: PropTypes.object,
@@ -79,51 +81,58 @@ export default class App extends Component {
   }
 
   render() {
-    const {user} = this.props
+    const {loaded, user} = this.props
 
     return (
-      <div className={cx('container')}>
-        <script src="https://web-payments.net/polyfill.js"></script>
-        <DocumentMeta {...config.app}/>
-        <div className={cx('header', 'clearfix')}>
-          <nav className={cx('headerContainer', 'container')}>
-            <ul className="nav nav-pills pull-right">
-              {user &&
-              <li role="presentation" className={cx('navText')}>
-                Hi <strong>{user.username}</strong>.
-              </li>}
-              {user &&
-              <IndexLinkContainer to="/">
-                <NavItem>Home</NavItem>
-              </IndexLinkContainer>
-              }
-              {user &&
-              <LinkContainer to="/button">
-                <NavItem>Pay Button</NavItem>
-              </LinkContainer>}
-              {user &&
-              <LinkContainer to="/logout">
-                <NavItem className="logout-link" onClick={this.handleLogout}>
-                  Logout
-                </NavItem>
-              </LinkContainer>}
-            </ul>
+      <div>
+        {!loaded &&
+          <div>Loading...</div>}
 
-            <h3 className={cx('logo')}>
-              {config.app.title}
-            </h3>
-          </nav>
-        </div>
+        {loaded &&
+          <div className={cx('container')}>
+            <script src="https://web-payments.net/polyfill.js"></script>
+            <DocumentMeta {...config.app}/>
+            <div className={cx('header', 'clearfix')}>
+              <nav className={cx('headerContainer', 'container')}>
+                <ul className="nav nav-pills pull-right">
+                  {user &&
+                  <li role="presentation" className={cx('navText')}>
+                    Hi <strong>{user.username}</strong>.
+                  </li>}
+                  {user &&
+                  <IndexLinkContainer to="/">
+                    <NavItem>Home</NavItem>
+                  </IndexLinkContainer>
+                  }
+                  {user &&
+                  <LinkContainer to="/button">
+                    <NavItem>Pay Button</NavItem>
+                  </LinkContainer>}
+                  {user &&
+                  <LinkContainer to="/logout">
+                    <NavItem className="logout-link" onClick={this.handleLogout}>
+                      Logout
+                    </NavItem>
+                  </LinkContainer>}
+                </ul>
 
-        <div className={cx('appContent')}>
-          {this.props.children}
-        </div>
+                <h3 className={cx('logo')}>
+                  {config.app.title}
+                </h3>
+              </nav>
+            </div>
 
-        <footer className={cx('footer')}>
-          <div className="container">
-            <p>&copy; 2016 <a href="http://interledger.org/">Interledger</a>.</p>
+            <div className={cx('appContent')}>
+              {this.props.children}
+            </div>
+
+            <footer className={cx('footer')}>
+              <div className="container">
+                <p>&copy; 2016 <a href="http://interledger.org/">Interledger</a>.</p>
+              </div>
+            </footer>
           </div>
-        </footer>
+        }
       </div>
     )
   }
