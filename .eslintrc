@@ -4,6 +4,9 @@
     "node": true,
     "mocha": true
   },
+  "ecmaFeatures": {
+    "modules": true
+  },
   "rules": {
     "react/no-multi-comp": 0,
     "import/default": 0,

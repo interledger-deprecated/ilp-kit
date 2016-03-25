@@ -54,8 +54,10 @@ function PaymentFactory (sequelize, validator, container, User) {
       }
     }
 
-    static getUserPayments (user) {
-      return Payment.findAll({
+    static getUserPayments (user, page, limit) {
+      page = page > 0 ? page : 1
+
+      return Payment.DbModel.findAndCountAll({
         // This is how we get a flat object that includes user username
         attributes: {include: [
           [Sequelize.col('SourceUser.username'), 'sourceUserUsername'],
@@ -69,6 +71,8 @@ function PaymentFactory (sequelize, validator, container, User) {
             {destination_account: user.account}
           ]
         },
+        limit: limit,
+        offset: limit * (page - 1),
         include: [
           // attributes: [] because we want a flat object. See above
           { model: User.DbModel, as: 'SourceUser', attributes: [] },

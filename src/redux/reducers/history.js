@@ -1,17 +1,12 @@
 import * as types from '../actionTypes'
 
-const initialState = {
-  success: false,
-  loading: false,
-  history: [],
-  fail: {}
-}
+import paginate from 'redux-pagination'
 
-export default function reducer(state = initialState, action = {}) {
+function reducer(state = {}, action = {}) {
   function updateInHistory(paymentId, update) {
     return {
       ...state,
-      history: state.history.map(payment => {
+      list: state.list.map(payment => {
         if (payment.id === paymentId) {
           return {
             ...payment,
@@ -25,30 +20,6 @@ export default function reducer(state = initialState, action = {}) {
   }
 
   switch (action.type) {
-    case types.HISTORY_LOAD:
-      return {
-        ...state,
-        success: false,
-        loading: true,
-        history: [],
-        fail: {}
-      }
-    case types.HISTORY_LOAD_SUCCESS:
-      return {
-        ...state,
-        success: true,
-        loading: false,
-        history: action.result,
-        fail: {}
-      }
-    case types.HISTORY_LOAD_FAIL:
-      return {
-        ...state,
-        success: false,
-        loading: false,
-        history: [],
-        fail: action.error
-      }
     // case PAYMENT_JSON_LOADING
     // case PAYMENT_JSON_FAIL
     case types.PAYMENT_JSON_SUCCESS:
@@ -61,13 +32,23 @@ export default function reducer(state = initialState, action = {}) {
     case types.PAYMENT_JSON_HIDE:
       return updateInHistory(action.id, {showJson: false})
     case types.WS_PAYMENT:
-      return {
-        ...state,
-        history: [action.result].concat(state.history)
+      if (state.currentPage === 1) {
+        // remove the last payment
+        state.list.pop()
+
+        return {
+          ...state,
+          // Add the new payment
+          list: [action.result].concat(state.list)
+        }
       }
+
+      return state
     case types.LOGOUT_SUCCESS:
-      return initialState
+      return {}
     default:
       return state
   }
 }
+
+export default paginate(reducer, {limit: 20})

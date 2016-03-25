@@ -28,12 +28,15 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
     }
 
     static * getHistory () {
-      // TODO pagination
-      const payments = yield Payment.getUserPayments(this.req.user)
+      const page = this.query.page
+      const limit = this.query.limit
 
-      this.body = _.map(payments, (payment) => {
-        return payment.getDataExternal()
-      })
+      const payments = yield Payment.getUserPayments(this.req.user, page, limit)
+
+      this.body = {
+        list: payments.rows,
+        totalPages: Math.ceil(payments.count / limit)
+      }
     }
 
     static * getResource () {

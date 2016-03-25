@@ -1,7 +1,10 @@
 import React, {Component, PropTypes} from 'react'
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import {connect} from 'react-redux'
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
+import ReactPaginate from 'react-paginate';
 import * as historyActions from 'redux/actions/history'
+
+import { initActionCreators } from 'redux-pagination'
 
 import { HistoryItem } from 'components'
 
@@ -9,52 +12,80 @@ import classNames from 'classnames/bind'
 import styles from './History.scss'
 const cx = classNames.bind(styles)
 
+// TODO not sure the component is the best place for this
+const paginationActionCreators = initActionCreators({
+  limit: 30,
+  path: '/payments'
+})
+
 @connect(
   state => ({
-    history: state.history.history,
-    loading: state.history.loading,
+    history: state.history.list,
+    totalPages: state.history.totalPages,
+    loadingPage: state.history.loadingPage,
     user: state.auth.user
   }),
-  historyActions)
+  {...historyActions, ...paginationActionCreators})
 export default class Home extends Component {
   static propTypes = {
-    load: PropTypes.func,
     history: PropTypes.array,
+    totalPages: PropTypes.number,
     user: PropTypes.object,
-    loading: PropTypes.bool,
-    toggleJson: PropTypes.func
+    loadingPage: PropTypes.bool,
+    toggleJson: PropTypes.func,
+
+    getPage: PropTypes.func
   }
 
   // Load the history
   componentDidMount() {
-    if (!this.props.history.length) {
-      this.props.load()
-    }
+    this.props.getPage(1)
+  }
+
+  handlePageClick = (data) => {
+    this.props.getPage(data.selected + 1)
   }
 
   render() {
-    const {history, user, toggleJson, loading} = this.props
+    const {history, totalPages, user, toggleJson, loadingPage} = this.props
 
     return (
-      <ul className={cx('list')}>
-        {history && history.length > 0 &&
-          <ReactCSSTransitionGroup transitionName={{
-            enter: cx('enter'),
-            enterActive: cx('enter-active'),
-            leave: cx('leave'),
-            leaveActive: cx('leave-active')
-          }} transitionEnterTimeout={1000} transitionLeaveTimeout={300}>
-          {history && history.map(item => {
-            return (
-              <li key={item.id}>
-                <HistoryItem item={item} user={user} toggleJson={toggleJson}/>
-              </li>
-            )
-          })}
-          </ReactCSSTransitionGroup>}
+      <div className={cx('container')}>
+        <ul className={cx('list')}>
+          {history && history.length > 0 &&
+            <ReactCSSTransitionGroup transitionName={{
+              enter: cx('enter'),
+              enterActive: cx('enter-active'),
+              leave: cx('leave'),
+              leaveActive: cx('leave-active')
+            }} transitionEnterTimeout={1000} transitionLeaveTimeout={300}>
+            {history && history.map(item => {
+              return (
+                <li key={item.id}>
+                  <HistoryItem item={item} user={user} toggleJson={toggleJson}/>
+                </li>
+              )
+            })}
+            </ReactCSSTransitionGroup>
+          }
 
-        {loading && <li className={cx('loading')}>Loading...</li>}
-      </ul>
+          {loadingPage && <li className={cx('loading')}>Loading...</li>}
+        </ul>
+
+        <ReactPaginate
+          pageNum={totalPages}
+          pageRangeDisplayed={5}
+          marginPagesDisplayed={1}
+          previousLabel="&laquo;"
+          nextLabel="&raquo;"
+          clickCallback={this.handlePageClick}
+          breakLabel={<span>...</span>}
+          containerClassName={cx('pagination', 'root-pagination')}
+          subContainerClassName={cx('pagination', 'fbw-pagination')}
+          activeClassName={cx('active')}
+        />
+      </div>
     )
   }
 }
+
