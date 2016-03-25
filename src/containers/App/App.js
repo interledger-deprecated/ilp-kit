@@ -85,9 +85,6 @@ export default class App extends Component {
 
     return (
       <div>
-        {!loaded &&
-          <div>Loading...</div>}
-
         {loaded &&
           <div className={cx('container')}>
             <script src="https://web-payments.net/polyfill.js"></script>
