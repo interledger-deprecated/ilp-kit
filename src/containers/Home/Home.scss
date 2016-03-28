@@ -1,8 +1,12 @@
 @import '../../theme/variables.scss';
 
 .defaultPPBar {
-  & > div {
-    line-height: 32px;
+  .button {
+    margin: 10px 0 5px;
+  }
+  .learnMore {
+    text-align: right;
+    font-size: 12px;
   }
 }
 .balanceContainer {

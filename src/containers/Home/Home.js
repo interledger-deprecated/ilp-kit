@@ -81,16 +81,6 @@ export default class Home extends Component {
         {/* Balance Send widget */}
         {user &&
         <div>
-          <div className={cx('box', 'defaultPPBar')}>
-            <div className="row">
-              <div className={cx('col-xs-3')}>
-                <button className={cx('btn', 'lu-btn', 'btn-block')} onClick={this.handleDefaultPayment}>Set as default</button>
-              </div>
-              <div className={cx('col-xs-9')}>
-                (This will use the <a href="https://github.com/justmoon/webpayments-polyfill">webpayments-polyfill</a> to set Five Bells Wallet as your default payment provider)
-              </div>
-            </div>
-          </div>
           <div className="row">
             <div className={cx('col-sm-8')}>
               <div className={cx('box')}>
@@ -112,6 +102,15 @@ export default class Home extends Component {
               </div>
             </div>
             <div className={cx('col-sm-4')}>
+              <div className={cx('box', 'defaultPPBar')}>
+                <span>Use Five Bells Wallet as your default payment provider</span>
+                <div className={cx('button')}>
+                  <button className={cx('btn', 'lu-btn', 'btn-block')} onClick={this.handleDefaultPayment}>Set as default</button>
+                </div>
+                <div className={cx('learnMore')}>
+                  <a href="https://github.com/justmoon/webpayments-polyfill">Learn more</a>
+                </div>
+              </div>
               <div className={cx('box')}>
                 <span className={cx('boxTitle')}>Send money</span>
                 <SendForm />

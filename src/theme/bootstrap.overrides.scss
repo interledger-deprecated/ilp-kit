@@ -1,3 +1,5 @@
+@import 'variables.scss';
+
 /**
  * Override Bootstrap styles that you can't modify via variables here.
  */
@@ -8,6 +10,34 @@
 .nav li.active a:focus {
   background: #fff;
   color: #000;
+}
+
+.nav-pills > li > a, .btn {
+  border-radius: 3px;
+}
+
+// Links colors
+a, .pagination > li > a, .pagination > li > span {
+  color: $header-background-color;
+}
+
+.pagination > li:first-child > a, .pagination > li:first-child > span {
+  border-bottom-left-radius: 3px;
+  border-top-left-radius: 3px;
+}
+
+.pagination > li:last-child > a, .pagination > li:last-child > span {
+  border-bottom-right-radius: 3px;
+  border-top-right-radius: 3px;
+}
+
+.pagination > .active > a, .pagination > .active > a:hover, .pagination > .active > a:focus, .pagination > .active > span, .pagination > .active > span:hover, .pagination > .active > span:focus {
+  background-color: $header-background-color;
+  border-color: $header-background-color;
+}
+
+.pagination > li > a:hover, .pagination > li > a:focus, .pagination > li > span:hover, .pagination > li > span:focus {
+  background-color: $container-background-color;
 }
 
 @media (min-width: 768px) and (max-width: 992px) {
