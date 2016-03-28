@@ -29,6 +29,10 @@
   font: 22px 'OpenSansLight';
   text-align: right;
   line-height: 37px;
+
+  @media (max-width: $screen-md) {
+    font-size: 18px;
+  }
 }
 .negative {
   color: $history-negative;
