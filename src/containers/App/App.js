@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap'
 import NavItem from 'react-bootstrap/lib/NavItem'
 import DocumentMeta from 'react-document-meta'
-import { isLoaded as isAuthLoaded, load as loadAuth, loadConfig, logout } from 'redux/actions/auth'
+import { isLoaded as isAuthLoaded, load as loadAuth, loadConfig, logout, updateBalance } from 'redux/actions/auth'
 import { routeActions } from 'react-router-redux'
 import { addPayment as historyAddPayment } from 'redux/actions/history'
 import config from '../../config'
@@ -32,18 +32,17 @@ const cx = classNames.bind(styles)
 @connect(
   state => ({
     user: state.auth.user,
-    config: state.auth.config,
-    loaded: state.reduxAsyncConnect.loaded
+    config: state.auth.config
   }),
-  {logout, pushState: routeActions.push, historyAddPayment})
+  {logout, pushState: routeActions.push, historyAddPayment, updateBalance})
 export default class App extends Component {
   static propTypes = {
-    loaded: PropTypes.bool,
     children: PropTypes.object.isRequired,
     user: PropTypes.object,
     config: PropTypes.object,
     logout: PropTypes.func.isRequired,
     historyAddPayment: PropTypes.func.isRequired,
+    updateBalance: PropTypes.func.isRequired,
     pushState: PropTypes.func.isRequired
   }
 
@@ -58,6 +57,23 @@ export default class App extends Component {
   getChildContext() {
     return {
       config: this.props.config
+    }
+  }
+
+  componentDidMount() {
+    // TODO socket stuff needs work
+    if (socket) {
+      socket.connect()
+      socket.on('payment', (payment) => {
+        this.props.historyAddPayment(payment)
+      })
+      socket.on('balance', (balance) => {
+        this.props.updateBalance(balance)
+      })
+
+      if (this.props.user && this.props.user.username) {
+        socket.emit('subscribe', this.props.user.username)
+      }
     }
   }
 
@@ -77,59 +93,59 @@ export default class App extends Component {
 
   handleLogout = (event) => {
     event.preventDefault()
+    // TODO don't disconnect, just unsubscribe
+    socket.disconnect()
     this.props.logout()
   }
 
   render() {
-    const {loaded, user} = this.props
+    const {user} = this.props
 
     return (
       <div>
-        {loaded &&
-          <div className={cx('container')}>
-            <script src="https://web-payments.net/polyfill.js"></script>
-            <DocumentMeta {...config.app}/>
-            <div className={cx('header', 'clearfix')}>
-              <nav className={cx('headerContainer', 'container')}>
-                <ul className="nav nav-pills pull-right">
-                  {user &&
-                  <li role="presentation" className={cx('navText')}>
-                    Hi <strong>{user.username}</strong>.
-                  </li>}
-                  {user &&
-                  <IndexLinkContainer to="/">
-                    <NavItem>Home</NavItem>
-                  </IndexLinkContainer>
-                  }
-                  {user &&
-                  <LinkContainer to="/button">
-                    <NavItem>Pay Button</NavItem>
-                  </LinkContainer>}
-                  {user &&
-                  <LinkContainer to="/logout">
-                    <NavItem className="logout-link" onClick={this.handleLogout}>
-                      Logout
-                    </NavItem>
-                  </LinkContainer>}
-                </ul>
+        <div className={cx('container')}>
+          <script src="https://web-payments.net/polyfill.js"></script>
+          <DocumentMeta {...config.app}/>
+          <div className={cx('header', 'clearfix')}>
+            <nav className={cx('headerContainer', 'container')}>
+              <ul className="nav nav-pills pull-right">
+                {user &&
+                <li role="presentation" className={cx('navText')}>
+                  Hi <strong>{user.username}</strong>.
+                </li>}
+                {user &&
+                <IndexLinkContainer to="/">
+                  <NavItem>Home</NavItem>
+                </IndexLinkContainer>
+                }
+                {user &&
+                <LinkContainer to="/button">
+                  <NavItem>Pay Button</NavItem>
+                </LinkContainer>}
+                {user &&
+                <LinkContainer to="/logout">
+                  <NavItem className="logout-link" onClick={this.handleLogout}>
+                    Logout
+                  </NavItem>
+                </LinkContainer>}
+              </ul>
 
-                <h3 className={cx('logo')}>
-                  {config.app.title}
-                </h3>
-              </nav>
-            </div>
-
-            <div className={cx('appContent')}>
-              {this.props.children}
-            </div>
-
-            <footer className={cx('footer')}>
-              <div className="container">
-                <p>&copy; 2016 <a href="http://interledger.org/">Interledger</a>.</p>
-              </div>
-            </footer>
+              <h3 className={cx('logo')}>
+                {config.app.title}
+              </h3>
+            </nav>
           </div>
-        }
+
+          <div className={cx('appContent')}>
+            {this.props.children}
+          </div>
+
+          <footer className={cx('footer')}>
+            <div className="container">
+              <p>&copy; 2016 <a href="http://interledger.org/">Interledger</a>.</p>
+            </div>
+          </footer>
+        </div>
       </div>
     )
   }
