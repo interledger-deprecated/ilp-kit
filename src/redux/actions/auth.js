@@ -25,6 +25,13 @@ export function register(fields) {
         username: fields.username,
         password: fields.password
       }
+    }).then((user) => {
+      if (!__SERVER__ && socket) {
+        socket.connect()
+        socket.emit('subscribe', user.username)
+      }
+
+      return user
     })
   }
 }
