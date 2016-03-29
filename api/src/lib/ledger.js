@@ -106,7 +106,6 @@ module.exports = class Ledger extends EventEmitter {
       response = yield superagent
         .put(this.ledgerUri + '/accounts/' + user.username)
         .send(data)
-        // TODO do we need auth?
         .auth(this.config.getIn(['ledger', 'admin', 'name']), this.config.getIn(['ledger', 'admin', 'pass']))
     } catch (e) {
       // TODO handle

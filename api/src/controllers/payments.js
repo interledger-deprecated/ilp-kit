@@ -55,7 +55,6 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
     }
 
     // TODO handle payment creation. Shouldn't rely on notification service
-    // TODO same ledger payment using webfinger shows two payments in history
     static * putResource () {
       const _this = this
 
@@ -110,14 +109,9 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
     static * findPath () {
       let destination
 
-      try {
-        destination = yield utils.parseDestination({
-          destination: this.body.destination
-        })
-      } catch (e) {
-        // TODO differentiate doesn't exist from parsing error
-        throw new InvalidLedgerAccountError("Account doesn't exist")
-      }
+      destination = yield utils.parseDestination({
+        destination: this.body.destination
+      })
 
       if (destination.type === 'local') {
         let amount = this.body.source_amount || this.body.destination_amount

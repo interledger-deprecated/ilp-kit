@@ -137,6 +137,9 @@ export default class SendForm extends Component {
       pathFinding, fail, data, fields: {destination, sourceAmount, destinationAmount} } = this.props
     const { config } = this.context
 
+    const isSendingAmountFieldDisabled = !destination.value || fail.id || (pathFinding && this.lastPathfindingField === 'destination')
+    const isReceivingAmountFieldDisabled = !destination.value || fail.id || (pathFinding && this.lastPathfindingField === 'source')
+
     // TODO sending amount should also have a currency
     // TODO initial render should show a currency
     return (
@@ -172,14 +175,14 @@ export default class SendForm extends Component {
               <div className="col-sm-6 form-group">
                 <label>Sending Amount</label>
                 <div className={cx('input-group', 'lu-input-group',
-                  {disabled: !destination.value || (pathFinding && this.lastPathfindingField === 'destination')},
+                  {disabled: isSendingAmountFieldDisabled},
                   {focused: sourceAmount.active})}>
                   <span className={cx('input-group-addon', 'lu-input-group-addon')}>
                     {config.currencySymbol}
                   </span>
                   <input type="text" className={cx('form-control', 'lu-form-control', 'lu-input-lg')}
                     {...sourceAmount} onChange={this.handleSourceAmountChange}
-                    disabled={!destination.value || (pathFinding && this.lastPathfindingField === 'destination')} />
+                    disabled={isSendingAmountFieldDisabled} />
                 </div>
 
                 {sourceAmount.dirty && sourceAmount.error && <div className="text-danger">{sourceAmount.error}</div>}
@@ -187,14 +190,14 @@ export default class SendForm extends Component {
               <div className="col-sm-6 form-group">
                 <label>Receiving Amount</label>
                 <div className={cx('input-group', 'lu-input-group',
-                  {disabled: !destination.value || (pathFinding && this.lastPathfindingField === 'source')},
+                  {disabled: isReceivingAmountFieldDisabled},
                   {focused: destinationAmount.active})}>
                   <span className={cx('input-group-addon', 'lu-input-group-addon')}>
                     {destinationInfo && destinationInfo.ledger && destinationInfo.ledger.currencySymbol}
                   </span>
                   <input type="text" className={cx('form-control', 'lu-form-control', 'lu-input-lg')}
                     {...destinationAmount} onChange={this.handleDestinationAmountChange}
-                    disabled={!destination.value || (pathFinding && this.lastPathfindingField === 'source')} />
+                    disabled={isReceivingAmountFieldDisabled} />
                 </div>
 
                 {destinationAmount.dirty && destinationAmount.error && <div className="text-danger">{destinationAmount.error}</div>}

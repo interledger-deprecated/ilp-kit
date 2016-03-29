@@ -43,8 +43,6 @@ function WebfingerControllerFactory (log, config, ledger) {
       // Validate the ledger account
       const ledgerUser = yield ledger.getAccount({username: parsed.auth}, true)
 
-      // TODO check if the account exists
-
       this.body = {
         "subject": "acct:" + ledgerUser.name + "@" + parsed.hostname,
         "links": [

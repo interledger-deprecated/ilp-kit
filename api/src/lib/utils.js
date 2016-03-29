@@ -2,6 +2,7 @@
 
 const _ = require('lodash')
 const WebFinger = require('webfinger.js')
+const superagent = require('superagent-promise')(require('superagent'), Promise)
 
 const Config = require('./config')
 const Ledger = require('./ledger')
@@ -35,16 +36,24 @@ module.exports = class Utils {
     return destination.search('@') > -1
   }
 
+  /**
+   * TODO better docs
+   *
+   * options
+   *  - destination - string
+   *  - retrieveLedgerInfo - bool (retrieves ledger info (currency, api endpoints, etc))
+   */
   * parseDestination (options) {
     let self = this
 
-    let destination = options.destination
-    let retrieveLedgerInfo = options.retrieveLedgerInfo
+    const destination = options.destination
+    const retrieveLedgerInfo = options.retrieveLedgerInfo
 
     // Ledger account URI
     if (self.isAccountUri(destination) && self.isForeignAccountUri(destination)) {
       // TODO should also parse the ledger info here
       // TODO should also retrieve ledger info here
+      // TODO should also check if exists
       return {
         type: self.getAccountType(destination),
         accountUri: destination
@@ -88,18 +97,13 @@ module.exports = class Utils {
       }
 
       if (retrieveLedgerInfo) {
-        try {
-          parsedDestination.ledgerInfo = yield self.ledger.getInfo(parsedDestination.ledgerUri)
-        } catch(e) {
-          // TODO handle
-        }
-
-        parsedDestination.ledgerInfo = parsedDestination.ledgerInfo.body
+        parsedDestination.ledgerInfo = yield self.ledger.getInfo(parsedDestination.ledgerUri)
       }
 
       return parsedDestination
     }
 
+    // Local account
     else {
       let accountUri = self.isAccountUri(destination)
         ? destination
@@ -112,15 +116,16 @@ module.exports = class Utils {
         ledgerUri: self.ledgerUriPublic
       }
 
+      // Check if account exists
+      try {
+        yield superagent.get(accountUri).end()
+      } catch (e) {
+        throw new NotFoundError("Unknown account")
+      }
+
       // TODO api should already know the current ledgerInfo at this point
       if (retrieveLedgerInfo) {
-        try {
-          parsedDestination.ledgerInfo = yield self.ledger.getInfo(parsedDestination.ledgerUri)
-        } catch(e) {
-          // TODO handle
-        }
-
-        parsedDestination.ledgerInfo = parsedDestination.ledgerInfo.body
+        parsedDestination.ledgerInfo = yield self.ledger.getInfo(parsedDestination.ledgerUri)
       }
 
       return parsedDestination
