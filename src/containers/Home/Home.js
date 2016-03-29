@@ -10,9 +10,8 @@ import { History } from 'containers'
 
 import classNames from 'classnames/bind'
 import sharedStyles from '../App/Shared.scss'
-import inputStyles from '../App/Inputs.scss'
 import styles from './Home.scss'
-const cx = classNames.bind({...sharedStyles, ...inputStyles, ...styles})
+const cx = classNames.bind({...sharedStyles, ...styles})
 
 @connect(
   state => ({
@@ -82,7 +81,7 @@ export default class Home extends Component {
         {user &&
         <div>
           <div className="row">
-            <div className={cx('col-sm-8')}>
+            <div className="col-sm-8">
               <div className={cx('box')}>
                 {/* Balance */}
                 <div className={cx('balanceContainer')}>
@@ -91,7 +90,7 @@ export default class Home extends Component {
                     {config.currencySymbol}{amount(user.balance)}
                     <span className={cx('but')}>*</span>
                   </div>
-                  <button className={cx('btn', 'lu-btn')} onClick={this.reload}>Get More</button>
+                  <button className="btn btn-lg" onClick={this.reload}>Get More</button>
                   <div className={cx('balanceFake')}>* Don't get too excited, this is fake money</div>
                 </div>
               </div>
@@ -101,11 +100,11 @@ export default class Home extends Component {
                 <History />
               </div>
             </div>
-            <div className={cx('col-sm-4')}>
+            <div className="col-sm-4">
               <div className={cx('box', 'defaultPPBar')}>
                 <span>Use Five Bells Wallet as your default payment provider</span>
                 <div className={cx('button')}>
-                  <button className={cx('btn', 'lu-btn', 'btn-block')} onClick={this.handleDefaultPayment}>Set as default</button>
+                  <button className="btn btn-block" onClick={this.handleDefaultPayment}>Set as default</button>
                 </div>
                 <div className={cx('learnMore')}>
                   <a href="https://github.com/justmoon/webpayments-polyfill">Learn more</a>

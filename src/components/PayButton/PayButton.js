@@ -1,9 +1,5 @@
 import React, {Component, PropTypes} from 'react';
 
-import classNames from 'classnames/bind';
-import inputStyles from '../../containers/App/Inputs.scss';
-const cx = classNames.bind(inputStyles);
-
 export default class PayButton extends Component {
   // TODO better validation
   static propTypes = {
@@ -43,7 +39,7 @@ export default class PayButton extends Component {
     return (
       <div>
         <script src="https://web-payments.net/polyfill.js"></script>
-        <button className={cx('btn', 'lu-btn')} onClick={this.makePayment}>{children}</button>
+        <button className="btn btn-lg" onClick={this.makePayment}>{children}</button>
       </div>
     );
   }

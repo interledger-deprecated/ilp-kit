@@ -5,9 +5,8 @@ import registerValidation from './RegisterValidation';
 import Alert from 'react-bootstrap/lib/Alert';
 
 import classNames from 'classnames/bind';
-import inputStyles from '../../containers/App/Inputs.scss';
 import styles from './RegisterForm.scss';
-const cx = classNames.bind({...inputStyles, ...styles});
+const cx = classNames.bind(styles);
 
 // TODO async validation on username
 @reduxForm({
@@ -53,16 +52,16 @@ export default class RegisterForm extends Component {
         <div className={cx('fields')}>
           <div className="form-group">
             <label className={cx('label')}>Username</label>
-            <input type="text" placeholder="Username" className={cx('form-control', 'lu-form-control', 'lu-input-lg')} autoFocus {...username} />
+            <input type="text" placeholder="Username" className="form-control input-lg" autoFocus {...username} />
             {username.dirty && username.error && <div className="text-danger">{username.error}</div>}
           </div>
           <div className="form-group">
             <label className={cx('label')}>Password</label>
-            <input type="password" placeholder="Password" className={cx('form-control', 'lu-form-control', 'lu-input-lg')} {...password} />
+            <input type="password" placeholder="Password" className="form-control input-lg" {...password} />
             {password.dirty && password.error && <div className="text-danger">{password.error}</div>}
           </div>
         </div>
-        <button type="submit" className={cx('btn', 'lu-btn')} disabled={pristine || invalid || submitting}>
+        <button type="submit" className="btn" disabled={pristine || invalid || submitting}>
           <i className="fa fa-sign-in"/>
           {submitting ? ' Registering...' : ' Register'}
         </button>

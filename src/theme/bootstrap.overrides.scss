@@ -1,4 +1,12 @@
-@import 'variables.scss';
+// Core variables and mixins
+@import "bootstrap-extend/mixins";
+
+// Core CSS
+@import 'bootstrap-extend/forms';
+@import "bootstrap-extend/buttons";
+
+// Components
+@import 'bootstrap-extend/input-groups';
 
 /**
  * Override Bootstrap styles that you can't modify via variables here.

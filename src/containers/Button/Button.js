@@ -4,9 +4,8 @@ import { PayButton } from 'components';
 
 import classNames from 'classnames/bind';
 import sharedStyles from '../App/Shared.scss';
-import inputStyles from '../App/Inputs.scss';
 import styles from './Button.scss';
-const cx = classNames.bind({...sharedStyles, ...inputStyles, ...styles});
+const cx = classNames.bind({...sharedStyles, ...styles});
 
 export default class Button extends Component {
   static contextTypes = {
@@ -24,8 +23,8 @@ export default class Button extends Component {
           Pay Button builds on top of ILP to provide your users with a streamlined,
           payment experience that is constantly improving.
         </div>
-        <div className={cx('row')}>
-          <div className={cx('col-sm-6')}>
+        <div className="row">
+          <div className="col-sm-6">
             <h3>Demo</h3>
             <p>Try the demo below</p>
             <div>
@@ -34,8 +33,8 @@ export default class Button extends Component {
             </div>
           </div>
         </div>
-        <div className={cx('row')}>
-          <div className={cx('col-sm-12')}>
+        <div className="row">
+          <div className="col-sm-12">
             <h3>Integration</h3>
             <p>You can integrate Pay Button using the code below.</p>
             <p>As we release new Pay Button features, we'll automatically roll

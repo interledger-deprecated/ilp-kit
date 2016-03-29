@@ -7,9 +7,8 @@ import * as sendActions from 'redux/actions/send'
 import Alert from 'react-bootstrap/lib/Alert'
 
 import classNames from 'classnames/bind'
-import inputStyles from '../App/Inputs.scss'
 import styles from './SendForm.scss'
-const cx = classNames.bind({...inputStyles, ...styles})
+const cx = classNames.bind(styles)
 
 @reduxForm({
   form: 'send',
@@ -140,11 +139,10 @@ export default class SendForm extends Component {
     const isSendingAmountFieldDisabled = !destination.value || fail.id || (pathFinding && this.lastPathfindingField === 'destination')
     const isReceivingAmountFieldDisabled = !destination.value || fail.id || (pathFinding && this.lastPathfindingField === 'source')
 
-    // TODO sending amount should also have a currency
     // TODO initial render should show a currency
     return (
       <div className="row">
-        <div className={cx('col-sm-12')}>
+        <div className="col-sm-12">
           {success &&
           <Alert bsStyle="success">
             <strong>Holy guacamole!</strong> You've just sent some money!
@@ -166,7 +164,7 @@ export default class SendForm extends Component {
           <form name="example" onSubmit={handleSubmit(transfer)}>
             <div className="form-group">
               <label>Recipient</label>
-              <input type="text" className={cx('form-control', 'lu-form-control', 'lu-input-lg')}
+              <input type="text" className="form-control input-lg"
                 autoFocus {...destination} onChange={this.handleDestinationChange} placeholder="alice@wallet.com" />
               {destination.dirty && destination.error &&
                 <div className="text-danger">{destination.error}</div>}
@@ -174,13 +172,13 @@ export default class SendForm extends Component {
             <div className="row">
               <div className="col-sm-6 form-group">
                 <label>Sending Amount</label>
-                <div className={cx('input-group', 'lu-input-group',
+                <div className={cx('input-group',
                   {disabled: isSendingAmountFieldDisabled},
                   {focused: sourceAmount.active})}>
-                  <span className={cx('input-group-addon', 'lu-input-group-addon')}>
+                  <span className="input-group-addon">
                     {config.currencySymbol}
                   </span>
-                  <input type="text" className={cx('form-control', 'lu-form-control', 'lu-input-lg')}
+                  <input type="text" className="form-control input-lg"
                     {...sourceAmount} onChange={this.handleSourceAmountChange}
                     disabled={isSendingAmountFieldDisabled} />
                 </div>
@@ -189,13 +187,13 @@ export default class SendForm extends Component {
               </div>
               <div className="col-sm-6 form-group">
                 <label>Receiving Amount</label>
-                <div className={cx('input-group', 'lu-input-group',
+                <div className={cx('input-group',
                   {disabled: isReceivingAmountFieldDisabled},
                   {focused: destinationAmount.active})}>
-                  <span className={cx('input-group-addon', 'lu-input-group-addon')}>
+                  <span className="input-group-addon">
                     {destinationInfo && destinationInfo.ledger && destinationInfo.ledger.currencySymbol}
                   </span>
-                  <input type="text" className={cx('form-control', 'lu-form-control', 'lu-input-lg')}
+                  <input type="text" className="form-control input-lg"
                     {...destinationAmount} onChange={this.handleDestinationAmountChange}
                     disabled={isReceivingAmountFieldDisabled} />
                 </div>
@@ -203,7 +201,7 @@ export default class SendForm extends Component {
                 {destinationAmount.dirty && destinationAmount.error && <div className="text-danger">{destinationAmount.error}</div>}
               </div>
             </div>
-            <button type="submit" className={cx('btn', 'lu-btn')}
+            <button type="submit" className="btn"
               disabled={(!data && pristine) || invalid || submitting || pathFinding || fail.id}>
               {submitting ? 'Sending...' : 'Send'}
             </button>
