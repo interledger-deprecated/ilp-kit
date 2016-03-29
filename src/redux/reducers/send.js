@@ -15,6 +15,7 @@ export default function reducer(state = initialState, action = {}) {
       // TODO handle the affect this has on source/destination amounts and pathfinding
       return {
         ...state,
+        fail: {},
         destinationInfo: action.result
       }
     case types.DESTINATION_CHANGE_FAIL:

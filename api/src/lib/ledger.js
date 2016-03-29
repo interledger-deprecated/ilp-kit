@@ -9,6 +9,8 @@ const EventEmitter = require('events').EventEmitter
 const Config = require('./config')
 const Log = require('./log')
 
+const NotFoundError = require('../errors/not-found-error')
+
 // TODO exception handling
 module.exports = class Ledger extends EventEmitter {
   static constitute () { return [Config, Log] }
@@ -80,7 +82,9 @@ module.exports = class Ledger extends EventEmitter {
         .auth(admin ? this.config.getIn(['ledger', 'admin', 'name']) : user.username, admin ? this.config.getIn(['ledger', 'admin', 'pass']): user.password)
         .end()
     } catch (e) {
-      this.log.critical(e)
+      if (e.response && e.response.body && e.response.body.id === 'NotFoundError') {
+        throw new NotFoundError(e.response.body.message)
+      }
     }
 
     return response.body

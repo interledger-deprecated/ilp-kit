@@ -10,9 +10,12 @@ const url = require("url")
 const request = require('five-bells-shared/utils/request')
 const Log = require('../lib/log')
 const Config = require('../lib/config')
+const Ledger = require('../lib/ledger')
 
-WebfingerControllerFactory.constitute = [Log, Config]
-function WebfingerControllerFactory (log, config) {
+const NotFoundError = require('../errors/not-found-error')
+
+WebfingerControllerFactory.constitute = [Log, Config, Ledger]
+function WebfingerControllerFactory (log, config, ledger) {
   log = log('auth')
 
   return class WebfingerController {
@@ -28,19 +31,22 @@ function WebfingerControllerFactory (log, config) {
         return
       }
 
-      // TODO if resource not found, throw 404
       // TODO rel support
 
       const parsed = url.parse(this.query.resource);
 
-      const ledger = parsed.hostname
-      const account = parsed.auth
+      // Validate ledger
+      if (config.data.getIn(['ledger', 'public_uri']).indexOf(parsed.hostname) < 0) {
+        throw new NotFoundError('Unknown account')
+      }
 
-      // TODO Validate hostname. It should be the current running instance
+      // Validate the ledger account
+      const ledgerUser = yield ledger.getAccount({username: parsed.auth}, true)
+
       // TODO check if the account exists
 
       this.body = {
-        "subject": "acct:" + account + "@" + ledger,
+        "subject": "acct:" + ledgerUser.name + "@" + parsed.hostname,
         "links": [
           {
             // TODO decide on rel names
@@ -49,7 +55,7 @@ function WebfingerControllerFactory (log, config) {
           },
           {
             "rel" : "http://webfinger.net/rel/ledgerAccount",
-            "href" : config.data.getIn(['ledger', 'public_uri']) + '/accounts/' + account
+            "href" : config.data.getIn(['ledger', 'public_uri']) + '/accounts/' + ledgerUser.name
           },
           {
             // TODO an actual rel to the docs

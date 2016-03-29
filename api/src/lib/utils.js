@@ -6,6 +6,8 @@ const WebFinger = require('webfinger.js')
 const Config = require('./config')
 const Ledger = require('./ledger')
 
+const NotFoundError = require('../errors/not-found-error')
+
 // TODO implement caching
 module.exports = class Utils {
   static constitute () { return [ Config, Ledger ] }
@@ -52,10 +54,10 @@ module.exports = class Utils {
     // Webfinger
     else if (self.isWebfinger(destination)) {
       var webfinger = new WebFinger({
-        webfist_fallback: true,
+        webfist_fallback: false,
         tls_only: true,
         uri_fallback: false,
-        request_timeout: 10000
+        request_timeout: 5000
       });
 
       let data
@@ -73,7 +75,7 @@ module.exports = class Utils {
           )
         })
       } catch(e) {
-        // TODO handle
+        throw new NotFoundError("Unknown account")
       }
 
       let accountUri = _.filter(data.links, {rel: 'http://webfinger.net/rel/ledgerAccount'})[0].href

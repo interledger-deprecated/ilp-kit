@@ -9,7 +9,6 @@ const Log = require('../lib/log')
 const Config = require('../lib/config')
 const Ledger = require('../lib/ledger')
 const Utils = require('../lib/utils')
-const InvalidLedgerAccountError = require('../errors/invalid-ledger-account-error')
 
 MiscControllerFactory.constitute = [Auth, Log, Config, Ledger, Utils]
 function MiscControllerFactory (Auth, log, config, ledger, utils) {
@@ -22,17 +21,10 @@ function MiscControllerFactory (Auth, log, config, ledger, utils) {
     }
 
     static * destination () {
-      let destination
-
-      try {
-        destination = yield utils.parseDestination({
-          destination: this.query.destination,
-          retrieveLedgerInfo: true
-        })
-      } catch(e) {
-        // TODO differentiate doesn't exist from parsing error
-        throw new InvalidLedgerAccountError("Account doesn't exist")
-      }
+      let destination = yield utils.parseDestination({
+        destination: this.query.destination,
+        retrieveLedgerInfo: true
+      })
 
       this.body = {
         ledger: {
