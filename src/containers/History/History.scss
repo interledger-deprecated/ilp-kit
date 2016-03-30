@@ -34,24 +34,3 @@
   overflow: hidden;
   transition: max-height .5s ease, opacity .5s ease;
 }
-
-// Overwriting some bootstrap classes to work with the react-paginate html structure
-.root-pagination {
-  margin: 20px 0;
-
-  & > li {
-    display: inline-block;
-  }
-
-  & > li:first-child a {
-    border-right: 0;
-  }
-
-  .fbw-pagination {
-    margin: 0;
-
-    * {
-      border-radius: 0 !important;
-    }
-  }
-}

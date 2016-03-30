@@ -80,9 +80,8 @@ export default class Home extends Component {
           nextLabel="&raquo;"
           clickCallback={this.handlePageClick}
           breakLabel={<span>...</span>}
-          containerClassName={cx('pagination', 'root-pagination')}
-          subContainerClassName={cx('pagination', 'fbw-pagination')}
-          activeClassName={cx('active')}
+          containerClassName="pagination"
+          activeClassName="active"
         />
       </div>
     )
