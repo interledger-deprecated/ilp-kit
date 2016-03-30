@@ -9,9 +9,8 @@ import { RegisterForm } from 'components'
 import { History } from 'containers'
 
 import classNames from 'classnames/bind'
-import sharedStyles from '../App/Shared.scss'
 import styles from './Home.scss'
-const cx = classNames.bind({...sharedStyles, ...styles})
+const cx = classNames.bind(styles)
 
 @connect(
   state => ({
@@ -58,7 +57,7 @@ export default class Home extends Component {
         {!user &&
         <div className="row">
           <div className="col-xs-12 col-sm-offset-4 col-sm-4">
-            <div className={cx('box')}>
+            <div className="box">
               <div className={cx('authTabs', 'clearfix')}>
                 {activeTab === 'login' &&
                 <span className={cx('authTab', 'active')}>Login</span>}
@@ -82,7 +81,7 @@ export default class Home extends Component {
         <div>
           <div className="row">
             <div className="col-sm-8">
-              <div className={cx('box')}>
+              <div className="box">
                 {/* Balance */}
                 <div className={cx('balanceContainer')}>
                   <div className={cx('balanceDescription')}>Your Balance</div>
@@ -94,8 +93,8 @@ export default class Home extends Component {
                   <div className={cx('balanceFake')}>* Don't get too excited, this is fake money</div>
                 </div>
               </div>
-              <div className={cx('box')}>
-                <span className={cx('boxTitle')}>Payment history</span>
+              <div className="box">
+                <span className="boxTitle">Payment history</span>
                 {/* History */}
                 <History />
               </div>
@@ -110,8 +109,8 @@ export default class Home extends Component {
                   <a href="https://github.com/justmoon/webpayments-polyfill">Learn more</a>
                 </div>
               </div>
-              <div className={cx('box')}>
-                <span className={cx('boxTitle')}>Send money</span>
+              <div className="box">
+                <span className="boxTitle">Send money</span>
                 <SendForm />
               </div>
             </div>

@@ -4,9 +4,13 @@
 // Variables
 // --------------------------------------------------
 
-//== Forms
-//
-//##
+//== Colors
+$brand-primary:           #12BFD6 !default;
 
-//** `<input>` background color
-$input-bg:                       #f6f6f6 !default;
+//== Components
+$border-radius-base:      3px !default;
+$border-radius-large:     3px !default;
+
+//== Navs
+$nav-pills-active-link-hover-bg:        #fff !default;
+$nav-pills-active-link-hover-color:     #000 !default;

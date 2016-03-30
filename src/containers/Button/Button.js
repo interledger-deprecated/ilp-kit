@@ -3,9 +3,8 @@ import React, {Component, PropTypes} from 'react';
 import { PayButton } from 'components';
 
 import classNames from 'classnames/bind';
-import sharedStyles from '../App/Shared.scss';
 import styles from './Button.scss';
-const cx = classNames.bind({...sharedStyles, ...styles});
+const cx = classNames.bind(styles);
 
 export default class Button extends Component {
   static contextTypes = {
@@ -16,7 +15,7 @@ export default class Button extends Component {
     const config = this.context.config
 
     return (
-      <div className={cx('box')}>
+      <div className="box">
         <h2>Pay Button</h2>
         <div>
           Pay Button is the best payment flow, on web and mobile.

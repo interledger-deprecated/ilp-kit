@@ -27,4 +27,13 @@
   fieldset[disabled] & {
     @include box-shadow(none);
   }
+
+  &,
+  &:active,
+  &.active {
+    &:focus,
+    &.focus {
+      @include tab-focus;
+    }
+  }
 }
