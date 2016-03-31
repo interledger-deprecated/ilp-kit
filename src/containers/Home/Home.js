@@ -57,21 +57,27 @@ export default class Home extends Component {
         {!user &&
         <div className="row">
           <div className="col-xs-12 col-sm-offset-4 col-sm-4">
-            <div className="box">
-              <div className={cx('authTabs', 'clearfix')}>
-                {activeTab === 'login' &&
-                <span className={cx('authTab', 'active')}>Login</span>}
-                {activeTab === 'register' &&
-                <a href="" onClick={this.handleChangeTab.bind(this, 'login')} className={cx('authTab')}>Login</a>}
-                {activeTab === 'login' &&
-                <a href="" onClick={this.handleChangeTab.bind(this, 'register')} className={cx('authTab')}>Register</a>}
-                {activeTab === 'register' &&
-                <span className={cx('authTab', 'active')}>Register</span>}
+            <div className={cx('panel', 'panel-transparent', 'panel-auth')}>
+              <ul className="nav nav-tabs nav-tabs-linetriangle" role="tablist" data-init-reponsive-tabs="collapse">
+                <li className={activeTab === 'login' ? 'active' : ''}>
+                  <a href="" onClick={this.handleChangeTab.bind(this, 'login')} data-toggle="tab" role="tab" aria-expanded="true">
+                    Login
+                  </a>
+                </li>
+                <li className={activeTab === 'register' ? 'active' : ''}>
+                  <a href="" onClick={this.handleChangeTab.bind(this, 'register')} data-toggle="tab" role="tab" aria-expanded="true">
+                    Register
+                  </a>
+                </li>
+              </ul>
+              <div className="tab-content">
+                <div className="tab-pane active">
+                  {activeTab === 'login' &&
+                  <LoginForm login={login} fail={authFail} unmount={unmount} />}
+                  {activeTab === 'register' &&
+                  <RegisterForm register={register} fail={authFail} unmount={unmount} />}
+                </div>
               </div>
-              {activeTab === 'login' &&
-              <LoginForm login={login} fail={authFail} unmount={unmount} />}
-              {activeTab === 'register' &&
-              <RegisterForm register={register} fail={authFail} unmount={unmount} />}
             </div>
           </div>
         </div>}
@@ -81,37 +87,46 @@ export default class Home extends Component {
         <div>
           <div className="row">
             <div className="col-sm-8">
-              <div className="box">
-                {/* Balance */}
-                <div className={cx('balanceContainer')}>
-                  <div className={cx('balanceDescription')}>Your Balance</div>
-                  <div className={cx('balance')}>
-                    {config.currencySymbol}{amount(user.balance)}
-                    <span className={cx('but')}>*</span>
+              {/* Balance */}
+              <div className="panel panel-default">
+                <div className="panel-body">
+                  <div className={cx('balanceContainer')}>
+                    <div className={cx('balanceDescription')}>Your Balance</div>
+                    <div className={cx('balance')}>
+                      {config.currencySymbol}{amount(user.balance)}
+                      <span className={cx('but')}>*</span>
+                    </div>
+                    <button className="btn btn-complete btn-lg" onClick={this.reload}>Get More</button>
+                    <div className={cx('balanceFake')}>* Don't get too excited, this is fake money</div>
                   </div>
-                  <button className="btn btn-lg" onClick={this.reload}>Get More</button>
-                  <div className={cx('balanceFake')}>* Don't get too excited, this is fake money</div>
                 </div>
               </div>
-              <div className="box">
-                <span className="boxTitle">Payment history</span>
-                {/* History */}
-                <History />
+              {/* History */}
+              <div className="panel panel-default">
+                <div className="panel-heading">
+                  <div className="panel-title">Payment History</div>
+                </div>
+                <div className="panel-body">
+                  <History />
+                </div>
               </div>
             </div>
             <div className="col-sm-4">
-              <div className={cx('box', 'defaultPPBar')}>
-                <span>Use Five Bells Wallet as your default payment provider</span>
-                <div className={cx('button')}>
-                  <button className="btn btn-block" onClick={this.handleDefaultPayment}>Set as default</button>
+              <div className="panel panel-default">
+                <div className="panel-heading">
+                  <div className="panel-title">Use Five Bells Wallet as your default payment provider</div>
                 </div>
-                <div className={cx('learnMore')}>
-                  <a href="https://github.com/justmoon/webpayments-polyfill">Learn more</a>
+                <div className="panel-body">
+                  <button className="btn btn-complete btn-block" onClick={this.handleDefaultPayment}>Set as default</button>
                 </div>
               </div>
-              <div className="box">
-                <span className="boxTitle">Send money</span>
-                <SendForm />
+              <div className="panel panel-default">
+                <div className="panel-heading">
+                  <div className="panel-title">Send Money</div>
+                </div>
+                <div className="panel-body">
+                  <SendForm />
+                </div>
               </div>
             </div>
           </div>

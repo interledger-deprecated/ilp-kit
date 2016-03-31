@@ -1,6 +1,0 @@
-@mixin form-control-focus() {
-  &:focus {
-    background: $input-focus-background-color;
-    @include box-shadow(none);
-  }
-}

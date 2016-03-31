@@ -10,6 +10,8 @@ import classNames from 'classnames/bind'
 import styles from './SendForm.scss'
 const cx = classNames.bind(styles)
 
+import { Input } from 'components'
+
 @reduxForm({
   form: 'send',
   fields: ['destination', 'sourceAmount', 'destinationAmount'],
@@ -163,11 +165,7 @@ export default class SendForm extends Component {
 
           <form name="example" onSubmit={handleSubmit(transfer)}>
             <div className="form-group">
-              <label>Recipient</label>
-              <input type="text" className="form-control input-lg"
-                autoFocus {...destination} onChange={this.handleDestinationChange} placeholder="alice@wallet.com" />
-              {destination.dirty && destination.error &&
-                <div className="text-danger">{destination.error}</div>}
+              <Input object={destination} label="Recipient" size="lg" focus onChange={this.handleDestinationChange} />
             </div>
             <div className="row">
               <div className="col-sm-6 form-group">
@@ -190,9 +188,10 @@ export default class SendForm extends Component {
                 <div className={cx('input-group',
                   {disabled: isReceivingAmountFieldDisabled},
                   {focused: destinationAmount.active})}>
-                  <span className="input-group-addon">
-                    {destinationInfo && destinationInfo.ledger && destinationInfo.ledger.currencySymbol}
-                  </span>
+                  {destinationInfo && destinationInfo.ledger && destinationInfo.ledger.currencySymbol &&
+                    <span className="input-group-addon">
+                      {destinationInfo.ledger.currencySymbol}
+                    </span>}
                   <input type="text" className="form-control input-lg"
                     {...destinationAmount} onChange={this.handleDestinationAmountChange}
                     disabled={isReceivingAmountFieldDisabled} />
@@ -201,7 +200,7 @@ export default class SendForm extends Component {
                 {destinationAmount.dirty && destinationAmount.error && <div className="text-danger">{destinationAmount.error}</div>}
               </div>
             </div>
-            <button type="submit" className="btn"
+            <button type="submit" className="btn btn-complete"
               disabled={(!data && pristine) || invalid || submitting || pathFinding || fail.id}>
               {submitting ? 'Sending...' : 'Send'}
             </button>

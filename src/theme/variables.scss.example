@@ -1,33 +1,31 @@
 // Main colors
-$yellow: #F7F1C1;
-$light-green: #BBCEB0;
-$green: #649990;
-$grey: #526667;
-$brown: #8F6A61;
+$dark: #4E4F4B;
+$blue: #48b0f7;
 
-$container-background-color: #eaf4f9;
+$brand-color: #48b0f7;
+
+$container-background-color: #f1f4f5;
 
 // Header
-$header-background-color: $grey;
-$header-text-color: #e0eaf4;
+$header-background-color: $blue;
+$header-text-color: #fff;
 $header-link-color: #fff;
 $header-link-hover-color: #000;
 $header-link-background-color: #fff;
 $header-logo-color: #fff;
 
 // Forms
-$input-background-color: #f6f6f6;
 $input-focus-background-color: #fafafa;
 $input-disabled-background-color: #eeeeee;
-$btn-background-color: #526667;
+$btn-background-color: $blue;
 $btn-text-color: #fff;
 $btn-hover-text-color: #fff;
 
 // Box
 $box-background-color: #fff;
 $box-shadow-color: #EEF0F7;
-$box-title-background-color: $light-green;
-$box-title-text-color: #444444;
+$box-title-background-color: $dark;
+$box-title-text-color: #fff;
 
 // Content
 $text-color: #000;
@@ -39,6 +37,6 @@ $success-background: #DFF0D8;
 $history-payment-separator-color: #f0f0f0;
 $history-date-text-color: #b0b0b0;
 $history-expand-text-color: #fff;
-$history-expand-background-color: $light-green;
-$history-positive: green;
-$history-negative: red;
+$history-expand-background-color: $dark;
+$history-positive: #10cfbd;
+$history-negative: #f55753;

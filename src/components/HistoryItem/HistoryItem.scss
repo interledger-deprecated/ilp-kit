@@ -1,12 +1,14 @@
+// TODO:UX include only one var file
 @import '../../theme/variables.scss';
 @import '../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss';
+@import '../../theme/pages/scss/var';
 
 .item {
-  border-bottom: 1px solid $history-payment-separator-color;
+  border-top: 1px solid $history-payment-separator-color;
 }
 .link, .link:hover, .link:active, .link:visited {
   display: block;
-  color: $text-color;
+  color: $color-master;
   padding: 15px 20px;
 }
 .link:hover {
@@ -21,12 +23,12 @@
   }
 }
 .date {
-  font: 13px 'OpenSansLight';
+  font-size: 13px;
   line-height: 15px;
   color: $history-date-text-color;
 }
 .amount {
-  font: 22px 'OpenSansLight';
+  font-size: 22px;
   text-align: right;
   line-height: 37px;
 

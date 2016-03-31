@@ -39,7 +39,7 @@ export default class PayButton extends Component {
     return (
       <div>
         <script src="https://web-payments.net/polyfill.js"></script>
-        <button className="btn btn-lg" onClick={this.makePayment}>{children}</button>
+        <button className="btn btn-primary btn-lg" onClick={this.makePayment}>{children}</button>
       </div>
     );
   }

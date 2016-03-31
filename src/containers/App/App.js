@@ -106,45 +106,50 @@ export default class App extends Component {
         <div className={cx('container')}>
           <script src="https://web-payments.net/polyfill.js"></script>
           <DocumentMeta {...config.app}/>
-          <div className={cx('header', 'clearfix')}>
-            <nav className={cx('headerContainer', 'container')}>
-              <ul className="nav nav-pills pull-right">
-                {user &&
-                <li role="presentation" className={cx('navText')}>
-                  Hi <strong>{user.username}</strong>.
-                </li>}
-                {user &&
-                <IndexLinkContainer to="/">
-                  <NavItem>Home</NavItem>
-                </IndexLinkContainer>
-                }
-                {user &&
-                <LinkContainer to="/button">
-                  <NavItem>Pay Button</NavItem>
-                </LinkContainer>}
-                {user &&
-                <LinkContainer to="/logout">
-                  <NavItem className="logout-link" onClick={this.handleLogout}>
-                    Logout
-                  </NavItem>
-                </LinkContainer>}
-              </ul>
-
-              <h3 className={cx('logo')}>
-                {config.app.title}
-              </h3>
-            </nav>
-          </div>
+          <nav className="navbar navbar-default navbar-fixed-top">
+            <div className="container">
+              <div className="navbar-header">
+                <span className="navbar-brand">{config.app.title}</span>
+              </div>
+              <div className="collapse navbar-collapse">
+                <ul className="nav navbar-nav pull-right">
+                  {user &&
+                  <li>
+                    <p className="navbar-text">
+                      Hi <strong>{user.username}</strong>.
+                    </p>
+                  </li>}
+                  {user &&
+                  <IndexLinkContainer to="/">
+                    <NavItem>Home</NavItem>
+                  </IndexLinkContainer>}
+                  {user &&
+                  <LinkContainer to="/button">
+                    <NavItem>Pay Button</NavItem>
+                  </LinkContainer>}
+                  {user &&
+                  <LinkContainer to="/logout">
+                    <NavItem className="logout-link" onClick={this.handleLogout}>
+                      Logout
+                    </NavItem>
+                  </LinkContainer>}
+                </ul>
+              </div>
+            </div>
+          </nav>
 
           <div className={cx('appContent')}>
             {this.props.children}
           </div>
 
-          <footer className={cx('footer')}>
-            <div className="container">
-              <p>&copy; 2016 <a href="http://interledger.org/">Interledger</a>.</p>
+          <div className="footer">
+            <div className="copyright">
+              <span className="hint-text">© 2016 </span>
+              <a href="https://interledger.org">
+                 Interledger
+              </a>.
             </div>
-          </footer>
+          </div>
         </div>
       </div>
     )

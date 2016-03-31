@@ -1,14 +1,5 @@
 @import '../../theme/variables.scss';
 
-.defaultPPBar {
-  .button {
-    margin: 10px 0 5px;
-  }
-  .learnMore {
-    text-align: right;
-    font-size: 12px;
-  }
-}
 .balanceContainer {
   text-align: center;
 
@@ -18,6 +9,7 @@
   }
   .balance {
     font-size: 60px;
+    line-height: 80px;
   }
   .but {
     font-size: 17px;
@@ -30,24 +22,9 @@
   font-size: 12px;
   margin: 10px;
 }
-.authTabs {
-  margin: -20px -20px 30px -20px;
-}
-.authTab {
-  width: 50%;
-  background: $container-background-color;
-  padding: 20px 10px;
-  margin: 0;
-  float: left;
-  font-size: 15px;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  text-align: center;
-}
-.authTab:hover, .authTab:visited, .authTab:active {
-  text-decoration: none;
-  color: $text-color;
-}
-.authTab.active {
-  background: $box-background-color;
+.panel-auth {
+  ul > li {
+    width: 50%;
+    text-align: center;
+  }
 }

@@ -76,10 +76,10 @@ export default class Widget extends Component {
           </div>
 
           {user &&
-          <SendForm type="widget" data={data} />}
+          <SendForm data={data} />}
 
           {!user &&
-          <LoginForm login={login} fail={loginFail} unmount={unmount} type="widget" />}
+          <LoginForm login={login} fail={loginFail} unmount={unmount} />}
         </div>
       </div>
     );

@@ -1,12 +1,10 @@
-import React, {Component, PropTypes} from 'react';
-import {reduxForm} from 'redux-form';
-import loginValidation from './LoginValidation';
+import React, {Component, PropTypes} from 'react'
+import {reduxForm} from 'redux-form'
+import loginValidation from './LoginValidation'
 
-import Alert from 'react-bootstrap/lib/Alert';
+import Alert from 'react-bootstrap/lib/Alert'
 
-import classNames from 'classnames/bind';
-import styles from './LoginForm.scss';
-const cx = classNames.bind(styles);
+import { Input } from 'components'
 
 @reduxForm({
   form: 'login',
@@ -24,19 +22,18 @@ export default class LoginForm extends Component {
     login: PropTypes.func.isRequired,
     unmount: PropTypes.func,
     success: PropTypes.bool,
-    fail: PropTypes.object,
-    type: PropTypes.string
-  };
+    fail: PropTypes.object
+  }
 
   componentWillUnmount() {
-    this.props.unmount();
+    this.props.unmount()
   }
 
   render() {
-    const { handleSubmit, login, success, fail, type, fields: {username, password}, pristine, invalid, submitting } = this.props;
+    const { handleSubmit, login, success, fail, fields: {username, password}, pristine, invalid, submitting } = this.props
 
     return (
-      <form onSubmit={handleSubmit(login)} className={styles[type]}>
+      <form onSubmit={handleSubmit(login)}>
         {success &&
         <Alert bsStyle="success">
           <strong>Holy guacamole!</strong> You've just sent some money!
@@ -47,23 +44,15 @@ export default class LoginForm extends Component {
           <strong>Woops!</strong> Invalid username/password
         </Alert>}
 
-        <div className={cx('fields')}>
-          <div className="form-group">
-            <label className={cx('label')}>Username</label>
-            <input type="text" placeholder="Username" className="form-control input-lg" autoFocus {...username} />
-            {username.dirty && username.error && <div className="text-danger">{username.error}</div>}
-          </div>
-          <div className="form-group">
-            <label className={cx('label')}>Password</label>
-            <input type="password" placeholder="Password" className="form-control input-lg" {...password} />
-            {password.dirty && password.error && <div className="text-danger">{password.error}</div>}
-          </div>
+        <div>
+          <Input object={username} label="Username" size="lg" focus />
+          <Input object={password} label="Password" size="lg" type="password" />
         </div>
-        <button type="submit" className="btn" disabled={pristine || invalid || submitting}>
+        <button type="submit" className="btn btn-complete" disabled={pristine || invalid || submitting}>
           <i className="fa fa-sign-in"/>
           {submitting ? ' Logging In...' : ' Login'}
         </button>
       </form>
-    );
+    )
   }
 }

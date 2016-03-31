@@ -1,0 +1,14 @@
+.navbar-nav > li {
+  & > a {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+  & > .navbar-text {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+}
+
+.navbar-brand {
+  padding: 20px 35px;
+}
