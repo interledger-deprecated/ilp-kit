@@ -116,7 +116,7 @@ export default class App extends Component {
                   {user &&
                   <li>
                     <p className="navbar-text">
-                      Hi <strong>{user.username}</strong>.
+                      Hi {user.username}.
                     </p>
                   </li>}
                   {user &&
@@ -142,6 +142,7 @@ export default class App extends Component {
             {this.props.children}
           </div>
 
+          {/* TODO:UX attached to bottom */}
           <div className="footer">
             <div className="copyright">
               <span className="hint-text">© 2016 </span>

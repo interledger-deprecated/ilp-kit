@@ -4,6 +4,8 @@ import {reduxForm} from 'redux-form'
 import sendValidation from './SendValidation'
 import * as sendActions from 'redux/actions/send'
 
+import { resetFormOnSuccess } from 'decorators'
+
 import Alert from 'react-bootstrap/lib/Alert'
 
 import classNames from 'classnames/bind'
@@ -28,6 +30,7 @@ import { Input } from 'components'
     pathFinding: state.send.pathFinding
   }),
   sendActions)
+@resetFormOnSuccess('send')
 export default class SendForm extends Component {
   static propTypes = {
     fields: PropTypes.object.isRequired,
@@ -86,22 +89,12 @@ export default class SendForm extends Component {
     }
   }
 
-  // TODO introduce a latency
-  shouldComponentUpdate(nextProps) {
-    // Reset the form after a successful transfer
-    if (!this.props.success && nextProps.success) {
-      this.props.initializeForm()
-      return false
-    }
-
-    return true
-  }
-
   // Remove the success/error messages on unmount
   componentWillUnmount() {
     this.props.unmount()
   }
 
+  // TODO introduce a latency
   handleDestinationChange = (event) => {
     this.props.fields.destination.onChange(event)
 
