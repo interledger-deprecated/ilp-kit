@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap'
+import Waypoint from 'react-waypoint'
 import NavItem from 'react-bootstrap/lib/NavItem'
 import DocumentMeta from 'react-document-meta'
 import { isLoaded as isAuthLoaded, load as loadAuth, loadConfig, logout, updateBalance } from 'redux/actions/auth'
@@ -43,7 +44,8 @@ export default class App extends Component {
     logout: PropTypes.func.isRequired,
     historyAddPayment: PropTypes.func.isRequired,
     updateBalance: PropTypes.func.isRequired,
-    pushState: PropTypes.func.isRequired
+    pushState: PropTypes.func.isRequired,
+    navBar: PropTypes.string
   }
 
   static contextTypes = {
@@ -87,8 +89,8 @@ export default class App extends Component {
     }
   }
 
-  onMessageReceived = (data) => {
-    this.props.historyAddPayment(data)
+  static defaultValues = {
+    navBar: ''
   }
 
   handleLogout = (event) => {
@@ -98,15 +100,20 @@ export default class App extends Component {
     this.props.logout()
   }
 
+  _handleWaypointLeave = () => {
+    this.props.navBar = 'in'
+  }
+
   render() {
-    const {user} = this.props
+    const {user, navBar} = this.props
 
     return (
       <div>
         <div className={cx('container')}>
           <script src="https://web-payments.net/polyfill.js"></script>
           <DocumentMeta {...config.app}/>
-          <nav className="navbar navbar-default navbar-fixed-top">
+          <Waypoint onLeave={this._handleWaypointLeave} />
+          <nav className={cx('navbar', 'navbar-default', 'navbar-fixed-top', navBar)}>
             <div className="container">
               <div className="navbar-header">
                 <span className="navbar-brand">{config.app.title}</span>
