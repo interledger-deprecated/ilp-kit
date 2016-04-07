@@ -33,8 +33,10 @@ function reducer(state = {}, action = {}) {
       return updateInHistory(action.id, {showJson: false})
     case types.WS_PAYMENT:
       if (state.currentPage === 1) {
-        // remove the last payment
-        state.list.pop()
+        if (state.totalPages > 1) {
+          // remove the last payment
+          state.list.pop()
+        }
 
         return {
           ...state,
