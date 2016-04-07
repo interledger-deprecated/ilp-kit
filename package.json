@@ -95,7 +95,7 @@
     "constitute": "^1.6.2",
     "express": "^4.13.3",
     "file-loader": "^0.8.5",
-    "five-bells-sender": "^4.5.0",
+    "five-bells-sender": "^6.0.0",
     "five-bells-shared": "^11.1.1",
     "hoist-non-react-statics": "^1.0.3",
     "http-proxy": "^1.12.0",
