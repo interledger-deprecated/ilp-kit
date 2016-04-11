@@ -1,5 +1,5 @@
 # Five Bells Wallet [![circle][circle-image]][circle-url]
-                      
+
 [circle-image]: https://circleci.com/gh/interledger/five-bells-wallet.svg?style=shield&circle-token=65d802e1ea641aabcc95f8d28f2c6ade577716a9
 [circle-url]: https://circleci.com/gh/interledger/five-bells-wallet
 
@@ -38,6 +38,8 @@ Use the following configuration options as environment variables:
 * `CLIENT_HOST` Publicly visible hostname
 * `CLIENT_PORT` Publicly visible port
 * `SENTRY_URI` Sentry tracking uri (getsentry.com)
+* `WALLET_FORCE_HTTPS` Force all connections to use HTTPS
+* `WALLET_TRUST_XFP_HEADER` Trust the `X-Forwarded-Proto` header
 
 ### Using Redux DevTools
 
@@ -49,4 +51,4 @@ In development, Redux Devtools are enabled by default. You can toggle visibility
 
 ### Theme customization
 
-`npm install` generates a `src/theme/variables.scss` which contains the theme colors. You can manually edit it. 
+`npm install` generates a `src/theme/variables.scss` which contains the theme colors. You can manually edit it.

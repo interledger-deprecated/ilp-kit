@@ -11,6 +11,7 @@ import ApiClient from './helpers/ApiClient';
 import Html from './helpers/Html';
 import PrettyError from 'pretty-error';
 import http from 'http';
+import forceSSL from 'express-force-ssl';
 
 import { match } from 'react-router';
 import { ReduxAsyncConnect, loadOnServer } from 'redux-async-connect';
@@ -30,6 +31,15 @@ const proxyApi = httpProxy.createProxyServer({
 const proxyLedger = httpProxy.createProxyServer({
   target: config.ledgerUri
 });
+
+if (['true', '1'].indexOf(process.env.WALLET_FORCE_HTTPS) !== -1) {
+  console.info('forcing HTTPS enabled')
+  app.set('forceSSLOptions', {
+    enable301Redirects: true,
+    trustXFPHeader: ['true', '1'].indexOf(process.env.WALLET_TRUST_XFP_HEADER) !== -1
+  });
+  app.use(forceSSL);
+}
 
 app.use(compression());
 app.use(favicon(path.join(__dirname, '..', 'static', 'favicon.ico')));
