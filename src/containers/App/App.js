@@ -44,8 +44,7 @@ export default class App extends Component {
     logout: PropTypes.func.isRequired,
     historyAddPayment: PropTypes.func.isRequired,
     updateBalance: PropTypes.func.isRequired,
-    pushState: PropTypes.func.isRequired,
-    navBar: PropTypes.string
+    pushState: PropTypes.func.isRequired
   }
 
   static contextTypes = {
@@ -89,10 +88,6 @@ export default class App extends Component {
     }
   }
 
-  static defaultValues = {
-    navBar: ''
-  }
-
   handleLogout = (event) => {
     event.preventDefault()
     // TODO don't disconnect, just unsubscribe
@@ -100,20 +95,32 @@ export default class App extends Component {
     this.props.logout()
   }
 
+  _handleWaypointEnter = () => {
+    if (this.navBar === 'navbar-default') {
+      this.navBar = ''
+      this.forceUpdate()
+    }
+  }
+
   _handleWaypointLeave = () => {
-    this.props.navBar = 'in'
+    if (!this.navBar) {
+      this.navBar = 'navbar-default'
+      this.forceUpdate()
+    }
   }
 
   render() {
-    const {user, navBar} = this.props
+    const {user} = this.props
 
     return (
       <div>
         <div className={cx('container')}>
           <script src="https://web-payments.net/polyfill.js"></script>
           <DocumentMeta {...config.app}/>
-          <Waypoint onLeave={this._handleWaypointLeave} />
-          <nav className={cx('navbar', 'navbar-default', 'navbar-fixed-top', navBar)}>
+          <div className={cx('waypoint')}>
+            <Waypoint onEnter={this._handleWaypointEnter} onLeave={this._handleWaypointLeave} />
+          </div>
+          <nav className={cx('navbar', 'navbar-fixed-top', this.navBar)}>
             <div className="container">
               <div className="navbar-header">
                 <span className="navbar-brand">{config.app.title}</span>

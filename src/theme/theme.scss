@@ -1,10 +1,30 @@
+html,
 body {
-  padding-top: 80px;
+  height: 100%;
+}
+
+body {
+  padding-top: 20px;
 }
 
 body > div {
   min-height: 100%;
   position: relative;
+}
+
+.appContent {
+  padding-bottom: 30px;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+
+  .copyright {
+    padding-bottom: 0;
+  }
 }
 
 // two wallets side by side on the same display look better with this
