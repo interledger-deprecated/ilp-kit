@@ -1,0 +1,7 @@
+{
+  "title": "Five Bells Wallet",
+  "url": "https://wallet.example",
+  "order": [
+    "Auth"
+  ]
+}

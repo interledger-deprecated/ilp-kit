@@ -22,6 +22,28 @@ function AuthsControllerFactory (Auth, User, log, ledger) {
       router.post('/auth/login', passport.authenticate('local'), this.load)
     }
 
+    /**
+     * @api {post} /auth/register Register user
+     * @apiName register
+     * @apiGroup Auth
+     * @apiVersion 1.0.0
+     *
+     * @apiDescription Create a wallet account
+     *
+     * @apiParam {String} username Account username
+     * @apiParam {String} password Account password
+     *
+     * @apiExample {shell} Register an account
+     *    curl -x POST
+     *    http://wallet.example/auth/register
+     *
+     * @apiSuccessExample {json} 200 Response:
+     *    HTTP/1.1 200 OK
+     *    {
+     *      id: 'http://wallet.example/auth/register',
+     *      username: 'bob'
+     *    }
+     */
     static * register () {
       let username = this.body.username
       request.validateUriParameter('username', username, 'Identifier')

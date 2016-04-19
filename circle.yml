@@ -14,3 +14,13 @@ test:
   override:
 #   - npm run lint
     - npm test
+
+deployment:
+  production:
+    branch: master
+    commands:
+      # Publish spec
+      - git config --global user.email "info@circleci.com"
+      - git config --global user.name "CircleCI"
+      - git config --global push.default simple
+      - scripts/publish_spec.sh
