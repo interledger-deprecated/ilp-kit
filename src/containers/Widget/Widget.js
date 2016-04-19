@@ -1,7 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import {connect} from 'react-redux';
 import * as authActions from 'redux/actions/auth';
-import { isLoaded as isAuthLoaded, load as loadAuth } from 'redux/actions/auth';
+import { isLoaded as isAuthLoaded, load as loadAuth, loadConfig } from 'redux/actions/auth';
 import { asyncConnect } from 'redux-async-connect';
 
 import { SendForm } from 'containers';
@@ -12,17 +12,26 @@ import styles from './Widget.scss';
 const cx = classNames.bind(styles);
 
 @asyncConnect([{
-  deferred: true,
   promise: ({store: {dispatch, getState}}) => {
+    const promises = []
+
     if (!isAuthLoaded(getState())) {
-      return dispatch(loadAuth());
+      promises.push(dispatch(loadAuth()))
     }
+
+    // Server config
+    if (!getState().auth.config.ledgerUri) {
+      promises.push(dispatch(loadConfig()))
+    }
+
+    return Promise.all(promises)
   }
 }])
 @connect(
   state => ({
     user: state.auth.user,
-    loginFail: state.auth.fail
+    loginFail: state.auth.fail,
+    config: state.auth.config
   }),
   // Is this cool? Seems like it could be a bad idea
   authActions)
@@ -32,6 +41,7 @@ export default class Widget extends Component {
     login: PropTypes.func,
     location: PropTypes.object,
     loginFail: PropTypes.object,
+    config: PropTypes.object,
 
     transfer: PropTypes.func,
     findPath: PropTypes.func,
@@ -39,6 +49,16 @@ export default class Widget extends Component {
     unmount: PropTypes.func,
     success: PropTypes.bool,
     fail: PropTypes.object
+  }
+
+  static childContextTypes = {
+    config: PropTypes.object
+  }
+
+  getChildContext() {
+    return {
+      config: this.props.config
+    }
   }
 
   componentDidMount() {
