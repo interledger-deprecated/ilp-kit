@@ -120,51 +120,48 @@ export default class App extends Component {
           <div className={cx('waypoint')}>
             <Waypoint onEnter={this._handleWaypointEnter} onLeave={this._handleWaypointLeave} />
           </div>
-          <nav className={cx('navbar', 'navbar-fixed-top', this.navBar)}>
-            <div className="container">
-              <div className="navbar-header">
-                <span className="navbar-brand">{config.app.title}</span>
+          {user &&
+            <nav className={cx('navbar', 'navbar-fixed-top', this.navBar)}>
+              <div className="container">
+                <div className="navbar-header">
+                  <span className="navbar-brand">{config.app.title}</span>
+                </div>
+                <div className="collapse navbar-collapse">
+                  <ul className="nav navbar-nav pull-right">
+                    <li>
+                      <p className="navbar-text">
+                        Hi {user.username}.
+                      </p>
+                    </li>
+                    <IndexLinkContainer to="/">
+                      <NavItem>Home</NavItem>
+                    </IndexLinkContainer>
+                    <LinkContainer to="/button">
+                      <NavItem>Pay Button</NavItem>
+                    </LinkContainer>
+                    <LinkContainer to="/logout">
+                      <NavItem className="logout-link" onClick={this.handleLogout}>
+                        Logout
+                      </NavItem>
+                    </LinkContainer>
+                  </ul>
+                </div>
               </div>
-              <div className="collapse navbar-collapse">
-                <ul className="nav navbar-nav pull-right">
-                  {user &&
-                  <li>
-                    <p className="navbar-text">
-                      Hi {user.username}.
-                    </p>
-                  </li>}
-                  {user &&
-                  <IndexLinkContainer to="/">
-                    <NavItem>Home</NavItem>
-                  </IndexLinkContainer>}
-                  {user &&
-                  <LinkContainer to="/button">
-                    <NavItem>Pay Button</NavItem>
-                  </LinkContainer>}
-                  {user &&
-                  <LinkContainer to="/logout">
-                    <NavItem className="logout-link" onClick={this.handleLogout}>
-                      Logout
-                    </NavItem>
-                  </LinkContainer>}
-                </ul>
-              </div>
-            </div>
-          </nav>
+            </nav>}
 
           <div className={cx('appContent')}>
             {this.props.children}
           </div>
 
-          {/* TODO:UX attached to bottom */}
-          <div className="footer">
-            <div className="copyright">
-              <span className="hint-text">© 2016 </span>
-              <a href="https://interledger.org">
-                 Interledger
-              </a>.
-            </div>
-          </div>
+          {user &&
+            <div className="footer">
+              <div className="copyright">
+                <span className="hint-text">© 2016 </span>
+                <a href="https://interledger.org">
+                   Interledger
+                </a>.
+              </div>
+            </div>}
         </div>
       </div>
     )
