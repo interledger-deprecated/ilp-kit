@@ -40,8 +40,10 @@ function AuthsControllerFactory (Auth, User, log, ledger) {
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
      *    {
-     *      id: 'http://wallet.example/auth/register',
-     *      username: 'bob'
+     *      "username": "bob",
+     *      "account": "http://wallet.example/ledger/accounts/bob",
+     *      "balance": "1000",
+     *      "id": 1
      *    }
      */
     static * register () {
