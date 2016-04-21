@@ -101,10 +101,10 @@
           mask: $arguments;
 }
 @mixin box_scale($scale) {
-    -webkit-transform: scale($scale);  
-      -ms-transform: scale($scale); 
-      -moz-transform: scale($scale); 
-          transform: scale($scale); 
+    -webkit-transform: scale($scale);
+      -ms-transform: scale($scale);
+      -moz-transform: scale($scale);
+          transform: scale($scale);
 }
 // Single side border-radius
 @mixin border-top-radius($radius) {
@@ -416,16 +416,15 @@
 // More easily include all the states for responsive-utilities.less.
 @mixin responsive-visibility() {
   display: block !important;
-  tr& { display: table-row !important; }
-  th&,
-  td& { display: table-cell !important; }
+  tr { display: table-row !important; }
+  th,
+  td { display: table-cell !important; }
 }
 
 @mixin responsive-invisibility() {
-    &,
-  tr&,
-  th&,
-  td& { display: none !important; }
+  tr,
+  th,
+  td { display: none !important; }
 }
 
 // Grid System

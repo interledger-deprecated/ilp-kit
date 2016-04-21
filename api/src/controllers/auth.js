@@ -93,7 +93,7 @@ function AuthsControllerFactory (Auth, User, log, ledger) {
       const ledgerUser = yield ledger.getAccount(user)
       user.balance = Math.round(ledgerUser.balance * 100) / 100
 
-      this.body = user.getDataExternal()
+      this.body = User.fromData(user).getDataExternal()
     }
 
     static logout () {
