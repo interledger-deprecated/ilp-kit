@@ -80,6 +80,27 @@ function AuthsControllerFactory (Auth, User, log, ledger) {
       this.status = 201
     }
 
+    /**
+     * @api {get} /auth/load Load logged in user
+     * @apiName load
+     * @apiGroup Auth
+     * @apiVersion 1.0.0
+     *
+     * @apiDescription Load logged in user
+     *
+     * @apiExample {shell} Load logged in user
+     *    curl -x GET
+     *    http://wallet.example/auth/load
+     *
+     * @apiSuccessExample {json} 200 Response:
+     *    HTTP/1.1 200 OK
+     *    {
+     *      "username": "bob",
+     *      "account": "http://wallet.example/ledger/accounts/bob",
+     *      "balance": "1000",
+     *      "id": 1
+     *    }
+     */
     static * load () {
       let user = this.req.user
 
@@ -96,6 +117,23 @@ function AuthsControllerFactory (Auth, User, log, ledger) {
       this.body = User.fromData(user).getDataExternal()
     }
 
+    /**
+     * @api {post} /auth/logout Logout user
+     * @apiName logout
+     * @apiGroup Auth
+     * @apiVersion 1.0.0
+     *
+     * @apiDescription Logout user
+     *
+     * @apiExample {shell} Logout user
+     *    curl -x POST
+     *    http://wallet.example/auth/logout
+     *
+     * @apiSuccessExample {json} 200 Response:
+     *    HTTP/1.1 200 OK
+     *    {
+     *    }
+     */
     static logout () {
       this.session = null
       this.body = {}
