@@ -29,7 +29,7 @@ export default class HistoryItem extends Component {
 
   render() {
     const item = contextualizePayment(this.props.item, this.props.user)
-    const {config} = this.context
+    const config = this.context.config || {}
 
     const amountClass = item.counterpartyAccount === item.destination_account ? 'negative' : 'positive'
 

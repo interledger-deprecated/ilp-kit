@@ -26,6 +26,6 @@ describe('(action creator) Auth', () => {
       {type: types.RELOAD_SUCCESS, result: undefined}
     ]
     const store = mockStore({}, expectedActions, done)
-    actions.reload({username: 'alice'})(store.dispatch)
+    store.dispatch(actions.reload({username: 'alice'}))
   })
 })
