@@ -1,1 +1,18 @@
-{  "name": "five-bells-wallet",  "version": "1.0.0",  "description": "Five Bells Wallet",  "title": "Five Bells Wallet",  "url": "https://wallet.example",  "order": [    "Auth"  ],  "sampleUrl": false,  "apidoc": "0.2.0",  "generator": {    "name": "apidoc",    "time": "2016-04-19T22:47:33.131Z",    "url": "http://apidocjs.com",    "version": "0.15.1"  }}
+{
+  "name": "five-bells-wallet",
+  "version": "1.0.0",
+  "description": "Five Bells Wallet",
+  "title": "Five Bells Wallet",
+  "url": "https://wallet.example",
+  "order": [
+    "Auth"
+  ],
+  "sampleUrl": false,
+  "apidoc": "0.2.0",
+  "generator": {
+    "name": "apidoc",
+    "time": "2016-04-21T22:03:00.686Z",
+    "url": "http://apidocjs.com",
+    "version": "0.16.0"
+  }
+}
