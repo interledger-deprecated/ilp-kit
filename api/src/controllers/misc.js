@@ -34,6 +34,26 @@ function MiscControllerFactory (Auth, log, config, ledger, utils) {
       }
     }
 
+    /**
+     * @api {GET} /config Get wallet config
+     * @apiName GetConfig
+     * @apiGroup Config
+     * @apiVersion 1.0.0
+     *
+     * @apiDescription Get wallet config
+     *
+     * @apiExample {shell} Find path
+     *    curl -x GET
+     *    http://wallet.example/config
+     *
+     * @apiSuccessExample {json} 200 Response:
+     *    HTTP/1.1 200 OK
+     *    {
+     *      "ledgerUri": "http://wallet.example/ledger",
+     *      "currencyCode": "USD",
+     *      "currencySymbol": "$"
+     *    }
+     */
     static * config () {
       const ledgerInfo = yield ledger.getInfo()
 
