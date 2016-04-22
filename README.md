@@ -41,6 +41,9 @@ Use the following configuration options as environment variables:
 * `WALLET_FORCE_HTTPS` Force all connections to use HTTPS
 * `WALLET_TRUST_XFP_HEADER` Trust the `X-Forwarded-Proto` header
 
+### API docs
+[http://interledger.org/five-bells-wallet/docs](http://interledger.org/five-bells-wallet/docs/)
+
 ### Using Redux DevTools
 
 In development, Redux Devtools are enabled by default. You can toggle visibility and move the dock around using the following keyboard shortcuts:
