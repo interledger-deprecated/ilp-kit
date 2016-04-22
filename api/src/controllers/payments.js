@@ -28,7 +28,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
     /**
      * @api {get} /payments User payments history
      * @apiName GetPayments
-     * @apiGroup Payments
+     * @apiGroup Payment
      * @apiVersion 1.0.0
      *
      * @apiDescription Get user payments history
@@ -37,7 +37,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
      * @apiParam {String} limit Number of payments
      *
      * @apiExample {shell} Get last 2 payments
-     *    curl -x GET
+     *    curl -x GET -H "Authorization: Basic YWxpY2U6YWxpY2U="
      *    http://wallet.example/payments?page=1&limit=2
      *
      * @apiSuccessExample {json} 200 Response:
@@ -95,7 +95,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
     /**
      * @api {put} /payments/:id Make payment
      * @apiName PutPayments
-     * @apiGroup Payments
+     * @apiGroup Payment
      * @apiVersion 1.0.0
      *
      * @apiDescription Make payment
@@ -107,7 +107,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
      * @apiParam {String} path path
      *
      * @apiExample {shell} Make a payment with the destination_amount
-     *    curl -x PUT -d
+     *    curl -x PUT -H "Authorization: Basic YWxpY2U6YWxpY2U=" -d
      *    '{
      *        "destination_account": "bob@wallet.example",
      *        "destination_amount": "1"
@@ -175,7 +175,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
     /**
      * @api {POST} /payments/findPath Find path
      * @apiName FindPath
-     * @apiGroup Payments
+     * @apiGroup Payment
      * @apiVersion 1.0.0
      *
      * @apiDescription Find path
@@ -185,7 +185,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
      * @apiParam {String} destination_amount destination amount
      *
      * @apiExample {shell} Find path
-     *    curl -x POST -d
+     *    curl -x POST -H "Authorization: Basic YWxpY2U6YWxpY2U=" -d
      *    '{
      *        "destination": "bob@wallet.example",
      *        "destination_amount": "10"

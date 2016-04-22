@@ -10,25 +10,12 @@ describe('Auth', function() {
     agent = appHelper.create()
   })
 
-  describe('POST /auth/register', function () {
-    it('create the user', function (done) {
-      agent
-        .post('/auth/register')
-        .send({
-          username: 'alice',
-          password: 'alice'
-        })
-        .expect(exampleApiData.accounts.alice, done)
-    })
-  })
-
   describe('POST /auth/login', function () {
     it('login user', function (done) {
       // Create the user
       agent
-        .post('/auth/register')
+        .post('/users/alice')
         .send({
-          username: 'alice',
           password: 'alice'
         })
         .end(function(){

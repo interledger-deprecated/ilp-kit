@@ -2,8 +2,8 @@
   "title": "Five Bells Wallet",
   "url": "https://wallet.example",
   "order": [
-    "Users",
-    "Payments",
+    "User",
+    "Payment",
     "Config",
     "Health"
   ]
