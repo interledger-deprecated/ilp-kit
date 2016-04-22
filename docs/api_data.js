@@ -264,14 +264,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "username",
-            "description": "<p>User's unique identifier</p>"
+            "description": "<p>username</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "password",
-            "description": "<p>Account password</p>"
+            "description": "<p>password</p>"
           }
         ]
       }
