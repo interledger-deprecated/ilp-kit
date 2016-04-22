@@ -114,6 +114,7 @@
     "mag-hub": "^0.1.1",
     "moment": "^2.12.0",
     "node-sass": "^3.3.3",
+    "passport-http": "^0.3.0",
     "passport-local": "^1.0.0",
     "pg": "^4.4.4",
     "pg-native": "^1.10.0",

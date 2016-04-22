@@ -4,7 +4,6 @@ module.exports = PaymentsControllerFactory
 
 const _ = require('lodash')
 const request = require('five-bells-shared/utils/request')
-const passport = require('koa-passport')
 const Auth = require('../lib/auth')
 const Log = require('../lib/log')
 const Ledger = require('../lib/ledger')
@@ -21,9 +20,9 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
 
   return class PaymentsController {
     static init (router) {
-      router.get('/payments', Auth.isAuth, this.getHistory)
-      router.put('/payments/:id', Auth.isAuth, Payment.createBodyParser(), this.putResource)
-      router.post('/payments/findPath', Auth.isAuth, this.findPath)
+      router.get('/payments', Auth.checkAuth, this.getHistory)
+      router.put('/payments/:id', Auth.checkAuth, Payment.createBodyParser(), this.putResource)
+      router.post('/payments/findPath', Auth.checkAuth, this.findPath)
     }
 
     /**

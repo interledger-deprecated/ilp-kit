@@ -3,7 +3,6 @@
 module.exports = MiscControllerFactory
 
 const request = require('five-bells-shared/utils/request')
-const passport = require('koa-passport')
 const Auth = require('../lib/auth')
 const Log = require('../lib/log')
 const Config = require('../lib/config')
@@ -16,7 +15,7 @@ function MiscControllerFactory (Auth, log, config, ledger, utils) {
 
   return class MiscController {
     static init (router) {
-      router.get('/analyze/destination', Auth.isAuth, this.destination)
+      router.get('/analyze/destination', this.destination)
       router.get('/config', this.config)
     }
 

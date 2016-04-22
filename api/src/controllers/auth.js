@@ -9,14 +9,15 @@ const Log = require('../lib/log')
 const Ledger = require('../lib/ledger')
 const UserFactory = require('../models/user')
 const UsernameTakenError = require('../errors/username-taken-error')
+const UsersControllerFactory = require('./users')
 
-AuthsControllerFactory.constitute = [Auth, UserFactory, Log, Ledger]
-function AuthsControllerFactory (Auth, User, log, ledger) {
+AuthsControllerFactory.constitute = [Auth, UserFactory, Log, Ledger, UsersControllerFactory]
+function AuthsControllerFactory (Auth, User, log, ledger, Users) {
   log = log('auth')
 
   return class AuthController {
     static init (router) {
-      router.get('/auth/load', Auth.isAuth, this.load)
+      router.get('/auth/load', this.load)
       router.get('/auth/logout', this.logout)
       router.post('/auth/register', User.createBodyParser(), this.register)
       router.post('/auth/login', passport.authenticate('local'), this.load)
@@ -80,60 +81,13 @@ function AuthsControllerFactory (Auth, User, log, ledger) {
       this.status = 201
     }
 
-    /**
-     * @api {get} /auth/load Load logged in user
-     * @apiName load
-     * @apiGroup Auth
-     * @apiVersion 1.0.0
-     *
-     * @apiDescription Load logged in user
-     *
-     * @apiExample {shell} Load logged in user
-     *    curl -x GET
-     *    http://wallet.example/auth/load
-     *
-     * @apiSuccessExample {json} 200 Response:
-     *    HTTP/1.1 200 OK
-     *    {
-     *      "username": "bob",
-     *      "account": "http://wallet.example/ledger/accounts/bob",
-     *      "balance": "1000",
-     *      "id": 1
-     *    }
-     */
-    static * load () {
+    static * load (next) {
       let user = this.req.user
+      this.params.username = user.username
 
-      // There's no active session
-      if (!user) {
-        this.status = 404
-        return
-      }
-
-      // Get account balance
-      const ledgerUser = yield ledger.getAccount(user)
-      user.balance = Math.round(ledgerUser.balance * 100) / 100
-
-      this.body = User.fromData(user).getDataExternal()
+      yield Users.getResource.call(this, next)
     }
 
-    /**
-     * @api {post} /auth/logout Logout user
-     * @apiName logout
-     * @apiGroup Auth
-     * @apiVersion 1.0.0
-     *
-     * @apiDescription Logout user
-     *
-     * @apiExample {shell} Logout user
-     *    curl -x POST
-     *    http://wallet.example/auth/logout
-     *
-     * @apiSuccessExample {json} 200 Response:
-     *    HTTP/1.1 200 OK
-     *    {
-     *    }
-     */
     static logout () {
       this.session = null
       this.body = {}
