@@ -83,9 +83,9 @@ define({ "api": [
   {
     "type": "GET",
     "url": "/config",
-    "title": "Get wallet config",
+    "title": "Wallet config",
     "name": "GetConfig",
-    "group": "Config",
+    "group": "Misc",
     "version": "1.0.0",
     "description": "<p>Get wallet config</p>",
     "examples": [
@@ -105,14 +105,14 @@ define({ "api": [
       ]
     },
     "filename": "api/src/controllers/misc.js",
-    "groupTitle": "Config"
+    "groupTitle": "Misc"
   },
   {
     "type": "get",
     "url": "/health",
     "title": "Health check",
     "name": "health",
-    "group": "Health",
+    "group": "Misc",
     "version": "1.0.0",
     "description": "<p>Health check</p>",
     "examples": [
@@ -132,7 +132,7 @@ define({ "api": [
       ]
     },
     "filename": "api/src/controllers/health.js",
-    "groupTitle": "Health"
+    "groupTitle": "Misc"
   },
   {
     "type": "POST",

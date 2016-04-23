@@ -7,15 +7,14 @@ define({
   "order": [
     "User",
     "Payment",
-    "Config",
-    "Health",
+    "Misc",
     "Auth"
   ],
   "sampleUrl": false,
   "apidoc": "0.2.0",
   "generator": {
     "name": "apidoc",
-    "time": "2016-04-23T00:02:54.529Z",
+    "time": "2016-04-23T00:15:07.925Z",
     "url": "http://apidocjs.com",
     "version": "0.16.1"
   }
