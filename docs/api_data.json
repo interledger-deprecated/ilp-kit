@@ -1,5 +1,86 @@
 [
   {
+    "type": "get",
+    "url": "/auth/load",
+    "title": "Load",
+    "name": "Load",
+    "group": "Auth",
+    "version": "1.0.0",
+    "description": "<p>Get currently authenticated user (used for cookie based auth)</p>",
+    "examples": [
+      {
+        "title": "Load",
+        "content": "curl -X GET\nhttp://wallet.example/auth/load",
+        "type": "shell"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "200 Response:",
+          "content": "HTTP/1.1 200 OK\n{\n  \"username\": \"alice\",\n  \"account\": \"http://wallet.example/ledger/accounts/alice\",\n  \"balance\": \"1000\",\n  \"id\": 1\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "api/src/controllers/auth.js",
+    "groupTitle": "Auth"
+  },
+  {
+    "type": "post",
+    "url": "/auth/login",
+    "title": "Login",
+    "name": "Login",
+    "group": "Auth",
+    "version": "1.0.0",
+    "description": "<p>Login (used for cookie based auth)</p>",
+    "examples": [
+      {
+        "title": "Login",
+        "content": "curl -X POST -d\n'{\n    \"username\": \"alice\",\n    \"password\": \"alice\"\n}'\nhttp://wallet.example/auth/login",
+        "type": "shell"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "200 Response:",
+          "content": "HTTP/1.1 200 OK\n{\n  \"username\": \"alice\",\n  \"account\": \"http://wallet.example/ledger/accounts/alice\",\n  \"balance\": \"1000\",\n  \"id\": 1\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "api/src/controllers/auth.js",
+    "groupTitle": "Auth"
+  },
+  {
+    "type": "post",
+    "url": "/auth/logout",
+    "title": "Logout",
+    "name": "Logout",
+    "group": "Auth",
+    "version": "1.0.0",
+    "description": "<p>Logout (used for cookie based auth)</p>",
+    "examples": [
+      {
+        "title": "Logout",
+        "content": "curl -X POST\nhttp://wallet.example/auth/logout",
+        "type": "shell"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "200 Response:",
+          "content": "HTTP/1.1 200 OK",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "api/src/controllers/auth.js",
+    "groupTitle": "Auth"
+  },
+  {
     "type": "GET",
     "url": "/config",
     "title": "Get wallet config",
@@ -10,7 +91,7 @@
     "examples": [
       {
         "title": "Find path",
-        "content": "curl -x GET\nhttp://wallet.example/config",
+        "content": "curl -X GET\nhttp://wallet.example/config",
         "type": "shell"
       }
     ],
@@ -37,7 +118,7 @@
     "examples": [
       {
         "title": "Health check",
-        "content": "curl -x GET\nhttp://wallet.example/health",
+        "content": "curl -X GET\nhttp://wallet.example/health",
         "type": "shell"
       }
     ],
@@ -91,7 +172,7 @@
     "examples": [
       {
         "title": "Find path",
-        "content": "curl -x POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\n'{\n    \"destination\": \"bob@wallet.example\",\n    \"destination_amount\": \"10\"\n}'\nhttp://wallet.example/payments/findPath",
+        "content": "curl -X POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\n'{\n    \"destination\": \"bob@wallet.example\",\n    \"destination_amount\": \"10\"\n}'\nhttp://wallet.example/payments/findPath",
         "type": "shell"
       }
     ],
@@ -138,7 +219,7 @@
     "examples": [
       {
         "title": "Get last 2 payments",
-        "content": "curl -x GET -H \"Authorization: Basic YWxpY2U6YWxpY2U=\"\nhttp://wallet.example/payments?page=1&limit=2",
+        "content": "curl -X GET -H \"Authorization: Basic YWxpY2U6YWxpY2U=\"\nhttp://wallet.example/payments?page=1&limit=2",
         "type": "shell"
       }
     ],
@@ -206,7 +287,7 @@
     "examples": [
       {
         "title": "Make a payment with the destination_amount",
-        "content": "curl -x PUT -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\n'{\n    \"destination_account\": \"bob@wallet.example\",\n    \"destination_amount\": \"1\"\n}'\nhttp://wallet.example/payments/9efa70ec-08b9-11e6-b512-3e1d05defe78",
+        "content": "curl -X PUT -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\n'{\n    \"destination_account\": \"bob@wallet.example\",\n    \"destination_amount\": \"1\"\n}'\nhttp://wallet.example/payments/9efa70ec-08b9-11e6-b512-3e1d05defe78",
         "type": "shell"
       }
     ],
@@ -233,7 +314,7 @@
     "examples": [
       {
         "title": "Get user",
-        "content": "curl -x GET -H \"Authorization: Basic YWxpY2U6YWxpY2U=\"\nhttp://wallet.example/users/alice",
+        "content": "curl -X GET -H \"Authorization: Basic YWxpY2U6YWxpY2U=\"\nhttp://wallet.example/users/alice",
         "type": "shell"
       }
     ],
@@ -279,7 +360,7 @@
     "examples": [
       {
         "title": "Post user",
-        "content": "curl -x POST -d\n'{\n    \"password\": \"alice\"\n}'\nhttp://wallet.example/users/alice",
+        "content": "curl -X POST -d\n'{\n    \"password\": \"alice\"\n}'\nhttp://wallet.example/users/alice",
         "type": "shell"
       }
     ],
