@@ -30,7 +30,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket) {
      * @apiDescription Get user
      *
      * @apiExample {shell} Get user
-     *    curl -x GET -H "Authorization: Basic YWxpY2U6YWxpY2U="
+     *    curl -X GET -H "Authorization: Basic YWxpY2U6YWxpY2U="
      *    http://wallet.example/users/alice
      *
      * @apiSuccessExample {json} 200 Response:
@@ -71,7 +71,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket) {
      * @apiParam {String} password password
      *
      * @apiExample {shell} Post user
-     *    curl -x POST -d
+     *    curl -X POST -d
      *    '{
      *        "password": "alice"
      *    }'

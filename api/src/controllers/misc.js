@@ -42,7 +42,7 @@ function MiscControllerFactory (Auth, log, config, ledger, utils) {
      * @apiDescription Get wallet config
      *
      * @apiExample {shell} Find path
-     *    curl -x GET
+     *    curl -X GET
      *    http://wallet.example/config
      *
      * @apiSuccessExample {json} 200 Response:

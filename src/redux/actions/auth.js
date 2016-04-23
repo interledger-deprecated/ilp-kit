@@ -98,6 +98,6 @@ export function login(fields) {
 export function logout() {
   return {
     types: [types.LOGOUT, types.LOGOUT_SUCCESS, types.LOGOUT_FAIL],
-    promise: (client) => client.get('/auth/logout')
+    promise: (client) => client.post('/auth/logout')
   }
 }

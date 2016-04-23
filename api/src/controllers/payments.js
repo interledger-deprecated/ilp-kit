@@ -37,7 +37,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
      * @apiParam {String} limit Number of payments
      *
      * @apiExample {shell} Get last 2 payments
-     *    curl -x GET -H "Authorization: Basic YWxpY2U6YWxpY2U="
+     *    curl -X GET -H "Authorization: Basic YWxpY2U6YWxpY2U="
      *    http://wallet.example/payments?page=1&limit=2
      *
      * @apiSuccessExample {json} 200 Response:
@@ -107,7 +107,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
      * @apiParam {String} path path
      *
      * @apiExample {shell} Make a payment with the destination_amount
-     *    curl -x PUT -H "Authorization: Basic YWxpY2U6YWxpY2U=" -d
+     *    curl -X PUT -H "Authorization: Basic YWxpY2U6YWxpY2U=" -d
      *    '{
      *        "destination_account": "bob@wallet.example",
      *        "destination_amount": "1"
@@ -185,7 +185,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
      * @apiParam {String} destination_amount destination amount
      *
      * @apiExample {shell} Find path
-     *    curl -x POST -H "Authorization: Basic YWxpY2U6YWxpY2U=" -d
+     *    curl -X POST -H "Authorization: Basic YWxpY2U6YWxpY2U=" -d
      *    '{
      *        "destination": "bob@wallet.example",
      *        "destination_amount": "10"
