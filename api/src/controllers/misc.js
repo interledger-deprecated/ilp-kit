@@ -34,9 +34,9 @@ function MiscControllerFactory (Auth, log, config, ledger, utils) {
     }
 
     /**
-     * @api {GET} /config Get wallet config
+     * @api {GET} /config Wallet config
      * @apiName GetConfig
-     * @apiGroup Config
+     * @apiGroup Misc
      * @apiVersion 1.0.0
      *
      * @apiDescription Get wallet config

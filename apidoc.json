@@ -4,8 +4,7 @@
   "order": [
     "User",
     "Payment",
-    "Config",
-    "Health",
+    "Misc",
     "Auth"
   ]
 }

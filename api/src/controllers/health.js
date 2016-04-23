@@ -12,7 +12,7 @@ function HealthControllerFactory () {
     /**
      * @api {get} /health Health check
      * @apiName health
-     * @apiGroup Health
+     * @apiGroup Misc
      * @apiVersion 1.0.0
      *
      * @apiDescription Health check
