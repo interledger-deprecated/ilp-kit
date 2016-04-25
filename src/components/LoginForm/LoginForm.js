@@ -21,7 +21,6 @@ export default class LoginForm extends Component {
     handleSubmit: PropTypes.func.isRequired,
     login: PropTypes.func.isRequired,
     unmount: PropTypes.func,
-    success: PropTypes.bool,
     fail: PropTypes.object
   }
 
@@ -30,15 +29,10 @@ export default class LoginForm extends Component {
   }
 
   render() {
-    const { handleSubmit, login, success, fail, fields: {username, password}, pristine, invalid, submitting } = this.props
+    const { handleSubmit, login, fail, fields: {username, password}, pristine, invalid, submitting } = this.props
 
     return (
       <form onSubmit={handleSubmit(login)}>
-        {success &&
-        <Alert bsStyle="success">
-          <strong>Holy guacamole!</strong> You've just sent some money!
-        </Alert>}
-
         {fail && fail.id === 'UnauthorizedError' &&
         <Alert bsStyle="danger">
           <strong>Woops!</strong> Invalid username/password

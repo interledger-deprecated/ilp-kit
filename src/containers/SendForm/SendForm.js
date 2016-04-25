@@ -4,6 +4,7 @@ import {reduxForm} from 'redux-form'
 import sendValidation from './SendValidation'
 import * as sendActions from 'redux/actions/send'
 
+import { successable } from 'decorators'
 import { resetFormOnSuccess } from 'decorators'
 
 import Alert from 'react-bootstrap/lib/Alert'
@@ -24,12 +25,12 @@ import { Input } from 'components'
     user: state.auth.user,
     destinationInfo: state.send.destinationInfo,
     send: state.send,
-    success: state.send.success,
     fail: state.send.fail,
     path: state.send.path,
     pathFinding: state.send.pathFinding
   }),
   sendActions)
+@successable()
 @resetFormOnSuccess('send')
 export default class SendForm extends Component {
   static propTypes = {
@@ -44,12 +45,15 @@ export default class SendForm extends Component {
     transfer: PropTypes.func.isRequired,
     findPath: PropTypes.func.isRequired,
     unmount: PropTypes.func.isRequired,
-    success: PropTypes.bool,
     path: PropTypes.object,
     pathFinding: PropTypes.bool,
     fail: PropTypes.object,
     data: PropTypes.object,
-    initializeForm: PropTypes.func
+    initializeForm: PropTypes.func,
+
+    // Successable
+    succeed: PropTypes.func,
+    success: PropTypes.bool
   }
 
   static contextTypes = {
@@ -89,11 +93,6 @@ export default class SendForm extends Component {
     }
   }
 
-  // Remove the success/error messages on unmount
-  componentWillUnmount() {
-    this.props.unmount()
-  }
-
   // TODO introduce a latency
   handleDestinationChange = (event) => {
     this.props.fields.destination.onChange(event)
@@ -126,8 +125,12 @@ export default class SendForm extends Component {
     this.lastPathfindingField = 'destination'
   }
 
+  handleSubmit = (data) => {
+    this.props.transfer(data).then(this.props.succeed)
+  }
+
   render() {
-    const { pristine, invalid, handleSubmit, transfer, submitting, success, destinationInfo,
+    const { pristine, invalid, handleSubmit, submitting, success, destinationInfo,
       pathFinding, fail, data, fields: {destination, sourceAmount, destinationAmount} } = this.props
     const { config } = this.context
 
@@ -156,7 +159,7 @@ export default class SendForm extends Component {
             })()}
           </Alert>}
 
-          <form name="example" onSubmit={handleSubmit(transfer)}>
+          <form onSubmit={handleSubmit(this.handleSubmit)}>
             <div className="form-group">
               <Input object={destination} label="Recipient" size="lg" focus onChange={this.handleDestinationChange} />
             </div>

@@ -22,7 +22,6 @@ export default class RegisterForm extends Component {
     handleSubmit: PropTypes.func.isRequired,
     register: PropTypes.func.isRequired,
     unmount: PropTypes.func,
-    success: PropTypes.bool,
     fail: PropTypes.object
   }
 
@@ -31,15 +30,10 @@ export default class RegisterForm extends Component {
   }
 
   render() {
-    const { handleSubmit, register, success, fail, fields: {username, password}, pristine, invalid, submitting } = this.props
+    const { handleSubmit, register, fail, fields: {username, password}, pristine, invalid, submitting } = this.props
 
     return (
       <form onSubmit={handleSubmit(register)}>
-        {success &&
-        <Alert bsStyle="success">
-          <strong>Holy guacamole!</strong> You've just sent some money!
-        </Alert>}
-
         {fail && fail.id &&
         <Alert bsStyle="danger">
           {fail.id === 'UsernameTakenError' &&

@@ -47,7 +47,6 @@ export default class Widget extends Component {
     findPath: PropTypes.func,
     path: PropTypes.object,
     unmount: PropTypes.func,
-    success: PropTypes.bool,
     fail: PropTypes.object
   }
 
