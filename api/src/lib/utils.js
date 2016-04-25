@@ -122,8 +122,8 @@ module.exports = class Utils {
       } catch (e) {
         throw new NotFoundError("Unknown account")
       }
-
-      // TODO api should already know the current ledgerInfo at this point
+      
+      // TODO:PERFORMANCE api should already know the current ledgerInfo at this point
       if (retrieveLedgerInfo) {
         parsedDestination.ledgerInfo = yield self.ledger.getInfo(parsedDestination.ledgerUri)
       }

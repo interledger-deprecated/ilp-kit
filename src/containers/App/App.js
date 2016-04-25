@@ -139,9 +139,11 @@ export default class App extends Component {
                     <LinkContainer to="/button">
                       <NavItem>Pay Button</NavItem>
                     </LinkContainer>
-                    <LinkContainer to="https://interledger.org/five-bells-wallet/docs" target="_blank">
-                      <NavItem>API docs</NavItem>
-                    </LinkContainer>
+                    <li>
+                      <a href="https://interledger.org/five-bells-wallet/docs" target="_blank">
+                        API docs
+                      </a>
+                    </li>
                     <LinkContainer to="/logout">
                       <NavItem className="logout-link" onClick={this.handleLogout}>
                         Logout

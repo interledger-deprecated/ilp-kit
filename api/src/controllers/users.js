@@ -7,11 +7,12 @@ const Auth = require('../lib/auth')
 const Log = require('../lib/log')
 const Ledger = require('../lib/ledger')
 const Socket = require('../lib/socket')
+const Config = require('../lib/config')
 const UserFactory = require('../models/user')
 const UsernameTakenError = require('../errors/username-taken-error')
 
-UsersControllerFactory.constitute = [Auth, UserFactory, Log, Ledger, Socket]
-function UsersControllerFactory (Auth, User, log, ledger, socket) {
+UsersControllerFactory.constitute = [Auth, UserFactory, Log, Ledger, Socket, Config]
+function UsersControllerFactory (Auth, User, log, ledger, socket, config) {
   log = log('users');
 
   return class UsersController {
@@ -125,6 +126,10 @@ function UsersControllerFactory (Auth, User, log, ledger, socket) {
     }
 
     static * reload () {
+      if (!config.data.get('reload')) {
+        return this.status = 404
+      }
+
       let username = this.params.username
       request.validateUriParameter('username', username, 'Identifier')
       username = username.toLowerCase()

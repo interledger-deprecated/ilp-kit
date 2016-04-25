@@ -56,11 +56,17 @@ function MiscControllerFactory (Auth, log, config, ledger, utils) {
     static * config () {
       const ledgerInfo = yield ledger.getInfo()
 
-      this.body = {
+      let response = {
         ledgerUri: config.data.getIn(['ledger', 'public_uri']),
         currencyCode: ledgerInfo.currency_code,
         currencySymbol: ledgerInfo.currency_symbol
       }
+
+      if (config.data.get('reload')) {
+        response.reload = true
+      }
+
+      this.body = response
     }
   }
 }

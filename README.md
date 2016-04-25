@@ -35,6 +35,7 @@ Use the following configuration options as environment variables:
 * `API_LEDGER_PUBLIC_URI` Ledger public URI
 * `API_LEDGER_ADMIN_NAME` Ledger admin username
 * `API_LEDGER_ADMIN_PASS` Ledger admin password
+* `API_RELOAD` Turn on/off the reload endpoint
 * `CLIENT_HOST` Publicly visible hostname
 * `CLIENT_PORT` Publicly visible port
 * `SENTRY_URI` Sentry tracking uri (getsentry.com)

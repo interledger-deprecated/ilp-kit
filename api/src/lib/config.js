@@ -17,6 +17,7 @@ module.exports = class WalletConfig {
     }
 
     localConfig.sessionSecret = Config.getEnv(envPrefix, 'SESSION_SECRET')
+    localConfig.reload = Config.getEnv(envPrefix, 'RELOAD')
 
     if (!localConfig.sessionSecret) {
       if (process.env.NODE_ENV === 'production') {

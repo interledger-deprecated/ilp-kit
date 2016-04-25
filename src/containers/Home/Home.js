@@ -18,7 +18,7 @@ const cx = classNames.bind(styles)
     authFail: state.auth.fail,
     activeTab: state.auth.activeTab
   }),
-  authActions) // TODO this is definitely wrong
+  authActions)
 export default class Home extends Component {
   static propTypes = {
     user: PropTypes.object,
@@ -94,10 +94,13 @@ export default class Home extends Component {
                     <div className={cx('balanceDescription')}>Your Balance</div>
                     <div className={cx('balance')}>
                       {config.currencySymbol}{amount(user.balance)}
-                      <span className={cx('but')}>*</span>
+                      {config.reload && <span className={cx('but')}>*</span>}
                     </div>
-                    <button className="btn btn-complete btn-lg" onClick={this.reload}>Get More</button>
-                    <div className={cx('balanceFake')}>* Don't get too excited, this is fake money</div>
+                    {config.reload &&
+                      <div>
+                        <button className="btn btn-complete btn-lg" onClick={this.reload}>Get More</button>
+                        <div className={cx('balanceFake')}>* Don't get too excited, this is fake money</div>
+                      </div>}
                   </div>
                 </div>
               </div>
