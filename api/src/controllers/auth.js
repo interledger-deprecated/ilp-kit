@@ -69,6 +69,9 @@ function AuthsControllerFactory (Auth, User, log, ledger, Users) {
      */
     static * load (next) {
       let user = this.req.user
+
+      if (!user) return this.status = 404
+
       this.params.username = user.username
 
       yield Users.getResource.call(this, next)
