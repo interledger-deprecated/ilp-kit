@@ -135,7 +135,7 @@ module.exports = class Ledger extends EventEmitter {
 
     // Interledger
     if (options.destination.type === 'foreign') {
-      response = yield sender.executePayment(options.path, {
+      let paymentObj = {
         sourceAccount: sourceAccount,
         sourcePassword: options.password,
         destinationAccount: options.destination.accountUri,
@@ -145,25 +145,47 @@ module.exports = class Ledger extends EventEmitter {
           destination_account: options.destination.accountUri,
           destination_amount: options.path[0].destination_transfers[0].credits[0].amount
         }
-      })
+      }
+
+      if (options.source_memo) {
+        paymentObj.sourceMemo = {userMemo: options.source_memo}
+      }
+
+      if (options.destination_memo) {
+        paymentObj.destinationMemo = {userMemo: options.destination_memo}
+      }
+
+      response = yield sender.executePayment(options.path, paymentObj)
 
       response = response[0]
     }
     else {
       const paymentId = uuid()
 
+      let debit = {
+        account: sourceAccount,
+        amount: options.destinationAmount,
+        authorized: true
+      }
+
+      if (options.source_memo) {
+        debit.memo = {userMemo: options.source_memo}
+      }
+
+      let credit = {
+        account: options.destination.accountUri,
+        amount: options.destinationAmount
+      }
+
+      if (options.destination_memo) {
+        credit.memo = {userMemo: options.destination_memo}
+      }
+
       response = yield superagent
         .put(this.ledgerUri + '/transfers/' + paymentId)
         .send({
-          debits: [{
-            account: sourceAccount,
-            amount: options.destinationAmount,
-            authorized: true
-          }],
-          credits: [{
-            account: options.destination.accountUri,
-            amount: options.destinationAmount
-          }],
+          debits: [debit],
+          credits: [credit],
           expires_at: "2016-06-16T00:00:01.000Z"
         })
         .auth(options.username, options.password)

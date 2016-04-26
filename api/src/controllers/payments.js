@@ -104,6 +104,8 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
      * @apiParam {String} destination_account destination account
      * @apiParam {String} source_amount source amount
      * @apiParam {String} destination_amount destination amount
+     * @apiParam {String} source_memo text memo for the source
+     * @apiParam {String} destination_memo text memo for the destination
      * @apiParam {String} path path
      *
      * @apiExample {shell} Make a payment with the destination_amount
@@ -144,6 +146,8 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
         destination: destination,
         destinationAmount: payment.destination_amount,
         path: payment.path,
+        source_memo: payment.source_memo,
+        destination_memo: payment.destination_memo,
         username: this.req.user.username,
         password: this.req.user.password
       }
