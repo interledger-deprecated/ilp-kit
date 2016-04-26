@@ -94,32 +94,28 @@ export default class SendForm extends Component {
   }
 
   // TODO introduce a latency
-  handleDestinationChange = (event) => {
-    this.props.fields.destination.onChange(event)
-
-    this.props.destinationChange(event.target.value)
+  handleDestinationChange = (target) => {
+    this.props.destinationChange(target.value)
   }
 
   // TODO there should be a feedback on a failed pathfinding
-  handleSourceAmountChange = (event) => {
-    this.props.fields.sourceAmount.onChange(event)
+  handleSourceAmountChange = (target) => {
     if (!this.props.values.destination) return
 
     this.props.findPath({
       destination: this.props.values.destination,
-      sourceAmount: event.target.value
+      sourceAmount: target.value
     })
 
     this.lastPathfindingField = 'source'
   }
 
-  handleDestinationAmountChange = (event) => {
-    this.props.fields.destinationAmount.onChange(event)
+  handleDestinationAmountChange = (target) => {
     if (!this.props.values.destination) return
 
     this.props.findPath({
       destination: this.props.values.destination,
-      destinationAmount: event.target.value
+      destinationAmount: target.value
     })
 
     this.lastPathfindingField = 'destination'
@@ -161,29 +157,27 @@ export default class SendForm extends Component {
 
           <form onSubmit={handleSubmit(this.handleSubmit)}>
             <div className="form-group">
-              <Input object={destination} label="Recipient" size="lg" focus onChange={this.handleDestinationChange} />
+              <Input object={destination} label="Recipient" size="lg" focus onChange={this.handleDestinationChange} debounce />
             </div>
             <div>
               <Input object={message} label="Message" size="lg" />
             </div>
             <div className="row">
               <div className="col-sm-6 form-group">
-                <label>Sending Amount</label>
+                <label>Sending</label>
                 <div className={cx('input-group',
                   {disabled: isSendingAmountFieldDisabled},
                   {focused: sourceAmount.active})}>
                   <span className="input-group-addon">
                     {config.currencySymbol}
                   </span>
-                  <input type="text" className="form-control input-lg"
-                    {...sourceAmount} onChange={this.handleSourceAmountChange}
-                    disabled={isSendingAmountFieldDisabled} />
+                  <Input object={sourceAmount} size="lg" onChange={this.handleSourceAmountChange} debounce disabled={isSendingAmountFieldDisabled} />
                 </div>
 
                 {sourceAmount.dirty && sourceAmount.error && <div className="text-danger">{sourceAmount.error}</div>}
               </div>
               <div className="col-sm-6 form-group">
-                <label>Receiving Amount</label>
+                <label>Receiving</label>
                 <div className={cx('input-group',
                   {disabled: isReceivingAmountFieldDisabled},
                   {focused: destinationAmount.active})}>
@@ -191,9 +185,7 @@ export default class SendForm extends Component {
                     <span className="input-group-addon">
                       {destinationInfo.ledger.currencySymbol}
                     </span>}
-                  <input type="text" className="form-control input-lg"
-                    {...destinationAmount} onChange={this.handleDestinationAmountChange}
-                    disabled={isReceivingAmountFieldDisabled} />
+                  <Input object={destinationAmount} size="lg" onChange={this.handleDestinationAmountChange} debounce disabled={isReceivingAmountFieldDisabled} />
                 </div>
 
                 {destinationAmount.dirty && destinationAmount.error && <div className="text-danger">{destinationAmount.error}</div>}
