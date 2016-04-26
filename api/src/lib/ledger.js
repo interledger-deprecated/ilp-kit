@@ -186,7 +186,8 @@ module.exports = class Ledger extends EventEmitter {
         .send({
           debits: [debit],
           credits: [credit],
-          expires_at: "2016-06-16T00:00:01.000Z"
+          // TODO shouldn't be fixed
+          expires_at: "2018-06-16T00:00:01.000Z"
         })
         .auth(options.username, options.password)
 

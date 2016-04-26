@@ -2,6 +2,7 @@ import React, {Component, PropTypes} from 'react'
 import moment from 'moment'
 
 import { contextualizePayment } from '../../utils/api'
+import { getAccountName } from '../../utils/account'
 import { amount } from '../../utils/amount'
 
 import { PrettyJson } from 'components'
@@ -31,20 +32,34 @@ export default class HistoryItem extends Component {
     const item = contextualizePayment(this.props.item, this.props.user)
     const config = this.context.config || {}
 
-    const amountClass = item.counterpartyAccount === item.destination_account ? 'negative' : 'positive'
+    const type = item.counterpartyAccount === item.destination_account ? 'outgoing' : 'incoming'
 
     return (
       <div className={cx('item')}>
         <a href="" onClick={this.toggleLedgerTransfer} className={cx('link')}>
           <div className="row">
             <div className="col-sm-7">
-              <div className={cx('counterparty')}>{item.counterpartyAccount}</div>
+              <div className={cx('counterpartyContainer')}>
+                {type === 'outgoing' &&
+                <span>You paid <span className={cx('counterparty')} title={item.counterpartyAccount}>
+                  {getAccountName(item.counterpartyAccount)}
+                </span></span>}
+
+                {type === 'incoming' &&
+                <span><span className={cx('counterparty')} title={item.counterpartyAccount}>
+                  {getAccountName(item.counterpartyAccount)}
+                </span> paid you</span>}
+              </div>
+              {item.message &&
+              <div className={cx('message')}>
+                {item.message}
+              </div>}
               <div className={cx('date')} title={moment(item.created_at).format('LLL')}>{moment(item.created_at).fromNow()}</div>
             </div>
             <div className="col-sm-5">
-              <div className={cx('amount', amountClass)}>
+              <div className={cx('amount', type)}>
                 {/* TODO Show both source and destination amounts */}
-                {config.currencySymbol}{amountClass === 'negative' ? amount(item.source_amount) : amount(item.destination_amount)}
+                {config.currencySymbol}{type === 'outgoing' ? amount(item.source_amount) : amount(item.destination_amount)}
               </div>
             </div>
           </div>

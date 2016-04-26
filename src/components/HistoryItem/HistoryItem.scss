@@ -14,13 +14,17 @@
 .link:hover {
   background: darken($box-background-color, 3%);
 }
-.counterparty {
+.counterpartyContainer {
   font-size: 18px;
   line-height: 22px;
 
-  @media (max-width: $screen-md) {
-    font-size: 15px;
+  .counterparty {
+    font-weight: bold;
   }
+}
+.message {
+  font-size: 15px;
+  line-height: 22px;
 }
 .date {
   font-size: 13px;
@@ -36,16 +40,16 @@
     font-size: 20px;
   }
 }
-.negative {
+.outgoing {
   color: $history-negative;
 }
-.negative:before {
+.outgoing:before {
   content: "– ";
 }
-.positive {
+.incoming {
   color: $history-positive;
 }
-.positive:before {
+.incoming:before {
   content: "+ ";
   padding: 0 0 10px;
 }

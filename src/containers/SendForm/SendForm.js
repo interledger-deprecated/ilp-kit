@@ -17,7 +17,7 @@ import { Input } from 'components'
 
 @reduxForm({
   form: 'send',
-  fields: ['destination', 'sourceAmount', 'destinationAmount'],
+  fields: ['destination', 'sourceAmount', 'destinationAmount', 'message'],
   validate: sendValidation
 })
 @connect(
@@ -131,7 +131,7 @@ export default class SendForm extends Component {
 
   render() {
     const { pristine, invalid, handleSubmit, submitting, success, destinationInfo,
-      pathFinding, fail, data, fields: {destination, sourceAmount, destinationAmount} } = this.props
+      pathFinding, fail, data, fields: {destination, sourceAmount, destinationAmount, message} } = this.props
     const { config } = this.context
 
     const isSendingAmountFieldDisabled = !destination.value || fail.id || (pathFinding && this.lastPathfindingField === 'destination')
@@ -162,6 +162,9 @@ export default class SendForm extends Component {
           <form onSubmit={handleSubmit(this.handleSubmit)}>
             <div className="form-group">
               <Input object={destination} label="Recipient" size="lg" focus onChange={this.handleDestinationChange} />
+            </div>
+            <div>
+              <Input object={message} label="Message" size="lg" />
             </div>
             <div className="row">
               <div className="col-sm-6 form-group">

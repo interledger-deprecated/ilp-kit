@@ -39,7 +39,8 @@ export function transfer(values) {
           destination_account: values.destination,
           source_amount: values.sourceAmount,
           destination_amount: values.destinationAmount,
-          path: getState().send.pathRaw
+          path: getState().send.pathRaw,
+          destination_memo: values.message
         }
       })
     });
