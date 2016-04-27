@@ -12,19 +12,20 @@ import io from 'socket.io-client'
 import {Provider} from 'react-redux'
 import { Router, browserHistory } from 'react-router'
 import { ReduxAsyncConnect } from 'redux-async-connect'
-import rga from 'react-ga'
-global.rga = rga
+import Tracker from './tracker'
 
 import getRoutes from './routes'
 const client = new ApiClient()
+const tracker = new Tracker()
 
-/* client.get('/config')
+client.get('/config')
   .then((config) => {
     global.config = config
+    tracker.init(config.track)
 
     // Remote log service
-    Raven.config(config.sentryUri).install()
-  }) */
+    // Raven.config(config.sentryUri).install()
+  })
 
 const dest = document.getElementById('content')
 const store = createStore(browserHistory, client, window.__data)
@@ -34,9 +35,11 @@ function initSocket() {
 }
 
 global.socket = initSocket()
+global.tracker = tracker
 
+// Google analytics page view tracking
 function logPageView() {
-  rga.pageview(window.location.pathname)
+  tracker.pageview(window.location.pathname)
 }
 
 const component = (
@@ -61,9 +64,6 @@ if (process.env.NODE_ENV !== 'production') {
     console.error('Server-side React render was discarded. Make sure that your initial render does not contain any client-side code.')
   }
 }
-
-// Google analytics
-rga.initialize('UA-77001509-1')
 
 if (__DEVTOOLS__ && !window.devToolsExtension) {
   const DevTools = require('./containers/DevTools/DevTools')

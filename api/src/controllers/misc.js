@@ -59,7 +59,11 @@ function MiscControllerFactory (Auth, log, config, ledger, utils) {
       let response = {
         ledgerUri: config.data.getIn(['ledger', 'public_uri']),
         currencyCode: ledgerInfo.currency_code,
-        currencySymbol: ledgerInfo.currency_symbol
+        currencySymbol: ledgerInfo.currency_symbol,
+        track: {
+          ga: config.data.getIn(['track', 'ga']),
+          mixpanel: config.data.getIn(['track', 'mixpanel'])
+        }
       }
 
       if (config.data.get('reload')) {

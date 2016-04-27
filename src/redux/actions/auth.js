@@ -37,6 +37,8 @@ export function register(fields) {
 }
 
 export function reload(opts) {
+  tracker.track('reload')
+
   return {
     types: [types.RELOADING, types.RELOAD_SUCCESS, types.RELOAD_FAIL],
     promise: (client) => client.post('/users/' + opts.username + '/reload')
@@ -68,6 +70,8 @@ export function load() {
             socket.emit('subscribe', user.username)
           }
 
+          tracker.identify(user.username)
+
           return user
         })
     })
@@ -88,6 +92,8 @@ export function login(fields) {
           socket.connect()
           socket.emit('subscribe', user.username)
         }
+
+        tracker.identify(user.username)
 
         return user
       })
