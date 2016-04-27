@@ -45,6 +45,37 @@ Use the following configuration options as environment variables:
 ### API docs
 [http://interledger.org/five-bells-wallet/docs](http://interledger.org/five-bells-wallet/docs/)
 
+### Webfinger
+Five Bells Wallet supports webfinger lookups.
+
+Example request 
+```bash
+curl -X GET
+https://wallet.example/.well-known/webfinger?resource=acct:alice@wallet.example
+```
+
+Example response 
+```bash
+HTTP/1.1 200 OK
+{
+  "subject": "acct:alice@wallet.example",
+  "links": [
+    {
+      "rel": "http://webfinger.net/rel/ledgerUri",
+      "href": "http://wallet.example/ledger"
+    },
+    {
+      "rel": "http://webfinger.net/rel/ledgerAccount",
+      "href": "http://wallet.example/ledger/accounts/alice"
+    },
+    {
+      "rel": "http://webfinger.net/rel/socketIOUri",
+      "href": "http://wallet.example/api/socket.io"
+    }
+  ]
+}
+```
+
 ### Using Redux DevTools
 
 In development, Redux Devtools are enabled by default. You can toggle visibility and move the dock around using the following keyboard shortcuts:
