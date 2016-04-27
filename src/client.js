@@ -12,6 +12,8 @@ import io from 'socket.io-client'
 import {Provider} from 'react-redux'
 import { Router, browserHistory } from 'react-router'
 import { ReduxAsyncConnect } from 'redux-async-connect'
+import rga from 'react-ga'
+global.rga = rga
 
 import getRoutes from './routes'
 const client = new ApiClient()
@@ -33,10 +35,14 @@ function initSocket() {
 
 global.socket = initSocket()
 
+function logPageView() {
+  rga.pageview(window.location.pathname)
+}
+
 const component = (
   <Router render={(props) =>
         <ReduxAsyncConnect {...props} helpers={{client}} filter={item => !item.deferred} />
-      } history={browserHistory}>
+      } history={browserHistory} onUpdate={logPageView}>
     {getRoutes(store)}
   </Router>
 )
@@ -55,6 +61,9 @@ if (process.env.NODE_ENV !== 'production') {
     console.error('Server-side React render was discarded. Make sure that your initial render does not contain any client-side code.')
   }
 }
+
+// Google analytics
+rga.initialize('UA-77001509-1')
 
 if (__DEVTOOLS__ && !window.devToolsExtension) {
   const DevTools = require('./containers/DevTools/DevTools')
