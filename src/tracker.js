@@ -47,4 +47,10 @@ export default class Tracker {
       })
     }
   }
+
+  clearIdentity() {
+    if (mixpanel.cookie && mixpanel.cookie.clear) {
+      mixpanel.cookie.clear()
+    }
+  }
 }
