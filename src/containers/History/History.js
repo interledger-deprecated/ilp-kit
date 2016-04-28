@@ -70,10 +70,12 @@ export default class Home extends Component {
           }
 
           {loadingPage && <li className={cx('loading')}>Loading...</li>}
+          {!loadingPage && (!history || history.length === 0) && <li className={cx('loading')}>No payments to show</li>}
         </ul>
 
+        {history && history.length > 0 &&
         <ReactPaginate
-          pageNum={totalPages}
+          pageNum={totalPages || 1}
           pageRangeDisplayed={5}
           marginPagesDisplayed={1}
           previousLabel="&laquo;"
@@ -82,7 +84,7 @@ export default class Home extends Component {
           breakLabel={<span>...</span>}
           containerClassName="pagination"
           activeClassName="active"
-        />
+        />}
       </div>
     )
   }
