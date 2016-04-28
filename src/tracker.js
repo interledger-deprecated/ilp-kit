@@ -1,5 +1,4 @@
 /* globals mixpanel */
-
 import rga from 'react-ga'
 
 export default class Tracker {
@@ -17,6 +16,7 @@ export default class Tracker {
         for(g=0;g<i.length;g++)f(c,i[g]);b._i.push([a,e,d])};b.__SV=1.2;a=e.createElement("script");a.type="text/javascript";a.async=!0;a.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"file:"===e.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";f=e.getElementsByTagName("script")[0];f.parentNode.insertBefore(a,f)}})(document,window.mixpanel||[]);
       /*eslint-enable */
 
+      this.mixpanel = true
       mixpanel.init(config.mixpanel)
     }
   }
@@ -33,13 +33,13 @@ export default class Tracker {
       })
     }
 
-    if (mixpanel) {
+    if (this.mixpanel) {
       mixpanel.track(name, props)
     }
   }
 
   identify(name) {
-    if (mixpanel) {
+    if (this.mixpanel) {
       mixpanel.identify(name)
       mixpanel.people.set({
         $username: name,
@@ -49,7 +49,7 @@ export default class Tracker {
   }
 
   clearIdentity() {
-    if (mixpanel.cookie && mixpanel.cookie.clear) {
+    if (this.mixpanel && mixpanel.cookie && mixpanel.cookie.clear) {
       mixpanel.cookie.clear()
     }
   }
