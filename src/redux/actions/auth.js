@@ -26,9 +26,13 @@ export function register(fields) {
         password: fields.password
       }
     }).then((user) => {
-      if (!__SERVER__ && socket) {
-        socket.connect()
-        socket.emit('subscribe', user.username)
+      if (!__SERVER__) {
+        if (socket) {
+          socket.connect()
+          socket.emit('subscribe', user.username)
+        }
+
+        tracker.identify(user.username)
       }
 
       return user
@@ -65,12 +69,14 @@ export function load() {
       types: [types.AUTH_LOAD, types.AUTH_LOAD_SUCCESS, types.AUTH_LOAD_FAIL],
       promise: (client) => client.get('/auth/load')
         .then((user) => {
-          if (!__SERVER__ && socket) {
-            socket.connect()
-            socket.emit('subscribe', user.username)
-          }
+          if (!__SERVER__) {
+            if (socket) {
+              socket.connect()
+              socket.emit('subscribe', user.username)
+            }
 
-          tracker.identify(user.username)
+            tracker.identify(user.username)
+          }
 
           return user
         })
@@ -88,12 +94,14 @@ export function login(fields) {
           password: fields.password
         }
       }).then((user) => {
-        if (!__SERVER__ && socket) {
-          socket.connect()
-          socket.emit('subscribe', user.username)
-        }
+        if (!__SERVER__) {
+          if (socket) {
+            socket.connect()
+            socket.emit('subscribe', user.username)
+          }
 
-        tracker.identify(user.username)
+          tracker.identify(user.username)
+        }
 
         return user
       })

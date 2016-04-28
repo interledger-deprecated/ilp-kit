@@ -10,6 +10,8 @@ const Ledger = require('../lib/ledger')
 const UserFactory = require('../models/user')
 const UsersControllerFactory = require('./users')
 
+const NotFoundError = require('../errors/not-found-error')
+
 AuthsControllerFactory.constitute = [Auth, UserFactory, Log, Ledger, UsersControllerFactory]
 function AuthsControllerFactory (Auth, User, log, ledger, Users) {
   log = log('auth')
@@ -70,7 +72,7 @@ function AuthsControllerFactory (Auth, User, log, ledger, Users) {
     static * load (next) {
       let user = this.req.user
 
-      if (!user) return this.status = 404
+      if (!user) throw new NotFoundError("No active user session")
 
       this.params.username = user.username
 
