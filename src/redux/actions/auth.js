@@ -20,7 +20,7 @@ export function isLoaded(globalState) {
 export function register(fields) {
   return {
     types: [types.REGISTER, types.REGISTER_SUCCESS, types.REGISTER_FAIL],
-    promise: (client) => client.post('/auth/register', {
+    promise: (client) => client.post('/users/' + fields.username, {
       data: {
         username: fields.username,
         password: fields.password
