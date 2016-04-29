@@ -130,7 +130,7 @@ export default class App extends Component {
                   <ul className="nav navbar-nav pull-right">
                     <li>
                       <p className="navbar-text">
-                        Hi {user.username}.
+                        Hi {user.username}
                       </p>
                     </li>
                     <IndexLinkContainer to="/">

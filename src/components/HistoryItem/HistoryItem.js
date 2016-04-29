@@ -26,6 +26,7 @@ export default class HistoryItem extends Component {
     event.preventDefault()
 
     this.props.toggleJson(this.props.item.id, this.props.item.transfers)
+    tracker.track('HistoryItem toggle details')
   }
 
   render() {

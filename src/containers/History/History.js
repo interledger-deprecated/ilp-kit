@@ -44,6 +44,7 @@ export default class Home extends Component {
 
   handlePageClick = (data) => {
     this.props.getPage(data.selected + 1)
+    tracker.track('History paginate')
   }
 
   render() {
