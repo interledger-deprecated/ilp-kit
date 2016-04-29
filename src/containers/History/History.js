@@ -14,7 +14,7 @@ const cx = classNames.bind(styles)
 
 // TODO not sure the component is the best place for this
 const paginationActionCreators = initActionCreators({
-  limit: 30,
+  limit: 10,
   path: '/payments'
 })
 
@@ -74,7 +74,6 @@ export default class Home extends Component {
           {!loadingPage && (!history || history.length === 0) && <li className={cx('loading')}>No payments to show</li>}
         </ul>
 
-        {history && history.length > 0 &&
         <ReactPaginate
           pageNum={totalPages || 1}
           pageRangeDisplayed={5}
@@ -85,7 +84,7 @@ export default class Home extends Component {
           breakLabel={<span>...</span>}
           containerClassName="pagination"
           activeClassName="active"
-        />}
+        />
       </div>
     )
   }
