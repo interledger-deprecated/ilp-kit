@@ -3,12 +3,16 @@ import superagent from 'superagent'
 import superagentMocker from 'superagent-mocker'
 import configureMockStore from 'redux-mock-store'
 import ApiClient from '../../helpers/ApiClient'
+import Tracker from '../../tracker'
 import createMiddleware from '../middleware/clientMiddleware'
 import * as types from '../actionTypes'
 import * as actions from './auth'
 
 const client = new ApiClient()
 const middlewares = [createMiddleware(client)]
+
+const tracker = new Tracker()
+global.tracker = tracker
 
 const mockRequest = superagentMocker(superagent);
 const mockStore = configureMockStore(middlewares)

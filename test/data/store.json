@@ -44,6 +44,14 @@
         "sourceUserUsername": "alice",
         "counterpartyAccount": "http://localhost:3002/accounts/alice"
       }
+    ],
+    "historyView": [
+      {
+        "source_account": "alice"
+      },
+      {
+        "source_account": "alice"
+      }
     ]
   }
 }

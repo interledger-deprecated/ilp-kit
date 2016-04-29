@@ -41,6 +41,7 @@ export function register(fields) {
 }
 
 export function reload(opts) {
+  // TODO move tracker to components
   tracker.track('reload')
 
   return {

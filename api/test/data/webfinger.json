@@ -10,6 +10,10 @@
       "href": "http://localhost:3001/accounts/alice"
     },
     {
+      "rel": "http://webfinger.net/rel/paymentUri",
+      "href": "http://localhost/payments"
+    },
+    {
       "rel": "http://webfinger.net/rel/socketIOUri",
       "href": "http://localhost/socket.io"
     }

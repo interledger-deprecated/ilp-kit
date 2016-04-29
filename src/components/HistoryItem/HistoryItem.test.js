@@ -18,6 +18,7 @@ describe('(component) HistoryItem', () => {
   let store, rendered
 
   const historyItemMock = mockStore.history.history[0]
+  const historyItemViewMock = mockStore.history.historyView[0]
   const userMock = mockStore.auth.user
 
   // TODO Context is not available in HistoryItem
@@ -36,6 +37,6 @@ describe('(component) HistoryItem', () => {
     const element = TestUtils.findRenderedDOMComponentWithClass(rendered, cx('counterparty'))
 
     expect(element).to.exist
-    expect(element.textContent).to.equal(historyItemMock.source_account)
+    expect(element.textContent).to.equal(historyItemViewMock.source_account)
   })
 })
