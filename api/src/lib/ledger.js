@@ -3,7 +3,9 @@
 const _ = require('lodash')
 const superagent = require('superagent-promise')(require('superagent'), Promise)
 const uuid = require ('uuid4')
+const crypto = require('crypto')
 const sender = require('five-bells-sender')
+const condition = require('five-bells-condition')
 const EventEmitter = require('events').EventEmitter
 
 const Config = require('./config')
@@ -53,6 +55,36 @@ module.exports = class Ledger extends EventEmitter {
     } catch (err) {
       if (err.status !== 422) throw err
     }
+  }
+
+  getCondition (paymentId) {
+    const cond = new condition.PreimageSha256()
+    const conditionSecret = this.config.getIn('conditionSecret')
+    cond.setPreimage(crypto.createHmac('sha256', conditionSecret).update(paymentId).digest())
+
+    return cond
+  }
+
+  getFulfillment (paymentId) {
+    return this.getCondition(paymentId).serializeUri()
+  }
+
+  generateCondition () {
+    const paymentId = uuid()
+    return {
+      paymentId: paymentId,
+      condition: this.getCondition(paymentId).getConditionUri()
+    }
+  }
+
+  preparedEvent (transfer) {
+    this.log.debug('received notification for prepared transfer ' + transfer.id)
+
+    superagent
+      .put(transfer.id + '/fulfillment')
+      .auth(this.config.getIn(['ledger', 'admin', 'name']), this.config.getIn(['ledger', 'admin', 'pass']))
+      .send(this.getFulfillment(transfer.credits[0].memo.receiver_payment_id))
+      .end()
   }
 
   emitTransferEvent (transfer) {
@@ -147,15 +179,27 @@ module.exports = class Ledger extends EventEmitter {
         }
       }
 
+      const resp = yield superagent.post(options.destination.paymentUri)
+
+      paymentObj.destinationMemo = {
+        receiver_payment_id: resp.body.paymentId
+      }
+
       if (options.source_memo) {
         paymentObj.sourceMemo = {userMemo: options.source_memo}
       }
 
       if (options.destination_memo) {
-        paymentObj.destinationMemo = {userMemo: options.destination_memo}
+        paymentObj.destinationMemo.userMemo = options.destination_memo
       }
 
-      response = yield sender.executePayment(options.path, paymentObj)
+      paymentObj.receiptCondition = resp.body.condition
+
+      try {
+        response = yield sender.executePayment(options.path, paymentObj)
+      } catch (e) {
+        // TODO handle
+      }
 
       response = response[0]
     }

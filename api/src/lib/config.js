@@ -16,12 +16,16 @@ module.exports = class WalletConfig {
       }
     }
 
+    // Google Analytics / Mixpanel tracking
     localConfig.track = {
       ga: Config.getEnv(envPrefix, 'TRACK_GA'),
       mixpanel: Config.getEnv(envPrefix, 'TRACK_MIXPANEL')
     }
 
+    // Secrets
     localConfig.sessionSecret = Config.getEnv(envPrefix, 'SESSION_SECRET')
+    localConfig.conditionSecret = Config.getEnv(envPrefix, 'CONDITION_SECRET')
+
     localConfig.reload = Config.getEnv(envPrefix, 'RELOAD')
 
     if (!localConfig.sessionSecret) {

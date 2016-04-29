@@ -40,8 +40,22 @@ function WebfingerControllerFactory (log, config, ledger) {
         throw new NotFoundError('Unknown account')
       }
 
+      let username
+
+      // resource is an acct:
+      if (parsed.auth) {
+        username = parsed.auth
+      }
+      // resource is a http(s):
+      else if (parsed.path) {
+        username = parsed.path.match(/([^\/]*)\/*$/)[1]
+      }
+      else {
+        throw new NotFoundError('Unknown account')
+      }
+
       // Validate the ledger account
-      const ledgerUser = yield ledger.getAccount({username: parsed.auth}, true)
+      const ledgerUser = yield ledger.getAccount({username: username}, true)
 
       this.body = {
         "subject": "acct:" + ledgerUser.name + "@" + parsed.hostname,
@@ -54,6 +68,10 @@ function WebfingerControllerFactory (log, config, ledger) {
           {
             "rel" : "http://webfinger.net/rel/ledgerAccount",
             "href" : config.data.getIn(['ledger', 'public_uri']) + '/accounts/' + ledgerUser.name
+          },
+          {
+            "rel" : "http://webfinger.net/rel/paymentUri",
+            "href" : config.data.getIn(['server', 'base_uri']) + '/payments'
           },
           {
             // TODO an actual rel to the docs
