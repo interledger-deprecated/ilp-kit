@@ -122,8 +122,8 @@ export default class SendForm extends Component {
   }
 
   handleSubmit = (data) => {
-    this.props.transfer(data).then(this.props.succeed)
     tracker.track('payment')
+    return this.props.transfer(data).then(this.props.succeed)
   }
 
   render() {
