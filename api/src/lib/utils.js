@@ -1,6 +1,7 @@
 "use strict"
 
 const _ = require('lodash')
+const url = require("url")
 const WebFinger = require('webfinger.js')
 const superagent = require('superagent-promise')(require('superagent'), Promise)
 
@@ -15,6 +16,7 @@ module.exports = class Utils {
   constructor (config, ledger) {
     this.ledger = ledger
     this.ledgerUriPublic = config.data.getIn(['ledger', 'public_uri'])
+    this.localUri = config.data.getIn(['server', 'base_uri'])
   }
 
   isAccountUri (destination) {
@@ -43,6 +45,15 @@ module.exports = class Utils {
   }
 
   * getWebfingerAccount (address) {
+    let parsed = url.parse(address)
+
+    // This dirty hack will stay here until there's a resolution to
+    // https://github.com/silverbucket/webfinger.js/issues/18
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+      const username = parsed.path.match(/([^\/]*)\/*$/)[1]
+      address = username + '@' + parsed.hostname
+    }
+
     const webfinger = new WebFinger({
       webfist_fallback: false,
       tls_only: true,
@@ -70,7 +81,8 @@ module.exports = class Utils {
 
     return {
       accountUri: _.filter(response.links, {rel: 'http://webfinger.net/rel/ledgerAccount'})[0].href,
-      ledgerUri: _.filter(response.links, {rel: 'http://webfinger.net/rel/ledgerUri'})[0].href
+      ledgerUri: _.filter(response.links, {rel: 'http://webfinger.net/rel/ledgerUri'})[0].href,
+      paymentUri: _.filter(response.links, {rel: 'http://webfinger.net/rel/paymentUri'})[0].href
     }
   }
 
@@ -88,27 +100,22 @@ module.exports = class Utils {
 
     let accountUri
     let ledgerUri
+    let paymentUri
 
-    // Foreign account URI
-    if (self.isForeignAccountUri(destination)) {
-      const account = yield self.getAccount(destination)
-
-      accountUri = destination
-      ledgerUri = account.ledger
-    }
-
-    // Webfinger
-    else if (self.isWebfinger(destination)) {
+    // Webfinger lookup
+    if (self.isWebfinger(destination) || self.isForeignAccountUri(destination)) {
       const account = yield self.getWebfingerAccount(destination)
 
       accountUri = account.accountUri
       ledgerUri = account.ledgerUri
+      paymentUri = account.paymentUri
     }
 
     // Local account
     else {
       accountUri = self.isAccountUri(destination) ? destination : self.ledgerUriPublic + '/accounts/' + destination
       ledgerUri = self.ledgerUriPublic
+      paymentUri = self.localUri
 
       // Check if account exists
       yield self.getAccount(accountUri)
@@ -117,7 +124,8 @@ module.exports = class Utils {
     let parsedDestination = {
       type: this.isForeignAccountUri(accountUri) ? 'foreign' : 'local',
       accountUri: accountUri,
-      ledgerUri: ledgerUri
+      ledgerUri: ledgerUri,
+      paymentUri: paymentUri
     }
 
     // TODO:PERFORMANCE api should already know the current ledgerInfo at this point

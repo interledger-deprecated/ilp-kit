@@ -20,7 +20,15 @@ function NotificationsControllerFactory (ledger, Auth, Payment, User, Config) {
       const notification = this.body
       const transfer = notification.resource
 
-      // Only handle executed payments for now
+      if (transfer.state === 'prepared') {
+        // Sender doesn't need to do anything at this point
+        if (transfer.credits[0].memo.receiver_payment_id) {
+          ledger.preparedEvent(transfer)
+          this.body = {'status': 'OK'}
+        }
+        return
+      }
+
       if (transfer.state !== 'executed') {
         this.body = {'status': 'OK'}
         return
@@ -36,7 +44,7 @@ function NotificationsControllerFactory (ledger, Auth, Payment, User, Config) {
         destination_account: (additionalInfo && additionalInfo.destination_account) || credit.account,
         source_amount: (additionalInfo && additionalInfo.source_amount) || debit.amount,
         destination_amount: (additionalInfo && additionalInfo.destination_amount) || credit.amount
-      };
+      }
 
       const creditMemo = credit.memo
 
