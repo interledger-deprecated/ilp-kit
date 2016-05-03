@@ -62,21 +62,29 @@ function WebfingerControllerFactory (log, config, ledger) {
         "links": [
           {
             // TODO decide on rel names
-            "rel" : "http://webfinger.net/rel/ledgerUri",
+            "rel" : "https://interledger.org/rel/ledgerUri",
             "href" : config.data.getIn(['ledger', 'public_uri'])
           },
           {
-            "rel" : "http://webfinger.net/rel/ledgerAccount",
+            // TODO an actual rel to the docs
+            "rel" : "https://interledger.org/rel/socketIOUri",
+            "href" : config.data.getIn(['server', 'base_uri']) + '/socket.io'
+          },
+          {
+            "rel" : "https://interledger.org/rel/ledgerAccount",
             "href" : config.data.getIn(['ledger', 'public_uri']) + '/accounts/' + ledgerUser.name
           },
           {
-            "rel" : "http://webfinger.net/rel/paymentUri",
+            "rel" : "https://interledger.org/rel/sender/payment",
             "href" : config.data.getIn(['server', 'base_uri']) + '/payments'
           },
           {
-            // TODO an actual rel to the docs
-            "rel" : "http://webfinger.net/rel/socketIOUri",
-            "href" : config.data.getIn(['server', 'base_uri']) + '/socket.io'
+            "rel" : "https://interledger.org/rel/receiver",
+            "href" : config.data.getIn(['server', 'base_uri']) + '/receivers/' + ledgerUser.name
+          },
+          {
+            "rel" : "https://interledger.org/rel/receiver/payment",
+            "href" : config.data.getIn(['server', 'base_uri']) + '/receivers/' + ledgerUser.name + '/payments'
           }
         ]
       }

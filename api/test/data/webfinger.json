@@ -2,20 +2,28 @@
   "subject": "acct:alice@localhost",
   "links": [
     {
-      "rel": "http://webfinger.net/rel/ledgerUri",
+      "rel": "https://interledger.org/rel/ledgerUri",
       "href": "http://localhost:3001"
     },
     {
-      "rel": "http://webfinger.net/rel/ledgerAccount",
+      "rel": "https://interledger.org/rel/socketIOUri",
+      "href": "http://localhost/socket.io"
+    },
+    {
+      "rel": "https://interledger.org/rel/ledgerAccount",
       "href": "http://localhost:3001/accounts/alice"
     },
     {
-      "rel": "http://webfinger.net/rel/paymentUri",
-      "href": "http://localhost/payments"
+      "rel" : "https://interledger.org/rel/sender/payment",
+      "href" : "http://localhost/payments"
     },
     {
-      "rel": "http://webfinger.net/rel/socketIOUri",
-      "href": "http://localhost/socket.io"
+      "rel" : "https://interledger.org/rel/receiver",
+      "href" : "http://localhost/receivers/alice"
+    },
+    {
+      "rel" : "https://interledger.org/rel/receiver/payment",
+      "href" : "http://localhost/receivers/alice/payments"
     }
   ]
 }

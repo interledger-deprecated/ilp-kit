@@ -20,6 +20,8 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config) {
       router.get('/users/:username', Auth.checkAuth, this.getResource)
       router.post('/users/:username', User.createBodyParser(), this.postResource)
       router.post('/users/:username/reload', Auth.checkAuth, this.reload)
+
+      router.get('/receivers/:username', this.getReceiver)
     }
 
     /**
@@ -156,6 +158,22 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config) {
       // do we need this?
       this.body = user.getDataExternal()
       this.status = 200
+    }
+
+    static * getReceiver () {
+      const ledgerUri = config.data.getIn(['ledger', 'public_uri'])
+      const user = yield User.findOne({where: {username: this.params.username}})
+
+      if (!user) {
+        // TODO throw exception
+      }
+
+      this.body = {
+        "type": "payee",
+        "ledger": ledgerUri,
+        "account": ledgerUri + "/accounts/" + user.username,
+        "payments": config.data.getIn(['server', 'base_uri']) + "/receiver/" + user.username + "/payments"
+      }
     }
   }
 }

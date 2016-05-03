@@ -73,7 +73,7 @@ module.exports = class Ledger extends EventEmitter {
     const paymentId = uuid()
     return {
       paymentId: paymentId,
-      condition: this.getCondition(paymentId).getConditionUri()
+      receipt_condition: this.getCondition(paymentId).getConditionUri()
     }
   }
 
@@ -193,7 +193,7 @@ module.exports = class Ledger extends EventEmitter {
         paymentObj.destinationMemo.userMemo = options.destination_memo
       }
 
-      paymentObj.receiptCondition = resp.body.condition
+      paymentObj.receiptCondition = resp.body.receipt_condition
 
       try {
         response = yield sender.executePayment(options.path, paymentObj)

@@ -22,8 +22,9 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
     static init (router) {
       router.get('/payments', Auth.checkAuth, this.getHistory)
       router.put('/payments/:id', Auth.checkAuth, Payment.createBodyParser(), this.putResource)
-      router.post('/payments', this.prepare)
       router.post('/payments/findPath', Auth.checkAuth, this.findPath)
+
+      router.post('/receivers/:username/payments', this.prepare)
     }
 
     /**
