@@ -106,8 +106,9 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
      * @apiParam {String} destination_account destination account
      * @apiParam {String} source_amount source amount
      * @apiParam {String} destination_amount destination amount
-     * @apiParam {String} source_memo text memo for the source
-     * @apiParam {String} destination_memo text memo for the destination
+     * @apiParam {String} source_memo memo for the source
+     * @apiParam {String} destination_memo memo for the destination
+     * @apiParam {String} message text message for the destination
      * @apiParam {String} path path
      *
      * @apiExample {shell} Make a payment with the destination_amount
@@ -150,6 +151,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
         path: payment.path,
         source_memo: payment.source_memo,
         destination_memo: payment.destination_memo,
+        message: payment.message,
         username: this.req.user.username,
         password: this.req.user.password
       }
@@ -159,6 +161,15 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
 
       try {
         transfer = yield ledger.transfer(options)
+
+        // Store the payment
+        let dbPayment = new Payment()
+        dbPayment.setDataExternal({
+          transfers: transfer.id,
+          message: payment.message,
+          status: 'pending'
+        })
+        dbPayment.save()
 
         log.debug('Ledger transfer payment ID ' + id)
       } catch (e) {
@@ -241,8 +252,28 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
       this.body = path
     }
 
+    // TODO:PERFORMANCE Expire pending payments (remove from db)
     static * prepare () {
-      this.body = ledger.generateCondition()
+      const memo = this.body.memo
+      const prepared = this.body = ledger.preparePayment()
+
+      if (!memo) return
+
+      let paymentObj = {
+        id: prepared.paymentId,
+        state: 'pending',
+        message: memo
+      }
+
+      // Create the payment object
+      let payment = new Payment()
+      payment.setDataExternal(paymentObj)
+
+      try {
+        yield payment.create()
+      } catch(e) {
+        // TODO handle
+      }
     }
   }
 }

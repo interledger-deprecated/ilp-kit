@@ -69,7 +69,7 @@ module.exports = class Ledger extends EventEmitter {
     return this.getCondition(paymentId).serializeUri()
   }
 
-  generateCondition () {
+  preparePayment () {
     const paymentId = uuid()
     return {
       paymentId: paymentId,
@@ -179,7 +179,10 @@ module.exports = class Ledger extends EventEmitter {
         }
       }
 
-      const resp = yield superagent.post(options.destination.paymentUri)
+      // Message
+      let postData = options.message ? {memo: options.message} : {}
+
+      const resp = yield superagent.post(options.destination.paymentUri, postData)
 
       paymentObj.destinationMemo = {
         receiver_payment_id: resp.body.paymentId

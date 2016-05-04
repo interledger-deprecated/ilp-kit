@@ -40,7 +40,7 @@ export function transfer(values) {
           source_amount: values.sourceAmount,
           destination_amount: values.destinationAmount,
           path: getState().send.pathRaw,
-          destination_memo: values.message
+          message: values.message
         }
       })
     });

@@ -43,20 +43,8 @@ function NotificationsControllerFactory (ledger, Auth, Payment, User, Config) {
         source_account: (additionalInfo && additionalInfo.source_account) || debit.account,
         destination_account: (additionalInfo && additionalInfo.destination_account) || credit.account,
         source_amount: (additionalInfo && additionalInfo.source_amount) || debit.amount,
-        destination_amount: (additionalInfo && additionalInfo.destination_amount) || credit.amount
-      }
-
-      const creditMemo = credit.memo
-
-      // Message
-      if (creditMemo) {
-        if (creditMemo.userMemo) {
-          paymentObj.message = creditMemo.userMemo
-        }
-
-        else if (creditMemo.destination_transfer && creditMemo.destination_transfer.credits[0].memo && creditMemo.destination_transfer.credits[0].memo.userMemo) {
-          paymentObj.message = creditMemo.destination_transfer.credits[0].memo.userMemo
-        }
+        destination_amount: (additionalInfo && additionalInfo.destination_amount) || credit.amount,
+        state: 'success'
       }
 
       // TODO move this logic somewhere else
@@ -76,12 +64,29 @@ function NotificationsControllerFactory (ledger, Auth, Payment, User, Config) {
         }
       }
 
-      // Create the payment object
-      let payment = new Payment()
+      let payment
+
+      const creditMemo = credit.memo
+
+      // Receiver: Get the pending payment
+      if (creditMemo && creditMemo.receiver_payment_id) {
+        payment = yield Payment.findOne({where: {id: creditMemo.receiver_payment_id}})
+      }
+
+      // Sender: Get the pending payment
+      if (!payment) {
+        payment = yield Payment.findOne({where: {transfers: transfer.id}})
+      }
+
+      // Payment is not prepared
+      if (!payment) {
+        payment = new Payment()
+      }
+
       payment.setDataExternal(paymentObj)
 
       try {
-        yield payment.create()
+        yield payment.save()
       } catch(e) {
         // TODO handle
       }
