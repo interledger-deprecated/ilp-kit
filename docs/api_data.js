@@ -279,14 +279,21 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "source_memo",
-            "description": "<p>text memo for the source</p>"
+            "description": "<p>memo for the source</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "destination_memo",
-            "description": "<p>text memo for the destination</p>"
+            "description": "<p>memo for the destination</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>text message for the destination</p>"
           },
           {
             "group": "Parameter",
