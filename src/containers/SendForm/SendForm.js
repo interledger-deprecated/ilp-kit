@@ -161,7 +161,7 @@ export default class SendForm extends Component {
               <Input object={destination} label="Recipient" size="lg" focus onChange={this.handleDestinationChange} debounce />
             </div>
             <div>
-              <Input object={message} label="Message" size="lg" />
+              <Input object={message} label="Message" size="lg" disabled={!destination.value || fail.id} />
             </div>
             <div className="row">
               <div className="col-sm-6 form-group">
@@ -182,10 +182,9 @@ export default class SendForm extends Component {
                 <div className={cx('input-group',
                   {disabled: isReceivingAmountFieldDisabled},
                   {focused: destinationAmount.active})}>
-                  {destinationInfo && destinationInfo.ledger && destinationInfo.ledger.currencySymbol &&
-                    <span className="input-group-addon">
-                      {destinationInfo.ledger.currencySymbol}
-                    </span>}
+                  <span className="input-group-addon">
+                    {(destinationInfo && destinationInfo.ledger && destinationInfo.ledger.currencySymbol) || config.currencySymbol}
+                  </span>
                   <Input object={destinationAmount} size="lg" onChange={this.handleDestinationAmountChange} debounce disabled={isReceivingAmountFieldDisabled} />
                 </div>
 
