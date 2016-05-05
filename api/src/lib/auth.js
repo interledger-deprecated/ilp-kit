@@ -50,7 +50,7 @@ module.exports = class Auth {
           })
       }))
 
-    // Github auth is optional
+    // TODO add an environment variable to disable github login, it should be optional
     if (config.data.getIn(['github', 'client_id'])) {
       passport.use(new GitHubStrategy(
         {
@@ -64,6 +64,7 @@ module.exports = class Auth {
 
           // User exists
           if (user) {
+            // TODO Update the user with updated profile data
             return done(null, user)
           }
 
@@ -73,16 +74,26 @@ module.exports = class Auth {
           let userObj = {
             username: profile.username,
             password: uuid(),
-            github_id: profile.id
+            github_id: profile.id,
+            profile_picture: profile.photos[0].value
           }
 
           // Create a ledger account
           // TODO handle exceptions
-          const ledgerUser = yield ledger.createAccount(userObj)
+          let ledgerUser
+          try {
+            ledgerUser = yield ledger.createAccount(userObj)
+          } catch (e) {
+            // TODO handle
+          }
 
           userObj.account = ledgerUser.id
 
-          user = yield User.createExternal(userObj)
+          try {
+            user = yield User.createExternal(userObj)
+          } catch (e) {
+            // TODO handle
+          }
 
           userObj.id = user.id
           userObj.balance = ledgerUser.balance

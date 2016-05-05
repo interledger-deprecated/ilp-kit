@@ -130,6 +130,8 @@ export default class App extends Component {
                   <ul className="nav navbar-nav pull-right">
                     <li>
                       <p className="navbar-text">
+                        {user.profile_picture &&
+                        <img className={cx('profilePic')} src={user.profile_picture} />}
                         Hi {user.username}
                       </p>
                     </li>

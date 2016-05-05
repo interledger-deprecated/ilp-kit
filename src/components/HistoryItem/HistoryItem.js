@@ -35,29 +35,34 @@ export default class HistoryItem extends Component {
 
     const type = item.counterpartyAccount === item.destination_account ? 'outgoing' : 'incoming'
 
+    const profilePic = (type === 'outgoing' ? item.destinationUserProfilePicture : item.sourceUserProfilePicture) || require('./placeholder.png')
+
     return (
       <div className={cx('item')}>
         <a href="" onClick={this.toggleLedgerTransfer} className={cx('link')}>
           <div className="row">
-            <div className="col-sm-7">
-              <div className={cx('counterpartyContainer')}>
-                {type === 'outgoing' &&
-                <span>You paid <span className={cx('counterparty')} title={item.counterpartyAccount}>
-                  {getAccountName(item.counterpartyAccount)}
-                </span></span>}
+            <div className="col-xs-7">
+              <img src={profilePic} className={cx('profilePic')} />
+              <div className={cx('description')}>
+                <div className={cx('counterpartyContainer')}>
+                  {type === 'outgoing' &&
+                  <span>You paid <span className={cx('counterparty')} title={item.counterpartyAccount}>
+                    {getAccountName(item.counterpartyAccount)}
+                  </span></span>}
 
-                {type === 'incoming' &&
-                <span><span className={cx('counterparty')} title={item.counterpartyAccount}>
-                  {getAccountName(item.counterpartyAccount)}
-                </span> paid you</span>}
+                  {type === 'incoming' &&
+                  <span><span className={cx('counterparty')} title={item.counterpartyAccount}>
+                    {getAccountName(item.counterpartyAccount)}
+                  </span> paid you</span>}
+                </div>
+                {item.message &&
+                <div className={cx('message')}>
+                  {item.message}
+                </div>}
+                <div className={cx('date')} title={moment(item.created_at).format('LLL')}>{moment(item.created_at).fromNow()}</div>
               </div>
-              {item.message &&
-              <div className={cx('message')}>
-                {item.message}
-              </div>}
-              <div className={cx('date')} title={moment(item.created_at).format('LLL')}>{moment(item.created_at).fromNow()}</div>
             </div>
-            <div className="col-sm-5">
+            <div className="col-xs-5">
               <div className={cx('amount', type)}>
                 {/* TODO Show both source and destination amounts */}
                 {config.currencySymbol}{type === 'outgoing' ? amount(item.source_amount) : amount(item.destination_amount)}

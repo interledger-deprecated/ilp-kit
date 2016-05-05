@@ -75,7 +75,8 @@ function UserFactory (sequelize, validator) {
     github_id: {
       type: Sequelize.INTEGER,
       unique: true
-    }
+    },
+    profile_picture: Sequelize.STRING
   })
 
   return User

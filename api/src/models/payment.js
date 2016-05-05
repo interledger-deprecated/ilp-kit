@@ -62,7 +62,9 @@ function PaymentFactory (sequelize, validator, container, User) {
         // This is how we get a flat object that includes user username
         attributes: {include: [
           [Sequelize.col('SourceUser.username'), 'sourceUserUsername'],
-          [Sequelize.col('DestinationUser.username'), 'destinationUserUsername']
+          [Sequelize.col('SourceUser.profile_picture'), 'sourceUserProfilePicture'],
+          [Sequelize.col('DestinationUser.username'), 'destinationUserUsername'],
+          [Sequelize.col('DestinationUser.profile_picture'), 'destinationUserProfilePicture']
         ]},
         where: {
           $or: [
