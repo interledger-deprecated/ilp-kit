@@ -26,6 +26,12 @@ module.exports = class WalletConfig {
     localConfig.sessionSecret = Config.getEnv(envPrefix, 'SESSION_SECRET')
     localConfig.conditionSecret = Config.getEnv(envPrefix, 'CONDITION_SECRET')
 
+    // Github
+    localConfig.github = {
+      client_id: Config.getEnv(envPrefix, 'GITHUB_CLIENT_ID'),
+      client_secret: Config.getEnv(envPrefix, 'GITHUB_CLIENT_SECRET')
+    }
+
     localConfig.reload = Config.getEnv(envPrefix, 'RELOAD')
 
     if (!localConfig.sessionSecret) {

@@ -78,6 +78,12 @@ export default class Home extends Component {
                   <RegisterForm register={register} fail={authFail} unmount={unmount} />}
                 </div>
               </div>
+              <div className={cx('oauthContainer', 'clearfix')}>
+                <div className="pull-left">Or login using</div>
+                <div className="pull-right">
+                  <a href="/api/auth/github" className="btn btn-primary">Github</a>
+                </div>
+              </div>
             </div>
           </div>
         </div>}

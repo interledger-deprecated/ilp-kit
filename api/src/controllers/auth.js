@@ -46,6 +46,12 @@ function AuthsControllerFactory (Auth, User, log, ledger, Users) {
       router.post('/auth/login', passport.authenticate('local'), this.load)
       router.get('/auth/load', this.load)
       router.post('/auth/logout', this.logout)
+
+      router.get('/auth/github', passport.authenticate('github'))
+      router.get('/auth/github/callback', passport.authenticate('github', {
+        successRedirect: '/',
+        failureRedirect: '/'
+      }))
     }
 
     /**

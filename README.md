@@ -39,6 +39,8 @@ Use the following configuration options as environment variables:
 * `API_RELOAD` Turn on/off the reload endpoint
 * `API_TRACK_GA` Google Analytics Tracking ID
 * `API_TRACK_MIXPANEL` Mixpanel Tracking ID
+* `API_GITHUB_CLIENT_ID` Github application client id (used for github oauth)
+* `API_GITHUB_CLIENT_SECRET` Github application client secret (used for github oauth)
 * `CLIENT_HOST` Publicly visible hostname
 * `CLIENT_PORT` Publicly visible port
 * `SENTRY_URI` Sentry tracking uri (getsentry.com)
