@@ -15,10 +15,14 @@
   background: darken($box-background-color, 3%);
 }
 .profilePic {
-  width: 50px;
-  border-radius: 50px;
   float: left;
-  margin: 0 15px 0 0;
+  width: 20%;
+  border-radius: 50px;
+}
+.description {
+  float: left;
+  width: 80%;
+  padding-left: 15px;
 }
 .counterpartyContainer {
   font-size: 18px;

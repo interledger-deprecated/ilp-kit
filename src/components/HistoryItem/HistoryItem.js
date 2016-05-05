@@ -41,7 +41,7 @@ export default class HistoryItem extends Component {
       <div className={cx('item')}>
         <a href="" onClick={this.toggleLedgerTransfer} className={cx('link')}>
           <div className="row">
-            <div className="col-xs-7">
+            <div className="col-xs-8">
               <img src={profilePic} className={cx('profilePic')} />
               <div className={cx('description')}>
                 <div className={cx('counterpartyContainer')}>
@@ -62,7 +62,7 @@ export default class HistoryItem extends Component {
                 <div className={cx('date')} title={moment(item.created_at).format('LLL')}>{moment(item.created_at).fromNow()}</div>
               </div>
             </div>
-            <div className="col-xs-5">
+            <div className="col-xs-4">
               <div className={cx('amount', type)}>
                 {/* TODO Show both source and destination amounts */}
                 {config.currencySymbol}{type === 'outgoing' ? amount(item.source_amount) : amount(item.destination_amount)}
