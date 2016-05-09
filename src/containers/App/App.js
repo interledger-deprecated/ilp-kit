@@ -146,6 +146,9 @@ export default class App extends Component {
                         API docs
                       </a>
                     </li>
+                    <LinkContainer to="/settings">
+                      <NavItem>Settings</NavItem>
+                    </LinkContainer>
                     <LinkContainer to="/logout">
                       <NavItem className="logout-link" onClick={this.handleLogout}>
                         Logout

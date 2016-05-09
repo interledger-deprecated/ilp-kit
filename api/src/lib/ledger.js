@@ -122,7 +122,35 @@ module.exports = class Ledger extends EventEmitter {
     return response.body
   }
 
-  * createAccount(user) {
+  * putAccount(auth, data) {
+    let response
+
+    try {
+      response = yield superagent
+        .put(this.ledgerUri + '/accounts/' + data.name)
+        .send(data)
+        .auth(auth.username, auth.password)
+    } catch (e) {
+      console.log('ledger.js:134', e)
+      // TODO handle
+    }
+
+    return response.body
+  }
+
+  updateAccount(user) {
+    let data = {
+      name: user.username
+    }
+
+    if (user.newPassword) {
+      data.password = user.newPassword
+    }
+
+    return this.putAccount(user, data)
+  }
+
+  createAccount(user) {
     let data = {
       name: user.username,
       balance: user.balance ? ''+user.balance : '1000'
@@ -132,18 +160,10 @@ module.exports = class Ledger extends EventEmitter {
       data.password = user.password
     }
 
-    let response
-
-    try {
-      response = yield superagent
-        .put(this.ledgerUri + '/accounts/' + user.username)
-        .send(data)
-        .auth(this.config.getIn(['ledger', 'admin', 'name']), this.config.getIn(['ledger', 'admin', 'pass']))
-    } catch (e) {
-      // TODO handle
-    }
-
-    return response.body
+    return this.putAccount({
+      username: this.config.getIn(['ledger', 'admin', 'name']),
+      password: this.config.getIn(['ledger', 'admin', 'pass'])
+    }, data)
   }
 
   findPath(options) {

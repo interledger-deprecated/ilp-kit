@@ -9,7 +9,9 @@ const Ledger = require('../lib/ledger')
 const Socket = require('../lib/socket')
 const Config = require('../lib/config')
 const UserFactory = require('../models/user')
+
 const UsernameTakenError = require('../errors/username-taken-error')
+const PasswordsDontMatch = require('../errors/passwords-dont-match')
 
 UsersControllerFactory.constitute = [Auth, UserFactory, Log, Ledger, Socket, Config]
 function UsersControllerFactory (Auth, User, log, ledger, socket, config) {
@@ -19,6 +21,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config) {
     static init (router) {
       router.get('/users/:username', Auth.checkAuth, this.getResource)
       router.post('/users/:username', User.createBodyParser(), this.postResource)
+      router.put('/users/:username', this.putResource)
       router.post('/users/:username/reload', Auth.checkAuth, this.reload)
 
       router.get('/receivers/:username', this.getReceiver)
@@ -125,6 +128,41 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config) {
 
       this.body = this.body.getDataExternal()
       this.status = 201
+    }
+
+    static * putResource () {
+      const data = this.body
+      let user = this.req.user
+
+      user = yield User.findOne({where: {id: user.id}})
+
+      // TODO:SECURITY sanity checking
+
+      // Password change
+      if (data.password) {
+        if (data.password !== data.verifyPassword) {
+          throw new PasswordsDontMatch('Passwords don\'t match')
+        }
+
+        user.password = data.password
+      }
+
+      try {
+        yield user.save()
+      } catch(e) {
+        // TODO handle
+      }
+
+      // Update the ledger user
+      yield ledger.updateAccount({
+        username: this.req.user.username,
+        password: this.req.user.password,
+        newPassword: data.password
+      })
+
+      this.req.logIn(user, function (err) {})
+
+      this.body = user.getDataExternal()
     }
 
     static * reload () {

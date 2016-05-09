@@ -7,6 +7,7 @@ import {
     Login,
     Register,
     Button,
+    Settings,
     NotFound,
     Widget
   } from 'containers';
@@ -46,6 +47,7 @@ export default (store) => {
         { /* Routes requiring login */ }
         <Route onEnter={requireLogin}>
           <Route path="button" component={Button}/>
+          <Route path="settings" component={Settings}/>
         </Route>
 
         { /* Catch all route */ }

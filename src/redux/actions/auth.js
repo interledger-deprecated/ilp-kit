@@ -121,3 +121,11 @@ export function logout() {
       })
   }
 }
+
+export function save(opts, data) {
+  return {
+    types: [types.AUTH_SAVE, types.AUTH_SAVE_SUCCESS, types.AUTH_SAVE_FAIL],
+    // TODO different endpoint
+    promise: (client) => client.put('/users/' + opts.username, {data})
+  }
+}

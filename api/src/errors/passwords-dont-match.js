@@ -1,0 +1,20 @@
+'use strict'
+
+const BaseError = require('five-bells-shared/errors/base-error')
+
+class PasswordsDontMatch extends BaseError {
+  constructor (message) {
+    super(message)
+  }
+
+  * handler (ctx, log) {
+    log.warn('Passwords don\'t match: ' + this.message)
+    ctx.status = 422
+    ctx.body = {
+      id: this.name,
+      message: this.message
+    }
+  }
+}
+
+module.exports = PasswordsDontMatch
