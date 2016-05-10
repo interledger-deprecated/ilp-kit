@@ -8,7 +8,7 @@ const UnauthorizedError = require('five-bells-shared/errors/unauthorized-error')
 
 const LocalStrategy = require('passport-local')
 const BasicStrategy = require('passport-http').BasicStrategy
-const GitHubStrategy = require('passport-github').Strategy;
+const GitHubStrategy = require('passport-github').Strategy
 
 const Config = require('./config')
 const Ledger = require('./ledger')
@@ -17,38 +17,52 @@ module.exports = class Auth {
   static constitute () { return [ UserFactory, Config, Ledger ] }
   constructor (User, config, ledger) {
     passport.use(new BasicStrategy(
-      function (username, password, done) {
+      co.wrap(function * (username, password, done) {
         // If no Authorization is provided we can still
         // continue without throwing an error
         if (!username) {
           return done(null, false)
         }
-        User.findOne({where:{username: username}})
-          .then(function (userObj) {
-            if (userObj && password && userObj.password === password) {
-              return done(null, userObj)
-            } else {
-              return done(new UnauthorizedError('Unknown or invalid account / password'))
-            }
-          })
-      }))
+
+        const ledgerUser = yield ledger.getAccount({
+          username: username,
+          password: password
+        })
+
+        if (!ledgerUser) {
+          return done(new UnauthorizedError('Unknown or invalid account / password'))
+        }
+
+        const dbUser = User.findOne({where:{username: username}})
+
+        return done(null, dbUser)
+      })
+    ))
 
     passport.use(new LocalStrategy(
-      function (username, password, done) {
+      co.wrap(function * (username, password, done) {
         // If no Authorization is provided we can still
         // continue without throwing an error
         if (!username) {
           return done(null, false)
         }
-        User.findOne({where:{username: username}})
-          .then(function (userObj) {
-            if (userObj && password && userObj.password === password) {
-              return done(null, userObj)
-            } else {
-              return done(new UnauthorizedError('Unknown or invalid account / password'))
-            }
+
+        try {
+          yield ledger.getAccount({
+            username: username,
+            password: password
           })
-      }))
+        } catch (e) {
+          return done(new UnauthorizedError('Unknown or invalid account / password'))
+        }
+
+        const dbUser = yield User.findOne({where:{username: username}})
+
+        dbUser.password = password
+
+        return done(null, dbUser)
+      })
+    ))
 
     // TODO add an environment variable to disable github login, it should be optional
     if (config.data.getIn(['github', 'client_id'])) {
@@ -109,8 +123,9 @@ module.exports = class Auth {
 
     passport.deserializeUser(function(user, done) {
       User.findOne({where: {username: user.username}})
-        .then(function(user){
-          done(null, user)
+        .then(function(dbUser){
+          dbUser.password = user.password
+          done(null, dbUser)
         })
     })
   }

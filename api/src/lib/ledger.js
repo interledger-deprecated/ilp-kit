@@ -114,8 +114,12 @@ module.exports = class Ledger extends EventEmitter {
         .auth(admin ? this.config.getIn(['ledger', 'admin', 'name']) : user.username, admin ? this.config.getIn(['ledger', 'admin', 'pass']): user.password)
         .end()
     } catch (e) {
-      if (e.response && e.response.body && e.response.body.id === 'NotFoundError') {
-        throw new NotFoundError(e.response.body.message)
+      if (e.response && e.response.body) {
+        if (e.response.body.id === 'NotFoundError') {
+          throw new NotFoundError(e.response.body.message)
+        } else if (e.response.body.id === 'UnauthorizedError') {
+          throw new NotFoundError(e.response.body.message)
+        }
       }
     }
 
@@ -131,20 +135,31 @@ module.exports = class Ledger extends EventEmitter {
         .send(data)
         .auth(auth.username, auth.password)
     } catch (e) {
-      console.log('ledger.js:134', e)
+      console.log('ledger.js:141', e)
       // TODO handle
     }
 
     return response.body
   }
 
-  updateAccount(user) {
+  updateAccount(user, admin) {
     let data = {
       name: user.username
     }
 
+    if (user.balance) {
+      data.balance = user.balance
+    }
+
     if (user.newPassword) {
       data.password = user.newPassword
+    }
+
+    if (admin) {
+      user = {
+        username: this.config.getIn(['ledger', 'admin', 'name']),
+        password: this.config.getIn(['ledger', 'admin', 'pass'])
+      }
     }
 
     return this.putAccount(user, data)

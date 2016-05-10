@@ -61,7 +61,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config) {
       let user = yield User.findOne({where: {username: username}})
 
       // Get account balance
-      const ledgerUser = yield ledger.getAccount(user)
+      const ledgerUser = yield ledger.getAccount(user, true)
       user.balance = Math.round(ledgerUser.balance * 100) / 100
 
       this.body = user.getDataExternal()
@@ -144,7 +144,12 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config) {
           throw new PasswordsDontMatch('Passwords don\'t match')
         }
 
-        user.password = data.password
+        // Update the ledger user
+        yield ledger.updateAccount({
+          username: this.req.user.username,
+          password: this.req.user.password,
+          newPassword: data.password
+        })
       }
 
       try {
@@ -152,13 +157,6 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config) {
       } catch(e) {
         // TODO handle
       }
-
-      // Update the ledger user
-      yield ledger.updateAccount({
-        username: this.req.user.username,
-        password: this.req.user.password,
-        newPassword: data.password
-      })
 
       this.req.logIn(user, function (err) {})
 
@@ -170,23 +168,22 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config) {
         return this.status = 404
       }
 
+      let user = this.req.user
+
       let username = this.params.username
       request.validateUriParameter('username', username, 'Identifier')
       username = username.toLowerCase()
 
-      let user = yield User.findOne({where: {username: username}})
-
       // Load the ledger account
       let ledgerUser = yield ledger.getAccount(user)
 
-      this.req.user.balance = parseInt(ledgerUser.balance) + 1000
+      user.balance = parseInt(ledgerUser.balance) + 1000
 
       // Reload the ledger account
-      ledgerUser = yield ledger.createAccount({
-        username: this.req.user.username,
-        password: this.req.user.password,
-        balance: this.req.user.balance
-      })
+      ledgerUser = yield ledger.updateAccount({
+        username: user.username,
+        balance: ''+user.balance
+      }, true)
 
       user.balance = ledgerUser.balance
 

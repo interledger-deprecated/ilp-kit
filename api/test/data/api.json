@@ -4,19 +4,25 @@
       "id": 1,
       "account": "http://localhost/accounts/admin",
       "username": "admin",
-      "balance": 0
+      "balance": 0,
+      "github_id": null,
+      "profile_picture": null
     },
     "alice": {
       "id": 1,
       "account": "http://localhost/accounts/alice",
       "username": "alice",
-      "balance": 1000
+      "balance": 1000,
+      "github_id": null,
+      "profile_picture": null
     },
     "bob": {
       "id": 1,
       "account": "http://localhost/accounts/bob",
       "username": "bob",
-      "balance": 1000
+      "balance": 1000,
+      "github_id": null,
+      "profile_picture": null
     }
   }
 }

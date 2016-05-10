@@ -17,8 +17,6 @@ function UserFactory (sequelize, validator) {
     }
 
     static convertToExternal (data) {
-      delete data.password
-
       return data
     }
 
@@ -71,7 +69,6 @@ function UserFactory (sequelize, validator) {
       type: Sequelize.STRING,
       unique: true
     },
-    password: Sequelize.STRING,
     github_id: {
       type: Sequelize.INTEGER,
       unique: true
