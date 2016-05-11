@@ -7,4 +7,7 @@ export NotFound from './NotFound/NotFound';
 export Widget from './Widget/Widget';
 export History from './History/History';
 export Button from './Button/Button';
+
 export Settings from './Settings/Settings';
+export ChangeEmailForm from './Settings/ChangeEmailForm';
+export ChangePasswordForm from './Settings/ChangePasswordForm';

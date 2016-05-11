@@ -9,6 +9,10 @@ const Database = require('../lib/db')
 const Validator = require('five-bells-shared/lib/validator')
 const Sequelize = require('sequelize')
 
+const ServerError = require('../errors/server-error')
+const InvalidBodyError = require('../errors/invalid-body-error')
+const EmailTakenError = require('../errors/email-taken-error')
+
 UserFactory.constitute = [Database, Validator]
 function UserFactory (sequelize, validator) {
   class User extends Model {
@@ -51,6 +55,37 @@ function UserFactory (sequelize, validator) {
         yield next
       }
     }
+
+    * changeEmail (email) {
+      this.email = email
+
+      const validationResult = User.validateExternal({
+        email: email
+      })
+
+      // Invalid email
+      if (validationResult.valid !== true) {
+        const message = validationResult.schema
+          ? 'Body did not match schema ' + validationResult.schema
+          : 'Body did not pass validation'
+        throw new InvalidBodyError(message)
+      }
+
+      try {
+        // TODO verification
+        yield this.save()
+      } catch (e) {
+        // Email is already taken by someone else
+        if (e.name === 'SequelizeUniqueConstraintError') {
+          throw new EmailTakenError("Email is already taken")
+        }
+
+        // Something else went wrong
+        throw new ServerError("Failed to change the user email")
+      }
+
+      return this
+    }
   }
 
   User.validateExternal = validator.create('User')
@@ -66,6 +101,10 @@ function UserFactory (sequelize, validator) {
       unique: true
     },
     account: {
+      type: Sequelize.STRING,
+      unique: true
+    },
+    email: {
       type: Sequelize.STRING,
       unique: true
     },

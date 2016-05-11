@@ -23,7 +23,6 @@ module.exports = class Auth {
         if (!username) {
           return done(null, false)
         }
-
         const ledgerUser = yield ledger.getAccount({
           username: username,
           password: password
@@ -33,7 +32,7 @@ module.exports = class Auth {
           return done(new UnauthorizedError('Unknown or invalid account / password'))
         }
 
-        const dbUser = User.findOne({where:{username: username}})
+        const dbUser = yield User.findOne({where:{username: username}})
 
         return done(null, dbUser)
       })
@@ -88,6 +87,7 @@ module.exports = class Auth {
           let userObj = {
             username: profile.username,
             password: uuid(),
+            email: profile.emails[0] && profile.emails[0].value,
             github_id: profile.id,
             profile_picture: profile.photos[0].value
           }
@@ -124,7 +124,9 @@ module.exports = class Auth {
     passport.deserializeUser(function(user, done) {
       User.findOne({where: {username: user.username}})
         .then(function(dbUser){
-          dbUser.password = user.password
+          if (dbUser) {
+            dbUser.password = user.password
+          }
           done(null, dbUser)
         })
     })

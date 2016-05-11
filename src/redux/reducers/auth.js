@@ -28,6 +28,11 @@ export default function reducer(state = initialState, action = {}) {
         loaded: false,
         error: action.error
       };
+    case types.AUTH_SAVE_SUCCESS:
+      return {
+        ...state,
+        user: action.result
+      };
     case types.AUTH_SAVE_FAIL:
       return {
         ...state,

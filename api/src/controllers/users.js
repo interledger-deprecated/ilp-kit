@@ -21,7 +21,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config) {
     static init (router) {
       router.get('/users/:username', Auth.checkAuth, this.getResource)
       router.post('/users/:username', User.createBodyParser(), this.postResource)
-      router.put('/users/:username', this.putResource)
+      router.put('/users/:username', Auth.checkAuth, this.putResource)
       router.post('/users/:username/reload', Auth.checkAuth, this.reload)
 
       router.get('/receivers/:username', this.getReceiver)
@@ -152,10 +152,15 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config) {
         })
       }
 
+      if (data.email) {
+        yield user.changeEmail(data.email)
+      }
+
       try {
         yield user.save()
       } catch(e) {
         // TODO handle
+        log.warn(e)
       }
 
       this.req.logIn(user, function (err) {})
