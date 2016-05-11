@@ -1,5 +1,7 @@
 import React, {Component} from 'react'
 
+// Always use after @connect it uses the success prop
+// TODO asking for formKey because redux-form formKey is empty for some reason
 export default function successable() {
 
   return (DecoratedComponent) => {
@@ -8,21 +10,25 @@ export default function successable() {
         super(props, context)
 
         this.state = {success: false}
-
-        this.success = this.success.bind(this)
-      }
-
-      success() {
-        const self = this
-        self.setState({success: true})
-
-        this.timer = setTimeout(() => {
-          self.setState({success: false})
-        }, 5000) // Hide in 5 seconds
       }
 
       componentWillUnmount() {
         clearTimeout(this.timer)
+      }
+
+      success = (keep) => {
+        const self = this
+        self.setState({success: true})
+
+        // Don't hide the success message if the keep is true
+        if (keep) return;
+
+        this.timer = setTimeout(() => {
+          self.setState({
+            ...self.state,
+            success: false
+          })
+        }, 5000) // Hide in 5 seconds
       }
 
       render() {

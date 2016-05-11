@@ -47,13 +47,13 @@ export default class SendForm extends Component {
     unmount: PropTypes.func.isRequired,
     path: PropTypes.object,
     pathFinding: PropTypes.bool,
-    fail: PropTypes.object,
     data: PropTypes.object,
     initializeForm: PropTypes.func,
 
     // Successable
     succeed: PropTypes.func,
-    success: PropTypes.bool
+    success: PropTypes.bool,
+    fail: PropTypes.object
   }
 
   static contextTypes = {
@@ -70,6 +70,7 @@ export default class SendForm extends Component {
       })
 
       // Find path
+      // TODO:UI feedback if pathfind fails
       this.props.findPath({
         destination: data.destination,
         destinationAmount: data.destinationAmount

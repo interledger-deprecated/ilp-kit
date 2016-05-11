@@ -19,7 +19,7 @@ import { Input } from 'components'
   // TODO server side rendering for initialValues is messed up
   // https://github.com/erikras/redux-form/issues/896
   initialValues: {
-    email: state.auth.user.email || undefined
+    email: (state.auth.user && state.auth.user.email) || undefined
   }
 }), actions)
 @successable()
@@ -32,18 +32,20 @@ export default class ChangeEmailForm extends Component {
     invalid: PropTypes.bool,
     handleSubmit: PropTypes.func,
     submitting: PropTypes.bool,
+    error: PropTypes.any,
+    submitFailed: PropTypes.bool,
 
     // Successable
     succeed: PropTypes.func,
     success: PropTypes.bool,
 
-    fail: PropTypes.object,
+    // Auth
     user: PropTypes.object,
     save: PropTypes.func
   }
 
   save = (data) => {
-    this.props.save({username: this.props.user.username}, data)
+    return this.props.save({username: this.props.user.username}, data)
       .then(() => {
         this.props.succeed()
 
@@ -51,12 +53,14 @@ export default class ChangeEmailForm extends Component {
       })
       .catch((error) => {
         tracker.track('Email change', {status: 'fail', error: error})
+
+        throw {_error: error}
       })
   }
 
   render() {
     const { fields: { email }, pristine, invalid,
-      handleSubmit, submitting, success, fail } = this.props
+      handleSubmit, submitting, success, error, submitFailed } = this.props
 
     return (
       <div className="panel panel-default">
@@ -69,11 +73,11 @@ export default class ChangeEmailForm extends Component {
             <strong>Holy guacamole!</strong> Email has been successfully changed!
           </Alert>}
 
-          {fail && fail.id &&
+          {error && error.id &&
           <Alert bsStyle="danger">
             <strong>Woops! </strong>
             {(() => {
-              switch (fail.id) {
+              switch (error.id) {
                 case 'InvalidBodyError': return 'Email is invalid'
                 case 'EmailTakenError': return 'Email is already taken'
                 default: return 'Something went wrong'
@@ -83,7 +87,7 @@ export default class ChangeEmailForm extends Component {
 
           <form onSubmit={handleSubmit(this.save)}>
             <Input object={email} label="Email" type="email" size="lg" focus />
-            <button type="submit" className="btn btn-primary" disabled={pristine || invalid || submitting}>
+            <button type="submit" className="btn btn-primary" disabled={pristine || (invalid && !submitFailed) || submitting}>
               {submitting ? ' Saving...' : ' Change Email'}
             </button>
           </form>

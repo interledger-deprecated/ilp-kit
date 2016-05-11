@@ -23,7 +23,8 @@
     "indent": [2, 2, {"SwitchCase": 1}],
     "no-console": 0,
     "no-alert": 0,
-    "semi": 0
+    "semi": 0,
+    "no-throw-literal": 0
   },
   "plugins": [
     "react", "import"

@@ -27,18 +27,20 @@ export default class ChangePasswordForm extends Component {
     invalid: PropTypes.bool,
     handleSubmit: PropTypes.func,
     submitting: PropTypes.bool,
+    error: PropTypes.any,
+    submitFailed: PropTypes.bool,
 
     // Successable
     succeed: PropTypes.func,
     success: PropTypes.bool,
 
-    fail: PropTypes.object,
+    // Auth
     user: PropTypes.object,
     save: PropTypes.func
   }
 
   save = (data) => {
-    this.props.save({username: this.props.user.username}, data)
+    return this.props.save({username: this.props.user.username}, data)
       .then(() => {
         this.props.succeed()
 
@@ -46,12 +48,14 @@ export default class ChangePasswordForm extends Component {
       })
       .catch((error) => {
         tracker.track('Password change', {status: 'fail', error: error})
+
+        throw {_error: error}
       })
   }
 
   render() {
     const { fields: { password, verifyPassword }, pristine, invalid,
-      handleSubmit, submitting, success, fail } = this.props
+      handleSubmit, submitting, success, error, submitFailed } = this.props
 
     return (
       <div className="panel panel-default">
@@ -64,11 +68,11 @@ export default class ChangePasswordForm extends Component {
             <strong>Holy guacamole!</strong> Password has been successfully changed!
           </Alert>}
 
-          {fail && fail.id &&
+          {error && error.id &&
           <Alert bsStyle="danger">
             <strong>Woops! </strong>
             {(() => {
-              switch (fail.id) {
+              switch (error.id) {
                 case 'PasswordsDontMatch': return 'Passwords don\'t match'
                 default: return 'Something went wrong'
               }
@@ -79,7 +83,7 @@ export default class ChangePasswordForm extends Component {
           <form onSubmit={handleSubmit(this.save)}>
             <Input object={password} label="New Password" type="password" size="lg" />
             <Input object={verifyPassword} label="Verify New Password" type="password" size="lg"/>
-            <button type="submit" className="btn btn-primary" disabled={pristine || invalid || submitting}>
+            <button type="submit" className="btn btn-primary" disabled={pristine || (invalid && !submitFailed) || submitting}>
               {submitting ? ' Saving...' : ' Change Password'}
             </button>
           </form>
