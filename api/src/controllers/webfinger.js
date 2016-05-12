@@ -79,6 +79,10 @@ function WebfingerControllerFactory (log, config, ledger) {
             "href" : config.data.getIn(['server', 'base_uri']) + '/payments'
           },
           {
+            "rel" : "https://interledger.org/rel/sender/pathfind",
+            "href" : config.data.getIn(['server', 'base_uri']) + '/payments/findPath'
+          },
+          {
             "rel" : "https://interledger.org/rel/receiver",
             "href" : config.data.getIn(['server', 'base_uri']) + '/receivers/' + ledgerUser.name
           },
