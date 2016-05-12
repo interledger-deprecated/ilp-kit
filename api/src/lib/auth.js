@@ -165,6 +165,6 @@ module.exports = class Auth {
   }
 
   generateGithubPassword (userId) {
-    return crypto.createHmac('sha256', this.config.data.getIn(['github', 'secret'])).update(userId).digest('hex')
+    return crypto.createHmac('sha256', this.config.data.getIn(['github', 'secret'])).update(userId).digest('base64')
   }
 }
