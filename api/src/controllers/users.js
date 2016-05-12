@@ -150,6 +150,8 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config) {
           password: this.req.user.password,
           newPassword: data.password
         })
+
+        this.req.user.password = data.password
       }
 
       if (data.email) {
@@ -162,6 +164,8 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config) {
         // TODO handle
         log.warn(e)
       }
+
+      user.password = this.req.user.password
 
       this.req.logIn(user, function (err) {})
 
