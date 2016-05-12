@@ -6,7 +6,8 @@
       "username": "admin",
       "balance": 0,
       "github_id": null,
-      "profile_picture": null
+      "profile_picture": null,
+      "email": null
     },
     "alice": {
       "id": 1,
@@ -14,7 +15,8 @@
       "username": "alice",
       "balance": 1000,
       "github_id": null,
-      "profile_picture": null
+      "profile_picture": null,
+      "email": null
     },
     "bob": {
       "id": 1,
@@ -22,7 +24,8 @@
       "username": "bob",
       "balance": 1000,
       "github_id": null,
-      "profile_picture": null
+      "profile_picture": null,
+      "email": null
     }
   }
 }

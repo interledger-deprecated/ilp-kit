@@ -18,6 +18,10 @@
       "href" : "http://localhost/payments"
     },
     {
+      "rel" : "https://interledger.org/rel/sender/pathfind",
+      "href" : "http://localhost/payments/findPath"
+    },
+    {
       "rel" : "https://interledger.org/rel/receiver",
       "href" : "http://localhost/receivers/alice"
     },

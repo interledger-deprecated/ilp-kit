@@ -22,6 +22,8 @@ function UserFactory (sequelize, validator, ledger) {
     }
 
     static convertToExternal (data) {
+      delete data.password
+
       return data
     }
 

@@ -37,7 +37,7 @@ module.exports = class WalletConfig {
 
     if (!localConfig.sessionSecret) {
       if (process.env.NODE_ENV === 'production') {
-        throw new Error('No ' + envPrefix.toUpperCase + 'SESSION_SECRET provided.')
+        throw new Error('No ' + envPrefix.toUpperCase + '_SECRET provided.')
       }
       localConfig.sessionSecret = 'dev'
     }
@@ -46,6 +46,7 @@ module.exports = class WalletConfig {
   }
 
   static generateSecret(text) {
-    return crypto.createHmac('sha256', Config.getEnv(envPrefix, 'SECRET')).update(text).digest()
+    // TODO remove the hardcoded secret in case of API_SECRET not being present
+    return crypto.createHmac('sha256', Config.getEnv(envPrefix, 'SECRET') || 'secret').update(text).digest()
   }
 }
