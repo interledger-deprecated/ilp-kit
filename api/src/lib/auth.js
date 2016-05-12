@@ -18,56 +18,12 @@ module.exports = class Auth {
   static constitute () { return [ UserFactory, Config, Ledger ] }
   constructor (User, config, ledger) {
     const self = this
-    this.config = config
+    self.config = config
+    self.ledger = ledger
+    self.User = User
 
-    passport.use(new BasicStrategy(
-      co.wrap(function * (username, password, done) {
-        // If no Authorization is provided we can still
-        // continue without throwing an error
-        if (!username) {
-          return done(null, false)
-        }
-        const ledgerUser = yield ledger.getAccount({
-          username: username,
-          password: password
-        })
-
-        if (!ledgerUser) {
-          return done(new UnauthorizedError('Unknown or invalid account / password'))
-        }
-
-        const dbUser = yield User.findOne({where:{username: username}})
-
-        dbUser.password = password
-
-        return done(null, dbUser)
-      })
-    ))
-
-    passport.use(new LocalStrategy(
-      co.wrap(function * (username, password, done) {
-        // If no Authorization is provided we can still
-        // continue without throwing an error
-        if (!username) {
-          return done(null, false)
-        }
-
-        try {
-          yield ledger.getAccount({
-            username: username,
-            password: password
-          })
-        } catch (e) {
-          return done(new UnauthorizedError('Unknown or invalid account / password'))
-        }
-
-        const dbUser = yield User.findOne({where:{username: username}})
-
-        dbUser.password = password
-
-        return done(null, dbUser)
-      })
-    ))
+    self.commonSetup(BasicStrategy)
+    self.commonSetup(LocalStrategy)
 
     // TODO add an environment variable to disable github login, it should be optional
     if (config.data.getIn(['github', 'client_id'])) {
@@ -82,7 +38,7 @@ module.exports = class Auth {
           const email = profile.emails[0] && profile.emails[0].value
 
           // Find a user by github id or email address
-          let user = yield User.findOne({
+          let dbUser = yield User.findOne({
             where: {
               $or: [
                 { github_id: profile.id },
@@ -92,14 +48,15 @@ module.exports = class Auth {
           })
 
           // User exists
-          if (user) {
-            user.password = self.generateGithubPassword(profile.id)
-            // TODO Update the user with updated profile data
-            return done(null, user)
+          if (dbUser) {
+            dbUser.password = self.generateGithubPassword(profile.id)
+            // TODO Update the user with changed profile data
+            return done(null, dbUser)
           }
 
-          // User doesn't exist, create one
+          // User doesn't exist
           // TODO custom username
+          // TODO what if the username already exists
           let userObj = {
             username: profile.username,
             password: self.generateGithubPassword(profile.id),
@@ -108,27 +65,25 @@ module.exports = class Auth {
             profile_picture: profile.photos[0].value
           }
 
-          // Create a ledger account
-          // TODO handle exceptions
-          let ledgerUser
+          // Create the ledger account
           try {
-            ledgerUser = yield ledger.createAccount(userObj)
+            yield ledger.createAccount(userObj)
           } catch (e) {
             // TODO handle
           }
 
-          userObj.account = ledgerUser.id
-
+          // Create the db user
           try {
-            user = yield User.createExternal(userObj)
+            dbUser = yield User.createExternal(userObj)
           } catch (e) {
             // TODO handle
           }
 
-          userObj.id = user.id
-          userObj.balance = ledgerUser.balance
+          // Append ledger account
+          const user = yield dbUser.appendLedgerAccount()
+          user.password = password
 
-          done(null, userObj)
+          done(null, user)
         })
       ))
     }
@@ -137,14 +92,18 @@ module.exports = class Auth {
       done(null, user)
     })
 
-    passport.deserializeUser(function(user, done) {
-      User.findOne({where: {username: user.username}})
-        .then(function(dbUser){
-          if (dbUser) {
-            dbUser.password = user.password
+    passport.deserializeUser(function(userObj, done) {
+      User.findOne({where: {username: userObj.username}})
+        .then(co.wrap(function * (dbUser){
+          if (!dbUser) {
+            done(new UnauthorizedError('Unknown or invalid account / password'))
           }
-          done(null, dbUser)
-        })
+
+          const user = yield dbUser.appendLedgerAccount()
+          user.password = userObj.password
+
+          done(null, user)
+        }))
     })
   }
 
@@ -160,8 +119,48 @@ module.exports = class Auth {
       return yield next
     }
 
-    // Basic Strategy
+    // Basic and OAuth strategies
     yield passport.authenticate(['basic', 'github'], { session: false }).call(this, next)
+  }
+
+  commonSetup(Strategy) {
+    const self = this
+
+    passport.use(new Strategy(co.wrap(
+      function * (username, password, done) {
+        // If no Authorization is provided we can still
+        // continue without throwing an error
+        if (!username) {
+          return done(null, false)
+        }
+
+        // Check if the db user exists
+        const dbUser = yield self.User.findOne({where:{
+          username: username
+        }})
+
+        if (!dbUser) {
+          return done(new UnauthorizedError('Unknown or invalid account / password'))
+        }
+
+        // Check if the ledger user exists
+        // TODO do we need this check?
+        const ledgerUser = yield self.ledger.getAccount({
+          username: username,
+          password: password
+        })
+
+        if (!ledgerUser) {
+          return done(new UnauthorizedError('Unknown or invalid account / password'))
+        }
+
+        // Append ledger account
+        const user = yield dbUser.appendLedgerAccount()
+        user.password = password
+
+        return done(null, user)
+      }
+    )))
   }
 
   generateGithubPassword (userId) {

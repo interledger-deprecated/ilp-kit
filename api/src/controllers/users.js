@@ -58,11 +58,8 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config) {
         return this.status = 404
       }
 
-      let user = yield User.findOne({where: {username: username}})
-
-      // Get account balance
-      const ledgerUser = yield ledger.getAccount(user, true)
-      user.balance = Math.round(ledgerUser.balance * 100) / 100
+      const dbUser = yield User.findOne({where: {username: username}})
+      const user = yield dbUser.appendLedgerAccount()
 
       this.body = user.getDataExternal()
     }
@@ -99,42 +96,54 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config) {
       request.validateUriParameter('username', username, 'Identifier')
       username = username.toLowerCase()
 
-      let user = yield User.findOne({where: {username: username}})
+      let dbUser = yield User.findOne({where: {username: username}})
 
       // Username is already taken
       // TODO check if the http://account already exists
-      if (user) {
+      if (dbUser) {
         throw new UsernameTakenError("Username is already taken")
       }
 
-      this.body.username = username
+      // New user object
+      let userObj = this.body
+      userObj.username = username
 
       // Create a ledger account
-      // TODO handle exceptions
-      const ledgerUser = yield ledger.createAccount(this.body)
+      let ledgerUser
+      try {
+        ledgerUser = yield ledger.createAccount(userObj)
+      } catch (e) {
+        // TODO handle
+        console.log('users.js:113', e)
+      }
 
-      this.body.account = ledgerUser.id
+      userObj.account = ledgerUser.id
 
-      user = yield User.createExternal(this.body)
+      // Create the db user
+      dbUser = new User()
+      dbUser.setDataExternal(userObj)
 
-      // TODO load balance in req.login
-      this.body.balance = ledgerUser.balance
-      this.body.id = user.id
+      try {
+        yield dbUser.save()
+      } catch (e) {
+        // TODO handle
+        console.log('users.js:125', e)
+      }
+
+      const user = yield dbUser.appendLedgerAccount(ledgerUser)
 
       // TODO callbacks?
-      this.req.logIn(this.body, function (err) {})
+      this.req.logIn(user, function (err) {})
 
       log.debug('created user ' + username)
 
-      this.body = this.body.getDataExternal()
+      this.body = user.getDataExternal()
       this.status = 201
     }
 
     static * putResource () {
       const data = this.body
       let user = this.req.user
-
-      user = yield User.findOne({where: {id: user.id}})
 
       // TODO:SECURITY sanity checking
 
@@ -146,12 +155,12 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config) {
 
         // Update the ledger user
         yield ledger.updateAccount({
-          username: this.req.user.username,
-          password: this.req.user.password,
+          username: user.username,
+          password: user.password,
           newPassword: data.password
         })
 
-        this.req.user.password = data.password
+        user.password = data.password
       }
 
       if (data.email) {
@@ -164,8 +173,6 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config) {
         // TODO handle
         log.warn(e)
       }
-
-      user.password = this.req.user.password
 
       this.req.logIn(user, function (err) {})
 

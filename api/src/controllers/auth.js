@@ -43,15 +43,22 @@ function AuthsControllerFactory (Auth, User, log, ledger, Users) {
        *      "id": 1
        *    }
        */
-      router.post('/auth/login', passport.authenticate('local'), this.load)
-      router.get('/auth/load', this.load)
-      router.post('/auth/logout', this.logout)
 
+      // Local Auth
+      router.post('/auth/login', passport.authenticate('local'), this.load)
+
+      // GitHub OAuth
       router.get('/auth/github', passport.authenticate('github'))
       router.get('/auth/github/callback', passport.authenticate('github', {
         successRedirect: '/',
         failureRedirect: '/'
-      }))
+      }), this.load)
+
+      // Load session user
+      router.get('/auth/load', Auth.checkAuth, this.load)
+
+      // Logout. Clears the session
+      router.post('/auth/logout', this.logout)
     }
 
     /**
@@ -75,14 +82,12 @@ function AuthsControllerFactory (Auth, User, log, ledger, Users) {
      *      "id": 1
      *    }
      */
-    static * load (next) {
+    static * load () {
       let user = this.req.user
 
       if (!user) throw new NotFoundError("No active user session")
 
-      this.params.username = user.username
-
-      yield Users.getResource.call(this, next)
+      this.body = user.getDataExternal()
     }
 
     /**

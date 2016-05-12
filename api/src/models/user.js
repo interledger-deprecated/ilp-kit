@@ -7,14 +7,15 @@ const Model = require('five-bells-shared').Model
 const PersistentModelMixin = require('five-bells-shared').PersistentModelMixin
 const Database = require('../lib/db')
 const Validator = require('five-bells-shared/lib/validator')
+const Ledger = require('../lib/ledger')
 const Sequelize = require('sequelize')
 
 const ServerError = require('../errors/server-error')
 const InvalidBodyError = require('../errors/invalid-body-error')
 const EmailTakenError = require('../errors/email-taken-error')
 
-UserFactory.constitute = [Database, Validator]
-function UserFactory (sequelize, validator) {
+UserFactory.constitute = [Database, Validator, Ledger]
+function UserFactory (sequelize, validator, ledger) {
   class User extends Model {
     static convertFromExternal (data) {
       return data
@@ -83,6 +84,15 @@ function UserFactory (sequelize, validator) {
         // Something else went wrong
         throw new ServerError("Failed to change the user email")
       }
+
+      return this
+    }
+
+    * appendLedgerAccount (ledgerUser) {
+      if (!ledgerUser) {
+        ledgerUser = yield ledger.getAccount(this, true)
+      }
+      this.balance = Math.round(ledgerUser.balance * 100) / 100
 
       return this
     }
