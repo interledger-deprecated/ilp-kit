@@ -135,27 +135,31 @@ module.exports = class Auth {
         }
 
         // Check if the db user exists
-        const dbUser = yield self.User.findOne({where:{
-          username: username
+        const dbUser = yield self.User.findOne({where: {
+          $or: [
+            { username: username },
+            { email: username }
+          ]
         }})
 
         if (!dbUser) {
           return done(new UnauthorizedError('Unknown or invalid account / password'))
         }
 
-        // Check if the ledger user exists
+        // Get the ledger user
         // TODO do we need this check?
-        const ledgerUser = yield self.ledger.getAccount({
-          username: username,
-          password: password
-        })
-
-        if (!ledgerUser) {
+        let ledgerUser
+        try {
+          ledgerUser = yield self.ledger.getAccount({
+            username: dbUser.username,
+            password: password
+          })
+        } catch (e) {
           return done(new UnauthorizedError('Unknown or invalid account / password'))
         }
 
         // Append ledger account
-        const user = yield dbUser.appendLedgerAccount()
+        const user = yield dbUser.appendLedgerAccount(ledgerUser)
         user.password = password
 
         return done(null, user)

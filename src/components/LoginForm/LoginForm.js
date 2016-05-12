@@ -39,7 +39,7 @@ export default class LoginForm extends Component {
         </Alert>}
 
         <div>
-          <Input object={username} label="Username" size="lg" focus />
+          <Input object={username} label="Username or Email" size="lg" focus />
           <Input object={password} label="Password" size="lg" type="password" />
         </div>
         <button type="submit" className="btn btn-complete" disabled={pristine || invalid || submitting}>
