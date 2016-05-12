@@ -73,7 +73,16 @@ module.exports = class Auth {
         },
         // TODO this whole function is a dup from local register flow
         co.wrap(function * (accessToken, refreshToken, profile, done) {
-          let user = yield User.findOne({where: {github_id: profile.id}})
+          const email = profile.emails[0] && profile.emails[0].value
+
+          let user = yield User.findOne({
+            where: {
+              $or: [
+                { github_id: profile.id },
+                { email: email }
+              ]
+            }
+          })
 
           // User exists
           if (user) {
@@ -87,7 +96,7 @@ module.exports = class Auth {
           let userObj = {
             username: profile.username,
             password: uuid(),
-            email: profile.emails[0] && profile.emails[0].value,
+            email: email,
             github_id: profile.id,
             profile_picture: profile.photos[0].value
           }
