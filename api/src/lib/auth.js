@@ -1,5 +1,6 @@
 "use strict"
 
+const crypto = require('crypto')
 const uuid = require('uuid4')
 const co = require('co')
 const passport = require('koa-passport')
@@ -16,6 +17,9 @@ const Ledger = require('./ledger')
 module.exports = class Auth {
   static constitute () { return [ UserFactory, Config, Ledger ] }
   constructor (User, config, ledger) {
+    const self = this
+    this.config = config
+
     passport.use(new BasicStrategy(
       co.wrap(function * (username, password, done) {
         // If no Authorization is provided we can still
@@ -33,6 +37,8 @@ module.exports = class Auth {
         }
 
         const dbUser = yield User.findOne({where:{username: username}})
+
+        dbUser.password = password
 
         return done(null, dbUser)
       })
@@ -75,6 +81,7 @@ module.exports = class Auth {
         co.wrap(function * (accessToken, refreshToken, profile, done) {
           const email = profile.emails[0] && profile.emails[0].value
 
+          // Find a user by github id or email address
           let user = yield User.findOne({
             where: {
               $or: [
@@ -86,16 +93,16 @@ module.exports = class Auth {
 
           // User exists
           if (user) {
+            user.password = self.generateGithubPassword(profile.id)
             // TODO Update the user with updated profile data
             return done(null, user)
           }
 
           // User doesn't exist, create one
-
           // TODO custom username
           let userObj = {
             username: profile.username,
-            password: uuid(),
+            password: self.generateGithubPassword(profile.id),
             email: email,
             github_id: profile.id,
             profile_picture: profile.photos[0].value
@@ -155,5 +162,9 @@ module.exports = class Auth {
 
     // Basic Strategy
     yield passport.authenticate(['basic', 'github'], { session: false }).call(this, next)
+  }
+
+  generateGithubPassword (userId) {
+    return crypto.createHmac('sha256', this.config.data.getIn(['github', 'secret'])).update(userId).digest('hex')
   }
 }

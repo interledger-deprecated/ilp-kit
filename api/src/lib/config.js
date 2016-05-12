@@ -1,8 +1,8 @@
 "use strict"
 
 const Config = require('five-bells-shared').Config
-const ledgerPrefix = 'ledger'
 const envPrefix = 'api'
+const crypto = require('crypto')
 
 module.exports = class WalletConfig {
   constructor () {
@@ -23,13 +23,14 @@ module.exports = class WalletConfig {
     }
 
     // Secrets
-    localConfig.sessionSecret = Config.getEnv(envPrefix, 'SESSION_SECRET')
-    localConfig.conditionSecret = Config.getEnv(envPrefix, 'CONDITION_SECRET')
+    localConfig.sessionSecret = WalletConfig.generateSecret('session').toString('base64')
+    localConfig.conditionSecret = WalletConfig.generateSecret('condition')
 
     // Github
     localConfig.github = {
       client_id: Config.getEnv(envPrefix, 'GITHUB_CLIENT_ID'),
-      client_secret: Config.getEnv(envPrefix, 'GITHUB_CLIENT_SECRET')
+      client_secret: Config.getEnv(envPrefix, 'GITHUB_CLIENT_SECRET'),
+      secret: WalletConfig.generateSecret('oauth:github')
     }
 
     localConfig.reload = Config.getEnv(envPrefix, 'RELOAD')
@@ -42,5 +43,9 @@ module.exports = class WalletConfig {
     }
 
     this.data = Config.loadConfig(envPrefix, localConfig)
+  }
+
+  static generateSecret(text) {
+    return crypto.createHmac('sha256', Config.getEnv(envPrefix, 'SECRET')).update(text).digest()
   }
 }
