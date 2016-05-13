@@ -26,6 +26,7 @@ module.exports = class Auth {
     self.commonSetup(LocalStrategy)
 
     // TODO add an environment variable to disable github login, it should be optional
+    // TODO changing password on a GitHub auth makes it impossible to login with github again
     if (config.data.getIn(['github', 'client_id'])) {
       passport.use(new GitHubStrategy(
         {

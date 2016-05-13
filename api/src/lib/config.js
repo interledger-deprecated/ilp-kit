@@ -33,6 +33,12 @@ module.exports = class WalletConfig {
       secret: WalletConfig.generateSecret('oauth:github')
     }
 
+    // Mailgun
+    localConfig.mailgun = {
+      api_key: Config.getEnv(envPrefix, 'MAILGUN_API_KEY'),
+      domain: Config.getEnv(envPrefix, 'MAILGUN_DOMAIN')
+    }
+
     localConfig.reload = Config.getEnv(envPrefix, 'RELOAD')
 
     if (!localConfig.sessionSecret) {

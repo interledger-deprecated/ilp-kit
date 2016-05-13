@@ -41,6 +41,8 @@ Use the following configuration options as environment variables:
 * `API_TRACK_MIXPANEL` Mixpanel Tracking ID
 * `API_GITHUB_CLIENT_ID` Github application client id (used for github oauth)
 * `API_GITHUB_CLIENT_SECRET` Github application client secret (used for github oauth)
+* `API_MAILGUN_API_KEY` Mailgun api key (for sending emails)
+* `API_MAILGUN_DOMAIN` One of the domains attached to the Mailgun account
 * `CLIENT_HOST` Publicly visible hostname
 * `CLIENT_PORT` Publicly visible port
 * `SENTRY_URI` Sentry tracking uri (getsentry.com)
