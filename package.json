@@ -92,6 +92,7 @@
     "co": "^4.6.0",
     "compression": "^1.6.0",
     "constitute": "^1.6.2",
+    "email-templates": "^2.3.0",
     "express": "^4.13.3",
     "express-force-ssl": "^0.3.1",
     "file-loader": "^0.8.5",
