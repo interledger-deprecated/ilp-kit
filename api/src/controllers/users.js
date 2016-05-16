@@ -11,6 +11,7 @@ const Config = require('../lib/config')
 const UserFactory = require('../models/user')
 
 const UsernameTakenError = require('../errors/username-taken-error')
+const EmailTakenError = require('../errors/email-taken-error')
 const PasswordsDontMatch = require('../errors/passwords-dont-match')
 
 UsersControllerFactory.constitute = [Auth, UserFactory, Log, Ledger, Socket, Config]
@@ -93,19 +94,30 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config) {
     // TODO should support both create and update
     static * postResource () {
       let username = this.params.username
+      // TODO also validate email
       request.validateUriParameter('username', username, 'Identifier')
       username = username.toLowerCase()
 
-      let dbUser = yield User.findOne({where: {username: username}})
+      let userObj = this.body
 
-      // Username is already taken
+      let dbUser = yield User.findOne({where: {
+        $or: [
+          { username: username },
+          { email: userObj.email }
+        ]
+      }})
+
       // TODO check if the http://account already exists
       if (dbUser) {
-        throw new UsernameTakenError("Username is already taken")
+        // Username is already taken
+        if (dbUser.username === username) {
+          throw new UsernameTakenError("Username is already taken")
+        }
+
+        // Email is already taken
+        throw new EmailTakenError("Email is already taken")
       }
 
-      // New user object
-      let userObj = this.body
       userObj.username = username
 
       // Create a ledger account
@@ -113,7 +125,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config) {
       try {
         ledgerUser = yield ledger.createAccount(userObj)
       } catch (e) {
-        // TODO handle
+        // TODO throw exception
         console.log('users.js:113', e)
       }
 
@@ -126,7 +138,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config) {
       try {
         yield dbUser.save()
       } catch (e) {
-        // TODO handle
+        // TODO throw exception
         console.log('users.js:125', e)
       }
 

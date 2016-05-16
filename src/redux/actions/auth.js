@@ -23,7 +23,8 @@ export function register(fields) {
     promise: (client) => client.post('/users/' + fields.username, {
       data: {
         username: fields.username,
-        password: fields.password
+        password: fields.password,
+        email: fields.email
       }
     }).then((user) => {
       if (!__SERVER__) {
