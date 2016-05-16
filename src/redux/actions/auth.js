@@ -126,7 +126,13 @@ export function logout() {
 export function save(opts, data) {
   return {
     types: [types.AUTH_SAVE, types.AUTH_SAVE_SUCCESS, types.AUTH_SAVE_FAIL],
-    // TODO different endpoint
     promise: (client) => client.put('/users/' + opts.username, {data})
+  }
+}
+
+export function verify(username, code) {
+  return {
+    types: [types.VERIFY, types.VERIFY_SUCCESS, types.VERIFY_FAIL],
+    promise: (client) => client.put('/users/' + username + '/verify', {data: {code}})
   }
 }

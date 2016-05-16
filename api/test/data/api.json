@@ -7,7 +7,8 @@
       "balance": 0,
       "github_id": null,
       "profile_picture": null,
-      "email": null
+      "email": null,
+      "email_verified": null
     },
     "alice": {
       "id": 1,
@@ -16,7 +17,8 @@
       "balance": 1000,
       "github_id": null,
       "profile_picture": null,
-      "email": null
+      "email": null,
+      "email_verified": null
     },
     "bob": {
       "id": 1,
@@ -25,7 +27,8 @@
       "balance": 1000,
       "github_id": null,
       "profile_picture": null,
-      "email": null
+      "email": null,
+      "email_verified": null
     }
   }
 }

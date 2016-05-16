@@ -55,7 +55,7 @@ function AuthsControllerFactory (Auth, User, log, ledger, Users) {
       }), this.load)
 
       // Load session user
-      router.get('/auth/load', Auth.checkAuth, this.load)
+      router.get('/auth/load', this.load)
 
       // Logout. Clears the session
       router.post('/auth/logout', this.logout)

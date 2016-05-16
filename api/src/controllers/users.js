@@ -8,14 +8,15 @@ const Log = require('../lib/log')
 const Ledger = require('../lib/ledger')
 const Socket = require('../lib/socket')
 const Config = require('../lib/config')
+const Mailer = require('../lib/mailer')
 const UserFactory = require('../models/user')
 
 const UsernameTakenError = require('../errors/username-taken-error')
 const EmailTakenError = require('../errors/email-taken-error')
 const PasswordsDontMatch = require('../errors/passwords-dont-match')
 
-UsersControllerFactory.constitute = [Auth, UserFactory, Log, Ledger, Socket, Config]
-function UsersControllerFactory (Auth, User, log, ledger, socket, config) {
+UsersControllerFactory.constitute = [Auth, UserFactory, Log, Ledger, Socket, Config, Mailer]
+function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer) {
   log = log('users');
 
   return class UsersController {
@@ -23,6 +24,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config) {
       router.get('/users/:username', Auth.checkAuth, this.getResource)
       router.post('/users/:username', User.createBodyParser(), this.postResource)
       router.put('/users/:username', Auth.checkAuth, this.putResource)
+      router.put('/users/:username/verify', this.verify)
       router.post('/users/:username/reload', Auth.checkAuth, this.reload)
 
       router.get('/receivers/:username', this.getReceiver)
@@ -142,6 +144,12 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config) {
         console.log('users.js:125', e)
       }
 
+      yield mailer.sendWelcome({
+        name: dbUser.username,
+        to: dbUser.email,
+        link: User.getVerificationLink(dbUser.username)
+      })
+
       const user = yield dbUser.appendLedgerAccount(ledgerUser)
 
       // TODO callbacks?
@@ -151,6 +159,25 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config) {
 
       this.body = user.getDataExternal()
       this.status = 201
+    }
+
+    static * verify () {
+      let username = this.params.username
+      request.validateUriParameter('username', username, 'Identifier')
+      username = username.toLowerCase()
+
+      // Code is wrong
+      if (this.body.code !== User.getVerificationCode(username)) {
+        // TODO throw exception
+        return this.body = {}
+      }
+
+      // TODO different result if the user has already been verified
+      const dbUser = yield User.findOne({where: {username: username}})
+      dbUser.email_verified = true
+      yield dbUser.save()
+
+      this.body = {'status':'ok'}
     }
 
     static * putResource () {

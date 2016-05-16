@@ -7,6 +7,10 @@ export const AUTH_SAVE = 'AUTH_SAVE';
 export const AUTH_SAVE_SUCCESS = 'AUTH_SAVE_SUCCESS';
 export const AUTH_SAVE_FAIL = 'AUTH_SAVE_FAIL';
 
+export const VERIFY = 'VERIFY';
+export const VERIFY_SUCCESS = 'VERIFY_SUCCESS';
+export const VERIFY_FAIL = 'VERIFY_FAIL';
+
 export const LOAD_CONFIG = 'LOAD_CONFIG';
 export const LOAD_CONFIG_SUCCESS = 'LOAD_CONFIG_SUCCESS';
 export const LOAD_CONFIG_FAIL = 'LOAD_CONFIG_FAIL';

@@ -59,7 +59,7 @@ export default class RegisterForm extends Component {
             </div>}
 
           <Input object={username} label="Username" size="lg" focus />
-          <Input object={email} label="Email" size="lg" focus />
+          <Input object={email} label="Email" size="lg" />
           <Input object={password} label="Password" size="lg" type="password" />
         </div>
         <button type="submit" className="btn btn-complete" disabled={pristine || invalid || submitting}>

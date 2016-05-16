@@ -23,14 +23,14 @@ module.exports = class WalletConfig {
     }
 
     // Secrets
-    localConfig.sessionSecret = WalletConfig.generateSecret('session').toString('base64')
-    localConfig.conditionSecret = WalletConfig.generateSecret('condition')
+    localConfig.sessionSecret = this.generateSecret('session').toString('base64')
+    localConfig.conditionSecret = this.generateSecret('condition')
 
     // Github
     localConfig.github = {
       client_id: Config.getEnv(envPrefix, 'GITHUB_CLIENT_ID'),
       client_secret: Config.getEnv(envPrefix, 'GITHUB_CLIENT_SECRET'),
-      secret: WalletConfig.generateSecret('oauth:github')
+      secret: this.generateSecret('oauth:github')
     }
 
     // Mailgun
@@ -40,6 +40,9 @@ module.exports = class WalletConfig {
     }
 
     localConfig.reload = Config.getEnv(envPrefix, 'RELOAD')
+
+    // Client url
+    localConfig.client_host = "https://" + Config.getEnv('CLIENT_HOST')
 
     if (!localConfig.sessionSecret) {
       if (process.env.NODE_ENV === 'production') {
@@ -51,7 +54,7 @@ module.exports = class WalletConfig {
     this.data = Config.loadConfig(envPrefix, localConfig)
   }
 
-  static generateSecret(text) {
+  generateSecret(text) {
     // TODO remove the hardcoded secret in case of API_SECRET not being present
     return crypto.createHmac('sha256', Config.getEnv(envPrefix, 'SECRET') || 'secret').update(text).digest()
   }

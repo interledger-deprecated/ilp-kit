@@ -4,7 +4,8 @@ export const initialState = {
   loaded: false,
   fail: {},
   config: {},
-  activeTab: 'login'
+  activeTab: 'login',
+  verified: false
 }
 
 export default function reducer(state = initialState, action = {}) {
@@ -33,6 +34,11 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         user: action.result
       };
+    case types.VERIFY_SUCCESS:
+      return {
+        ...state,
+        verified: true
+      };
     case types.LOAD_CONFIG_SUCCESS:
       return {
         ...state,
@@ -47,7 +53,8 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         loggingIn: false,
-        user: action.result
+        user: action.result,
+        verified: false
       };
     case types.LOGIN_FAIL:
       return {
@@ -83,7 +90,8 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         loggingOut: false,
-        user: null
+        user: null,
+        verified: false
       };
     case types.LOGOUT_FAIL:
       return {

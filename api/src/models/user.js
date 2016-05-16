@@ -8,14 +8,15 @@ const PersistentModelMixin = require('five-bells-shared').PersistentModelMixin
 const Database = require('../lib/db')
 const Validator = require('five-bells-shared/lib/validator')
 const Ledger = require('../lib/ledger')
+const Config = require('../lib/config')
 const Sequelize = require('sequelize')
 
 const ServerError = require('../errors/server-error')
 const InvalidBodyError = require('../errors/invalid-body-error')
 const EmailTakenError = require('../errors/email-taken-error')
 
-UserFactory.constitute = [Database, Validator, Ledger]
-function UserFactory (sequelize, validator, ledger) {
+UserFactory.constitute = [Database, Validator, Ledger, Config]
+function UserFactory (sequelize, validator, ledger, config) {
   class User extends Model {
     static convertFromExternal (data) {
       return data
@@ -57,6 +58,14 @@ function UserFactory (sequelize, validator, ledger) {
 
         yield next
       }
+    }
+
+    static getVerificationCode(username) {
+      return config.generateSecret('verify' + username).toString('hex')
+    }
+
+    static getVerificationLink(username) {
+      return config.data.get(['client_host']) + '/verify/' + username + '/' + User.getVerificationCode(username)
     }
 
     * changeEmail (email) {
@@ -119,6 +128,9 @@ function UserFactory (sequelize, validator, ledger) {
     email: {
       type: Sequelize.STRING,
       unique: true
+    },
+    email_verified: {
+      type: Sequelize.BOOLEAN
     },
     github_id: {
       type: Sequelize.INTEGER,

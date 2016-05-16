@@ -121,7 +121,7 @@ module.exports = class Auth {
     }
 
     // Basic and OAuth strategies
-    yield passport.authenticate(['basic', 'github'], { session: false }).call(this, next)
+    yield passport.authenticate(['basic'], { session: false }).call(this, next)
   }
 
   commonSetup(Strategy) {

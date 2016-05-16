@@ -3,6 +3,8 @@ import {connect} from 'react-redux'
 import * as authActions from 'redux/actions/auth'
 import { amount } from '../../utils/amount'
 
+import Alert from 'react-bootstrap/lib/Alert'
+
 import { SendForm } from 'containers'
 import { LoginForm } from 'components'
 import { RegisterForm } from 'components'
@@ -16,7 +18,8 @@ const cx = classNames.bind(styles)
   state => ({
     user: state.auth.user,
     authFail: state.auth.fail,
-    activeTab: state.auth.activeTab
+    activeTab: state.auth.activeTab,
+    verified: state.auth.verified
   }),
   authActions)
 export default class Home extends Component {
@@ -28,11 +31,22 @@ export default class Home extends Component {
     unmount: PropTypes.func,
     reload: PropTypes.func,
     changeTab: PropTypes.func,
-    activeTab: PropTypes.string
+    activeTab: PropTypes.string,
+
+    // User verification
+    params: PropTypes.object,
+    verify: PropTypes.func,
+    verified: PropTypes.bool
   }
 
   static contextTypes = {
     config: PropTypes.object
+  }
+
+  componentDidMount() {
+    if (this.props.params.username && this.props.params.code) {
+      this.props.verify(this.props.params.username, this.props.params.code)
+    }
   }
 
   reload = () => {
@@ -49,7 +63,7 @@ export default class Home extends Component {
   }
 
   render() {
-    const {user, authFail, unmount, login, register, activeTab} = this.props
+    const {user, authFail, unmount, login, register, activeTab, verified} = this.props
     const {config} = this.context
 
     return (
@@ -72,6 +86,11 @@ export default class Home extends Component {
               </ul>
               <div className="tab-content">
                 <div className="tab-pane active">
+                  {verified &&
+                  <Alert bsStyle="success">
+                    Your email has been verified!
+                  </Alert>}
+
                   {activeTab === 'login' &&
                   <LoginForm login={login} fail={authFail} unmount={unmount} />}
                   {activeTab === 'register' &&
@@ -90,52 +109,55 @@ export default class Home extends Component {
 
         {/* Balance Send widget */}
         {user &&
-        <div>
-          <div className="row">
-            <div className="col-sm-8">
-              {/* Balance */}
-              <div className="panel panel-default">
-                <div className="panel-body">
-                  <div className={cx('balanceContainer')}>
-                    <div className={cx('balanceDescription')}>Your Balance</div>
-                    <div className={cx('balance')}>
-                      {config.currencySymbol}{amount(user.balance)}
-                      {config.reload && <span className={cx('but')}>*</span>}
-                    </div>
-                    {config.reload &&
-                      <div>
-                        <button className="btn btn-complete btn-lg" onClick={this.reload}>Get More</button>
-                        <div className={cx('balanceFake')}>* Don't get too excited, this is fake money</div>
-                      </div>}
+        <div className="row">
+          <div className="col-sm-8">
+            {verified &&
+            <Alert bsStyle="success">
+              Your email has been verified!
+            </Alert>}
+
+            {/* Balance */}
+            <div className="panel panel-default">
+              <div className="panel-body">
+                <div className={cx('balanceContainer')}>
+                  <div className={cx('balanceDescription')}>Your Balance</div>
+                  <div className={cx('balance')}>
+                    {config.currencySymbol}{amount(user.balance)}
+                    {config.reload && <span className={cx('but')}>*</span>}
                   </div>
-                </div>
-              </div>
-              {/* History */}
-              <div className="panel panel-default">
-                <div className="panel-heading">
-                  <div className="panel-title">Payment History</div>
-                </div>
-                <div className="panel-body">
-                  <History />
+                  {config.reload &&
+                    <div>
+                      <button className="btn btn-complete btn-lg" onClick={this.reload}>Get More</button>
+                      <div className={cx('balanceFake')}>* Don't get too excited, this is fake money</div>
+                    </div>}
                 </div>
               </div>
             </div>
-            <div className="col-sm-4">
-              <div className="panel panel-default">
-                <div className="panel-heading">
-                  <div className="panel-title">Use Five Bells Wallet as your default payment provider</div>
-                </div>
-                <div className="panel-body">
-                  <button className="btn btn-complete btn-block" onClick={this.handleDefaultPayment}>Set as default</button>
-                </div>
+            {/* History */}
+            <div className="panel panel-default">
+              <div className="panel-heading">
+                <div className="panel-title">Payment History</div>
               </div>
-              <div className="panel panel-default">
-                <div className="panel-heading">
-                  <div className="panel-title">Send Money</div>
-                </div>
-                <div className="panel-body">
-                  <SendForm />
-                </div>
+              <div className="panel-body">
+                <History />
+              </div>
+            </div>
+          </div>
+          <div className="col-sm-4">
+            <div className="panel panel-default">
+              <div className="panel-heading">
+                <div className="panel-title">Use Five Bells Wallet as your default payment provider</div>
+              </div>
+              <div className="panel-body">
+                <button className="btn btn-complete btn-block" onClick={this.handleDefaultPayment}>Set as default</button>
+              </div>
+            </div>
+            <div className="panel panel-default">
+              <div className="panel-heading">
+                <div className="panel-title">Send Money</div>
+              </div>
+              <div className="panel-body">
+                <SendForm />
               </div>
             </div>
           </div>
