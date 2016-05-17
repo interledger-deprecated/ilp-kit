@@ -40,6 +40,19 @@ module.exports = class Mailer {
     })
   }
 
+  * changeEmail (params) {
+    let locals = {
+      name: params.name,
+      link: params.link
+    }
+
+    return yield this.send({
+      template: 'change-email',
+      locals: locals,
+      to: params.to
+    })
+  }
+
   * send (params) {
     const self = this
 

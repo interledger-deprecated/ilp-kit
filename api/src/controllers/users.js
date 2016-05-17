@@ -147,7 +147,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
       yield mailer.sendWelcome({
         name: dbUser.username,
         to: dbUser.email,
-        link: User.getVerificationLink(dbUser.username)
+        link: User.getVerificationLink(dbUser.username, dbUser.email)
       })
 
       const user = yield dbUser.appendLedgerAccount(ledgerUser)
@@ -166,14 +166,15 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
       request.validateUriParameter('username', username, 'Identifier')
       username = username.toLowerCase()
 
+      const dbUser = yield User.findOne({where: {username: username}})
+
       // Code is wrong
-      if (this.body.code !== User.getVerificationCode(username)) {
+      if (this.body.code !== User.getVerificationCode(dbUser.email)) {
         // TODO throw exception
         return this.body = {}
       }
 
       // TODO different result if the user has already been verified
-      const dbUser = yield User.findOne({where: {username: username}})
       dbUser.email_verified = true
       yield dbUser.save()
 
@@ -204,6 +205,12 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
 
       if (data.email) {
         yield user.changeEmail(data.email)
+
+        yield mailer.changeEmail({
+          name: user.username,
+          to: user.email,
+          link: User.getVerificationLink(user.username, user.email)
+        })
       }
 
       try {

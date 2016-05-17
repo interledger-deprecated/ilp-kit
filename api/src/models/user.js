@@ -60,16 +60,19 @@ function UserFactory (sequelize, validator, ledger, config) {
       }
     }
 
-    static getVerificationCode(username) {
-      return config.generateSecret('verify' + username).toString('hex')
+    static getVerificationCode(email) {
+      return config.generateSecret('verify' + email).toString('hex')
     }
 
-    static getVerificationLink(username) {
-      return config.data.get(['client_host']) + '/verify/' + username + '/' + User.getVerificationCode(username)
+    static getVerificationLink(username, email) {
+      return config.data.get(['client_host']) + '/verify/' + username + '/' + User.getVerificationCode(email)
     }
 
-    * changeEmail (email) {
+    * changeEmail (email, verified) {
+      if (this.email === email) return this
+
       this.email = email
+      this.email_verified = verified || false
 
       const validationResult = User.validateExternal({
         email: email
