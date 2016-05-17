@@ -4,6 +4,8 @@ import Alert from 'react-bootstrap/lib/Alert'
 
 import * as actions from 'redux/actions/auth'
 
+import validation from './PasswordValidation'
+
 import { successable } from 'decorators'
 import { resetFormOnSuccess } from 'decorators'
 
@@ -11,7 +13,8 @@ import { Input } from 'components'
 
 @reduxForm({
   form: 'passwordSettings',
-  fields: ['password', 'verifyPassword']
+  fields: ['password', 'verifyPassword'],
+  validate: validation
   // TODO local validation
 }, state => ({
   user: state.auth.user,
