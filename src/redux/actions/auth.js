@@ -130,9 +130,16 @@ export function save(opts, data) {
   }
 }
 
+export function resendVerificationEmail(username) {
+  return {
+    types: [types.EMAIL_VERIFICATION_RESEND, types.EMAIL_VERIFICATION_RESEND_SUCCESS, types.EMAIL_VERIFICATION_RESEND_FAIL],
+    promise: (client) => client.post('/users/' + username + '/resendVerification')
+  }
+}
+
 export function verify(username, code) {
   return {
-    types: [types.VERIFY, types.VERIFY_SUCCESS, types.VERIFY_FAIL],
+    types: [types.EMAIL_VERIFICATION, types.EMAIL_VERIFICATION_SUCCESS, types.EMAIL_VERIFICATION_FAIL],
     promise: (client) => client.put('/users/' + username + '/verify', {data: {code}})
   }
 }

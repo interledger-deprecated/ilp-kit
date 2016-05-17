@@ -34,10 +34,16 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         user: action.result
       };
-    case types.VERIFY_SUCCESS:
+    case types.EMAIL_VERIFICATION_SUCCESS:
       return {
         ...state,
-        verified: true
+        verified: true,
+        user: action.result
+      };
+    case types.EMAIL_VERIFICATION_RESEND_SUCCESS:
+      return {
+        ...state,
+        verification_email_sent: true
       };
     case types.LOAD_CONFIG_SUCCESS:
       return {

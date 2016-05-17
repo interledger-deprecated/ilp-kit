@@ -19,7 +19,8 @@ const cx = classNames.bind(styles)
     user: state.auth.user,
     authFail: state.auth.fail,
     activeTab: state.auth.activeTab,
-    verified: state.auth.verified
+    verified: state.auth.verified,
+    verificationEmailSent: state.auth.verification_email_sent
   }),
   authActions)
 export default class Home extends Component {
@@ -35,6 +36,8 @@ export default class Home extends Component {
 
     // User verification
     params: PropTypes.object,
+    resendVerificationEmail: PropTypes.func,
+    verificationEmailSent: PropTypes.bool,
     verify: PropTypes.func,
     verified: PropTypes.bool
   }
@@ -62,8 +65,14 @@ export default class Home extends Component {
     this.props.changeTab(tab)
   }
 
+  resendVerification = (event) => {
+    event.preventDefault()
+
+    this.props.resendVerificationEmail(this.props.user.username)
+  }
+
   render() {
-    const {user, authFail, unmount, login, register, activeTab, verified} = this.props
+    const {user, authFail, unmount, login, register, activeTab, verified, verificationEmailSent} = this.props
     const {config} = this.context
 
     return (
@@ -111,6 +120,7 @@ export default class Home extends Component {
         {user &&
         <div className="row">
           <div className="col-sm-8">
+            {/* TODO:UX Invalid verification error */}
             {verified &&
             <Alert bsStyle="success">
               Your email has been verified!
@@ -144,6 +154,13 @@ export default class Home extends Component {
             </div>
           </div>
           <div className="col-sm-4">
+            {!user.email_verified &&
+            <Alert bsStyle="danger">
+              An email has been sent to <strong>{user.email}</strong>.
+              Please click the link in that message to confirm your email address.&nbsp;
+              {!verificationEmailSent && <a href="" onClick={this.resendVerification}>Resend the message</a>}
+              {verificationEmailSent && <strong>Verification email sent!</strong>}
+            </Alert>}
             <div className="panel panel-default">
               <div className="panel-heading">
                 <div className="panel-title">Use Five Bells Wallet as your default payment provider</div>
