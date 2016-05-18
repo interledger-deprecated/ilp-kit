@@ -19,17 +19,14 @@ function HealthControllerFactory () {
      *
      * @apiExample {shell} Health check
      *    curl -X GET
-     *    http://wallet.example/health
+     *    https://wallet.example/health
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
-     *    {
-     *      'status': 'OK'
-     *    }
      */
     static health () {
       // TODO: Add some checks, e.g. database status
-      this.body = {'status': 'OK'}
+      this.status = 200
     }
   }
 }

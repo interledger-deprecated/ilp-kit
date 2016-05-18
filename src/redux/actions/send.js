@@ -6,7 +6,7 @@ export function destinationChange(destination) {
   // TODO don't make a call for a local ledger destination
   return {
     types: [types.DESTINATION_CHANGE, types.DESTINATION_CHANGE_SUCCESS, types.DESTINATION_CHANGE_FAIL],
-    promise: (client) => client.get('/analyze/destination', {
+    promise: (client) => client.get('/parse/destination', {
       params: {
         destination: destination
       }

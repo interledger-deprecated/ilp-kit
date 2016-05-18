@@ -44,13 +44,13 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
      *
      * @apiExample {shell} Get user
      *    curl -X GET -H "Authorization: Basic YWxpY2U6YWxpY2U="
-     *    http://wallet.example/users/alice
+     *    https://wallet.example/users/alice
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
      *    {
      *      "username": "alice",
-     *      "account": "http://wallet.example/ledger/accounts/alice",
+     *      "account": "https://wallet.example/ledger/accounts/alice",
      *      "balance": "1000",
      *      "id": 1
      *    }
@@ -85,13 +85,13 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
      *    '{
      *        "password": "alice"
      *    }'
-     *    http://wallet.example/users/alice
+     *    https://wallet.example/users/alice
      *
      * @apiSuccessExample {json} 200 Response:
-     *    HTTP/1.1 200 OK
+     *    HTTP/1.1 201 OK
      *    {
-     *      "username": "bob",
-     *      "account": "http://wallet.example/ledger/accounts/bob",
+     *      "username": "alice",
+     *      "account": "https://wallet.example/ledger/accounts/alice",
      *      "balance": "1000",
      *      "id": 1
      *    }
@@ -113,7 +113,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
         ]
       }})
 
-      // TODO check if the http://account already exists
+      // TODO check if the https://account already exists
       if (dbUser) {
         // Username is already taken
         if (dbUser.username === username) {
@@ -165,6 +165,30 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
       this.status = 201
     }
 
+    /**
+     * @api {put} /users/:username Update user
+     * @apiName PutUser
+     * @apiGroup User
+     * @apiVersion 1.0.0
+     *
+     * @apiParam {String} username username
+     *
+     * @apiExample {shell} Update user email
+     *    curl -X PUT -d
+     *    '{
+     *        "email": "alice@example.com"
+     *    }'
+     *    https://wallet.example/users/alice
+     *
+     * @apiSuccessExample {json} 200 Response:
+     *    HTTP/1.1 200 OK
+     *    {
+     *      "username": "alice",
+     *      "account": "https://wallet.example/ledger/accounts/alice",
+     *      "balance": "1000",
+     *      "id": 1
+     *    }
+     */
     static * putResource () {
       const data = this.body
       let user = this.req.user
@@ -242,7 +266,30 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
     }
 
     /**
-     * Email verification
+     * @api {put} /users/:username/verify Verify user email address
+     * @apiName VerifyUser
+     * @apiGroup User
+     * @apiVersion 1.0.0
+     *
+     * @apiParam {String} username username
+     * @apiParam {String} code verification code
+     *
+     * @apiExample {shell} Verify user email address
+     *    curl -X PUT -d
+     *    '{
+     *        "code": "1f7aade2946667fac85ebaf7259182ead6b1fe062b5e8bb0ffa1b9d417431acb"
+     *    }'
+     *    https://wallet.example/users/alice/verify
+     *
+     * @apiSuccessExample {json} 200 Response:
+     *    HTTP/1.1 200 OK
+     *    {
+     *      "username": "alice",
+     *      "account": "https://wallet.example/ledger/accounts/alice",
+     *      "balance": "1000",
+     *      "id": 1,
+     *      "email_verified": true
+     *    }
      */
     static * verify () {
       let username = this.params.username
@@ -265,6 +312,21 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
       this.body = user.getDataExternal()
     }
 
+    /**
+     * @api {post} /users/:username/resendVerification Resend verification email
+     * @apiName ResendVerificationEmail
+     * @apiGroup User
+     * @apiVersion 1.0.0
+     *
+     * @apiParam {String} username username
+     *
+     * @apiExample {shell} Resend verification email
+     *    curl -X POST
+     *    https://wallet.example/users/alice/resendVerification
+     *
+     * @apiSuccessExample {json} 200 Response:
+     *    HTTP/1.1 200 OK
+     */
     static * resendVerification () {
       let username = this.params.username
       request.validateUriParameter('username', username, 'Identifier')
@@ -278,11 +340,29 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
         link: User.getVerificationLink(dbUser.username, dbUser.email)
       })
 
-      this.body = {'status':'ok'}
+      this.status = 200
     }
 
     /**
-     * Receiver
+     * @api {get} /receivers/:username Get receiver details
+     * @apiName GetReceiver
+     * @apiGroup User
+     * @apiVersion 1.0.0
+     *
+     * @apiParam {String} username receiver username
+     *
+     * @apiExample {shell} Get receiver details
+     *    curl -X GET
+     *    https://wallet.example/receivers/alice
+     *
+     * @apiSuccessExample {json} 200 Response:
+     *    HTTP/1.1 200 OK
+     *    {
+     *      "type": "payee",
+     *      "ledger": "https://wallet.example/ledger",
+     *      "account": "https://wallet.example/ledger/accounts/alice",
+     *      "payments": "https://wallet.example/receiver/alice/payments"
+     *    }
      */
     static * getReceiver () {
       const ledgerUri = config.data.getIn(['ledger', 'public_uri'])

@@ -32,13 +32,13 @@ function AuthsControllerFactory (Auth, User, log, ledger, Users) {
        *        "username": "alice",
        *        "password": "alice"
        *    }'
-       *    http://wallet.example/auth/login
+       *    https://wallet.example/auth/login
        *
        * @apiSuccessExample {json} 200 Response:
        *    HTTP/1.1 200 OK
        *    {
        *      "username": "alice",
-       *      "account": "http://wallet.example/ledger/accounts/alice",
+       *      "account": "https://wallet.example/ledger/accounts/alice",
        *      "balance": "1000",
        *      "id": 1
        *    }
@@ -47,14 +47,32 @@ function AuthsControllerFactory (Auth, User, log, ledger, Users) {
       // Local Auth
       router.post('/auth/login', passport.authenticate('local'), this.load)
 
+      /**
+       * @api {get} /auth/github Github Auth
+       * @apiName Github Auth
+       * @apiGroup Auth
+       * @apiVersion 1.0.0
+       *
+       * @apiDescription Github OAuth (used for cookie based auth)
+       */
+
       // GitHub OAuth
       router.get('/auth/github', passport.authenticate('github'))
+
+      /**
+       * @api {get} /auth/github/callback Github Auth Callback
+       * @apiName Github Auth Callback
+       * @apiGroup Auth
+       * @apiVersion 1.0.0
+       *
+       * @apiDescription Github Auth Callback (used for cookie based auth)
+       */
       router.get('/auth/github/callback', passport.authenticate('github', {
         successRedirect: '/',
         failureRedirect: '/'
       }), this.load)
 
-      // Load session user
+      // Get session user
       router.get('/auth/load', this.load)
 
       // Logout. Clears the session
@@ -71,13 +89,13 @@ function AuthsControllerFactory (Auth, User, log, ledger, Users) {
      *
      * @apiExample {shell} Load
      *    curl -X GET
-     *    http://wallet.example/auth/load
+     *    https://wallet.example/auth/load
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
      *    {
      *      "username": "alice",
-     *      "account": "http://wallet.example/ledger/accounts/alice",
+     *      "account": "https://wallet.example/ledger/accounts/alice",
      *      "balance": "1000",
      *      "id": 1
      *    }
@@ -100,7 +118,7 @@ function AuthsControllerFactory (Auth, User, log, ledger, Users) {
      *
      * @apiExample {shell} Logout
      *    curl -X POST
-     *    http://wallet.example/auth/logout
+     *    https://wallet.example/auth/logout
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK

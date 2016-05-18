@@ -21,8 +21,8 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
   return class PaymentsController {
     static init (router) {
       router.get('/payments', Auth.checkAuth, this.getHistory)
-      router.put('/payments/:id', Auth.checkAuth, Payment.createBodyParser(), this.putResource)
       router.post('/payments/findPath', Auth.checkAuth, this.findPath)
+      router.put('/payments/:id', Auth.checkAuth, Payment.createBodyParser(), this.putResource)
 
       router.post('/receivers/:username/payments', this.prepare)
     }
@@ -40,7 +40,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
      *
      * @apiExample {shell} Get last 2 payments
      *    curl -X GET -H "Authorization: Basic YWxpY2U6YWxpY2U="
-     *    http://wallet.example/payments?page=1&limit=2
+     *    https://wallet.example/payments?page=1&limit=2
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
@@ -49,10 +49,10 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
      *        {
      *          "id": "15a3cbb8-d0f3-410e-8a59-14e8dee14abd",
      *          "source_user": 1,
-     *          "source_account": "http://wallet.example/ledger/accounts/alice",
+     *          "source_account": "https://wallet.example/ledger/accounts/alice",
      *          "destination_user": 2,
-     *          "destination_account": "http://wallet.example/ledger/accounts/bob",
-     *          "transfers": "http://wallet.example/ledger/transfers/3d4c9c8e-204a-4213-9e91-88b64dad8604",
+     *          "destination_account": "https://wallet.example/ledger/accounts/bob",
+     *          "transfers": "https://wallet.example/ledger/transfers/3d4c9c8e-204a-4213-9e91-88b64dad8604",
      *          "state": null,
      *          "source_amount": "12",
      *          "destination_amount": "12",
@@ -65,10 +65,10 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
      *        {
      *          "id": "e1d3c588-807c-4d4f-b25c-61842b5ead6d",
      *          "source_user": 1,
-     *          "source_account": "http://wallet.example/ledger/accounts/alice",
+     *          "source_account": "https://wallet.example/ledger/accounts/alice",
      *          "destination_user": 2,
-     *          "destination_account": "http://wallet.example/ledger/accounts/bob",
-     *          "transfers": "http://wallet.example/ledger/transfers/d1fa49d3-c955-4833-803a-df0c43eab044",
+     *          "destination_account": "https://wallet.example/ledger/accounts/bob",
+     *          "transfers": "https://wallet.example/ledger/transfers/d1fa49d3-c955-4833-803a-df0c43eab044",
      *          "state": null,
      *          "source_amount": "1",
      *          "destination_amount": "1",
@@ -117,13 +117,10 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
      *        "destination_account": "bob@wallet.example",
      *        "destination_amount": "1"
      *    }'
-     *    http://wallet.example/payments/9efa70ec-08b9-11e6-b512-3e1d05defe78
+     *    https://wallet.example/payments/9efa70ec-08b9-11e6-b512-3e1d05defe78
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
-     *    {
-     *      "status": "OK"
-     *    }
      */
 
     // TODO handle payment creation. Shouldn't rely on notification service
@@ -186,7 +183,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
       }
 
       // TODO should be something more meaningful
-      this.body = {'status': 'OK'}
+      this.status = 200
     }
 
     /**
@@ -207,7 +204,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
      *        "destination": "bob@wallet.example",
      *        "destination_amount": "10"
      *    }'
-     *    http://wallet.example/payments/findPath
+     *    https://wallet.example/payments/findPath
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
@@ -251,6 +248,26 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
 
       this.body = path
     }
+
+    /**
+     * @api {POST} /receivers/:username/payments Prepare a payment
+     * @apiName PreparePayment
+     * @apiGroup Payment
+     * @apiVersion 1.0.0
+     *
+     * @apiDescription Prepare a payment
+     *
+     * @apiExample {shell} Prepare a payment
+     *    curl -X POST
+     *    https://wallet.example/receivers/alice/payments
+     *
+     * @apiSuccessExample {json} 200 Response:
+     *    HTTP/1.1 200 OK
+     *    {
+     *      "paymentId": "1bbeea29-f9aa-49aa-abb1-9954400c9ca7",
+     *      "receipt_condition": "cc:0:3:eAOobLmr23UI0wZgfmW1mis_b7cxrrRpNqvI2c37LI4:32"
+     *    }
+     */
 
     // TODO:PERFORMANCE Expire pending payments (remove from db)
     static * prepare () {

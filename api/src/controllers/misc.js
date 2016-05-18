@@ -2,7 +2,6 @@
 
 module.exports = MiscControllerFactory
 
-const request = require('five-bells-shared/utils/request')
 const Auth = require('../lib/auth')
 const Log = require('../lib/log')
 const Config = require('../lib/config')
@@ -15,10 +14,31 @@ function MiscControllerFactory (Auth, log, config, ledger, utils) {
 
   return class MiscController {
     static init (router) {
-      router.get('/analyze/destination', this.destination)
+      router.get('/parse/destination', this.destination)
       router.get('/config', this.config)
     }
 
+    /**
+     * @api {GET} /parse/destination Parse destination
+     * @apiName ParseDestination
+     * @apiGroup Misc
+     * @apiVersion 1.0.0
+     *
+     * @apiDescription Parse a destination
+     *
+     * @apiExample {shell} Parse a destination
+     *    curl -X GET
+     *    https://wallet.example/parse/destination?destination=alice@wallet.example
+     *
+     * @apiSuccessExample {json} 200 Response:
+     *    HTTP/1.1 200 OK
+     *    {
+     *      "ledger": {
+     *        "currencyCode": "USD",
+     *        "currencySymbol": "$"
+     *      }
+     *    }
+     */
     static * destination () {
       let destination = yield utils.parseDestination({
         destination: this.query.destination,
@@ -43,12 +63,12 @@ function MiscControllerFactory (Auth, log, config, ledger, utils) {
      *
      * @apiExample {shell} Find path
      *    curl -X GET
-     *    http://wallet.example/config
+     *    https://wallet.example/config
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
      *    {
-     *      "ledgerUri": "http://wallet.example/ledger",
+     *      "ledgerUri": "https://wallet.example/ledger",
      *      "currencyCode": "USD",
      *      "currencySymbol": "$"
      *    }

@@ -24,13 +24,13 @@ function NotificationsControllerFactory (ledger, Auth, Payment, User, Config) {
         // Sender doesn't need to do anything at this point
         if (transfer.credits[0].memo.receiver_payment_id) {
           ledger.preparedEvent(transfer)
-          this.body = {'status': 'OK'}
+          this.status = 200
         }
         return
       }
 
       if (transfer.state !== 'executed') {
-        this.body = {'status': 'OK'}
+        this.status = 200
         return
       }
 
@@ -93,7 +93,7 @@ function NotificationsControllerFactory (ledger, Auth, Payment, User, Config) {
 
       ledger.emitTransferEvent(transfer)
 
-      this.body = {'status': 'OK'}
+      this.status = 200
     }
   }
 }

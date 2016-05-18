@@ -23,12 +23,58 @@ function WebfingerControllerFactory (log, config, ledger) {
       router.get('/webfinger', this.load)
     }
 
+    /**
+     * @api {GET} /webfinger Get webfinger info
+     * @apiName GetWebfinger
+     * @apiGroup Misc
+     * @apiVersion 1.0.0
+     *
+     * @apiDescription Get webfinger info
+     *
+     * @apiExample {shell} Get webfinger info
+     *    curl -X GET
+     *    https://wallet.example/webfinger?resource=acct:alice@wallet.example
+     *
+     * @apiSuccessExample {json} 200 Response:
+     *    HTTP/1.1 200 OK
+     *    {
+     *      "subject": "acct:alice@wallet.example",
+     *      "links": [
+     *        {
+     *          "rel": "https://interledger.org/rel/ledgerUri",
+     *          "href": "https://wallet.example/ledger"
+     *        },
+     *        {
+     *          "rel": "https://interledger.org/rel/socketIOUri",
+     *          "href": "https://wallet.example/socket.io"
+     *        },
+     *        {
+     *          "rel": "https://interledger.org/rel/ledgerAccount",
+     *          "href": "https://wallet.example/ledger/accounts/alice"
+     *        },
+     *        {
+     *          "rel": "https://interledger.org/rel/sender/payment",
+     *          "href": "https://wallet.example/payments"
+     *        },
+     *        {
+     *          "rel": "https://interledger.org/rel/sender/pathfind",
+     *          "href": "https://wallet.example/payments/findPath"
+     *        },
+     *        {
+     *          "rel": "https://interledger.org/rel/receiver",
+     *          "href": "https://wallet.example/receivers/alice"
+     *        },
+     *        {
+     *          "rel": "https://interledger.org/rel/receiver/payment",
+     *          "href": "https://wallet.example/receivers/alice/payments"
+     *        }
+     *      ]
+     *    }
+     */
     static * load () {
       if (!this.query || !this.query.resource) {
         // TODO throw exception
-        this.status = 400
-        this.body = {}
-        return
+        return this.status = 400
       }
 
       // TODO rel support
