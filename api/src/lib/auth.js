@@ -62,29 +62,34 @@ module.exports = class Auth {
             username: profile.username,
             password: self.generateGithubPassword(profile.id),
             email: email,
+            email_verified: true,
             github_id: profile.id,
             profile_picture: profile.photos[0].value
           }
 
           // Create the ledger account
+          let ledgerUser
           try {
-            yield ledger.createAccount(userObj)
+            ledgerUser = yield ledger.createAccount(userObj)
           } catch (e) {
             // TODO handle
+            console.log('auth.js:80', e)
           }
 
           // Create the db user
           try {
-            dbUser = yield User.createExternal(userObj)
+            dbUser = User.fromDatabaseModel(yield User.createExternal(userObj))
           } catch (e) {
             // TODO handle
+            console.log('auth.js:80', e)
           }
 
           // Append ledger account
-          const user = yield dbUser.appendLedgerAccount()
-          user.password = password
+          const user = yield dbUser.appendLedgerAccount(ledgerUser)
 
-          done(null, user)
+          user.password = self.generateGithubPassword(profile.id)
+
+          return done(null, user)
         })
       ))
     }
