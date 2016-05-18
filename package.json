@@ -23,7 +23,7 @@
     "start": "concurrent --kill-others \"npm run start-prod\" \"npm run start-prod-api\"",
     "start-prod": "better-npm-run start-prod",
     "start-prod-api": "better-npm-run start-prod-api",
-    "build": "cp -n src/theme/variables.scss.example src/theme/variables.scss && better-npm-run build",
+    "build": "cp -n src/theme/variables.scss.example src/theme/variables.scss ; better-npm-run build",
     "lint": "eslint -c .eslintrc src api",
     "start-dev": "better-npm-run start-dev",
     "start-dev-api": "better-npm-run start-dev-api",
