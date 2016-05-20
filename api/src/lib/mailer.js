@@ -27,27 +27,40 @@ module.exports = class Mailer {
     this.transporter = nodemailer.createTransport(mg(auth));
   }
 
-  * sendWelcome (params) {
+  sendWelcome (params) {
     let locals = {
       name: params.name,
       link: params.link
     }
 
-    return yield this.send({
+    return this.send({
       template: 'welcome',
       locals: locals,
       to: params.to
     })
   }
 
-  * changeEmail (params) {
+  changeEmail (params) {
     let locals = {
       name: params.name,
       link: params.link
     }
 
-    return yield this.send({
+    return this.send({
       template: 'change-email',
+      locals: locals,
+      to: params.to
+    })
+  }
+
+  forgotPassword (params) {
+    let locals = {
+      name: params.name,
+      link: params.link
+    }
+
+    return this.send({
+      template: 'forgot-password',
       locals: locals,
       to: params.to
     })

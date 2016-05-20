@@ -8,6 +8,8 @@ import Alert from 'react-bootstrap/lib/Alert'
 import { SendForm } from 'containers'
 import { LoginForm } from 'components'
 import { RegisterForm } from 'components'
+import { ForgotPasswordForm } from 'components'
+import { ChangePasswordForm } from 'components'
 import { History } from 'containers'
 
 import classNames from 'classnames/bind'
@@ -29,6 +31,7 @@ export default class Home extends Component {
     authFail: PropTypes.object,
     login: PropTypes.func,
     register: PropTypes.func,
+    forgot: PropTypes.func,
     unmount: PropTypes.func,
     reload: PropTypes.func,
     changeTab: PropTypes.func,
@@ -39,7 +42,10 @@ export default class Home extends Component {
     resendVerificationEmail: PropTypes.func,
     verificationEmailSent: PropTypes.bool,
     verify: PropTypes.func,
-    verified: PropTypes.bool
+    verified: PropTypes.bool,
+
+    // Password change
+    changePassword: PropTypes.func
   }
 
   static contextTypes = {
@@ -47,8 +53,16 @@ export default class Home extends Component {
   }
 
   componentDidMount() {
-    if (this.props.params.username && this.props.params.code) {
-      this.props.verify(this.props.params.username, this.props.params.code)
+    if (this.props.params.username) {
+      // Email verification
+      if (this.props.params.verifyCode) {
+        this.props.verify(this.props.params.username, this.props.params.verifyCode)
+      }
+
+      // Password change
+      if (this.props.params.passwordChangeCode) {
+        this.handleChangeTab('changePassword')
+      }
     }
   }
 
@@ -61,7 +75,7 @@ export default class Home extends Component {
   }
 
   handleChangeTab = (tab, event) => {
-    event.preventDefault()
+    if (event) event.preventDefault()
     this.props.changeTab(tab)
   }
 
@@ -72,7 +86,7 @@ export default class Home extends Component {
   }
 
   render() {
-    const {user, authFail, unmount, login, register, activeTab, verified, verificationEmailSent} = this.props
+    const {user, authFail, unmount, login, register, forgot, changePassword, activeTab, verified, verificationEmailSent, params} = this.props
     const {config} = this.context
 
     return (
@@ -101,9 +115,13 @@ export default class Home extends Component {
                   </Alert>}
 
                   {activeTab === 'login' &&
-                  <LoginForm login={login} fail={authFail} unmount={unmount} />}
+                  <LoginForm login={login} fail={authFail} unmount={unmount} onForgotPassword={this.handleChangeTab.bind('this', 'forgot')} />}
                   {activeTab === 'register' &&
                   <RegisterForm register={register} fail={authFail} unmount={unmount} />}
+                  {activeTab === 'forgot' &&
+                  <ForgotPasswordForm submit={forgot} fail={authFail} unmount={unmount} />}
+                  {activeTab === 'changePassword' &&
+                  <ChangePasswordForm submit={changePassword} username={params.username} code={params.passwordChangeCode} fail={authFail} unmount={unmount} />}
                 </div>
               </div>
               <div className={cx('oauthContainer', 'clearfix')}>

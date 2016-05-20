@@ -7,13 +7,15 @@ const passport = require('koa-passport')
 const Auth = require('../lib/auth')
 const Log = require('../lib/log')
 const Ledger = require('../lib/ledger')
+const Mailer = require('../lib/mailer')
 const UserFactory = require('../models/user')
 const UsersControllerFactory = require('./users')
 
 const NotFoundError = require('../errors/not-found-error')
+const PasswordsDontMatchError = require('../errors/passwords-dont-match-error')
 
-AuthsControllerFactory.constitute = [Auth, UserFactory, Log, Ledger, UsersControllerFactory]
-function AuthsControllerFactory (Auth, User, log, ledger, Users) {
+AuthsControllerFactory.constitute = [Auth, UserFactory, Log, Ledger, UsersControllerFactory, Mailer]
+function AuthsControllerFactory (Auth, User, log, ledger, Users, mailer) {
   log = log('auth')
 
   return class AuthController {
@@ -74,6 +76,8 @@ function AuthsControllerFactory (Auth, User, log, ledger, Users) {
 
       // Get session user
       router.get('/auth/load', this.load)
+      router.post('/auth/forgotPassword', this.forgotPassword)
+      router.post('/auth/changePassword', this.changePassword)
 
       // Logout. Clears the session
       router.post('/auth/logout', this.logout)
@@ -106,6 +110,66 @@ function AuthsControllerFactory (Auth, User, log, ledger, Users) {
       if (!user) throw new NotFoundError("No active user session")
 
       this.body = user.getDataExternal()
+    }
+
+    /**
+     * @api {post} /auth/forgotPassword Forgot Password
+     * @apiName ForgotPassword
+     * @apiGroup Auth
+     * @apiVersion 1.0.0
+     *
+     * @apiDescription Get an email to change the password
+     *
+     * @apiParam {String} resource username or email
+     *
+     * @apiExample {shell} Forgot Password
+     *    curl -X POST
+     *    https://wallet.example/auth/forgotPassword
+     *
+     * @apiSuccessExample {json} 200 Response:
+     *    HTTP/1.1 200 OK
+     */
+    static * forgotPassword () {
+      const resource = this.body.resource
+
+      // TODO think about github users
+      const dbUser = yield User.findOne({where: {
+        $or: [
+          { username: resource },
+          { email: resource }
+        ]
+      }})
+
+      if (!dbUser) throw new NotFoundError("Wrong username/email")
+
+      // TODO Send the email
+      yield mailer.forgotPassword({
+        name: dbUser.username,
+        to: dbUser.email,
+        link: dbUser.generateForgotPasswordLink()
+      })
+
+      this.body = {}
+      this.status = 200
+    }
+
+    static * changePassword () {
+      const dbUser = yield User.findOne({where: { username: this.body.username }})
+
+      if (!dbUser) throw new NotFoundError("Wrong username")
+
+      if (this.body.password !== this.body.repeatPassword) {
+        throw new PasswordsDontMatchError('Passwords don\'t match')
+      }
+
+      dbUser.verifyForgotPasswordCode(this.body.code)
+
+      yield ledger.updateAccount({
+        username: dbUser.username,
+        newPassword: this.body.password
+      }, true)
+
+      this.body = dbUser.getDataExternal()
     }
 
     /**

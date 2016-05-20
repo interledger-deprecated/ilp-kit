@@ -111,6 +111,31 @@ export function login(fields) {
   }
 }
 
+export function forgot(data) {
+  return {
+    types: [types.FORGOT_PASSWORD, types.FORGOT_PASSWORD_SUCCESS, types.FORGOT_PASSWORD_FAIL],
+    promise: (client) => client.post('/auth/forgotPassword', {
+      data: {
+        resource: data.resource
+      }
+    })
+  }
+}
+
+export function changePassword(data) {
+  return {
+    types: [types.CHANGE_PASSWORD, types.CHANGE_PASSWORD_SUCCESS, types.CHANGE_PASSWORD_FAIL],
+    promise: (client) => client.post('/auth/changePassword', {
+      data: {
+        code: data.code,
+        username: data.username,
+        password: data.password,
+        repeatPassword: data.repeatPassword
+      }
+    })
+  }
+}
+
 export function logout() {
   return {
     types: [types.LOGOUT, types.LOGOUT_SUCCESS, types.LOGOUT_FAIL],

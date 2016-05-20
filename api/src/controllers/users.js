@@ -13,7 +13,7 @@ const UserFactory = require('../models/user')
 
 const UsernameTakenError = require('../errors/username-taken-error')
 const EmailTakenError = require('../errors/email-taken-error')
-const PasswordsDontMatch = require('../errors/passwords-dont-match')
+const PasswordsDontMatchError = require('../errors/passwords-dont-match-error')
 const InvalidVerification = require('../errors/invalid-verification-error')
 
 UsersControllerFactory.constitute = [Auth, UserFactory, Log, Ledger, Socket, Config, Mailer]
@@ -198,7 +198,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
       // Password change
       if (data.password) {
         if (data.password !== data.verifyPassword) {
-          throw new PasswordsDontMatch('Passwords don\'t match')
+          throw new PasswordsDontMatchError('Passwords don\'t match')
         }
 
         // Update the ledger user

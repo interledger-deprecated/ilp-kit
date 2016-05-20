@@ -2,7 +2,7 @@
 
 const BaseError = require('five-bells-shared/errors/base-error')
 
-class PasswordsDontMatch extends BaseError {
+class PasswordsDontMatchError extends BaseError {
   constructor (message) {
     super(message)
   }
@@ -17,4 +17,4 @@ class PasswordsDontMatch extends BaseError {
   }
 }
 
-module.exports = PasswordsDontMatch
+module.exports = PasswordsDontMatchError

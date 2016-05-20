@@ -43,7 +43,8 @@ export default (store) => {
         { /* Routes */ }
         <Route path="login" component={Login}/>
         <Route path="register" component={Register}/>
-        <Route path="verify/:username/:code" component={Home}/>
+        <Route path="verify/:username/:verifyCode" component={Home}/>
+        <Route path="changePassword/:username/:passwordChangeCode" component={Home}/>
 
         { /* Routes requiring login */ }
         <Route onEnter={requireLogin}>

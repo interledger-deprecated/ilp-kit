@@ -76,6 +76,8 @@ module.exports = class Auth {
             console.log('auth.js:80', e)
           }
 
+          userObj.account = ledgerUser.id
+
           // Create the db user
           try {
             dbUser = User.fromDatabaseModel(yield User.createExternal(userObj))

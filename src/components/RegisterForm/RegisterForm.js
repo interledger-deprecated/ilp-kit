@@ -63,7 +63,6 @@ export default class RegisterForm extends Component {
           <Input object={password} label="Password" size="lg" type="password" />
         </div>
         <button type="submit" className="btn btn-complete" disabled={pristine || invalid || submitting}>
-          <i className="fa fa-sign-in"/>
           {submitting ? ' Registering...' : ' Register'}
         </button>
       </form>

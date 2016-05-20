@@ -24,13 +24,13 @@ function UserFactory (sequelize, validator, ledger, config) {
 
     static convertToExternal (data) {
       delete data.password
+      delete data.created_at
+      delete data.updated_at
 
       return data
     }
 
     static convertFromPersistent (data) {
-      delete data.created_at
-      delete data.updated_at
       data = _.omit(data, _.isNull)
       return data
     }
@@ -109,6 +109,36 @@ function UserFactory (sequelize, validator, ledger, config) {
       this.balance = Math.round(ledgerUser.balance * 100) / 100
 
       return this
+    }
+
+    generateForgotPasswordCode(date) {
+      date = date || Math.floor(Date.now() / 1000)
+
+      return date + '.' + config.generateSecret(+date + this.id + this.updated_at.toString()).toString('hex')
+    }
+
+    generateForgotPasswordLink() {
+      return config.data.get(['client_host']) + '/changePassword/' + this.username + '/' + this.generateForgotPasswordCode()
+    }
+
+    verifyForgotPasswordCode(code) {
+      const parts = code.split('.')
+      const date = parts[0]
+      const hash = parts[1]
+
+      if (!date || !hash) throw new InvalidBodyError("Invalid code")
+
+      const currentDate = Math.floor(Date.now() / 1000)
+
+      // Code is only valid for an hour
+      if (currentDate > date + 3600) {
+        // TODO should this be an invalid body error?
+        throw new InvalidBodyError("The code has been expired")
+      }
+
+      if (code !== this.generateForgotPasswordCode(date)) {
+        throw new InvalidBodyError("Invalid code")
+      }
     }
   }
 
