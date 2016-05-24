@@ -1,7 +1,6 @@
 export const AUTH_LOAD = 'AUTH_LOAD';
 export const AUTH_LOAD_SUCCESS = 'AUTH_LOAD_SUCCESS';
 export const AUTH_LOAD_FAIL = 'AUTH_LOAD_FAIL';
-export const AUTH_CHANGE_TAB = 'AUTH_CHANGE_TAB';
 
 export const AUTH_SAVE = 'AUTH_SAVE';
 export const AUTH_SAVE_SUCCESS = 'AUTH_SAVE_SUCCESS';

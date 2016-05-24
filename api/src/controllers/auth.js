@@ -76,8 +76,8 @@ function AuthsControllerFactory (Auth, User, log, ledger, Users, mailer) {
 
       // Get session user
       router.get('/auth/load', this.load)
-      router.post('/auth/forgotPassword', this.forgotPassword)
-      router.post('/auth/changePassword', this.changePassword)
+      router.post('/auth/forgot-password', this.forgotPassword)
+      router.post('/auth/change-password', this.changePassword)
 
       // Logout. Clears the session
       router.post('/auth/logout', this.logout)
@@ -113,7 +113,7 @@ function AuthsControllerFactory (Auth, User, log, ledger, Users, mailer) {
     }
 
     /**
-     * @api {post} /auth/forgotPassword Forgot Password
+     * @api {post} /auth/forgot-password Forgot Password
      * @apiName ForgotPassword
      * @apiGroup Auth
      * @apiVersion 1.0.0
@@ -124,7 +124,7 @@ function AuthsControllerFactory (Auth, User, log, ledger, Users, mailer) {
      *
      * @apiExample {shell} Forgot Password
      *    curl -X POST
-     *    https://wallet.example/auth/forgotPassword
+     *    https://wallet.example/auth/forgot-password
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK

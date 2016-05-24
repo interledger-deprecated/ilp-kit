@@ -1,11 +1,10 @@
 import React from 'react'
 import {Router, IndexRoute, Route} from 'react-router'
-import { isLoaded as isAuthLoaded, load as loadAuth } from 'redux/actions/auth'
+import { isLoaded as isAuthLoaded, load } from 'redux/actions/auth'
 import {
     App,
+    Auth,
     Home,
-    Login,
-    Register,
     Button,
     Settings,
     NotFound,
@@ -13,21 +12,36 @@ import {
   } from 'containers'
 
 export default (store) => {
-  const requireLogin = (nextState, replace, cb) => {
-    function checkAuth() {
-      const { auth: { user }} = store.getState()
-      if (!user) {
-        // oops, not logged in, so can't be here!
-        replace('/')
-      }
+  const isAuth = () => {
+    return store.getState().auth.user
+  }
+
+  const loadAuth = (cb) => {
+    if (!isAuthLoaded(store.getState())) {
+      store.dispatch(load()).then(cb).catch(cb)
+    } else {
       cb()
     }
+  }
 
-    if (!isAuthLoaded(store.getState())) {
-      store.dispatch(loadAuth()).then(checkAuth).catch(checkAuth)
-    } else {
-      checkAuth()
-    }
+  const noAuth = (nextState, replace, cb) => {
+    loadAuth(() => {
+      if (isAuth()) replace('/')
+      cb()
+    })
+  }
+
+  const requireAuth = (nextState, replace, cb) => {
+    loadAuth(() => {
+      if (!isAuth()) replace('/')
+      cb()
+    })
+  }
+
+  const rootComponent = (nextState, cb) => {
+    loadAuth(() => {
+      cb(null, isAuth() ? Home : Auth)
+    })
   }
 
   /**
@@ -38,19 +52,24 @@ export default (store) => {
       <Route path="widget" component={Widget} />
       <Route path="/" component={App}>
         { /* Home (main) route */ }
-        <IndexRoute component={Home}/>
+        <IndexRoute getComponent={rootComponent}/>
 
-        { /* Routes */ }
-        <Route path="login" component={Login}/>
-        <Route path="register" component={Register}/>
-        <Route path="verify/:username/:verifyCode" component={Home}/>
-        <Route path="changePassword/:username/:passwordChangeCode" component={Home}/>
+        { /* Routes only available to guests */ }
+        <Route onEnter={noAuth}>
+          <Route path="login" component={Auth}/>
+          <Route path="register" component={Auth}/>
+          <Route path="forgot-password" component={Auth}/>
+          <Route path="change-password/:username/:passwordChangeCode" component={Auth}/>
+        </Route>
 
-        { /* Routes requiring login */ }
-        <Route onEnter={requireLogin}>
+        { /* Routes requiring Auth */ }
+        <Route onEnter={requireAuth}>
           <Route path="button" component={Button}/>
           <Route path="settings" component={Settings}/>
         </Route>
+
+        { /* Routes available to all */ }
+        <Route path="verify/:username/:verifyCode" getComponent={rootComponent}/>
 
         { /* Catch all route */ }
         <Route path="*" component={NotFound} status={404} />

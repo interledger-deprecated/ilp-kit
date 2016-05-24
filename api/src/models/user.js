@@ -118,7 +118,7 @@ function UserFactory (sequelize, validator, ledger, config) {
     }
 
     generateForgotPasswordLink() {
-      return config.data.get(['client_host']) + '/changePassword/' + this.username + '/' + this.generateForgotPasswordCode()
+      return config.data.get(['client_host']) + '/change-password/' + this.username + '/' + this.generateForgotPasswordCode()
     }
 
     verifyForgotPasswordCode(code) {

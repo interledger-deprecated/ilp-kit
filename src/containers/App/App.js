@@ -4,7 +4,7 @@ import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap'
 import Waypoint from 'react-waypoint'
 import NavItem from 'react-bootstrap/lib/NavItem'
 import DocumentMeta from 'react-document-meta'
-import { isLoaded as isAuthLoaded, load as loadAuth, loadConfig, logout, updateBalance } from 'redux/actions/auth'
+import { isLoaded as isAuthLoaded, load as loadAuth, loadConfig, logout, updateBalance, verify } from 'redux/actions/auth'
 import { routeActions } from 'react-router-redux'
 import { addPayment as historyAddPayment } from 'redux/actions/history'
 import config from '../../config'
@@ -35,7 +35,7 @@ const cx = classNames.bind(styles)
     user: state.auth.user,
     config: state.auth.config
   }),
-  {logout, pushState: routeActions.push, historyAddPayment, updateBalance})
+  {logout, pushState: routeActions.push, historyAddPayment, updateBalance, verify})
 export default class App extends Component {
   static propTypes = {
     children: PropTypes.object.isRequired,
@@ -44,7 +44,10 @@ export default class App extends Component {
     logout: PropTypes.func.isRequired,
     historyAddPayment: PropTypes.func.isRequired,
     updateBalance: PropTypes.func.isRequired,
-    pushState: PropTypes.func.isRequired
+    pushState: PropTypes.func.isRequired,
+    params: PropTypes.object,
+
+    verify: PropTypes.func
   }
 
   static contextTypes = {
@@ -62,6 +65,8 @@ export default class App extends Component {
   }
 
   componentDidMount() {
+    const params = this.props.params
+
     // TODO socket stuff needs work
     if (socket) {
       socket.connect()
@@ -74,6 +79,13 @@ export default class App extends Component {
 
       if (this.props.user && this.props.user.username) {
         socket.emit('subscribe', this.props.user.username)
+      }
+    }
+
+    if (params.username) {
+      // Email verification
+      if (params.verifyCode) {
+        this.props.verify(params.username, params.verifyCode)
       }
     }
   }

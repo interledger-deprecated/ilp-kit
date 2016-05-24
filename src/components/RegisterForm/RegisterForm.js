@@ -21,7 +21,6 @@ export default class RegisterForm extends Component {
     submitting: PropTypes.bool.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     register: PropTypes.func.isRequired,
-    unmount: PropTypes.func,
     fail: PropTypes.object
   }
 
@@ -30,10 +29,6 @@ export default class RegisterForm extends Component {
     setTimeout(() => {
       this.setState({hideFakes: true})
     }, 1)
-  }
-
-  componentWillUnmount() {
-    this.props.unmount()
   }
 
   render() {

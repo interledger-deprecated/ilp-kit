@@ -29,7 +29,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
 
       // Email verification
       router.put('/users/:username/verify', this.verify)
-      router.post('/users/:username/resendVerification', this.resendVerification)
+      router.post('/users/:username/resend-verification', this.resendVerification)
 
       router.get('/receivers/:username', this.getReceiver)
     }
@@ -307,13 +307,11 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
       dbUser.email_verified = true
       yield dbUser.save()
 
-      const user = yield dbUser.appendLedgerAccount()
-
-      this.body = user.getDataExternal()
+      this.status = 200
     }
 
     /**
-     * @api {post} /users/:username/resendVerification Resend verification email
+     * @api {post} /users/:username/resend-verification Resend verification email
      * @apiName ResendVerificationEmail
      * @apiGroup User
      * @apiVersion 1.0.0
@@ -322,7 +320,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
      *
      * @apiExample {shell} Resend verification email
      *    curl -X POST
-     *    https://wallet.example/users/alice/resendVerification
+     *    https://wallet.example/users/alice/resend-verification
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
@@ -334,7 +332,8 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
 
       const dbUser = yield User.findOne({where: {username: username}})
 
-      yield mailer.sendWelcome({
+      // TODO could sometimes be sendWelcome
+      yield mailer.changeEmail({
         name: dbUser.username,
         to: dbUser.email,
         link: User.getVerificationLink(dbUser.username, dbUser.email)

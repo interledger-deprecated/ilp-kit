@@ -24,15 +24,10 @@ export default class ForgotPasswordForm extends Component {
     submit: PropTypes.func.isRequired,
     submitFailed: PropTypes.bool,
     error: PropTypes.object,
-    unmount: PropTypes.func,
 
     // Successable
     succeed: PropTypes.func,
     success: PropTypes.bool
-  }
-
-  componentWillUnmount() {
-    this.props.unmount()
   }
 
   handleSubmit = (data) => {

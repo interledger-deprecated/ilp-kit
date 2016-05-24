@@ -1,4 +1,5 @@
 import React, {Component, PropTypes} from 'react'
+import {Link} from 'react-router'
 import {reduxForm} from 'redux-form'
 import loginValidation from './LoginValidation'
 
@@ -24,17 +25,11 @@ export default class LoginForm extends Component {
     submitting: PropTypes.bool.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     login: PropTypes.func.isRequired,
-    unmount: PropTypes.func,
-    fail: PropTypes.object,
-    onForgotPassword: PropTypes.func
-  }
-
-  componentWillUnmount() {
-    this.props.unmount()
+    fail: PropTypes.object
   }
 
   render() {
-    const { handleSubmit, login, fail, fields: {username, password}, pristine, invalid, submitting, onForgotPassword } = this.props
+    const { handleSubmit, login, fail, fields: {username, password}, pristine, invalid, submitting } = this.props
 
     return (
       <form onSubmit={handleSubmit(login)}>
@@ -55,8 +50,7 @@ export default class LoginForm extends Component {
             </button>
           </div>
           <div className={cx('col-sm-8', 'text-right', 'forgotPasswordLinkContainer')}>
-            {onForgotPassword &&
-            <a href="" onClick={onForgotPassword}>Forgot your password?</a>}
+            <Link to="/forgot-password">Forgot your password?</Link>
           </div>
         </div>
       </form>

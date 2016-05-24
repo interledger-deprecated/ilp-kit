@@ -44,7 +44,6 @@ export default class SendForm extends Component {
     values: PropTypes.object,
     transfer: PropTypes.func.isRequired,
     findPath: PropTypes.func.isRequired,
-    unmount: PropTypes.func.isRequired,
     path: PropTypes.object,
     pathFinding: PropTypes.bool,
     data: PropTypes.object,

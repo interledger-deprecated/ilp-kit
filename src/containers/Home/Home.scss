@@ -1,12 +1,5 @@
 @import '../../theme/variables.scss';
 
-.oauthContainer {
-  background: #fff;
-  padding: 15px;
-  margin: 15px 0 0 0;
-  line-height: 35px;
-}
-
 .balanceContainer {
   text-align: center;
 
@@ -28,10 +21,4 @@
   color: $faded-text-color;
   font-size: 12px;
   margin: 10px;
-}
-.panel-auth {
-  ul > li {
-    width: 50%;
-    text-align: center;
-  }
 }

@@ -1,0 +1,14 @@
+@import '../../theme/variables.scss';
+
+.oauthContainer {
+  background: #fff;
+  padding: 15px;
+  margin: 15px 0 0 0;
+  line-height: 35px;
+}
+.panel-auth {
+  ul > li {
+    width: 50%;
+    text-align: center;
+  }
+}

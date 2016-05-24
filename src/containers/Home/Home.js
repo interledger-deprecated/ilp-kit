@@ -6,10 +6,6 @@ import { amount } from '../../utils/amount'
 import Alert from 'react-bootstrap/lib/Alert'
 
 import { SendForm } from 'containers'
-import { LoginForm } from 'components'
-import { RegisterForm } from 'components'
-import { ForgotPasswordForm } from 'components'
-import { ChangePasswordForm } from 'components'
 import { History } from 'containers'
 
 import classNames from 'classnames/bind'
@@ -19,51 +15,25 @@ const cx = classNames.bind(styles)
 @connect(
   state => ({
     user: state.auth.user,
-    authFail: state.auth.fail,
+    verificationEmailSent: state.auth.verificationEmailSent,
     activeTab: state.auth.activeTab,
     verified: state.auth.verified,
-    verificationEmailSent: state.auth.verification_email_sent
   }),
   authActions)
 export default class Home extends Component {
   static propTypes = {
     user: PropTypes.object,
-    authFail: PropTypes.object,
-    login: PropTypes.func,
-    register: PropTypes.func,
-    forgot: PropTypes.func,
-    unmount: PropTypes.func,
     reload: PropTypes.func,
-    changeTab: PropTypes.func,
-    activeTab: PropTypes.string,
 
     // User verification
     params: PropTypes.object,
     resendVerificationEmail: PropTypes.func,
     verificationEmailSent: PropTypes.bool,
-    verify: PropTypes.func,
-    verified: PropTypes.bool,
-
-    // Password change
-    changePassword: PropTypes.func
+    verified: PropTypes.bool
   }
 
   static contextTypes = {
     config: PropTypes.object
-  }
-
-  componentDidMount() {
-    if (this.props.params.username) {
-      // Email verification
-      if (this.props.params.verifyCode) {
-        this.props.verify(this.props.params.username, this.props.params.verifyCode)
-      }
-
-      // Password change
-      if (this.props.params.passwordChangeCode) {
-        this.handleChangeTab('changePassword')
-      }
-    }
   }
 
   reload = () => {
@@ -74,11 +44,6 @@ export default class Home extends Component {
     navigator.registerPaymentHandler('interledger', location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/widget')
   }
 
-  handleChangeTab = (tab, event) => {
-    if (event) event.preventDefault()
-    this.props.changeTab(tab)
-  }
-
   resendVerification = (event) => {
     event.preventDefault()
 
@@ -86,117 +51,70 @@ export default class Home extends Component {
   }
 
   render() {
-    const {user, authFail, unmount, login, register, forgot, changePassword, activeTab, verified, verificationEmailSent, params} = this.props
+    const {user, verified, verificationEmailSent} = this.props
     const {config} = this.context
 
     return (
-      <div>
-        {!user &&
-        <div className="row">
-          <div className="col-xs-12 col-sm-offset-4 col-sm-4">
-            <div className={cx('panel', 'panel-transparent', 'panel-auth')}>
-              <ul className="nav nav-tabs nav-tabs-linetriangle" role="tablist" data-init-reponsive-tabs="collapse">
-                <li className={activeTab === 'login' ? 'active' : ''}>
-                  <a href="" onClick={this.handleChangeTab.bind(this, 'login')} data-toggle="tab" role="tab" aria-expanded="true">
-                    Login
-                  </a>
-                </li>
-                <li className={activeTab === 'register' ? 'active' : ''}>
-                  <a href="" onClick={this.handleChangeTab.bind(this, 'register')} data-toggle="tab" role="tab" aria-expanded="true">
-                    Register
-                  </a>
-                </li>
-              </ul>
-              <div className="tab-content">
-                <div className="tab-pane active">
-                  {verified &&
-                  <Alert bsStyle="success">
-                    Your email has been verified!
-                  </Alert>}
+      <div className="row">
+        <div className="col-sm-8">
+          {/* TODO:UX Invalid verification error */}
+          {verified &&
+          <Alert bsStyle="success">
+            Your email has been verified!
+          </Alert>}
 
-                  {activeTab === 'login' &&
-                  <LoginForm login={login} fail={authFail} unmount={unmount} onForgotPassword={this.handleChangeTab.bind('this', 'forgot')} />}
-                  {activeTab === 'register' &&
-                  <RegisterForm register={register} fail={authFail} unmount={unmount} />}
-                  {activeTab === 'forgot' &&
-                  <ForgotPasswordForm submit={forgot} fail={authFail} unmount={unmount} />}
-                  {activeTab === 'changePassword' &&
-                  <ChangePasswordForm submit={changePassword} username={params.username} code={params.passwordChangeCode} fail={authFail} unmount={unmount} />}
+          {/* Balance */}
+          <div className="panel panel-default">
+            <div className="panel-body">
+              <div className={cx('balanceContainer')}>
+                <div className={cx('balanceDescription')}>Your Balance</div>
+                <div className={cx('balance')}>
+                  {config.currencySymbol}{amount(user.balance)}
+                  {config.reload && <span className={cx('but')}>*</span>}
                 </div>
-              </div>
-              <div className={cx('oauthContainer', 'clearfix')}>
-                <div className="pull-left">Or login using</div>
-                <div className="pull-right">
-                  <a href="/api/auth/github" className="btn btn-primary">Github</a>
-                </div>
+                {config.reload &&
+                  <div>
+                    <button className="btn btn-complete btn-lg" onClick={this.reload}>Get More</button>
+                    <div className={cx('balanceFake')}>* Don't get too excited, this is fake money</div>
+                  </div>}
               </div>
             </div>
           </div>
-        </div>}
-
-        {/* Balance Send widget */}
-        {user &&
-        <div className="row">
-          <div className="col-sm-8">
-            {/* TODO:UX Invalid verification error */}
-            {verified &&
-            <Alert bsStyle="success">
-              Your email has been verified!
-            </Alert>}
-
-            {/* Balance */}
-            <div className="panel panel-default">
-              <div className="panel-body">
-                <div className={cx('balanceContainer')}>
-                  <div className={cx('balanceDescription')}>Your Balance</div>
-                  <div className={cx('balance')}>
-                    {config.currencySymbol}{amount(user.balance)}
-                    {config.reload && <span className={cx('but')}>*</span>}
-                  </div>
-                  {config.reload &&
-                    <div>
-                      <button className="btn btn-complete btn-lg" onClick={this.reload}>Get More</button>
-                      <div className={cx('balanceFake')}>* Don't get too excited, this is fake money</div>
-                    </div>}
-                </div>
-              </div>
+          {/* History */}
+          <div className="panel panel-default">
+            <div className="panel-heading">
+              <div className="panel-title">Payment History</div>
             </div>
-            {/* History */}
-            <div className="panel panel-default">
-              <div className="panel-heading">
-                <div className="panel-title">Payment History</div>
-              </div>
-              <div className="panel-body">
-                <History />
-              </div>
+            <div className="panel-body">
+              <History />
             </div>
           </div>
-          <div className="col-sm-4">
-            {!user.email_verified &&
-            <Alert bsStyle="danger">
-              An email has been sent to <strong>{user.email}</strong>.
-              Please click the link in that message to confirm your email address.&nbsp;
-              {!verificationEmailSent && <a href="" onClick={this.resendVerification}>Resend the message</a>}
-              {verificationEmailSent && <strong>Verification email sent!</strong>}
-            </Alert>}
-            <div className="panel panel-default">
-              <div className="panel-heading">
-                <div className="panel-title">Use Five Bells Wallet as your default payment provider</div>
-              </div>
-              <div className="panel-body">
-                <button className="btn btn-complete btn-block" onClick={this.handleDefaultPayment}>Set as default</button>
-              </div>
+        </div>
+        <div className="col-sm-4">
+          {!user.email_verified &&
+          <Alert bsStyle="danger">
+            An email has been sent to <strong>{user.email}</strong>.
+            Please click the link in that message to confirm your email address.&nbsp;
+            {!verificationEmailSent && <a href="" onClick={this.resendVerification}>Resend the message</a>}
+            {verificationEmailSent && <strong>Verification email sent!</strong>}
+          </Alert>}
+          <div className="panel panel-default">
+            <div className="panel-heading">
+              <div className="panel-title">Use Five Bells Wallet as your default payment provider</div>
             </div>
-            <div className="panel panel-default">
-              <div className="panel-heading">
-                <div className="panel-title">Send Money</div>
-              </div>
-              <div className="panel-body">
-                <SendForm />
-              </div>
+            <div className="panel-body">
+              <button className="btn btn-complete btn-block" onClick={this.handleDefaultPayment}>Set as default</button>
             </div>
           </div>
-        </div>}
+          <div className="panel panel-default">
+            <div className="panel-heading">
+              <div className="panel-title">Send Money</div>
+            </div>
+            <div className="panel-body">
+              <SendForm />
+            </div>
+          </div>
+        </div>
       </div>
     )
   }

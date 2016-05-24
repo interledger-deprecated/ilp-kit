@@ -46,7 +46,6 @@ export default class Widget extends Component {
     transfer: PropTypes.func,
     findPath: PropTypes.func,
     path: PropTypes.object,
-    unmount: PropTypes.func,
     fail: PropTypes.object
   }
 
@@ -82,7 +81,7 @@ export default class Widget extends Component {
       destination: this.props.location.query.account
     };
 
-    const { user, login, loginFail, unmount } = this.props;
+    const { user, login, loginFail } = this.props;
 
     return (
       <div>
@@ -98,7 +97,7 @@ export default class Widget extends Component {
           <SendForm data={data} />}
 
           {!user &&
-          <LoginForm login={login} fail={loginFail} unmount={unmount} />}
+          <LoginForm login={login} fail={loginFail} />}
         </div>
       </div>
     );

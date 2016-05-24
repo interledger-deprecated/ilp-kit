@@ -4,7 +4,6 @@ export const initialState = {
   loaded: false,
   fail: {},
   config: {},
-  activeTab: 'login',
   verified: false
 }
 
@@ -38,12 +37,15 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         verified: true,
-        user: action.result
+        user: state.user && {
+          ...state.user,
+          email_verified: true
+        }
       };
     case types.EMAIL_VERIFICATION_RESEND_SUCCESS:
       return {
         ...state,
-        verification_email_sent: true
+        verificationEmailSent: true
       };
     case types.LOAD_CONFIG_SUCCESS:
       return {
@@ -60,8 +62,7 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         loggingIn: false,
         user: action.result,
-        verified: false,
-        activeTab: 'login'
+        verified: false
       };
     case types.LOGIN_FAIL:
       return {
@@ -79,8 +80,7 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         registering: false,
-        user: action.result,
-        activeTab: 'login'
+        user: action.result
       };
     case types.REGISTER_FAIL:
       return {
@@ -114,16 +114,6 @@ export default function reducer(state = initialState, action = {}) {
           ...state.user,
           balance: action.balance
         }
-      };
-    case types.AUTH_CHANGE_TAB:
-      return {
-        ...state,
-        activeTab: action.tab
-      };
-    case types.DESTROY:
-      return {
-        ...state,
-        fail: {}
       };
     default:
       return state;

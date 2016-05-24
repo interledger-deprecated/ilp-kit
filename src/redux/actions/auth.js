@@ -1,18 +1,5 @@
 import * as types from '../actionTypes'
 
-export function changeTab(tab) {
-  return {
-    type: types.AUTH_CHANGE_TAB,
-    tab: tab
-  }
-}
-
-export function unmount() {
-  return {
-    type: types.DESTROY
-  }
-}
-
 export function isLoaded(globalState) {
   return globalState.auth && globalState.auth.loaded
 }
@@ -114,7 +101,7 @@ export function login(fields) {
 export function forgot(data) {
   return {
     types: [types.FORGOT_PASSWORD, types.FORGOT_PASSWORD_SUCCESS, types.FORGOT_PASSWORD_FAIL],
-    promise: (client) => client.post('/auth/forgotPassword', {
+    promise: (client) => client.post('/auth/forgot-password', {
       data: {
         resource: data.resource
       }
@@ -125,7 +112,7 @@ export function forgot(data) {
 export function changePassword(data) {
   return {
     types: [types.CHANGE_PASSWORD, types.CHANGE_PASSWORD_SUCCESS, types.CHANGE_PASSWORD_FAIL],
-    promise: (client) => client.post('/auth/changePassword', {
+    promise: (client) => client.post('/auth/change-password', {
       data: {
         code: data.code,
         username: data.username,
@@ -158,7 +145,7 @@ export function save(opts, data) {
 export function resendVerificationEmail(username) {
   return {
     types: [types.EMAIL_VERIFICATION_RESEND, types.EMAIL_VERIFICATION_RESEND_SUCCESS, types.EMAIL_VERIFICATION_RESEND_FAIL],
-    promise: (client) => client.post('/users/' + username + '/resendVerification')
+    promise: (client) => client.post('/users/' + username + '/resend-verification')
   }
 }
 
