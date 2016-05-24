@@ -60,7 +60,8 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         loggingIn: false,
         user: action.result,
-        verified: false
+        verified: false,
+        activeTab: 'login'
       };
     case types.LOGIN_FAIL:
       return {
@@ -78,7 +79,8 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         registering: false,
-        user: action.result
+        user: action.result,
+        activeTab: 'login'
       };
     case types.REGISTER_FAIL:
       return {
