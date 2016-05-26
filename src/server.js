@@ -12,6 +12,7 @@ import Html from './helpers/Html';
 import PrettyError from 'pretty-error';
 import http from 'http';
 import forceSSL from 'express-force-ssl';
+import url from 'url';
 
 import { match } from 'react-router';
 import { ReduxAsyncConnect, loadOnServer } from 'redux-async-connect';
@@ -29,7 +30,8 @@ const proxyApi = httpProxy.createProxyServer({
   ws: true
 });
 const proxyLedger = httpProxy.createProxyServer({
-  target: config.ledgerUri
+  target: config.ledgerUri,
+  ws: true
 });
 
 if (['true', '1'].indexOf(process.env.WALLET_FORCE_HTTPS) !== -1) {
@@ -56,7 +58,21 @@ app.use('/.well-known/webfinger', (req, res) => {
 });
 
 server.on('upgrade', (req, socket, head) => {
-  proxyApi.ws(req, socket, head, {target: targetUrl + '/socket.io'});
+  let u = url.parse(req.url).pathname.split("/")[1]
+
+  if (u === 'api') {
+    proxyApi.ws(req, socket, head, {target: targetUrl + '/socket.io'});
+  }
+
+  if (u === 'ledger') {
+    let parsedUrl = url.parse(req.url)
+
+    // TODO /ledger shouldn't be hardcoded here
+    parsedUrl.pathname = parsedUrl.pathname.replace('/ledger', '')
+    req.url = url.format(parsedUrl)
+
+    proxyLedger.ws(req, socket, head);
+  }
 });
 
 // added the error handling to avoid https://github.com/nodejitsu/node-http-proxy/issues/527
@@ -65,9 +81,9 @@ proxyApi.on('error', (error, req, res) => {
   if (error.code !== 'ECONNRESET') {
     console.error('proxy error', error);
   }
-  if (!res.headersSent) {
-    res.writeHead(500, {'content-type': 'application/json'});
-  }
+  // if (!res.headersSent) {
+  //   res.writeHead(500, {'content-type': 'application/json'});
+  // }
 
   json = {error: 'server_error', reason: 'API is unavailable'};
   res.end(JSON.stringify(json));
@@ -84,9 +100,9 @@ proxyLedger.on('error', (error, req, res) => {
   if (error.code !== 'ECONNRESET') {
     console.error('proxy error', error);
   }
-  if (!res.headersSent) {
-    res.writeHead(500, {'content-type': 'application/json'});
-  }
+  // if (!res.headersSent) {
+  //   res.writeHead(500, {'content-type': 'application/json'});
+  // }
 
   json = {error: 'server_error', reason: 'Ledger is unavailable'};
   res.end(JSON.stringify(json));
