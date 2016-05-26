@@ -32,12 +32,12 @@ export default function reducer(state = initialState, action = {}) {
         fail: {}
       };
     case types.PATHFIND_SUCCESS:
-      if (action.result.length && action.result[0].source_transfers) {
+      if (action.result && action.result.debits) {
         return {
           ...state,
           path: {
-            sourceAmount: action.result[0].source_transfers[0].debits[0].amount,
-            destinationAmount: action.result[0].destination_transfers[0].debits[0].amount
+            sourceAmount: action.result.debits[0].amount,
+            destinationAmount: action.result.credits[0].memo.destination_transfer.debits[0].amount
           },
           pathRaw: action.result,
           pathFinding: false

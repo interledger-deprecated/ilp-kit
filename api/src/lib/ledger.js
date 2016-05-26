@@ -208,9 +208,9 @@ module.exports = class Ledger extends EventEmitter {
         destinationAccount: options.destination.accountUri,
         additionalInfo: {
           source_account: sourceAccount,
-          source_amount: options.path[0].source_transfers[0].debits[0].amount,
+          source_amount: options.path.debits[0].amount,
           destination_account: options.destination.accountUri,
-          destination_amount: options.path[0].destination_transfers[0].credits[0].amount
+          destination_amount: options.path.credits[0].memo.destination_transfer.credits[0].amount
         }
       }
 
@@ -238,8 +238,6 @@ module.exports = class Ledger extends EventEmitter {
       } catch (e) {
         // TODO handle
       }
-
-      response = response[0]
     }
     else {
       const paymentId = uuid()
