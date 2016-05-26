@@ -28,7 +28,7 @@ export default class Html extends Component {
         <head>
           {DocumentMeta.renderAsReact()}
 
-          <link rel="shortcut icon" href="/favicon.ico" />
+          <link rel="shortcut icon" href="/favicon.png" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           {/* styles (will be present only in production with webpack extract text plugin) */}
           {Object.keys(assets.styles).map((style, key) =>
