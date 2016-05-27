@@ -6,6 +6,10 @@ import Alert from 'react-bootstrap/lib/Alert'
 
 import { Input } from 'components'
 
+import classNames from 'classnames/bind';
+import styles from './RegisterForm.scss';
+const cx = classNames.bind(styles);
+
 // TODO async validation on username
 @reduxForm({
   form: 'register',
@@ -48,7 +52,7 @@ export default class RegisterForm extends Component {
         <div>
           {/* Hey chrome, can you please stop autofilling the register form? */}
           {!hideFakes &&
-            <div>
+            <div className={cx('fakeInputs')}>
               <input type="text" name="fakeusernameremembered" ref="fakeuser"/>
               <input type="password" name="fakepasswordremembered" ref="fakepass" />
             </div>}

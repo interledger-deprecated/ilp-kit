@@ -5,3 +5,9 @@
     }
   }
 }
+.fakeInputs {
+  position: absolute;
+  overflow: hidden;
+  left: -10000px;
+  background: #000;
+}
