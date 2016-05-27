@@ -98,6 +98,7 @@ export default class Home extends Component {
             {!verificationEmailSent && <a href="" onClick={this.resendVerification}>Resend the message</a>}
             {verificationEmailSent && <strong>Verification email sent!</strong>}
           </Alert>}
+          {/*
           <div className="panel panel-default">
             <div className="panel-heading">
               <div className="panel-title">Use Five Bells Wallet as your default payment provider</div>
@@ -106,6 +107,7 @@ export default class Home extends Component {
               <button className="btn btn-complete btn-block" onClick={this.handleDefaultPayment}>Set as default</button>
             </div>
           </div>
+          */}
           <div className="panel panel-default">
             <div className="panel-heading">
               <div className="panel-title">Send Money</div>
