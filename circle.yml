@@ -22,4 +22,4 @@ deployment:
       - git config --global user.email "info@circleci.com"
       - git config --global user.name "CircleCI"
       - git config --global push.default simple
-      - scripts/publish_spec.sh
+      - node scripts/publish_web.js
