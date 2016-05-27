@@ -50,7 +50,7 @@ Use the following configuration options as environment variables:
 * `WALLET_TRUST_XFP_HEADER` Trust the `X-Forwarded-Proto` header
 
 ### API docs
-[http://interledger.org/five-bells-wallet/docs](http://interledger.org/five-bells-wallet/docs/)
+[http://interledger.org/five-bells-wallet/apidoc](http://interledger.org/five-bells-wallet/apidoc/)
 
 ### Webfinger
 Five Bells Wallet supports webfinger lookups.

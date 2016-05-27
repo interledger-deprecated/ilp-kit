@@ -154,7 +154,7 @@ export default class App extends Component {
                       <NavItem>Pay Button</NavItem>
                     </LinkContainer> */}
                     <li>
-                      <a href="https://interledger.org/five-bells-wallet/docs" target="_blank">
+                      <a href="https://interledger.org/five-bells-wallet/apidoc" target="_blank">
                         API docs
                       </a>
                     </li>
