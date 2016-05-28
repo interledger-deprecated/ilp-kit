@@ -46,6 +46,7 @@ export default class App extends Component {
     updateBalance: PropTypes.func.isRequired,
     pushState: PropTypes.func.isRequired,
     params: PropTypes.object,
+    store: PropTypes.object,
 
     verify: PropTypes.func
   }

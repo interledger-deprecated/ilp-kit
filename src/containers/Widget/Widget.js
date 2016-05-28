@@ -42,6 +42,7 @@ export default class Widget extends Component {
     location: PropTypes.object,
     loginFail: PropTypes.object,
     config: PropTypes.object,
+    store: PropTypes.object,
 
     transfer: PropTypes.func,
     findPath: PropTypes.func,
