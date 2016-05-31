@@ -14,22 +14,28 @@ const middlewares = [createMiddleware(client)]
 const tracker = new Tracker()
 global.tracker = tracker
 
-const mockRequest = superagentMocker(superagent);
+const mockRequest = superagentMocker(superagent)
 const mockStore = configureMockStore(middlewares)
 
 describe('(action creator) Auth', () => {
-  beforeEach(function(){
+  beforeEach(() => {
     mockRequest.clearRoutes()
   })
 
-  it('.reload creates RELOADING, RELOAD_SUCCESS actions', (done) => {
-    mockRequest.post('/api/users/alice/reload', function() {return {}})
+  it('.reload creates RELOADING, RELOAD_SUCCESS actions', () => {
+    mockRequest.post('/api/users/alice/reload', () => {
+      return {}
+    })
 
     const expectedActions = [
       {type: types.RELOADING},
       {type: types.RELOAD_SUCCESS, result: undefined}
     ]
-    const store = mockStore({}, expectedActions, done)
-    store.dispatch(actions.reload({username: 'alice'}))
+    const store = mockStore({})
+
+    return store.dispatch(actions.reload({username: 'alice'}))
+      .then(() => {
+        expect(store.getActions()).to.eql(expectedActions)
+      })
   })
 })
