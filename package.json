@@ -29,8 +29,8 @@
     "start-dev-api": "better-npm-run start-dev-api",
     "watch-client": "better-npm-run watch-client",
     "dev": "concurrent --kill-others \"npm run watch-client\" \"npm run start-dev\" \"npm run start-dev-api\"",
-    "test": "karma start && npm run test-api",
-    "test-api": "./node_modules/.bin/mocha"
+    "test": "karma start",
+    "test-api": "mocha"
   },
   "betterScripts": {
     "start-prod": {
