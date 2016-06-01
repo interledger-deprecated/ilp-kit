@@ -6,7 +6,7 @@ define({ "api": [
     "name": "ForgotPassword",
     "group": "Auth",
     "version": "1.0.0",
-    "description": "<p>Get an email to change the password</p> ",
+    "description": "<p>Get an email to change the password</p>",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -15,7 +15,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "resource",
-            "description": "<p>username or email</p> "
+            "description": "<p>username or email</p>"
           }
         ]
       }
@@ -46,7 +46,7 @@ define({ "api": [
     "name": "Github_Auth",
     "group": "Auth",
     "version": "1.0.0",
-    "description": "<p>Github OAuth (used for cookie based auth)</p> ",
+    "description": "<p>Github OAuth (used for cookie based auth)</p>",
     "filename": "api/src/controllers/auth.js",
     "groupTitle": "Auth"
   },
@@ -57,7 +57,7 @@ define({ "api": [
     "name": "Github_Auth_Callback",
     "group": "Auth",
     "version": "1.0.0",
-    "description": "<p>Github Auth Callback (used for cookie based auth)</p> ",
+    "description": "<p>Github Auth Callback (used for cookie based auth)</p>",
     "filename": "api/src/controllers/auth.js",
     "groupTitle": "Auth"
   },
@@ -68,7 +68,7 @@ define({ "api": [
     "name": "Load",
     "group": "Auth",
     "version": "1.0.0",
-    "description": "<p>Get currently authenticated user (used for cookie based auth)</p> ",
+    "description": "<p>Get currently authenticated user (used for cookie based auth)</p>",
     "examples": [
       {
         "title": "Load",
@@ -95,7 +95,7 @@ define({ "api": [
     "name": "Login",
     "group": "Auth",
     "version": "1.0.0",
-    "description": "<p>Login (used for cookie based auth)</p> ",
+    "description": "<p>Login (used for cookie based auth)</p>",
     "examples": [
       {
         "title": "Login",
@@ -122,7 +122,7 @@ define({ "api": [
     "name": "Logout",
     "group": "Auth",
     "version": "1.0.0",
-    "description": "<p>Logout (used for cookie based auth)</p> ",
+    "description": "<p>Logout (used for cookie based auth)</p>",
     "examples": [
       {
         "title": "Logout",
@@ -149,7 +149,7 @@ define({ "api": [
     "name": "GetConfig",
     "group": "Misc",
     "version": "1.0.0",
-    "description": "<p>Get wallet config</p> ",
+    "description": "<p>Get wallet config</p>",
     "examples": [
       {
         "title": "Find path",
@@ -176,7 +176,7 @@ define({ "api": [
     "name": "GetWebfinger",
     "group": "Misc",
     "version": "1.0.0",
-    "description": "<p>Get webfinger info</p> ",
+    "description": "<p>Get webfinger info</p>",
     "examples": [
       {
         "title": "Get webfinger info",
@@ -203,7 +203,7 @@ define({ "api": [
     "name": "ParseDestination",
     "group": "Misc",
     "version": "1.0.0",
-    "description": "<p>Parse a destination</p> ",
+    "description": "<p>Parse a destination</p>",
     "examples": [
       {
         "title": "Parse a destination",
@@ -230,7 +230,7 @@ define({ "api": [
     "name": "health",
     "group": "Misc",
     "version": "1.0.0",
-    "description": "<p>Health check</p> ",
+    "description": "<p>Health check</p>",
     "examples": [
       {
         "title": "Health check",
@@ -257,7 +257,7 @@ define({ "api": [
     "name": "FindPath",
     "group": "Payment",
     "version": "1.0.0",
-    "description": "<p>Find path</p> ",
+    "description": "<p>Find path</p>",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -266,21 +266,21 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "destination",
-            "description": "<p>destination</p> "
+            "description": "<p>destination</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "source_amount",
-            "description": "<p>source amount</p> "
+            "description": "<p>source amount</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "destination_amount",
-            "description": "<p>destination amount</p> "
+            "description": "<p>destination amount</p>"
           }
         ]
       }
@@ -311,7 +311,7 @@ define({ "api": [
     "name": "GetPayments",
     "group": "Payment",
     "version": "1.0.0",
-    "description": "<p>Get user payments history</p> ",
+    "description": "<p>Get user payments history</p>",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -320,14 +320,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "page",
-            "description": "<p>Current page number</p> "
+            "description": "<p>Current page number</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "limit",
-            "description": "<p>Number of payments</p> "
+            "description": "<p>Number of payments</p>"
           }
         ]
       }
@@ -358,7 +358,7 @@ define({ "api": [
     "name": "PreparePayment",
     "group": "Payment",
     "version": "1.0.0",
-    "description": "<p>Prepare a payment</p> ",
+    "description": "<p>Prepare a payment</p>",
     "examples": [
       {
         "title": "Prepare a payment",
@@ -385,7 +385,7 @@ define({ "api": [
     "name": "PutPayments",
     "group": "Payment",
     "version": "1.0.0",
-    "description": "<p>Make payment</p> ",
+    "description": "<p>Make payment</p>",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -394,56 +394,56 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "id",
-            "description": "<p>generated payment uuid</p> "
+            "description": "<p>generated payment uuid</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "destination_account",
-            "description": "<p>destination account</p> "
+            "description": "<p>destination account</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "source_amount",
-            "description": "<p>source amount</p> "
+            "description": "<p>source amount</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "destination_amount",
-            "description": "<p>destination amount</p> "
+            "description": "<p>destination amount</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "source_memo",
-            "description": "<p>memo for the source</p> "
+            "description": "<p>memo for the source</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "destination_memo",
-            "description": "<p>memo for the destination</p> "
+            "description": "<p>memo for the destination</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>text message for the destination</p> "
+            "description": "<p>text message for the destination</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "path",
-            "description": "<p>path</p> "
+            "description": "<p>path</p>"
           }
         ]
       }
@@ -482,7 +482,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "username",
-            "description": "<p>receiver username</p> "
+            "description": "<p>receiver username</p>"
           }
         ]
       }
@@ -513,7 +513,7 @@ define({ "api": [
     "name": "GetUser",
     "group": "User",
     "version": "1.0.0",
-    "description": "<p>Get user</p> ",
+    "description": "<p>Get user</p>",
     "examples": [
       {
         "title": "Get user",
@@ -548,14 +548,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "username",
-            "description": "<p>username</p> "
+            "description": "<p>username</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "password",
-            "description": "<p>password</p> "
+            "description": "<p>password</p>"
           }
         ]
       }
@@ -594,7 +594,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "username",
-            "description": "<p>username</p> "
+            "description": "<p>username</p>"
           }
         ]
       }
@@ -633,7 +633,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "username",
-            "description": "<p>username</p> "
+            "description": "<p>username</p>"
           }
         ]
       }
@@ -672,14 +672,14 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "username",
-            "description": "<p>username</p> "
+            "description": "<p>username</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "code",
-            "description": "<p>verification code</p> "
+            "description": "<p>verification code</p>"
           }
         ]
       }
