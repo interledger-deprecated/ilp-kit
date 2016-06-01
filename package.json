@@ -29,8 +29,8 @@
     "start-dev-api": "better-npm-run start-dev-api",
     "watch-client": "better-npm-run watch-client",
     "dev": "concurrent --kill-others \"npm run watch-client\" \"npm run start-dev\" \"npm run start-dev-api\"",
-    "test": "karma start && npm run test-api",
-    "test-api": "./node_modules/.bin/mocha",
+    "test": "cp -n src/theme/variables.scss.example src/theme/variables.scss ; karma start",
+    "test-api": "mocha",
     "apidoc": "apidoc -i api/src/controllers/ -o apidoc-out"
   },
   "betterScripts": {
@@ -77,6 +77,7 @@
     }
   },
   "dependencies": {
+    "apidoc": "^0.16.1",
     "babel-core": "~6.9.0",
     "babel-loader": "^6.2.1",
     "babel-plugin-add-module-exports": "^0.2.1",

@@ -3,6 +3,8 @@ var webpack = require('webpack');
 module.exports = function (config) {
   config.set({
 
+    // basePath : !!process.env.CI ? '../' : '../',
+
     browsers: ['PhantomJS'],
 
     singleRun: !!process.env.CI,
