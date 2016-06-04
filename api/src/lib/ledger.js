@@ -210,7 +210,7 @@ module.exports = class Ledger extends EventEmitter {
           source_account: sourceAccount,
           source_amount: options.path.debits[0].amount,
           destination_account: options.destination.accountUri,
-          destination_amount: options.path.credits[0].memo.destination_transfer.credits[0].amount
+          destination_amount: options.path.credits[0].memo.ilp_header.amount
         }
       }
 
