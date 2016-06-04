@@ -170,15 +170,18 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
 
         log.debug('Ledger transfer payment ID ' + id)
       } catch (e) {
-        let error = JSON.parse(e.response.error.text)
+        if (e && e.response) {
+          let error = JSON.parse(e.response.error.text)
 
-        if (error.id === 'UnprocessableEntityError') {
-          throw new InvalidLedgerAccountError(error.message)
-        } else if (error.id === 'InsufficientFundsError') {
-          throw new LedgerInsufficientFundsError(error.message)
+          if (error.id === 'UnprocessableEntityError') {
+            throw new InvalidLedgerAccountError(error.message)
+          } else if (error.id === 'InsufficientFundsError') {
+            throw new LedgerInsufficientFundsError(error.message)
+          } else {
+            throw e
+          }
         } else {
-          // TODO more meaningful error
-          throw new Error()
+          throw e
         }
       }
 
