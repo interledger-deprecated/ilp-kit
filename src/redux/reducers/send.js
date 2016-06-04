@@ -37,7 +37,7 @@ export default function reducer(state = initialState, action = {}) {
           ...state,
           path: {
             sourceAmount: action.result.debits[0].amount,
-            destinationAmount: action.result.credits[0].memo.destination_transfer.debits[0].amount
+            destinationAmount: action.result.credits[0].memo.ilp_header.amount
           },
           pathRaw: action.result,
           pathFinding: false
