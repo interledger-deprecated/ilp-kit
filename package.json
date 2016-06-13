@@ -100,7 +100,7 @@
     "express-force-ssl": "^0.3.1",
     "file-loader": "^0.8.5",
     "five-bells-condition": "^3.2.0",
-    "five-bells-sender": "^10.0.0",
+    "five-bells-sender": "^10.0.1",
     "five-bells-shared": "^14.1.2",
     "hoist-non-react-statics": "^1.0.3",
     "http-proxy": "^1.12.0",

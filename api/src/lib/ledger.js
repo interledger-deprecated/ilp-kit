@@ -205,13 +205,7 @@ module.exports = class Ledger extends EventEmitter {
       let paymentObj = {
         sourceAccount: sourceAccount,
         sourcePassword: options.password,
-        destinationAccount: options.destination.accountUri,
-        additionalInfo: {
-          source_account: sourceAccount,
-          source_amount: options.path.debits[0].amount,
-          destination_account: options.destination.accountUri,
-          destination_amount: options.path.credits[0].memo.ilp_header.amount
-        }
+        destinationAccount: options.destination.accountUri
       }
 
       // Message
@@ -220,11 +214,15 @@ module.exports = class Ledger extends EventEmitter {
       const resp = yield superagent.post(options.destination.paymentUri, postData)
 
       paymentObj.destinationMemo = {
-        receiver_payment_id: resp.body.paymentId
+        receiver_payment_id: resp.body.paymentId,
+        source_account: sourceAccount,
+        source_amount: options.path.debits[0].amount,
+        destination_account: options.destination.accountUri,
+        destination_amount: options.path.credits[0].memo.ilp_header.amount
       }
 
       if (options.source_memo) {
-        paymentObj.sourceMemo = {userMemo: options.source_memo}
+        paymentObj.sourceMemo.userMemo = options.source_memo
       }
 
       if (options.destination_memo) {

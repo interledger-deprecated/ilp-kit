@@ -36,7 +36,7 @@ function NotificationsControllerFactory (ledger, Auth, Payment, User, Config) {
 
       const debit = transfer.debits[0]
       const credit = transfer.credits[0]
-      const additionalInfo = transfer.additional_info
+      const additionalInfo = credit.memo.ilp_header ? credit.memo.ilp_header.data : credit.memo
 
       let paymentObj = {
         transfers: transfer.id,
