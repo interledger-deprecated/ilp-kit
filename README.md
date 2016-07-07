@@ -73,11 +73,21 @@ Name | Example | Description |
 `WALLET_FORCE_HTTPS` | `true` | Force all connections to use HTTPS
 `WALLET_TRUST_XFP_HEADER` | `true` | Trust the `X-Forwarded-Proto` header
 
-## API docs
+## Architecture
+Five Bells Wallet consists of a [Node.js](https://github.com/nodejs/node) backend (REST API) and a client built using [React](https://github.com/facebook/react).
+
+### Backend (REST API)
+The backend is responsible for communicating with the ILP ledger, creating accounts, sending payments and keeping the payment history.
+
+#### API docs
 [http://interledger.org/five-bells-wallet/apidoc](http://interledger.org/five-bells-wallet/apidoc/)
 
-## Webfinger
-Five Bells Wallet supports webfinger lookups.
+#### SPSP
+
+The wallet implements [SPSP](https://github.com/interledger/rfcs/blob/master/0009-simple-payment-setup-protocol/0009-simple-payment-setup-protocol.md) for initiating and receiving payments.
+
+##### Webfinger
+Webfinger is used to lookup account/user identifiers.
 
 Example request 
 ```bash
@@ -89,25 +99,46 @@ Example response
 ```bash
 HTTP/1.1 200 OK
 {
-  "subject": "acct:alice@wallet.example",
+  "subject": "acct:alice@red.ilpdemo.org",
   "links": [
     {
-      "rel": "http://webfinger.net/rel/ledgerUri",
-      "href": "http://wallet.example/ledger"
+      "rel": "https://interledger.org/rel/ledgerUri",
+      "href": "https://red.ilpdemo.org/ledger"
     },
     {
-      "rel": "http://webfinger.net/rel/ledgerAccount",
-      "href": "http://wallet.example/ledger/accounts/alice"
+      "rel": "https://interledger.org/rel/socketIOUri",
+      "href": "https://red.ilpdemo.org/api/socket.io"
     },
     {
-      "rel": "http://webfinger.net/rel/socketIOUri",
-      "href": "http://wallet.example/api/socket.io"
+      "rel": "https://interledger.org/rel/ledgerAccount",
+      "href": "https://red.ilpdemo.org/ledger/accounts/alice"
+    },
+    {
+      "rel": "https://interledger.org/rel/sender/payment",
+      "href": "https://red.ilpdemo.org/api/payments"
+    },
+    {
+      "rel": "https://interledger.org/rel/sender/pathfind",
+      "href": "https://red.ilpdemo.org/api/payments/findPath"
+    },
+    {
+      "rel": "https://interledger.org/rel/receiver",
+      "href": "https://red.ilpdemo.org/api/receivers/alice"
+    },
+    {
+      "rel": "https://interledger.org/rel/receiver/payment",
+      "href": "https://red.ilpdemo.org/api/receivers/alice/payments"
     }
   ]
 }
 ```
 
-## Using Redux DevTools
+### Client
+The client is a web app built on [React](https://github.com/facebook/react) that implements user signup/signin, sending payments and payment history.
+
+Client state management is handled by [Redux](https://github.com/reactjs/redux).
+
+#### Using Redux DevTools
 
 In development, Redux Devtools are enabled by default. You can toggle visibility and move the dock around using the following keyboard shortcuts:
 
@@ -115,6 +146,8 @@ In development, Redux Devtools are enabled by default. You can toggle visibility
 - <kbd>Ctrl+Q</kbd> Move Dock Position
 - see [redux-devtools-dock-monitor](https://github.com/gaearon/redux-devtools-dock-monitor) for more detail information.
 
-## Theme customization
+#### Theme customization
 
 `npm install` generates a `src/theme/variables.scss` which contains the theme colors. You can manually edit it.
+
+Database has two tables: Users and Payments.
