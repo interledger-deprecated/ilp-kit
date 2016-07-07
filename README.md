@@ -26,28 +26,28 @@ npm run start
 
 Use the following configuration options as environment variables:
 
-* `API_PRIVATE_HOSTNAME` Private API hostname
-* `API_HOSTNAME` Publicly visible API hostname
-* `API_PORT` Publicly visible API port
-* `API_DB_URI` (e.g.: postgres://root:password@localhost/wallet) URI for connecting to a database.    
-* `API_SESSION_SECRET` App session secret
-* `API_LEDGER_URI` Ledger URI (requests go to this uri)
-* `API_LEDGER_PUBLIC_URI` Ledger public URI
-* `API_LEDGER_ADMIN_NAME` Ledger admin username
-* `API_LEDGER_ADMIN_PASS` Ledger admin password
-* `API_CONDITION_SECRET` Condition secret
-* `API_RELOAD` Turn on/off the reload endpoint
-* `API_TRACK_GA` Google Analytics Tracking ID
-* `API_TRACK_MIXPANEL` Mixpanel Tracking ID
-* `API_GITHUB_CLIENT_ID` Github application client id (used for github oauth)
-* `API_GITHUB_CLIENT_SECRET` Github application client secret (used for github oauth)
-* `API_MAILGUN_API_KEY` Mailgun api key (for sending emails)
-* `API_MAILGUN_DOMAIN` One of the domains attached to the Mailgun account
-* `CLIENT_HOST` Publicly visible hostname
-* `CLIENT_PORT` Publicly visible port
-* `SENTRY_URI` Sentry tracking uri (getsentry.com)
-* `WALLET_FORCE_HTTPS` Force all connections to use HTTPS
-* `WALLET_TRUST_XFP_HEADER` Trust the `X-Forwarded-Proto` header
+Name | Required | Default     | Description |
+---- | -------- | ----------- | ----------- |
+`API_HOSTNAME` | required | *none* | Publicly visible API hostname.
+`API_PORT` | required | *none* | Publicly visible API port.
+`API_DB_URI` | required | *none* | (e.g.: postgres://root:password@localhost/wallet) URI for connecting to a database.    
+`API_LEDGER_URI` | required | *none* | Ledger URI (requests go to this uri)
+`API_LEDGER_ADMIN_NAME` | required | *none* | Ledger admin name
+`API_LEDGER_ADMIN_PASS` | required | *none* | Ledger admin pass
+`CLIENT_HOST` | required | *none* | Publicly visible hostname
+`CLIENT_PORT` | required | *none* | Publicly visible port
+`API_PRIVATE_HOSTNAME` | optional | *none* | Private API hostname.
+`API_SECRET` | optional | `secret` | Api secret. Used to generate the session, oauth and condition secrets.
+`API_RELOAD` | optional | *none* | Turn on/off the reload endpoint
+`API_LEDGER_PUBLIC_URI` | optional | *none* | Ledger public URI (used in account URIs). Specified if different from the `API_LEDGER_URI`.
+`API_TRACK_GA` | optional | *none* | Google Analytics Tracking ID
+`API_TRACK_MIXPANEL` | optional | *none* | Mixpanel Tracking ID
+`API_GITHUB_CLIENT_ID` | optional | *none* | Github application client id (used for github oauth)
+`API_GITHUB_CLIENT_SECRET` | optional | *none* | Github application client secret (used for github oauth)
+`API_MAILGUN_API_KEY` | optional | *none* | Mailgun api key (for sending emails)
+`API_MAILGUN_DOMAIN` | optional | *none* | One of the domains attached to the Mailgun account
+`WALLET_FORCE_HTTPS` | optional | *none* | Force all connections to use HTTPS
+`WALLET_TRUST_XFP_HEADER` | optional | *none* | Trust the `X-Forwarded-Proto` header
 
 ### API docs
 [http://interledger.org/five-bells-wallet/apidoc](http://interledger.org/five-bells-wallet/apidoc/)
