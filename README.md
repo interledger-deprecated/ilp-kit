@@ -5,26 +5,43 @@
 
 Five Bells Wallet
 
+## Prerequisites
+
+- [Five Bells Ledger](https://github.com/interledger/five-bells-ledger) instance
+
 ## Installation
 
 ```bash
+git clone git@github.com:interledger/five-bells-wallet.git
+cd five-bells-wallet
 npm install
 ```
 
-## Running Dev Server
+## Usage
+
+### Running Dev Wallet
+
+_You must specify the required environment variables before running the below command_
 
 ```bash
 npm run dev
 ```
 
-## Building and Running Production Server
+### Building Production Wallet
 
 ```bash
 npm run build
+```
+
+### Running Production Wallet
+
+_You must specify the required environment variables before running the below command_
+
+```
 npm run start
 ```
 
-Use the following configuration options as environment variables:
+### Environment variables
 
 ##### Required
 
@@ -56,10 +73,10 @@ Name | Example | Description |
 `WALLET_FORCE_HTTPS` | `true` | Force all connections to use HTTPS
 `WALLET_TRUST_XFP_HEADER` | `true` | Trust the `X-Forwarded-Proto` header
 
-### API docs
+## API docs
 [http://interledger.org/five-bells-wallet/apidoc](http://interledger.org/five-bells-wallet/apidoc/)
 
-### Webfinger
+## Webfinger
 Five Bells Wallet supports webfinger lookups.
 
 Example request 
@@ -90,7 +107,7 @@ HTTP/1.1 200 OK
 }
 ```
 
-### Using Redux DevTools
+## Using Redux DevTools
 
 In development, Redux Devtools are enabled by default. You can toggle visibility and move the dock around using the following keyboard shortcuts:
 
@@ -98,6 +115,6 @@ In development, Redux Devtools are enabled by default. You can toggle visibility
 - <kbd>Ctrl+Q</kbd> Move Dock Position
 - see [redux-devtools-dock-monitor](https://github.com/gaearon/redux-devtools-dock-monitor) for more detail information.
 
-### Theme customization
+## Theme customization
 
 `npm install` generates a `src/theme/variables.scss` which contains the theme colors. You can manually edit it.
