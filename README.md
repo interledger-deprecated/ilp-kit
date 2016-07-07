@@ -74,7 +74,7 @@ Name | Example | Description |
 `WALLET_TRUST_XFP_HEADER` | `true` | Trust the `X-Forwarded-Proto` header
 
 ## Architecture
-Five Bells Wallet consists of a [Node.js](https://github.com/nodejs/node) backend (REST API) and a client built using [React](https://github.com/facebook/react).
+Five Bells Wallet consists of a [Node.js](https://github.com/nodejs/node) (developed on v5.6) backend (REST API) and a client built using [React](https://github.com/facebook/react).
 
 ### Backend (REST API)
 The backend is responsible for communicating with the ILP ledger, creating accounts, sending payments and keeping the payment history.
