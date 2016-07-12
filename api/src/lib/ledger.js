@@ -1,12 +1,19 @@
 "use strict"
 
 const _ = require('lodash')
+const co = require('co')
 const superagent = require('superagent-promise')(require('superagent'), Promise)
 const uuid = require ('uuid4')
 const crypto = require('crypto')
+const WebSocket = require('ws')
+const reconnectCore = require('reconnect-core')
+const Container = require('constitute').Container
 const sender = require('five-bells-sender')
 const condition = require('five-bells-condition')
 const EventEmitter = require('events').EventEmitter
+
+const PaymentFactory = require('../models/payment')
+const UserFactory = require('../models/user')
 
 const Config = require('./config')
 const Log = require('./log')
@@ -15,17 +22,25 @@ const NotFoundError = require('../errors/not-found-error')
 
 // TODO exception handling
 module.exports = class Ledger extends EventEmitter {
-  static constitute () { return [Config, Log] }
-  constructor (config, log) {
+  static constitute () { return [Config, Log, Container] }
+  constructor (config, log, container) {
     super()
+
+    const self = this
+
     this.config = config.data
     this.log = log('ledger')
     this.ledgerUri = this.config.getIn(['ledger', 'uri'])
     this.ledgerUriPublic = this.config.getIn(['ledger', 'public_uri'])
+
+    container.schedulePostConstructor((User, Payment) => {
+      self.User = User
+      self.Payment = Payment
+    }, [ UserFactory, PaymentFactory ])
   }
 
   // TODO caching
-  * getInfo (uri) {
+  * getInfo(uri) {
     const ledgerUri = uri || this.ledgerUri
     let response
 
@@ -39,22 +54,117 @@ module.exports = class Ledger extends EventEmitter {
     return response.body
   }
 
-  * subscribe () {
-    try {
-      this.log.info('subscribing to ledger ' + this.ledgerUri)
-      yield superagent
-        .put(this.ledgerUri + '/subscriptions/' + uuid())
-        .auth(this.config.getIn(['ledger', 'admin', 'name']), this.config.getIn(['ledger', 'admin', 'pass']))
-        .send({
-          'owner': this.config.getIn(['ledger', 'admin', 'name']),
-          'event': '*',
-          'subject': '*',
-          'target': this.config.getIn(['server', 'base_uri']) + '/notifications' // TODO server.base_uri???
-        })
-        .end()
-    } catch (err) {
-      if (err.status !== 422) throw err
+  * subscribe() {
+    const self = this
+
+    const options = {
+      headers: {
+        Authorization: 'Basic ' + new Buffer(
+          this.config.getIn(['ledger', 'admin', 'name'])
+          + ':'
+          + this.config.getIn(['ledger', 'admin', 'pass']), 'utf8').toString('base64')
+      }
     }
+
+    const streamUri = this.ledgerUri + '/accounts/*/transfers'
+
+    const reconnect = reconnectCore(() => {
+      return new WebSocket(streamUri, options)
+    })
+
+    reconnect({immediate: true}, (ws) => {
+      ws.on('open', () => {
+        self.log.info('ws connected to ' + streamUri)
+      })
+      ws.on('message', (msg) => {co(function *() {
+        const notification = JSON.parse(msg)
+        self.log.debug('notify', notification.resource.id)
+        try {
+          yield self.handleNotification(notification)
+        } catch (err) {
+          self.log.warn('failure while processing notification: ' + err)
+        }
+      })})
+      ws.on('close', () => {
+        self.log.info('ws disconnected from ' + streamUri)
+      })
+    })
+    .on('error', (err) => {
+      self.log.warn('ws error on ' + streamUri + ': ' + err)
+    })
+    .connect()
+  }
+
+  * handleNotification(notification) {
+    const self = this
+    const transfer = notification.resource
+    if (transfer.state === 'prepared') {
+      // Sender doesn't need to do anything at this point
+      if (transfer.credits[0].memo.receiver_payment_id) {
+        self.preparedEvent(transfer)
+      }
+      return
+    }
+
+    if (transfer.state !== 'executed') {
+      return
+    }
+
+    const debit = transfer.debits[0]
+    const credit = transfer.credits[0]
+    const additionalInfo = (credit.memo && credit.memo.ilp_header) ? credit.memo.ilp_header.data : credit.memo
+
+    let paymentObj = {
+      transfers: transfer.id,
+      source_account: (additionalInfo && additionalInfo.source_account) || debit.account,
+      destination_account: (additionalInfo && additionalInfo.destination_account) || credit.account,
+      source_amount: (additionalInfo && additionalInfo.source_amount) || debit.amount,
+      destination_amount: (additionalInfo && additionalInfo.destination_amount) || credit.amount,
+      state: 'success'
+    }
+
+    // TODO move this logic somewhere else
+    // Source user
+    if (_.startsWith(debit.account, self.config.getIn(['ledger', 'public_uri']) + '/accounts/')) {
+      let user = yield self.User.findOne({where: {username: debit.account.slice(self.config.getIn(['ledger', 'public_uri']).length + 10)}})
+      if (user) {
+        paymentObj.source_user = user.id
+      }
+    }
+    // Destination user
+    if (_.startsWith(credit.account, self.config.getIn(['ledger', 'public_uri']) + '/accounts/')) {
+      let user = yield self.User.findOne({where: {username: credit.account.slice(self.config.getIn(['ledger', 'public_uri']).length + 10)}})
+      if (user) {
+        paymentObj.destination_user = user.id
+      }
+    }
+
+    let payment
+
+    const creditMemo = credit.memo
+
+    // Receiver: Get the pending payment
+    if (creditMemo && creditMemo.receiver_payment_id) {
+      payment = yield self.Payment.findOne({where: {id: creditMemo.receiver_payment_id}})
+    }
+
+    // Sender: Get the pending payment
+    if (!payment) {
+      payment = yield self.Payment.findOne({where: {transfers: transfer.id}})
+    }
+    // Payment is not prepared
+    if (!payment) {
+      payment = new self.Payment()
+    }
+    payment.setDataExternal(paymentObj)
+
+    try {
+      yield payment.save()
+    } catch (e) {
+      // TODO handle
+    }
+
+    self.emitTransferEvent(transfer)
   }
 
   getCondition (paymentId) {
@@ -135,7 +245,6 @@ module.exports = class Ledger extends EventEmitter {
         .send(data)
         .auth(auth.username, auth.password)
     } catch (e) {
-      console.log('ledger.js:141', e)
       // TODO handle
     }
 

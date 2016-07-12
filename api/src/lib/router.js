@@ -7,7 +7,6 @@ const HealthController = require('../controllers/health')
 const AuthController = require('../controllers/auth')
 const UsersController = require('../controllers/users')
 const PaymentsController = require('../controllers/payments')
-const NotificationsController = require('../controllers/notifications')
 const WebfingerController = require('../controllers/webfinger')
 const MiscController = require('../controllers/misc')
 
@@ -30,9 +29,6 @@ module.exports = class Router {
 
     const payments = this.container.constitute(PaymentsController)
     payments.init(this.router)
-
-    const notifications = this.container.constitute(NotificationsController)
-    notifications.init(this.router)
 
     const webfinger = this.container.constitute(WebfingerController)
     webfinger.init(this.router)
