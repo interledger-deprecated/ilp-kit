@@ -97,14 +97,14 @@ module.exports = class Auth {
     }
 
     passport.serializeUser(function(user, done) {
-      done(null, user)
+      return done(null, user)
     })
 
     passport.deserializeUser(function(userObj, done) {
       User.findOne({where: {username: userObj.username}})
         .then(co.wrap(function * (dbUser){
           if (!dbUser) {
-            done(new UnauthorizedError('Unknown or invalid account / password'))
+            return done(new UnauthorizedError('Unknown or invalid account / password'))
           }
 
           const user = yield dbUser.appendLedgerAccount()
