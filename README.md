@@ -59,6 +59,7 @@ Name | Example | Description |
 
 Name | Example | Description |
 ---- | ------- | ----------- |
+`API_PUBLIC_HTTPS` | `''` | Whether or not the publicly visible instance of Five Bells Wallet is using HTTPS.
 `API_PRIVATE_HOSTNAME` | `localhost` | Private API hostname.
 `API_SECRET` | `qO2UX+fdl+tg0a1bYt` | Api secret. Used to generate the session, oauth and condition secrets.
 `API_RELOAD` | `true` | Turn on/off the reload endpoint.

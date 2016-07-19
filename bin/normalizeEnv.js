@@ -10,9 +10,10 @@ if (!env.API_LEDGER_URI) {
   env.LEDGER_PUBLIC_PATH = env.LEDGER_PUBLIC_PATH || 'ledger'
   env.LEDGER_CURRENCY_CODE = env.LEDGER_CURRENCY_CODE || 'USD'
   env.LEDGER_CURRENCY_SYMBOL = env.LEDGER_CURRENCY_SYMBOL || '$'
-  env.LEDGER_PUBLIC_HTTPS = env.LEDGER_PUBLIC_HTTPS || !!env.WALLET_FORCE_HTTPS
+  env.LEDGER_PUBLIC_HTTPS = env.LEDGER_PUBLIC_HTTPS || !!env.API_PUBLIC_HTTPS
 
-  // TODO or https
-  env.API_LEDGER_URI = 'http://' + env.LEDGER_HOSTNAME + ':' + env.LEDGER_PORT
-  env.API_LEDGER_PUBLIC_URI = 'http://' + env.LEDGER_HOSTNAME + ':' + env.LEDGER_PUBLIC_PORT + '/' + env.LEDGER_PUBLIC_PATH
+  const protocol = env.LEDGER_PUBLIC_HTTPS ? 'https:' : 'http:'
+  
+  env.API_LEDGER_URI = protocol + '//' + env.LEDGER_HOSTNAME + ':' + env.LEDGER_PORT
+  env.API_LEDGER_PUBLIC_URI = protocol + '//' + env.LEDGER_HOSTNAME + ':' + env.LEDGER_PUBLIC_PORT + '/' + env.LEDGER_PUBLIC_PATH
 }
