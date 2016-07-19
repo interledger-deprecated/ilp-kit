@@ -1,4 +1,5 @@
-require('babel-polyfill');
+require('babel-polyfill')
+require('../bin/normalizeEnv')
 
 const environment = {
   development: {

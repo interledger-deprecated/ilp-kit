@@ -50,7 +50,6 @@ Name | Example | Description |
 `API_HOSTNAME` | `wallet.com` | Publicly visible API hostname.
 `API_PORT` | `3000` | Publicly visible API port.
 `API_DB_URI` | `postgres://localhost/wallet` | URI for connecting to a database.
-`API_LEDGER_URI` | `http://wallet.com:2000` | Ledger URI (requests go to this uri).
 `API_LEDGER_ADMIN_NAME` | `admin` | Ledger admin name.
 `API_LEDGER_ADMIN_PASS` | `pass` | Ledger admin pass.
 `CLIENT_HOST` | `wallet.com` | Publicly visible hostname.
@@ -63,6 +62,7 @@ Name | Example | Description |
 `API_PRIVATE_HOSTNAME` | `localhost` | Private API hostname.
 `API_SECRET` | `qO2UX+fdl+tg0a1bYt` | Api secret. Used to generate the session, oauth and condition secrets.
 `API_RELOAD` | `true` | Turn on/off the reload endpoint.
+`API_LEDGER_URI` | `http://wallet.com:2000` | Ledger URI: requests go to this uri (a ledger instance will be started by the wallet if this is not specified).
 `API_LEDGER_PUBLIC_URI` | `http://wallet.com/ledger` | Ledger public URI (used in account URIs). Specified if different from the `API_LEDGER_URI`.
 `API_TRACK_GA` | `UA-XXXXX-X` | Google Analytics Tracking ID.
 `API_TRACK_MIXPANEL` | | Mixpanel Tracking ID.
@@ -72,7 +72,6 @@ Name | Example | Description |
 `API_MAILGUN_DOMAIN` | | One of the domains attached to the Mailgun account.
 `WALLET_FORCE_HTTPS` | `true` | Force all connections to use HTTPS.
 `WALLET_TRUST_XFP_HEADER` | `true` | Trust the `X-Forwarded-Proto` header.
-`WALLET_LEDGER_ENABLE` | `false` | Run a ledger instance. (Optionally you can specify any of the [ledger environment variables](https://github.com/interledger/five-bells-ledger#step-3-run-it))
 
 ## Architecture
 Five Bells Wallet consists of a [Node.js](https://github.com/nodejs/node) (developed on v5.6) backend (REST API) and a client built using [React](https://github.com/facebook/react).
