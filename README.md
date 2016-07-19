@@ -41,6 +41,13 @@ _You must specify the required environment variables before running the below co
 npm run start
 ```
 
+### Running a ledger instance in the five-bells-wallet process
+
+Unless you're hosting an external ledger, you can optionally run a five-bells-ledger instance inside the five-bells-wallet. 
+To do so, all you need to do is leave the `API_LEDGER_URI` environment variable empty, and the software will automatically run a five-bells-ledger instance.
+
+Five-bells-ledger instance comes with default environment variables, but you can change them specifying any of the five-bells-ledger [environment variables](https://github.com/interledger/five-bells-ledger#step-3-run-it).
+
 ### Environment variables
 
 ##### Required
@@ -73,6 +80,22 @@ Name | Example | Description |
 `API_MAILGUN_DOMAIN` | | One of the domains attached to the Mailgun account.
 `WALLET_FORCE_HTTPS` | `true` | Force all connections to use HTTPS.
 `WALLET_TRUST_XFP_HEADER` | `true` | Trust the `X-Forwarded-Proto` header.
+
+##### Default five-bells-ledger environment variables 
+(used if the `API_LEDGER_URI` is not specified). You can read more about these variables in the [five-bells-ledger readme](https://github.com/interledger/five-bells-ledger#step-3-run-it).
+
+Name | Default |
+---- | ------- |
+`LEDGER_DB_URI` | `API_DB_URI + '-ledger'`
+`LEDGER_ADMIN_NAME` | `API_LEDGER_ADMIN_NAME`
+`LEDGER_ADMIN_PASS` | `API_LEDGER_ADMIN_PASS`
+`LEDGER_HOSTNAME` | `API_HOSTNAME`
+`LEDGER_PORT` | `API_PORT + 1`
+`LEDGER_PUBLIC_PORT` | `CLIENT_PORT`
+`LEDGER_PUBLIC_PATH` | `'ledger'`
+`LEDGER_CURRENCY_CODE` | `'USD'`
+`LEDGER_CURRENCY_SYMBOL` | `'$'`
+`LEDGER_PUBLIC_HTTPS` | `API_PUBLIC_HTTPS`
 
 ## Architecture
 Five Bells Wallet consists of a [Node.js](https://github.com/nodejs/node) (developed on v5.6) backend (REST API) and a client built using [React](https://github.com/facebook/react).

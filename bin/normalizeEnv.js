@@ -12,8 +12,8 @@ if (!env.API_LEDGER_URI) {
   env.LEDGER_CURRENCY_SYMBOL = env.LEDGER_CURRENCY_SYMBOL || '$'
   env.LEDGER_PUBLIC_HTTPS = env.LEDGER_PUBLIC_HTTPS || !!env.API_PUBLIC_HTTPS
 
-  const protocol = env.LEDGER_PUBLIC_HTTPS ? 'https:' : 'http:'
-  
+  const protocol = env.API_PUBLIC_HTTPS ? 'https:' : 'http:'
+
   env.API_LEDGER_URI = protocol + '//' + env.LEDGER_HOSTNAME + ':' + env.LEDGER_PORT
   env.API_LEDGER_PUBLIC_URI = protocol + '//' + env.LEDGER_HOSTNAME + ':' + env.LEDGER_PUBLIC_PORT + '/' + env.LEDGER_PUBLIC_PATH
 }
