@@ -60,7 +60,7 @@ Name | Example | Description |
 `API_LEDGER_ADMIN_NAME` | `admin` | Ledger admin name.
 `API_LEDGER_ADMIN_PASS` | `pass` | Ledger admin pass.
 `CLIENT_HOST` | `wallet.com` | Publicly visible hostname.
-`CLIENT_PORT` | `4000` | Publicly visible port.
+`CLIENT_PORT` | `4000` | Client port.
 
 ##### Optional
 
@@ -80,6 +80,7 @@ Name | Example | Description |
 `API_MAILGUN_DOMAIN` | | One of the domains attached to the Mailgun account.
 `WALLET_FORCE_HTTPS` | `true` | Force all connections to use HTTPS.
 `WALLET_TRUST_XFP_HEADER` | `true` | Trust the `X-Forwarded-Proto` header.
+`CLIENT_PUBLIC_PORT` | `80` | Client public port (if different from `CLIENT_PORT`)
 
 ##### Default five-bells-ledger environment variables 
 (used if the `API_LEDGER_URI` is not specified). You can read more about these variables in the [five-bells-ledger readme](https://github.com/interledger/five-bells-ledger#step-3-run-it).
