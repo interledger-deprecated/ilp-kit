@@ -41,6 +41,31 @@ _You must specify the required environment variables before running the below co
 npm run start
 ```
 
+### Port forwarding
+
+In most cases it makes sense to expose the wallet through 443 (or 80) port, in which case you need to setup a port forwarding that will forward `API_PORT` requests to `API_PUBLIC_PORT` (443 or 80). Note that the port forwarding should work for both http(s) and websocket connections.
+
+Here's an example of an Apache 2.4 virtual host with enabled port forwarding.
+
+> NOTE: Current webfinger implementation will not work if the public port is not 443 or 80.
+
+```
+<VirtualHost *:443> 
+  ServerName wallet.com
+  
+  RewriteEngine On
+  RewriteCond %{HTTP:Connection} Upgrade [NC]
+  RewriteRule /(.*) ws://wallet.com:3000/$1 [P,L]
+
+  ProxyPass / http://wallet.com:3000/ retry=0
+  ProxyPassReverse / http://wallet.com:3000/
+  
+  SSLEngine on
+  SSLCertificateFile /etc/apache2/ssl/wallet.com.crt
+  SSLCertificateKeyFile /etc/apache2/ssl/wallet.com.key
+</VirtualHost> 
+```
+
 ### Running a ledger instance in the five-bells-wallet process
 
 Unless you're hosting an external ledger, you can optionally run a five-bells-ledger instance inside the five-bells-wallet. 
@@ -54,8 +79,8 @@ Five-bells-ledger instance comes with default environment variables, but you can
 
 Name | Example | Description |
 ---- | ------- | ----------- |
-`API_HOSTNAME` | `wallet.com` | Publicly visible API hostname.
-`API_PORT` | `3000` | Publicly visible API port.
+`API_HOSTNAME` | `wallet.com` | API public hostname.
+`API_PORT` | `3000` | API private port (used as both public and private port if `API_PUBLIC_PORT` is not specified).
 `API_DB_URI` | `postgres://localhost/wallet` | URI for connecting to a database.
 `API_LEDGER_ADMIN_NAME` | `admin` | Ledger admin name.
 `API_LEDGER_ADMIN_PASS` | `pass` | Ledger admin pass.
@@ -68,6 +93,7 @@ Name | Example | Description |
 ---- | ------- | ----------- |
 `API_PUBLIC_HTTPS` | `''` | Whether or not the publicly visible instance of Five Bells Wallet is using HTTPS.
 `API_PRIVATE_HOSTNAME` | `localhost` | Private API hostname.
+`API_PUBLIC_PORT` | `''` | Api public port.
 `API_SECRET` | `qO2UX+fdl+tg0a1bYt` | Api secret. Used to generate the session, oauth and condition secrets.
 `API_RELOAD` | `true` | Turn on/off the reload endpoint.
 `API_LEDGER_URI` | `http://wallet.com:2000` | Ledger URI: requests go to this uri (a ledger instance will be started by the wallet if this is not specified).
