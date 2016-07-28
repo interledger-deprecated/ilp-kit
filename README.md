@@ -5,6 +5,26 @@
 
 Five Bells Wallet
 
+## Table of contents
+
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Running Dev Wallet](#running-dev-wallet)
+  - [Building Production Wallet](#building-production-wallet)
+  - [Running Production Wallet](#running-production-wallet)
+  - [Port Forwarding](#port-forwarding)
+  - [Running a ledger instance in the five-bells-wallet process](#running-a-ledger-instance-in-the-five-bells-wallet-process)
+  - [Environment variables](#environment-variables)
+- [Architecture](#architecture)
+  - [Backend (REST API)](#backend-rest-api)
+    - [API docs](#api-docs)
+    - [SPSP](#spsp)
+      - [Webfinger](#webfinger)
+  - [Client](#client)
+    - [Using Redux DevTools](#using-redux-devtools)
+    - [Theme Customization](#theme-customization)
+
 ## Prerequisites
 
 - [Five Bells Ledger](https://github.com/interledger/five-bells-ledger) instance
@@ -197,7 +217,7 @@ In development, Redux Devtools are enabled by default. You can toggle visibility
 - <kbd>Ctrl+Q</kbd> Move Dock Position
 - see [redux-devtools-dock-monitor](https://github.com/gaearon/redux-devtools-dock-monitor) for more detail information.
 
-#### Theme customization
+#### Theme Customization
 
 `npm install` generates a `src/theme/variables.scss` which contains the theme colors. You can manually edit it.
 
