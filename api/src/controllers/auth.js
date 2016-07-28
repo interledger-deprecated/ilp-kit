@@ -29,7 +29,7 @@ function AuthsControllerFactory (Auth, User, log, ledger, Users, mailer) {
        * @apiDescription Login (used for cookie based auth)
        *
        * @apiExample {shell} Login
-       *    curl -X POST -d
+       *    curl -X POST -H "Content-Type: application/json" -d
        *    '{
        *        "username": "alice",
        *        "password": "alice"

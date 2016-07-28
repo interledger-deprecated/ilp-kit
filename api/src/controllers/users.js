@@ -81,7 +81,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
      * @apiParam {String} password password
      *
      * @apiExample {shell} Post user
-     *    curl -X POST -d
+     *    curl -X POST -H "Content-Type: application/json" -d
      *    '{
      *        "password": "alice"
      *    }'
@@ -174,7 +174,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
      * @apiParam {String} username username
      *
      * @apiExample {shell} Update user email
-     *    curl -X PUT -d
+     *    curl -X PUT -H "Content-Type: application/json" -d
      *    '{
      *        "email": "alice@example.com"
      *    }'
@@ -275,7 +275,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
      * @apiParam {String} code verification code
      *
      * @apiExample {shell} Verify user email address
-     *    curl -X PUT -d
+     *    curl -X PUT -H "Content-Type: application/json" -d
      *    '{
      *        "code": "1f7aade2946667fac85ebaf7259182ead6b1fe062b5e8bb0ffa1b9d417431acb"
      *    }'

@@ -112,7 +112,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
      * @apiParam {String} path path
      *
      * @apiExample {shell} Make a payment with the destination_amount
-     *    curl -X PUT -H "Authorization: Basic YWxpY2U6YWxpY2U=" -d
+     *    curl -X PUT -H "Authorization: Basic YWxpY2U6YWxpY2U=" -H "Content-Type: application/json" -d
      *    '{
      *        "destination_account": "bob@wallet.example",
      *        "destination_amount": "1"
@@ -202,7 +202,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
      * @apiParam {String} destination_amount destination amount
      *
      * @apiExample {shell} Find path
-     *    curl -X POST -H "Authorization: Basic YWxpY2U6YWxpY2U=" -d
+     *    curl -X POST -H "Authorization: Basic YWxpY2U6YWxpY2U=" -H "Content-Type: application/json" -d
      *    '{
      *        "destination": "bob@wallet.example",
      *        "destination_amount": "10"
