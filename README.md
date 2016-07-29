@@ -16,6 +16,7 @@ Five Bells Wallet
   - [Port Forwarding](#port-forwarding)
   - [Running a ledger instance in the five-bells-wallet process](#running-a-ledger-instance-in-the-five-bells-wallet-process)
   - [Environment variables](#environment-variables)
+- [Interledger Setup](#interledger-setup)
 - [Architecture](#architecture)
   - [Backend (REST API)](#backend-rest-api)
     - [API docs](#api-docs)
@@ -68,6 +69,8 @@ In most cases it makes sense to expose the wallet through 443 (or 80) port, in w
 Here's an example of an Apache 2.4 virtual host with enabled port forwarding.
 
 > NOTE: Current webfinger implementation will not work if the public port is not 443 or 80.
+
+> NOTE: At the moment you need to have a 443 virtual host in addition to 80 virtual host if you're use 80 as a public port. 443 virtual host is used for the webfinger lookups. This is a [reported issue](https://github.com/e14n/webfinger/issues/27) in the webfinger lib used by the five-bells-wallet.
 
 ```
 <VirtualHost *:443> 
@@ -143,6 +146,135 @@ Name | Default |
 `LEDGER_CURRENCY_CODE` | `'USD'`
 `LEDGER_CURRENCY_SYMBOL` | `'$'`
 `LEDGER_PUBLIC_HTTPS` | `API_PUBLIC_HTTPS`
+
+## Interledger Setup
+You might want to do an interledger setup to test interledger transfers. In this case you will need at least two wallet instances and a connector. Below is an example setup instructions for two wallets and a connector on a personal machine (development/testing use).
+
+### Hosts file
+
+Edit your hosts file (/private/etc/hosts on OSX). Add these two lines
+
+```
+127.0.0.1   wallet1.com
+127.0.0.1   wallet2.com
+```
+
+### Database
+
+Create 4 postgres databases. `wallet1`, `wallet1-ledger`, `wallet2`, `wallet2-ledger`.
+
+### Apache Virtual Hosts
+
+> Note: The wallet instances are running on port 80, but we also need to setup virtual hosts on port 443 for the webfinger lookups (issue mentioned above).
+
+```
+<VirtualHost *:80> 
+  ServerName wallet1.com
+
+  RewriteEngine On
+  RewriteCond %{HTTP:Connection} Upgrade [NC]  
+  RewriteRule /(.*) ws://wallet1.com:3010/$1 [P,L]
+
+  ProxyPass / http://wallet1.com:3010/ retry=0
+  ProxyPassReverse / http://wallet1.com:3010/  
+</VirtualHost> 
+
+<VirtualHost *:443> 
+  ServerName wallet1.com
+  ProxyPass / http://wallet1.com:3010/ retry=0
+  ProxyPassReverse / http://wallet1.com:3010/
+  RedirectMatch ^/$ https://wallet1.com
+  
+  SSLEngine on
+  SSLCertificateFile /etc/apache2/ssl/wallet1.com.crt
+  SSLCertificateKeyFile /etc/apache2/ssl/wallet1.com.key
+</VirtualHost>
+
+<VirtualHost *:80> 
+  ServerName wallet2.com
+
+  RewriteEngine On
+  RewriteCond %{HTTP:Connection} Upgrade [NC]
+  RewriteRule /(.*) ws://wallet2.com:3020/$1 [P,L]
+
+  ProxyPass / http://wallet2.com:3020/ retry=0
+  ProxyPassReverse / http://wallet2.com:3020/
+</VirtualHost> 
+
+<VirtualHost *:443> 
+  ServerName wallet2.com
+  ProxyPass / http://wallet2.com:3020/ retry=0
+  ProxyPassReverse / http://wallet2.com:3020/
+  RedirectMatch ^/$ https://wallet2.com
+  
+  SSLEngine on
+  SSLCertificateFile /etc/apache2/ssl/wallet2.com.crt
+  SSLCertificateKeyFile /etc/apache2/ssl/wallet2.com.key
+</VirtualHost> 
+```
+
+> Note: You can use self signed certificates.
+
+### Wallet 1 + Ledger 1 instance
+
+Run with these environment variables
+```
+API_PRIVATE_HOSTNAME=localhost
+API_HOSTNAME=wallet1.com
+API_PORT=3100
+API_PUBLIC_PORT=80 
+API_PUBLIC_PATH=/api 
+API_DB_URI=postgres://localhost/wallet1
+API_LEDGER_ADMIN_NAME=admin
+API_LEDGER_ADMIN_PASS=admin
+API_RELOAD=true
+CLIENT_HOST=wallet1.com
+CLIENT_PORT=3010
+CLIENT_PUBLIC_PORT=80
+API_SECRET=qO2UX+fdl+tg0a1bYtXoBVQHN4pkn2hFB5Ont6CYj50=
+```
+
+> Note: Use `LEDGER_DB_SYNC=true` environment variable for both wallet1 and wallet2 to create the ledger db tables first time when you run each of the instances.
+
+### Wallet 2 + Ledger 2
+
+Run with these environment variables
+```
+API_PRIVATE_HOSTNAME=localhost
+API_HOSTNAME=wallet2.com
+API_PORT=3200
+API_PUBLIC_PORT=80 
+API_PUBLIC_PATH=/api 
+API_DB_URI=postgres://localhost/wallet2
+API_LEDGER_ADMIN_NAME=admin
+API_LEDGER_ADMIN_PASS=admin
+API_RELOAD=true
+CLIENT_HOST=wallet2.com
+CLIENT_PORT=3020
+CLIENT_PUBLIC_PORT=80
+API_SECRET=qO2UX+fdl+tg0a1bYtXoBVQHN4pkn2hFB5Ont6CYj50=
+```
+
+### Setup a five-bells-connector
+
+> Note: five-bells-wallet currently works with [five-bells-connector v8.1.0](https://github.com/interledger/five-bells-connector/tree/v8.1.0)
+
+- Create a trader user on both wallet1 and wallet2 instances with username: `trader`, password: `trader`.
+- Execute this query on both `wallet1-ledger` and `wallet2-ledger` databases.
+```
+UPDATE "L_ACCOUNTS" SET "CONNECTOR" = 'http://localhost:5000' WHERE "NAME" = 'trader';
+```
+
+Environment Variables
+```
+CONNECTOR_HOSTNAME=localhost
+CONNECTOR_PORT=5000
+CONNECTOR_LEDGERS='["USD@http://wallet1.com/ledger","EUR@http://wallet2.com/ledger"]' CONNECTOR_PAIRS='[["USD@http://wallet1.com/ledger", "EUR@http://wallet2.com/ledger"],["EUR@http://wallet2.com/ledger", "USD@http://wallet1.com/ledger"]]'
+CONNECTOR_ADMIN_USER=admin 
+CONNECTOR_ADMIN_PASS=admin 
+CONNECTOR_CREDENTIALS='{"http://wallet1.com/ledger":{"account_uri":"http://wallet1.com/ledger/accounts/trader","username":"trader","password":"trader"},"http://wallet2.com/ledger":{"account_uri":"http://wallet2.com/ledger/accounts/trader","username":"trader","password":"trader"}}'
+CONNECTOR_QUOTE_FULL_PATH=true
+```
 
 ## Architecture
 Five Bells Wallet consists of a [Node.js](https://github.com/nodejs/node) (developed on v5.6) backend (REST API) and a client built using [React](https://github.com/facebook/react).
