@@ -17,6 +17,12 @@ Five Bells Wallet
   - [Running a ledger instance in the five-bells-wallet process](#running-a-ledger-instance-in-the-five-bells-wallet-process)
   - [Environment variables](#environment-variables)
 - [Interledger Setup](#interledger-setup)
+  - [Hosts File](#hosts-file)
+  - [Database](#database)
+  - [Apache Virtual Hosts](#apache-virtual-hosts)
+  - [Wallet 1 + Ledger 1 Instance](wallet-1--ledger-1-instance)
+  - [Wallet 2 + Ledger 2 Instance](wallet-2--ledger-2-instance)
+  - [Setup five-bells-connector](#setup-five-bells-connector)
 - [Architecture](#architecture)
   - [Backend (REST API)](#backend-rest-api)
     - [API docs](#api-docs)
@@ -255,7 +261,7 @@ CLIENT_PUBLIC_PORT=80
 API_SECRET=qO2UX+fdl+tg0a1bYtXoBVQHN4pkn2hFB5Ont6CYj50=
 ```
 
-### Setup a five-bells-connector
+### Setup five-bells-connector
 
 > Note: five-bells-wallet currently works with [five-bells-connector v8.1.0](https://github.com/interledger/five-bells-connector/tree/v8.1.0)
 
