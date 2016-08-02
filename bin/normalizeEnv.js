@@ -17,6 +17,6 @@ if (!env.API_LEDGER_URI) {
 
   const protocol = env.API_PUBLIC_HTTPS ? 'https:' : 'http:'
 
-  env.API_LEDGER_URI = protocol + '//' + env.LEDGER_HOSTNAME + ':' + env.LEDGER_PORT
+  env.API_LEDGER_URI = 'http://' + (env.API_PRIVATE_HOSTNAME || env.LEDGER_HOSTNAME) + ':' + env.LEDGER_PORT
   env.API_LEDGER_PUBLIC_URI = protocol + '//' + env.LEDGER_HOSTNAME + ledgerPublicPort + '/' + env.LEDGER_PUBLIC_PATH
 }
