@@ -266,10 +266,6 @@ API_SECRET=qO2UX+fdl+tg0a1bYtXoBVQHN4pkn2hFB5Ont6CYj50=
 > Note: five-bells-wallet currently works with [five-bells-connector v8.1.0](https://github.com/interledger/five-bells-connector/tree/v8.1.0)
 
 - Create a trader user on both wallet1 and wallet2 instances with username: `trader`, password: `trader`.
-- Execute this query on both `wallet1-ledger` and `wallet2-ledger` databases.
-```
-UPDATE "L_ACCOUNTS" SET "CONNECTOR" = 'http://localhost:5000' WHERE "NAME" = 'trader';
-```
 
 Environment Variables
 ```
