@@ -2,7 +2,12 @@ import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap'
 import Waypoint from 'react-waypoint'
+
+import Navbar from 'react-bootstrap/lib/Navbar'
+import Nav from 'react-bootstrap/lib/Nav'
 import NavItem from 'react-bootstrap/lib/NavItem'
+import NavDropdown from 'react-bootstrap/lib/NavDropdown'
+
 import DocumentMeta from 'react-document-meta'
 import { isLoaded as isAuthLoaded, load as loadAuth, loadConfig, logout, updateBalance, verify } from 'redux/actions/auth'
 import { routeActions } from 'react-router-redux'
@@ -59,6 +64,10 @@ export default class App extends Component {
     config: PropTypes.object
   }
 
+  state = {
+    navExpanded: false
+  }
+
   getChildContext() {
     return {
       config: this.props.config
@@ -101,6 +110,14 @@ export default class App extends Component {
     }
   }
 
+  onNavItemClick = () => {
+    this.setState({ navExpanded: false })
+  }
+
+  onNavbarToggle = () => {
+    this.setState({ navExpanded: ! this.state.navExpanded })
+  }
+
   handleLogout = (event) => {
     event.preventDefault()
     // TODO don't disconnect, just unsubscribe
@@ -109,7 +126,7 @@ export default class App extends Component {
   }
 
   _handleWaypointEnter = () => {
-    if (this.navBar === 'navbar-default') {
+    if (this.navBar === 'navbar-active') {
       this.navBar = ''
       this.forceUpdate()
     }
@@ -117,7 +134,7 @@ export default class App extends Component {
 
   _handleWaypointLeave = () => {
     if (!this.navBar) {
-      this.navBar = 'navbar-default'
+      this.navBar = 'navbar-active'
       this.forceUpdate()
     }
   }
@@ -126,67 +143,74 @@ export default class App extends Component {
     const {user} = this.props
 
     return (
-      <div>
-        <div className={cx('container')}>
-          <script src="https://web-payments.net/polyfill.js"></script>
-          <DocumentMeta {...config.app}/>
-          <div className={cx('waypoint')}>
-            <Waypoint onEnter={this._handleWaypointEnter} onLeave={this._handleWaypointLeave} />
-          </div>
-          {user &&
-            <nav className={cx('navbar', 'navbar-fixed-top', this.navBar)}>
-              <div className="container">
-                <div className="navbar-header">
-                  <span className="navbar-brand">{config.app.title}</span>
-                </div>
-                <div className="collapse navbar-collapse">
-                  <ul className="nav navbar-nav pull-right">
-                    <li>
-                      <p className="navbar-text">
-                        {user.profile_picture &&
-                        <img className={cx('profilePic')} src={user.profile_picture} />}
-                        Hi {user.username}
-                      </p>
-                    </li>
-                    <IndexLinkContainer to="/">
-                      <NavItem>Home</NavItem>
-                    </IndexLinkContainer>
-                    {/* <LinkContainer to="/button">
-                      <NavItem>Pay Button</NavItem>
-                    </LinkContainer> */}
-                    <li>
-                      <a href="https://interledger.org/five-bells-wallet/apidoc" target="_blank">
-                        API docs
-                      </a>
-                    </li>
-                    {!user.github_id &&
-                    <LinkContainer to="/settings">
-                      <NavItem>Settings</NavItem>
-                    </LinkContainer>}
-                    <LinkContainer to="/logout">
-                      <NavItem className="logout-link" onClick={this.handleLogout}>
-                        Logout
-                      </NavItem>
-                    </LinkContainer>
-                  </ul>
-                </div>
-              </div>
-            </nav>}
+      <div className={cx('container')}>
+        <script src="https://web-payments.net/polyfill.js"></script>
+        <DocumentMeta {...config.app}/>
 
-          <div className={cx('appContent')}>
-            {this.props.children}
-          </div>
-
-          {user &&
-            <div className="footer">
-              <div className="copyright">
-                <span className="hint-text">© 2016 </span>
-                <a href="https://interledger.org">
-                   Interledger
-                </a>.
-              </div>
-            </div>}
+        <div className={cx('waypoint')}>
+          <Waypoint onEnter={this._handleWaypointEnter} onLeave={this._handleWaypointLeave} />
         </div>
+
+        {user &&
+        <Navbar fixedTop className={this.navBar} expanded={ this.state.navExpanded } onToggle={ this.onNavbarToggle }>
+          <Navbar.Header>
+            <Navbar.Brand>
+              <IndexLinkContainer to="/">
+                <a>{config.app.title}</a>
+              </IndexLinkContainer>
+            </Navbar.Brand>
+            <Navbar.Toggle />
+          </Navbar.Header>
+          <Navbar.Collapse>
+            <Nav pullRight>
+              <li>
+                <Navbar.Text>
+                  {user.profile_picture &&
+                  <img className={cx('profilePic')} src={user.profile_picture} />}
+                  Hi {user.username}
+                </Navbar.Text>
+              </li>
+              <IndexLinkContainer to="/">
+                <NavItem onClick={this.onNavItemClick}>Home</NavItem>
+              </IndexLinkContainer>
+              <NavDropdown title="Dev Tools">
+                <li>
+                  <a href="https://interledger.org/five-bells-wallet/apidoc" target="_blank" onClick={this.onNavItemClick}>
+                    API docs
+                  </a>
+                </li>
+                <li>
+                  <a href="https://github.com/interledger/five-bells-wallet-client" target="_blank" onClick={this.onNavItemClick}>
+                    Wallet Client
+                  </a>
+                </li>
+              </NavDropdown>
+              {!user.github_id &&
+              <LinkContainer to="/settings">
+                <NavItem onClick={this.onNavItemClick}>Settings</NavItem>
+              </LinkContainer>}
+              <LinkContainer to="/logout">
+                <NavItem className="logout-link" onClick={this.handleLogout}>
+                  Logout
+                </NavItem>
+              </LinkContainer>
+            </Nav>
+          </Navbar.Collapse>
+        </Navbar>}
+
+        <div className={cx('appContent')}>
+          {this.props.children}
+        </div>
+
+        {user &&
+          <div className="footer">
+            <div className="copyright">
+              <span className="hint-text">© 2016 </span>
+              <a href="https://interledger.org">
+                 Interledger
+              </a>.
+            </div>
+          </div>}
       </div>
     )
   }

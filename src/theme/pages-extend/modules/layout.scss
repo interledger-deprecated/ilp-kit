@@ -1,3 +1,11 @@
+.navbar {
+  background: transparent;
+  border-color: transparent;
+}
+.navbar-active {
+  background: #fff;
+  border-color: #e7e7e7;
+}
 .navbar-nav > li {
   &.active {
     background: transparent;
@@ -9,12 +17,17 @@
     background: transparent;
 
     &:hover, &:active, &:focus {
-      background: transparent;
+      background: transparent !important;
     }
   }
   & > .navbar-text {
     margin-top: 20px;
     margin-bottom: 20px;
+  }
+  .dropdown-menu {
+    border: 1px solid #e7e7e7;
+    border-top: none;
+    box-shadow: none;
   }
 }
 
