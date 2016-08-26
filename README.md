@@ -115,6 +115,7 @@ Name | Example | Description |
 `API_LEDGER_ADMIN_PASS` | `pass` | Ledger admin pass.
 `CLIENT_HOST` | `wallet.com` | Publicly visible hostname.
 `CLIENT_PORT` | `4000` | Client port.
+`LEDGER_ILP_PREFIX` | `wallet.` | Ledger ILP prefix 
 
 ##### Optional
 
@@ -323,16 +324,12 @@ HTTP/1.1 200 OK
       "href": "https://red.ilpdemo.org/api/payments"
     },
     {
-      "rel": "https://interledger.org/rel/sender/pathfind",
-      "href": "https://red.ilpdemo.org/api/payments/findPath"
+      "rel": "https://interledger.org/rel/sender/quote",
+      "href": "https://red.ilpdemo.org/api/payments/quote"
     },
     {
       "rel": "https://interledger.org/rel/receiver",
       "href": "https://red.ilpdemo.org/api/receivers/alice"
-    },
-    {
-      "rel": "https://interledger.org/rel/receiver/payment",
-      "href": "https://red.ilpdemo.org/api/receivers/alice/payments"
     }
   ]
 }

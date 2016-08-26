@@ -82,7 +82,7 @@ module.exports = class Utils {
     return {
       accountUri: _.filter(response.links, {rel: 'https://interledger.org/rel/ledgerAccount'})[0].href,
       ledgerUri: _.filter(response.links, {rel: 'https://interledger.org/rel/ledgerUri'})[0].href,
-      paymentUri: _.filter(response.links, {rel: 'https://interledger.org/rel/receiver/payment'})[0].href
+      paymentUri: _.filter(response.links, {rel: 'https://interledger.org/rel/receiver'})[0].href
     }
   }
 

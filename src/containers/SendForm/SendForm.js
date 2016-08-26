@@ -26,8 +26,8 @@ import { Input } from 'components'
     destinationInfo: state.send.destinationInfo,
     send: state.send,
     fail: state.send.fail,
-    path: state.send.path,
-    pathFinding: state.send.pathFinding
+    quote: state.send.quote,
+    quoting: state.send.quoting
   }),
   sendActions)
 @successable()
@@ -43,9 +43,9 @@ export default class SendForm extends Component {
     handleSubmit: PropTypes.func.isRequired,
     values: PropTypes.object,
     transfer: PropTypes.func.isRequired,
-    findPath: PropTypes.func.isRequired,
-    path: PropTypes.object,
-    pathFinding: PropTypes.bool,
+    requestQuote: PropTypes.func.isRequired,
+    quote: PropTypes.object,
+    quoting: PropTypes.bool,
     data: PropTypes.object,
     initializeForm: PropTypes.func,
 
@@ -68,9 +68,9 @@ export default class SendForm extends Component {
         destinationAmount: data.destinationAmount
       })
 
-      // Find path
-      // TODO:UI feedback if pathfind fails
-      this.props.findPath({
+      // Request a quote
+      // TODO:UI feedback if quoting fails
+      this.props.requestQuote({
         destination: data.destination,
         destinationAmount: data.destinationAmount
       })
@@ -79,16 +79,16 @@ export default class SendForm extends Component {
 
   // TODO doesn't handle the initial render
   componentWillReceiveProps(nextProps) {
-    if (nextProps.path
-      && ((nextProps.path.sourceAmount && nextProps.path.sourceAmount !== this.props.path.sourceAmount)
-      || (nextProps.path.destinationAmount && nextProps.path.destinationAmount !== this.props.path.destinationAmount))) {
+    if (nextProps.quote
+      && ((nextProps.quote.sourceAmount && nextProps.quote.sourceAmount !== this.props.quote.sourceAmount)
+      || (nextProps.quote.destinationAmount && nextProps.quote.destinationAmount !== this.props.quote.destinationAmount))) {
 
       if (!nextProps.fields.sourceAmount.active) {
-        this.props.fields.sourceAmount.onChange(nextProps.path.sourceAmount)
+        this.props.fields.sourceAmount.onChange(nextProps.quote.sourceAmount)
       }
 
       if (!nextProps.fields.destinationAmount.active) {
-        this.props.fields.destinationAmount.onChange(nextProps.path.destinationAmount)
+        this.props.fields.destinationAmount.onChange(nextProps.quote.destinationAmount)
       }
     }
   }
@@ -102,23 +102,23 @@ export default class SendForm extends Component {
   handleSourceAmountChange = (target) => {
     if (!this.props.values.destination) return
 
-    this.props.findPath({
+    this.props.requestQuote({
       destination: this.props.values.destination,
       sourceAmount: target.value
     })
 
-    this.lastPathfindingField = 'source'
+    this.lastQuotingField = 'source'
   }
 
   handleDestinationAmountChange = (target) => {
     if (!this.props.values.destination) return
 
-    this.props.findPath({
+    this.props.requestQuote({
       destination: this.props.values.destination,
       destinationAmount: target.value
     })
 
-    this.lastPathfindingField = 'destination'
+    this.lastQuotingField = 'destination'
   }
 
   handleSubmit = (data) => {
@@ -128,11 +128,11 @@ export default class SendForm extends Component {
 
   render() {
     const { pristine, invalid, handleSubmit, submitting, success, destinationInfo,
-      pathFinding, fail, data, fields: {destination, sourceAmount, destinationAmount, message} } = this.props
+      quoting, fail, data, fields: {destination, sourceAmount, destinationAmount, message} } = this.props
     const { config } = this.context
 
-    const isSendingAmountFieldDisabled = !destination.value || fail.id || (pathFinding && this.lastPathfindingField === 'destination')
-    const isReceivingAmountFieldDisabled = !destination.value || fail.id || (pathFinding && this.lastPathfindingField === 'source')
+    const isSendingAmountFieldDisabled = !destination.value || fail.id || (quoting && this.lastQuotingField === 'destination')
+    const isReceivingAmountFieldDisabled = !destination.value || fail.id || (quoting && this.lastQuotingField === 'source')
 
     // TODO initial render should show a currency
     return (
@@ -150,7 +150,6 @@ export default class SendForm extends Component {
               switch (fail.id) {
                 case 'LedgerInsufficientFundsError': return 'You have insufficient funds to make the payment'
                 case 'NotFoundError': return 'Account not found'
-                case 'NoPathsError': return 'Couldn\'t find paths to the destination account'
                 default: return 'Something went wrong'
               }
             })()}
@@ -192,7 +191,7 @@ export default class SendForm extends Component {
               </div>
             </div>
             <button type="submit" className="btn btn-complete"
-              disabled={(!data && pristine) || invalid || submitting || pathFinding || fail.id}>
+              disabled={(!data && pristine) || invalid || submitting || quoting || fail.id}>
               {submitting ? 'Sending...' : 'Send'}
             </button>
           </form>

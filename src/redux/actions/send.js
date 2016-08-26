@@ -12,9 +12,9 @@ export const destinationChange = (destination) => ({
   })
 })
 
-export const findPath = (values) => ({
-  types: [types.PATHFIND, types.PATHFIND_SUCCESS, types.PATHFIND_FAIL],
-  promise: (client) => client.post('/payments/findPath', {
+export const requestQuote = (values) => ({
+  types: [types.REQUEST_QUOTE, types.REQUEST_QUOTE_SUCCESS, types.REQUEST_QUOTE_FAIL],
+  promise: (client) => client.post('/payments/quote', {
     // TODO source user set here or in api?
     data: {
       destination: values.destination,
@@ -28,12 +28,9 @@ export const findPath = (values) => ({
 export const transfer = (values) => (dispatch, getState) => dispatch({
   types: [types.SEND, types.SEND_SUCCESS, types.SEND_FAIL],
   promise: (client) => client.put('/payments/' + uuid4(), {
-    // TODO source user set here or in api?
     data: {
-      destination_account: values.destination,
-      source_amount: values.sourceAmount,
-      destination_amount: values.destinationAmount,
-      path: getState().send.pathRaw,
+      ...getState().send.quote,
+      destination: values.destination,
       message: values.message
     }
   })

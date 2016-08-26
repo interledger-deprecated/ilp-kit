@@ -167,26 +167,6 @@ module.exports = class Ledger extends EventEmitter {
     self.emitTransferEvent(transfer)
   }
 
-  getCondition (paymentId) {
-    const cond = new condition.PreimageSha256()
-    const conditionSecret = this.config.getIn('conditionSecret')
-    cond.setPreimage(crypto.createHmac('sha256', conditionSecret).update(paymentId).digest())
-
-    return cond
-  }
-
-  getFulfillment (paymentId) {
-    return this.getCondition(paymentId).serializeUri()
-  }
-
-  preparePayment () {
-    const paymentId = uuid()
-    return {
-      paymentId: paymentId,
-      receipt_condition: this.getCondition(paymentId).getConditionUri()
-    }
-  }
-
   preparedEvent (transfer) {
     this.log.debug('received notification for prepared transfer ' + transfer.id)
 
@@ -290,97 +270,41 @@ module.exports = class Ledger extends EventEmitter {
     }, data)
   }
 
-  findPath(options) {
-    let pathOptions = {
-      sourceAccount: this.ledgerUriPublic + '/accounts/' + options.username,
-      destinationAccount: options.destination.accountUri
-    }
-
-    if (options.sourceAmount) {
-      pathOptions.sourceAmount = options.sourceAmount
-    } else {
-      pathOptions.destinationAmount = options.destinationAmount
-    }
-
-    return sender.findPath(pathOptions)
-  }
-
   * transfer(options) {
     let response
     let sourceAccount = this.ledgerUriPublic + '/accounts/' + options.username
 
-    // Interledger
-    if (options.destination.type === 'foreign') {
-      let paymentObj = {
-        sourceAccount: sourceAccount,
-        sourcePassword: options.password,
-        destinationAccount: options.destination.accountUri
-      }
+    const paymentId = uuid()
 
-      // Message
-      let postData = options.message ? {memo: options.message} : {}
-
-      const resp = yield superagent.post(options.destination.paymentUri, postData)
-
-      paymentObj.destinationMemo = {
-        receiver_payment_id: resp.body.paymentId,
-        source_account: sourceAccount,
-        source_amount: options.path.debits[0].amount,
-        destination_account: options.destination.accountUri,
-        destination_amount: options.path.credits[0].memo.ilp_header.amount
-      }
-
-      if (options.source_memo) {
-        paymentObj.sourceMemo.userMemo = options.source_memo
-      }
-
-      if (options.destination_memo) {
-        paymentObj.destinationMemo.userMemo = options.destination_memo
-      }
-
-      paymentObj.receiptCondition = resp.body.receipt_condition
-
-      try {
-        response = yield sender.executePayment(options.path, paymentObj)
-      } catch (e) {
-        // TODO handle
-      }
-    }
-    else {
-      const paymentId = uuid()
-
-      let debit = {
-        account: sourceAccount,
-        amount: options.destinationAmount,
-        authorized: true
-      }
-
-      if (options.source_memo) {
-        debit.memo = {userMemo: options.source_memo}
-      }
-
-      let credit = {
-        account: options.destination.accountUri,
-        amount: options.destinationAmount
-      }
-
-      if (options.destination_memo) {
-        credit.memo = {userMemo: options.destination_memo}
-      }
-
-      response = yield superagent
-        .put(this.ledgerUri + '/transfers/' + paymentId)
-        .send({
-          debits: [debit],
-          credits: [credit],
-          // TODO shouldn't be fixed
-          expires_at: "2018-06-16T00:00:01.000Z"
-        })
-        .auth(options.username, options.password)
-
-      response = response.body
+    let debit = {
+      account: sourceAccount,
+      amount: options.destinationAmount,
+      authorized: true
     }
 
-    return response
+    if (options.source_memo) {
+      debit.memo = {userMemo: options.source_memo}
+    }
+
+    let credit = {
+      account: options.destination.accountUri,
+      amount: options.destinationAmount
+    }
+
+    if (options.destination_memo) {
+      credit.memo = {userMemo: options.destination_memo}
+    }
+
+    response = yield superagent
+      .put(this.ledgerUri + '/transfers/' + paymentId)
+      .send({
+        debits: [debit],
+        credits: [credit],
+        // TODO shouldn't be fixed
+        expires_at: "2018-06-16T00:00:01.000Z"
+      })
+      .auth(options.username, options.password)
+
+    return response.body
   }
 }

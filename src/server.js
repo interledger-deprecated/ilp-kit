@@ -78,7 +78,7 @@ server.on('upgrade', (req, socket, head) => {
 // added the error handling to avoid https://github.com/nodejitsu/node-http-proxy/issues/527
 proxyApi.on('error', (error, req, res) => {
   let json;
-  if (error.code !== 'ECONNRESET') {
+  if (error.code !== 'ECONNRESET' && error.code !== 'ECONNREFUSED') {
     console.error('proxy error', error);
   }
   // if (!res.headersSent) {
