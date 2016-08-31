@@ -10,6 +10,10 @@
       "href": "http://localhost/socket.io"
     },
     {
+      "rel": "https://interledger.org/rel/ilpAddress",
+      "href": "localhost.alice"
+    },
+    {
       "rel": "https://interledger.org/rel/ledgerAccount",
       "href": "http://localhost:3001/accounts/alice"
     },

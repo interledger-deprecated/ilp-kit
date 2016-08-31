@@ -23,6 +23,13 @@ module.exports = class SPSP {
   constructor(config, log, container, Payment, socket) {
     this.Payment = Payment
     this.socket = socket
+    this.config = config
+
+    this.ledgerPrefix = this.config.data.getIn(['ledger', 'prefix'])
+    this.ledgerPublicUri = this.config.data.getIn(['ledger', 'public_uri'])
+
+    this.adminName = this.config.data.getIn(['ledger', 'admin', 'name'])
+    this.adminPass = this.config.data.getIn(['ledger', 'admin', 'pass'])
   }
 
   * init() {
@@ -56,16 +63,19 @@ module.exports = class SPSP {
 
   // The quoting has different flows depending on what's supplied (source or destination amount)
   * quote(params) {
+    const sourceAccount = this.ledgerPublicUri + '/accounts/' + params.source.username
+
     this.sender = ILP.createSender({
       _plugin: FiveBellsLedgerPlugin,
-      prefix: 'wallet1.', // TODO:BEFORE_DEPLOY don't hardcode
-      account: 'http://wallet1.com/ledger/accounts/alice',
-      password: 'alice'
+      prefix: this.ledgerPrefix,
+      account: sourceAccount,
+      username: this.adminName,
+      password: this.adminPass
     })
 
     // TODO remove hardcode
-    const sourceAmount = params.sourceAmount || (yield this.sender.quoteDestinationAmount('wallet2.alice', params.destinationAmount))
-    const destinationAmount = params.destinationAmount || (yield this.sender.quoteSourceAmount('wallet2.alice', params.sourceAmount))
+    const sourceAmount = params.sourceAmount || (yield this.sender.quoteDestinationAmount(params.destination.ilpAddress, params.destinationAmount))
+    const destinationAmount = params.destinationAmount || (yield this.sender.quoteSourceAmount(params.destination.ilpAddress, params.sourceAmount))
 
     return {
       sourceAmount,
@@ -102,14 +112,18 @@ module.exports = class SPSP {
   /**
    * Receiver
    */
-  * createRequest(amount) {
+  * createRequest(destinationUser, destinationAmount) {
     const self = this
+    const prefix = self.config.data.getIn(['ledger', 'prefix'])
+    const destinationAccount = self.config.data.getIn(['ledger', 'public_uri'])
+      + '/accounts/' + destinationUser.username
 
     self.receiver = ILP.createReceiver({
       _plugin: FiveBellsLedgerPlugin,
-      prefix: 'wallet2.',
-      account: 'http://wallet2.com/ledger/accounts/alice',
-      password: 'alice'
+      prefix: prefix,
+      account: destinationAccount,
+      username: self.adminName,
+      password: self.adminPass
     })
 
     yield self.receiver.listen()
@@ -134,7 +148,7 @@ module.exports = class SPSP {
     }))
 
     return this.receiver.createRequest({
-      amount: amount
+      amount: destinationAmount
     })
   }
 }

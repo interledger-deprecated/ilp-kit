@@ -16,6 +16,7 @@ module.exports = class Utils {
   constructor (config, ledger) {
     this.ledger = ledger
     this.ledgerUriPublic = config.data.getIn(['ledger', 'public_uri'])
+    this.ledgerPrefix = config.data.getIn(['ledger', 'prefix'])
     this.localUri = config.data.getIn(['server', 'base_uri'])
   }
 
@@ -82,7 +83,8 @@ module.exports = class Utils {
     return {
       accountUri: _.filter(response.links, {rel: 'https://interledger.org/rel/ledgerAccount'})[0].href,
       ledgerUri: _.filter(response.links, {rel: 'https://interledger.org/rel/ledgerUri'})[0].href,
-      paymentUri: _.filter(response.links, {rel: 'https://interledger.org/rel/receiver'})[0].href
+      paymentUri: _.filter(response.links, {rel: 'https://interledger.org/rel/receiver'})[0].href,
+      ilpAddress: _.filter(response.links, {rel: 'https://interledger.org/rel/ilpAddress'})[0].href
     }
   }
 
@@ -93,7 +95,7 @@ module.exports = class Utils {
    *  - destination - string
    *  - retrieveLedgerInfo - bool (retrieves ledger info (currency, api endpoints, etc))
    */
-  * parseDestination (options) {
+  * parseDestination(options) {
     let self = this
 
     const destination = options.destination
@@ -101,6 +103,7 @@ module.exports = class Utils {
     let accountUri
     let ledgerUri
     let paymentUri
+    let ilpAddress
 
     // Webfinger lookup
     if (self.isWebfinger(destination) || self.isForeignAccountUri(destination)) {
@@ -109,6 +112,7 @@ module.exports = class Utils {
       accountUri = account.accountUri
       ledgerUri = account.ledgerUri
       paymentUri = account.paymentUri
+      ilpAddress = account.ilpAddress
     }
 
     // Local account
@@ -116,6 +120,7 @@ module.exports = class Utils {
       accountUri = self.isAccountUri(destination) ? destination : self.ledgerUriPublic + '/accounts/' + destination
       ledgerUri = self.ledgerUriPublic
       paymentUri = self.localUri
+      ilpAddress = self.ledgerPrefix + destination
 
       // Check if account exists
       yield self.getAccount(accountUri)
@@ -125,7 +130,8 @@ module.exports = class Utils {
       type: this.isForeignAccountUri(accountUri) ? 'foreign' : 'local',
       accountUri: accountUri,
       ledgerUri: ledgerUri,
-      paymentUri: paymentUri
+      paymentUri: paymentUri,
+      ilpAddress: ilpAddress
     }
 
     // TODO:PERFORMANCE api should already know the current ledgerInfo at this point

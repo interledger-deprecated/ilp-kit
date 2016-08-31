@@ -113,6 +113,10 @@ function WebfingerControllerFactory (log, config, ledger) {
             "href" : config.data.getIn(['server', 'base_uri']) + '/socket.io'
           },
           {
+            "rel" : "https://interledger.org/rel/ilpAddress",
+            "href" : config.data.getIn(['ledger', 'prefix']) + ledgerUser.name
+          },
+          {
             "rel" : "https://interledger.org/rel/ledgerAccount",
             "href" : config.data.getIn(['ledger', 'public_uri']) + '/accounts/' + ledgerUser.name
           },

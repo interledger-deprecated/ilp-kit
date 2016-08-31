@@ -26,8 +26,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
       router.post('/payments/quote', Auth.checkAuth, this.quote)
       router.put('/payments/:id', Auth.checkAuth, Payment.createBodyParser(), this.putResource)
 
-      router.get('/receivers/:username', this.getReceiver)
-      router.post('/receivers/:username', this.postReceiver)
+      router.post('/receivers/:username', this.setup)
     }
 
     /**
@@ -221,53 +220,17 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
       })
 
       this.body = yield spsp.quote({
+        source: this.req.user,
         destination: destination,
         sourceAmount: this.body.source_amount,
         destinationAmount: this.body.destination_amount
       })
     }
 
-    /**
-     * @api {POST} /receivers/:username/payments Prepare a payment
-     * @apiName PreparePayment
-     * @apiGroup Payment
-     * @apiVersion 1.0.0
-     *
-     * @apiDescription Prepare a payment
-     *
-     * @apiExample {shell} Prepare a payment
-     *    curl -X POST -d
-     *    '{
-     *        "amount": 98,
-     *    }'
-     *    https://wallet.example/receivers/alice/payments
-     *
-     * @apiSuccessExample {json} 200 Response:
-     *    HTTP/1.1 200 OK
-     *    {
-     *      "packet": {
-     *        "amount": "98",
-     *        "account": "wallet.alice",
-     *        "data": {
-     *          "expires_at": "2016-08-22T18:14:27.783Z",
-     *          "request_id": "ed1edd4d-1d24-4c1f-9a28-dc0fa229ba84"
-     *        }
-     *      },
-     *      "condition": "cc:0:3:Jbe1_sdvD0rlzYdkLZcfuftTLKpyscZ2U8zj_6Oafjw:32"
-     *    }
-     */
-
-    // TODO:PERFORMANCE Expire pending payments (remove from db)
-    static * getReceiver() {
-      this.body = yield spsp.createRequest(this.body.amount)
-    }
-
-    static * postReceiver() {
+    static * setup() {
       const sourceAccount = this.body.sender_identifier
       const memo = this.body.memo
       const destinationAmount = this.body.amount
-
-      const paymentParams = yield spsp.createRequest(destinationAmount)
 
       // Get the user from the db. We need the id in the payment
       const destinationUser = yield User.findOne({
@@ -278,6 +241,10 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
       if (!destinationUser) {
         return this.status = 404
       }
+
+      const paymentParams = yield spsp.createRequest(destinationUser, destinationAmount)
+
+      console.log('payments:247', paymentParams)
 
       const paymentObj = {
         state: 'pending',

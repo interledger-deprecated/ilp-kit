@@ -15,7 +15,8 @@ module.exports = class WalletConfig {
       admin: {
         name: Config.getEnv(envPrefix, 'LEDGER_ADMIN_NAME'),
         pass: Config.getEnv(envPrefix, 'LEDGER_ADMIN_PASS')
-      }
+      },
+      prefix: Config.getEnv('LEDGER_ILP_PREFIX')
     }
 
     // Google Analytics / Mixpanel tracking
