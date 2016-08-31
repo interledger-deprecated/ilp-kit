@@ -1,7 +1,6 @@
 "use strict"
 
 const crypto = require('crypto')
-const uuid = require('uuid4')
 const co = require('co')
 const passport = require('koa-passport')
 const UserFactory = require('../models/user')

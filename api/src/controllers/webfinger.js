@@ -57,16 +57,12 @@ function WebfingerControllerFactory (log, config, ledger) {
      *          "href": "https://wallet.example/payments"
      *        },
      *        {
-     *          "rel": "https://interledger.org/rel/sender/pathfind",
-     *          "href": "https://wallet.example/payments/findPath"
+     *          "rel": "https://interledger.org/rel/sender/quote",
+     *          "href": "https://wallet.example/payments/quote"
      *        },
      *        {
      *          "rel": "https://interledger.org/rel/receiver",
      *          "href": "https://wallet.example/receivers/alice"
-     *        },
-     *        {
-     *          "rel": "https://interledger.org/rel/receiver/payment",
-     *          "href": "https://wallet.example/receivers/alice/payments"
      *        }
      *      ]
      *    }
@@ -125,16 +121,12 @@ function WebfingerControllerFactory (log, config, ledger) {
             "href" : config.data.getIn(['server', 'base_uri']) + '/payments'
           },
           {
-            "rel" : "https://interledger.org/rel/sender/pathfind",
-            "href" : config.data.getIn(['server', 'base_uri']) + '/payments/findPath'
+            "rel" : "https://interledger.org/rel/sender/quote",
+            "href" : config.data.getIn(['server', 'base_uri']) + '/payments/quote'
           },
           {
             "rel" : "https://interledger.org/rel/receiver",
             "href" : config.data.getIn(['server', 'base_uri']) + '/receivers/' + ledgerUser.name
-          },
-          {
-            "rel" : "https://interledger.org/rel/receiver/payment",
-            "href" : config.data.getIn(['server', 'base_uri']) + '/receivers/' + ledgerUser.name + '/payments'
           }
         ]
       }

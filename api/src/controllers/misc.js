@@ -61,7 +61,7 @@ function MiscControllerFactory (Auth, log, config, ledger, utils) {
      *
      * @apiDescription Get wallet config
      *
-     * @apiExample {shell} Find path
+     * @apiExample {shell} Get wallet config
      *    curl -X GET
      *    https://wallet.example/config
      *

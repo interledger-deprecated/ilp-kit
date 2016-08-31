@@ -93,7 +93,7 @@ function PaymentFactory (sequelize, validator, container, User) {
           [Sequelize.col('SourceUser.username'), 'sourceUserUsername']
         ]},
         where: {
-          transfers: transfer
+          transfer: transfer
         },
         include: [{
           model: User.DbModel, as: 'SourceUser', attributes: []
@@ -114,7 +114,7 @@ function PaymentFactory (sequelize, validator, container, User) {
     source_account: Sequelize.STRING(1024),
     destination_user: Sequelize.INTEGER,
     destination_account: Sequelize.STRING(1024),
-    transfers: {
+    transfer: {
       type: Sequelize.STRING(512),
       unique: true
     },
@@ -122,6 +122,7 @@ function PaymentFactory (sequelize, validator, container, User) {
     source_amount: Sequelize.STRING(1024), // TODO put the right type
     destination_amount: Sequelize.STRING(1024), // TODO put the right type
     message: Sequelize.STRING(1024), // TODO decide on the size
+    execution_condition: Sequelize.STRING(1024), // TODO decide on the size
     created_at: Sequelize.DATE,
     completed_at: Sequelize.DATE
   })

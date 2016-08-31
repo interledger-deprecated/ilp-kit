@@ -107,7 +107,7 @@ module.exports = class Socket {
     let self = this
 
     // TODO move this logic somewhere else?
-    self.Payment.findOne({where: {transfers: transfer.id}})
+    self.Payment.findOne({where: {transfer: transfer.id}})
       .then(function (data) {
         self.log.info('payment for ' + username)
 
@@ -116,6 +116,19 @@ module.exports = class Socket {
 
     // Fire a balance update event
     // TODO move somewhere else
+    co(function *() {
+      var account = yield self.ledger.getAccount({username: username}, true)
+      self.updateBalance(username, account.balance)
+    }).catch((err) => {
+      // TODO handle
+    })
+  }
+
+  payment(username, payment) {
+    const self = this
+
+    self.emitToUser(username, 'payment', payment)
+
     co(function *() {
       var account = yield self.ledger.getAccount({username: username}, true)
       self.updateBalance(username, account.balance)

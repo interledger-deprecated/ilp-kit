@@ -45,8 +45,8 @@ export default class Widget extends Component {
     store: PropTypes.object,
 
     transfer: PropTypes.func,
-    findPath: PropTypes.func,
-    path: PropTypes.object,
+    requestQuote: PropTypes.func,
+    quote: PropTypes.object,
     fail: PropTypes.object
   }
 

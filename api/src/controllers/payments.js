@@ -7,24 +7,27 @@ const request = require('five-bells-shared/utils/request')
 const Auth = require('../lib/auth')
 const Log = require('../lib/log')
 const Ledger = require('../lib/ledger')
+const SPSP = require('../lib/spsp')
 const Config = require('../lib/config')
+const Socket = require('../lib/socket')
 const Utils = require('../lib/utils')
+const UserFactory = require('../models/user')
 const PaymentFactory = require('../models/payment')
 const InvalidLedgerAccountError = require('../errors/invalid-ledger-account-error')
 const LedgerInsufficientFundsError = require('../errors/ledger-insufficient-funds-error')
-const NoPathsError = require('../errors/no-paths-error')
 
-PaymentsControllerFactory.constitute = [Auth, PaymentFactory, Log, Ledger, Config, Utils]
-function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
+PaymentsControllerFactory.constitute = [Auth, PaymentFactory, Log, Ledger, Config, Utils, SPSP, Socket, UserFactory]
+function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, spsp, socket, User) {
   log = log('payments')
 
   return class PaymentsController {
-    static init (router) {
+    static init(router) {
       router.get('/payments', Auth.checkAuth, this.getHistory)
-      router.post('/payments/findPath', Auth.checkAuth, this.findPath)
+      router.post('/payments/quote', Auth.checkAuth, this.quote)
       router.put('/payments/:id', Auth.checkAuth, Payment.createBodyParser(), this.putResource)
 
-      router.post('/receivers/:username/payments', this.prepare)
+      router.get('/receivers/:username', this.getReceiver)
+      router.post('/receivers/:username', this.postReceiver)
     }
 
     /**
@@ -52,7 +55,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
      *          "source_account": "https://wallet.example/ledger/accounts/alice",
      *          "destination_user": 2,
      *          "destination_account": "https://wallet.example/ledger/accounts/bob",
-     *          "transfers": "https://wallet.example/ledger/transfers/3d4c9c8e-204a-4213-9e91-88b64dad8604",
+     *          "transfer": "https://wallet.example/ledger/transfers/3d4c9c8e-204a-4213-9e91-88b64dad8604",
      *          "state": null,
      *          "source_amount": "12",
      *          "destination_amount": "12",
@@ -68,7 +71,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
      *          "source_account": "https://wallet.example/ledger/accounts/alice",
      *          "destination_user": 2,
      *          "destination_account": "https://wallet.example/ledger/accounts/bob",
-     *          "transfers": "https://wallet.example/ledger/transfers/d1fa49d3-c955-4833-803a-df0c43eab044",
+     *          "transfer": "https://wallet.example/ledger/transfers/d1fa49d3-c955-4833-803a-df0c43eab044",
      *          "state": null,
      *          "source_amount": "1",
      *          "destination_amount": "1",
@@ -82,7 +85,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
      *      "totalPages": 5
      *    }
      */
-    static * getHistory () {
+    static * getHistory() {
       const page = this.query.page
       const limit = this.query.limit
 
@@ -109,7 +112,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
      * @apiParam {String} source_memo memo for the source
      * @apiParam {String} destination_memo memo for the destination
      * @apiParam {String} message text message for the destination
-     * @apiParam {String} path path
+     * @apiParam {String} quote quote
      *
      * @apiExample {shell} Make a payment with the destination_amount
      *    curl -X PUT -H "Authorization: Basic YWxpY2U6YWxpY2U=" -H "Content-Type: application/json" -d
@@ -124,7 +127,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
      */
 
     // TODO handle payment creation. Shouldn't rely on notification service
-    static * putResource () {
+    static * putResource() {
       const _this = this
 
       let id = _this.params.id
@@ -133,81 +136,75 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
       let payment = this.body
 
       payment.id = id
-
       payment.source_user = this.req.user.id
 
-      let destination = yield utils.parseDestination({
-        destination: payment.destination_account
+      const destination = yield utils.parseDestination({
+        destination: payment.destination
       })
 
       // TODO fill the destination_user
       const options = {
-        sourceAmount: payment.source_amount,
+        sourceAmount: payment.sourceAmount,
         destination: destination,
-        destinationAmount: payment.destination_amount,
-        path: payment.path,
-        source_memo: payment.source_memo,
-        destination_memo: payment.destination_memo,
+        destinationAmount: payment.destinationAmount,
+        quote: payment,
+        source_memo: payment.sourceMemo,
+        destination_memo: payment.destinationMemo,
         message: payment.message,
         username: this.req.user.username,
         password: this.req.user.password
       }
 
-      // Try doing the ledger transaction
-      let transfer
+      // Interledger payment
+      const transferId = yield spsp.pay({
+        destination: destination,
+        sourceAmount: payment.sourceAmount,
+        destinationAmount: payment.destinationAmount,
+        memo: payment.message
+      })
 
-      try {
-        transfer = yield ledger.transfer(options)
+      // Save the payment.
+      // Later referenced by the 'transfers' (local) or condition (interledger)
+      const dbPayment = new Payment()
+      dbPayment.setDataExternal({
+        source_user: this.req.user.id,
+        destination_account: destination.accountUri,
+        source_amount: payment.sourceAmount,
+        destination_amount: payment.destinationAmount,
+        transfer: transferId,
+        message: payment.message,
+        status: 'success'
+      })
+      dbPayment.save()
 
-        // Store the payment
-        let dbPayment = new Payment()
-        dbPayment.setDataExternal({
-          transfers: transfer.id,
-          message: payment.message,
-          status: 'pending'
-        })
-        dbPayment.save()
+      // Notify the clients
+      socket.payment(this.req.user.username, dbPayment)
 
-        log.debug('Ledger transfer payment ID ' + id)
-      } catch (e) {
-        if (e && e.response) {
-          let error = JSON.parse(e.response.error.text)
-
-          if (error.id === 'UnprocessableEntityError') {
-            throw new InvalidLedgerAccountError(error.message)
-          } else if (error.id === 'InsufficientFundsError') {
-            throw new LedgerInsufficientFundsError(error.message)
-          } else {
-            throw e
-          }
-        } else {
-          throw e
-        }
-      }
+      log.debug('Ledger transfer payment ID ' + id)
 
       // TODO should be something more meaningful
       this.status = 200
     }
 
     /**
-     * @api {POST} /payments/findPath Find path
-     * @apiName FindPath
+     * @api {POST} /payments/quote Request a quote
+     * @apiName Quote
      * @apiGroup Payment
      * @apiVersion 1.0.0
      *
-     * @apiDescription Find path
+     * @apiDescription Request a quote
      *
      * @apiParam {String} destination destination
      * @apiParam {String} source_amount source amount
      * @apiParam {String} destination_amount destination amount
      *
-     * @apiExample {shell} Find path
+     * @apiExample {shell} Request a quote
      *    curl -X POST -H "Authorization: Basic YWxpY2U6YWxpY2U=" -H "Content-Type: application/json" -d
      *    '{
      *        "destination": "bob@wallet.example",
      *        "destination_amount": "10"
      *    }'
-     *    https://wallet.example/payments/findPath
+     *    https://wallet.example/payments/quote
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
@@ -218,38 +215,16 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
      */
 
     // TODO handle not supplied params
-    static * findPath () {
-      let destination
-
-      destination = yield utils.parseDestination({
+    static * quote() {
+      const destination = yield utils.parseDestination({
         destination: this.body.destination
       })
 
-      if (destination.type === 'local') {
-        let amount = this.body.source_amount || this.body.destination_amount
-
-        this.body = {
-          sourceAmount: amount,
-          destinationAmount: amount
-        }
-
-        return
-      }
-
-      const options = {
+      this.body = yield spsp.quote({
         destination: destination,
         sourceAmount: this.body.source_amount,
-        destinationAmount: this.body.destination_amount,
-        username: this.req.user.username
-      }
-
-      let path = yield ledger.findPath(options)
-
-      if (!path) {
-        throw new NoPathsError("No paths to specified destination found")
-      }
-
-      this.body = path
+        destinationAmount: this.body.destination_amount
+      })
     }
 
     /**
@@ -261,37 +236,70 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils) {
      * @apiDescription Prepare a payment
      *
      * @apiExample {shell} Prepare a payment
-     *    curl -X POST
+     *    curl -X POST -d
+     *    '{
+     *        "amount": 98,
+     *    }'
      *    https://wallet.example/receivers/alice/payments
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
      *    {
-     *      "paymentId": "1bbeea29-f9aa-49aa-abb1-9954400c9ca7",
-     *      "receipt_condition": "cc:0:3:eAOobLmr23UI0wZgfmW1mis_b7cxrrRpNqvI2c37LI4:32"
+     *      "packet": {
+     *        "amount": "98",
+     *        "account": "wallet.alice",
+     *        "data": {
+     *          "expires_at": "2016-08-22T18:14:27.783Z",
+     *          "request_id": "ed1edd4d-1d24-4c1f-9a28-dc0fa229ba84"
+     *        }
+     *      },
+     *      "condition": "cc:0:3:Jbe1_sdvD0rlzYdkLZcfuftTLKpyscZ2U8zj_6Oafjw:32"
      *    }
      */
 
     // TODO:PERFORMANCE Expire pending payments (remove from db)
-    static * prepare () {
+    static * getReceiver() {
+      this.body = yield spsp.createRequest(this.body.amount)
+
+      console.log('get', this.body);
+    }
+
+    static * postReceiver() {
+      const sourceAccount = this.body.sender_identifier
       const memo = this.body.memo
-      const prepared = this.body = ledger.preparePayment()
+      const destinationAmount = this.body.amount
 
-      if (!memo) return
+      const paymentParams = yield spsp.createRequest(destinationAmount)
 
-      let paymentObj = {
-        id: prepared.paymentId,
+      // Get the user from the db. We need the id in the payment
+      const destinationUser = yield User.findOne({
+        where: {username: this.params.username}
+      })
+
+      // Requested user doesn't exist
+      if (!destinationUser) {
+        return this.status = 404
+      }
+
+      const paymentObj = {
         state: 'pending',
-        message: memo
+        source_account: sourceAccount,
+        destination_user: destinationUser.id,
+        destination_amount: destinationAmount,
+        message: memo,
+        execution_condition: paymentParams.condition
       }
 
       // Create the payment object
-      let payment = new Payment()
+      const payment = new Payment()
       payment.setDataExternal(paymentObj)
 
       try {
         yield payment.create()
-      } catch(e) {
+
+        this.body = paymentParams
+      } catch (e) {
+        console.log('payments:299', 'woops', e)
         // TODO handle
       }
     }

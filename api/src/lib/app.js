@@ -14,17 +14,19 @@ const Router = require('./router')
 const DB = require('./db')
 const Log = require('./log')
 const Ledger = require('./ledger')
+const SPSP = require('./spsp')
 const Socket = require('./socket')
 
 module.exports = class App {
-  static constitute () { return [ Config, Auth, Router, Validator, Ledger, DB, Log, Socket ] }
-  constructor (config, auth, router, validator, ledger, db, log, socket ) {
+  static constitute () { return [ Config, Auth, Router, Validator, Ledger, SPSP, DB, Log, Socket ] }
+  constructor (config, auth, router, validator, ledger, spsp, db, log, socket ) {
     this.config = config.data
     this.auth = auth
     this.router = router
     this.socket = socket
     this.validator = validator
     this.ledger = ledger
+    this.spsp = spsp
     this.db = db
     this.log = log('app')
 
@@ -66,9 +68,10 @@ module.exports = class App {
 
   * _start () {
     yield this.db.sync()
-    
+
     // Ensure ledger subscription exists
-    yield this.ledger.subscribe()
+    // yield this.ledger.subscribe()
+    yield this.spsp.init()
 
     this.listen()
   }

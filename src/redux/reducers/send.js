@@ -2,16 +2,15 @@ import * as types from '../actionTypes';
 
 const initialState = {
   fail: {},
-  path: {},
-  pathFinding: false,
-  destinationInfo: {},
-  pathRaw: {}
+  quote: {},
+  quoting: false,
+  destinationInfo: {}
 };
 
 export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
     case types.DESTINATION_CHANGE_SUCCESS:
-      // TODO handle the affect this has on source/destination amounts and pathfinding
+      // TODO handle the affect this has on source/destination amounts and quoting
       return {
         ...state,
         fail: {},
@@ -23,40 +22,33 @@ export default function reducer(state = initialState, action = {}) {
         fail: action.error,
         destinationInfo: {}
       }
-    case types.PATHFIND:
+    case types.REQUEST_QUOTE:
       return {
         ...state,
-        path: {},
-        pathRaw: {},
-        pathFinding: true,
+        quote: {},
+        quoting: true,
         fail: {}
       };
-    case types.PATHFIND_SUCCESS:
+    case types.REQUEST_QUOTE_SUCCESS:
       if (action.result && action.result.debits) {
         return {
           ...state,
-          path: {
-            sourceAmount: action.result.debits[0].amount,
-            destinationAmount: action.result.credits[0].memo.ilp_header.amount
-          },
-          pathRaw: action.result,
-          pathFinding: false
+          quote: action.result,
+          quoting: false
         };
       }
 
       return {
         ...state,
-        path: action.result,
-        pathRaw: action.result,
-        pathFinding: false,
+        quote: action.result,
+        quoting: false,
         fail: {}
       };
-    case types.PATHFIND_FAIL:
+    case types.REQUEST_QUOTE_FAIL:
       return {
         ...state,
-        path: {},
-        pathRaw: {},
-        pathFinding: false,
+        quote: {},
+        quoting: false,
         fail: action.error
       };
     case types.SEND:
@@ -68,8 +60,7 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         fail: {},
-        path: {},
-        pathRaw: {}
+        quote: {}
       };
     case types.SEND_FAIL:
       return {
