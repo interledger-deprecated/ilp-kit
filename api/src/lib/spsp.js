@@ -12,15 +12,17 @@ const UserFactory = require('../models/user')
 
 const Config = require('./config')
 const Log = require('./log')
+const Socket = require('./socket')
 
 const ILP = require('ilp')
 const FiveBellsLedgerPlugin = require('ilp-plugin-bells')
 
 // TODO exception handling
 module.exports = class SPSP {
-  static constitute() { return [Config, Log, Container, PaymentFactory] }
-  constructor(config, log, container, Payment) {
+  static constitute() { return [Config, Log, Container, PaymentFactory, Socket] }
+  constructor(config, log, container, Payment, socket) {
     this.Payment = Payment
+    this.socket = socket
   }
 
   * init() {
@@ -123,7 +125,12 @@ module.exports = class SPSP {
 
       // Update the db payment
       dbPayment.state = 'success'
-      dbPayment.save()
+      yield dbPayment.save()
+
+      // Notify the clients
+      self.socket.payment('alice', dbPayment)
+
+      self.receiver.stopListening()
     }))
 
     return this.receiver.createRequest({

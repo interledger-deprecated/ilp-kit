@@ -260,8 +260,6 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
     // TODO:PERFORMANCE Expire pending payments (remove from db)
     static * getReceiver() {
       this.body = yield spsp.createRequest(this.body.amount)
-
-      console.log('get', this.body);
     }
 
     static * postReceiver() {
