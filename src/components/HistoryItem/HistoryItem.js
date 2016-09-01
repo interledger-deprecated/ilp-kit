@@ -39,7 +39,7 @@ export default class HistoryItem extends Component {
 
     return (
       <div className={cx('item')}>
-        <a href="" onClick={this.toggleLedgerTransfer} className={cx('link')}>
+        {/* <a href="" onClick={this.toggleLedgerTransfer} className={cx('link')}> */}
           <div className="row">
             <div className="col-xs-8">
               <img src={profilePic} className={cx('profilePic')} />
@@ -69,7 +69,7 @@ export default class HistoryItem extends Component {
               </div>
             </div>
           </div>
-        </a>
+        {/* </a> */}
         {item.showJson && item.json &&
         <div className="row">
           <div className={cx('col-sm-12', 'jsonContainer')}>
