@@ -119,7 +119,7 @@ module.exports = class Utils {
     else {
       accountUri = self.isAccountUri(destination) ? destination : self.ledgerUriPublic + '/accounts/' + destination
       ledgerUri = self.ledgerUriPublic
-      paymentUri = self.localUri
+      paymentUri = self.localUri + '/receivers/' + destination
       ilpAddress = self.ledgerPrefix + destination
 
       // Check if account exists

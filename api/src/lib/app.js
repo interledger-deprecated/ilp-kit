@@ -69,10 +69,6 @@ module.exports = class App {
   * _start () {
     yield this.db.sync()
 
-    // Ensure ledger subscription exists
-    // yield this.ledger.subscribe()
-    yield this.spsp.init()
-
     this.listen()
   }
 

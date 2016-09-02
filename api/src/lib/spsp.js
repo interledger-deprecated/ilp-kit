@@ -1,26 +1,20 @@
 "use strict"
 
-const _ = require('lodash')
 const co = require('co')
 const uuid = require ('uuid4')
 const superagent = require('superagent-promise')(require('superagent'), Promise)
-const Container = require('constitute').Container
-const sender = require('five-bells-sender')
-
-const PaymentFactory = require('../models/payment')
-const UserFactory = require('../models/user')
-
-const Config = require('./config')
-const Log = require('./log')
-const Socket = require('./socket')
 
 const ILP = require('ilp')
 const FiveBellsLedgerPlugin = require('ilp-plugin-bells')
 
+const PaymentFactory = require('../models/payment')
+const Config = require('./config')
+const Socket = require('./socket')
+
 // TODO exception handling
 module.exports = class SPSP {
-  static constitute() { return [Config, Log, Container, PaymentFactory, Socket] }
-  constructor(config, log, container, Payment, socket) {
+  static constitute() { return [Config, PaymentFactory, Socket] }
+  constructor(config, Payment, socket) {
     this.Payment = Payment
     this.socket = socket
     this.config = config
@@ -32,36 +26,9 @@ module.exports = class SPSP {
     this.adminPass = this.config.data.getIn(['ledger', 'admin', 'pass'])
   }
 
-  * init() {
-    /*
-    this.receiver.on('incoming', (transfer, fulfillment) => {
-      console.log('received transfer:', transfer)
-      console.log('fulfilled transfer hold with fulfillment:', fulfillment)
-    })*/
-  }
-
   /**
    * Sender
    */
-  * getReceiver(options) {
-    const response = yield superagent.get(options.paymentUri, {
-      amount: options.amount
-    })
-
-    return response.body
-  }
-
-  * setup(options) {
-    const response = yield superagent.post(options.paymentUri, {
-      amount: options.amount,
-      sender_identifier: options.sender_identifier,
-      memo: options.memo
-    })
-
-    return response.body
-  }
-
-  // The quoting has different flows depending on what's supplied (source or destination amount)
   * quote(params) {
     const sourceAccount = this.ledgerPublicUri + '/accounts/' + params.source.username
 
@@ -73,9 +40,15 @@ module.exports = class SPSP {
       password: this.adminPass
     })
 
-    // TODO remove hardcode
-    const sourceAmount = params.sourceAmount || (yield this.sender.quoteDestinationAmount(params.destination.ilpAddress, params.destinationAmount))
-    const destinationAmount = params.destinationAmount || (yield this.sender.quoteSourceAmount(params.destination.ilpAddress, params.sourceAmount))
+    // One of the amounts should be supplied to get a quote for the other one
+    const sourceAmount = params.sourceAmount || (
+      yield this.sender.quoteDestinationAmount(
+        params.destination.ilpAddress,
+        params.destinationAmount))
+    const destinationAmount = params.destinationAmount || (
+      yield this.sender.quoteSourceAmount(
+        params.destination.ilpAddress,
+        params.sourceAmount))
 
     return {
       sourceAmount,
@@ -83,11 +56,19 @@ module.exports = class SPSP {
     }
   }
 
+  * setup(options) {
+    return (yield superagent.post(options.paymentUri, {
+      amount: options.amount,
+      sender_identifier: options.sender_identifier,
+      memo: options.memo
+    })).body
+  }
+
   * pay(params) {
     const quote = yield this.setup({
       paymentUri: params.destination.paymentUri,
       amount: params.destinationAmount,
-      sender_identifier: 'alice@wallet1.com', // TODO remove hardcode,
+      sender_identifier: params.source.username,
       memo: params.memo
     })
 
@@ -106,7 +87,7 @@ module.exports = class SPSP {
 
     yield this.sender.payRequest(paymentParams)
 
-    return paymentParams.uuid
+    return paymentParams
   }
 
   /**
@@ -142,7 +123,7 @@ module.exports = class SPSP {
       yield dbPayment.save()
 
       // Notify the clients
-      self.socket.payment('alice', dbPayment)
+      self.socket.payment(destinationUser.username, dbPayment)
 
       self.receiver.stopListening()
     }))

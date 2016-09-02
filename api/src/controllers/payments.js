@@ -141,38 +141,33 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
         destination: payment.destination
       })
 
-      // TODO fill the destination_user
-      const options = {
-        sourceAmount: payment.sourceAmount,
-        destination: destination,
-        destinationAmount: payment.destinationAmount,
-        quote: payment,
-        source_memo: payment.sourceMemo,
-        destination_memo: payment.destinationMemo,
-        message: payment.message,
-        username: this.req.user.username,
-        password: this.req.user.password
-      }
-
       // Interledger payment
-      const transferId = yield spsp.pay({
+      const transfer = yield spsp.pay({
+        source: this.req.user,
         destination: destination,
         sourceAmount: payment.sourceAmount,
         destinationAmount: payment.destinationAmount,
         memo: payment.message
       })
 
-      // Save the payment.
-      // Later referenced by the 'transfers' (local) or condition (interledger)
-      const dbPayment = new Payment()
+      // If the payment is local the receiver already created it in the db
+      let dbPayment = yield Payment.findOne({
+        where: {execution_condition: transfer.executionCondition}
+      })
+
+      if (!dbPayment) {
+        dbPayment = new Payment()
+      }
+
       dbPayment.setDataExternal({
         source_user: this.req.user.id,
         destination_account: destination.accountUri,
         source_amount: payment.sourceAmount,
         destination_amount: payment.destinationAmount,
-        transfer: transferId,
+        transfer: transfer.uuid,
         message: payment.message,
-        status: 'success'
+        execution_condition: transfer.executionCondition,
+        state: 'success'
       })
       dbPayment.save()
 
@@ -243,8 +238,6 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
       }
 
       const paymentParams = yield spsp.createRequest(destinationUser, destinationAmount)
-
-      console.log('payments:247', paymentParams)
 
       const paymentObj = {
         state: 'pending',
