@@ -115,6 +115,7 @@ Name | Example | Description |
 `API_LEDGER_ADMIN_PASS` | `pass` | Ledger admin pass.
 `CLIENT_HOST` | `wallet.com` | Publicly visible hostname.
 `CLIENT_PORT` | `4000` | Client port.
+`LEDGER_ILP_PREFIX` | `wallet.` | This is required if the `API_LEDGER_URI` is not specified
 
 ##### Optional
 
@@ -238,6 +239,7 @@ CLIENT_HOST=wallet1.com
 CLIENT_PORT=3010
 CLIENT_PUBLIC_PORT=80
 API_SECRET=qO2UX+fdl+tg0a1bYtXoBVQHN4pkn2hFB5Ont6CYj50=
+LEDGER_ILP_PREFIX=wallet1.
 ```
 
 > Note: Use `LEDGER_DB_SYNC=true` environment variable for both wallet1 and wallet2 to create the ledger db tables first time when you run each of the instances.
@@ -259,6 +261,7 @@ CLIENT_HOST=wallet2.com
 CLIENT_PORT=3020
 CLIENT_PUBLIC_PORT=80
 API_SECRET=qO2UX+fdl+tg0a1bYtXoBVQHN4pkn2hFB5Ont6CYj50=
+LEDGER_ILP_PREFIX=wallet2.
 ```
 
 ### Setup five-bells-connector
@@ -329,10 +332,6 @@ HTTP/1.1 200 OK
     {
       "rel": "https://interledger.org/rel/receiver",
       "href": "https://red.ilpdemo.org/api/receivers/alice"
-    },
-    {
-      "rel": "https://interledger.org/rel/receiver/payment",
-      "href": "https://red.ilpdemo.org/api/receivers/alice/payments"
     }
   ]
 }
