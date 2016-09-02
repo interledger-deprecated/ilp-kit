@@ -13,6 +13,7 @@ const Socket = require('../lib/socket')
 const Utils = require('../lib/utils')
 const UserFactory = require('../models/user')
 const PaymentFactory = require('../models/payment')
+// TODO handle these cases
 const InvalidLedgerAccountError = require('../errors/invalid-ledger-account-error')
 const LedgerInsufficientFundsError = require('../errors/ledger-insufficient-funds-error')
 

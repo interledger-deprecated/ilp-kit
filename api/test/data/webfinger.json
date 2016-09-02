@@ -3,7 +3,7 @@
   "links": [
     {
       "rel": "https://interledger.org/rel/ledgerUri",
-      "href": "http://localhost:3001"
+      "href": "http://localhost/ledger"
     },
     {
       "rel": "https://interledger.org/rel/socketIOUri",
@@ -15,7 +15,7 @@
     },
     {
       "rel": "https://interledger.org/rel/ledgerAccount",
-      "href": "http://localhost:3001/accounts/alice"
+      "href": "http://localhost/ledger/accounts/alice"
     },
     {
       "rel" : "https://interledger.org/rel/sender/payment",

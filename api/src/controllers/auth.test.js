@@ -3,22 +3,22 @@
 const appHelper = require('../../test/helpers/app')
 const exampleApiData = require('../../test/data/api')
 
-describe('Auth', function() {
+describe('Auth', () => {
   let agent
 
-  beforeEach(function () {
+  beforeEach(() => {
     agent = appHelper.create()
   })
 
-  describe('POST /auth/login', function () {
-    it('login user', function (done) {
+  describe('POST /auth/login', () => {
+    it('login user', (done) => {
       // Create the user
       agent
         .post('/users/alice')
         .send({
           password: 'alice'
         })
-        .end(function(){
+        .end(() => {
           // Try to login
           agent
             .post('/auth/login')

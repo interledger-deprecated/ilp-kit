@@ -74,7 +74,6 @@ function WebfingerControllerFactory (log, config, ledger) {
       }
 
       // TODO rel support
-
       const parsed = url.parse(this.query.resource);
 
       // Validate ledger
