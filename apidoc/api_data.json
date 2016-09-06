@@ -320,14 +320,14 @@
             "type": "String",
             "optional": false,
             "field": "sourceAmount",
-            "description": "<p>source amount</p>"
+            "description": "<p>source amount (optional, used if destinationAmount is not provided)</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
             "field": "destinationAmount",
-            "description": "<p>destination amount</p>"
+            "description": "<p>destination amount (optional, used if sourceAmount is not provided)</p>"
           }
         ]
       }
