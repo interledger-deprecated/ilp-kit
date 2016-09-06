@@ -298,74 +298,6 @@ define({ "api": [
     "groupTitle": "Payment"
   },
   {
-    "type": "put",
-    "url": "/payments/:id",
-    "title": "Make payment",
-    "name": "PutPayments",
-    "group": "Payment",
-    "version": "1.0.0",
-    "description": "<p>Make payment</p>",
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "id",
-            "description": "<p>generated payment uuid</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "destination",
-            "description": "<p>destination account</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "sourceAmount",
-            "description": "<p>source amount</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "destinationAmount",
-            "description": "<p>destination amount</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>text message for the destination</p>"
-          }
-        ]
-      }
-    },
-    "examples": [
-      {
-        "title": "Make a payment with the destinationAmount",
-        "content": "curl -X PUT -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"destination\": \"bob@wallet.example\",\n    \"destinationAmount\": \"1\"\n}'\nhttps://wallet.example/payments/9efa70ec-08b9-11e6-b512-3e1d05defe78",
-        "type": "shell"
-      }
-    ],
-    "success": {
-      "examples": [
-        {
-          "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK",
-          "type": "json"
-        }
-      ]
-    },
-    "filename": "api/src/controllers/payments.js",
-    "groupTitle": "Payment"
-  },
-  {
     "type": "POST",
     "url": "/payments/quote",
     "title": "Request a quote",
@@ -472,6 +404,74 @@ define({ "api": [
     },
     "filename": "api/src/controllers/payments.js",
     "groupTitle": "Payment"
+  },
+  {
+    "type": "put",
+    "url": "/payments/:id",
+    "title": "Make payment",
+    "name": "PutPayments",
+    "group": "Receiver",
+    "version": "1.0.0",
+    "description": "<p>Make payment</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>generated payment uuid</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "destination",
+            "description": "<p>destination account</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "sourceAmount",
+            "description": "<p>source amount</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "destinationAmount",
+            "description": "<p>destination amount</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>text message for the destination</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Make a payment with the destinationAmount",
+        "content": "curl -X PUT -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"destination\": \"bob@wallet.example\",\n    \"destinationAmount\": \"1\"\n}'\nhttps://wallet.example/payments/9efa70ec-08b9-11e6-b512-3e1d05defe78",
+        "type": "shell"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "200 Response:",
+          "content": "HTTP/1.1 200 OK",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "api/src/controllers/payments.js",
+    "groupTitle": "Receiver"
   },
   {
     "type": "get",
