@@ -319,36 +319,22 @@
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "destination_account",
+            "field": "destination",
             "description": "<p>destination account</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "source_amount",
+            "field": "sourceAmount",
             "description": "<p>source amount</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "destination_amount",
+            "field": "destinationAmount",
             "description": "<p>destination amount</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "source_memo",
-            "description": "<p>memo for the source</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "destination_memo",
-            "description": "<p>memo for the destination</p>"
           },
           {
             "group": "Parameter",
@@ -356,21 +342,14 @@
             "optional": false,
             "field": "message",
             "description": "<p>text message for the destination</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "quote",
-            "description": "<p>quote</p>"
           }
         ]
       }
     },
     "examples": [
       {
-        "title": "Make a payment with the destination_amount",
-        "content": "curl -X PUT -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"destination_account\": \"bob@wallet.example\",\n    \"destination_amount\": \"1\"\n}'\nhttps://wallet.example/payments/9efa70ec-08b9-11e6-b512-3e1d05defe78",
+        "title": "Make a payment with the destinationAmount",
+        "content": "curl -X PUT -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"destination\": \"bob@wallet.example\",\n    \"destinationAmount\": \"1\"\n}'\nhttps://wallet.example/payments/9efa70ec-08b9-11e6-b512-3e1d05defe78",
         "type": "shell"
       }
     ],
@@ -433,6 +412,60 @@
         {
           "title": "200 Response:",
           "content": "HTTP/1.1 200 OK\n{\n  \"sourceAmount\": \"10\",\n  \"destinationAmount\": \"10\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "api/src/controllers/payments.js",
+    "groupTitle": "Payment"
+  },
+  {
+    "type": "POST",
+    "url": "/receivers/:username",
+    "title": "Setup a payment",
+    "name": "Setup",
+    "group": "Payment",
+    "version": "1.0.0",
+    "description": "<p>Setup a payment</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "amount",
+            "description": "<p>destination amount</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "sender_identifier",
+            "description": "<p>sender identifier</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "memo",
+            "description": "<p>memo</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Setup a payment",
+        "content": "curl -X POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"amount\": \"10\",\n    \"sender_identifier\": \"alice@wallet1.example\"\n    \"memo\": \"Here's some money for you!\"\n}'\nhttps://wallet2.example/payments/alice",
+        "type": "shell"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "200 Response:",
+          "content": "HTTP/1.1 200 OK\n{\n  \"address\": \"wallet2.alice.ae09e9c0-c4f9-423f-91de-fa1733640b2f\",\n  \"amount\": \"10.00\",\n  \"expires_at\": \"2016-09-06T22:47:01.668Z\",\n  \"condition\": \"cc:0:3:XcJRQrVJQKsXrXnpHIk1Nm7PBm5JfnFgmd8ocsexjO4:32\"\n}",
           "type": "json"
         }
       ]
