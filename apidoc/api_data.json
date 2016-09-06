@@ -335,7 +335,7 @@
     "examples": [
       {
         "title": "Request a quote",
-        "content": "curl -X POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"destination\": \"bob@wallet.example\",\n    \"destination_amount\": \"10\"\n}'\nhttps://wallet.example/payments/quote",
+        "content": "curl -X POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"destination\": \"bob@wallet.example\",\n    \"destinationAmount\": \"10\"\n}'\nhttps://wallet.example/payments/quote",
         "type": "shell"
       }
     ],
