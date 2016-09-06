@@ -174,7 +174,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
      * @apiParam {String} username username
      *
      * @apiExample {shell} Update user email
-     *    curl -X PUT -H "Content-Type: application/json" -d
+     *    curl -X PUT -H "Authorization: Basic YWxpY2U6YWxpY2U=" -H "Content-Type: application/json" -d
      *    '{
      *        "email": "alice@example.com"
      *    }'
@@ -275,7 +275,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
      * @apiParam {String} code verification code
      *
      * @apiExample {shell} Verify user email address
-     *    curl -X PUT -H "Content-Type: application/json" -d
+     *    curl -X PUT -H "Authorization: Basic YWxpY2U6YWxpY2U=" -H "Content-Type: application/json" -d
      *    '{
      *        "code": "1f7aade2946667fac85ebaf7259182ead6b1fe062b5e8bb0ffa1b9d417431acb"
      *    }'
@@ -345,7 +345,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
     /**
      * @api {get} /receivers/:username Get receiver details
      * @apiName GetReceiver
-     * @apiGroup User
+     * @apiGroup Receiver
      * @apiVersion 1.0.0
      *
      * @apiParam {String} username receiver username

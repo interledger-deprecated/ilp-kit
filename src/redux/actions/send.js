@@ -18,8 +18,8 @@ export const requestQuote = (values) => ({
     // TODO source user set here or in api?
     data: {
       destination: values.destination,
-      source_amount: values.sourceAmount,
-      destination_amount: values.destinationAmount
+      sourceAmount: values.sourceAmount,
+      destinationAmount: values.destinationAmount
     }
   })
 })

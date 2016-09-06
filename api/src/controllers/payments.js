@@ -106,24 +106,30 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
      * @apiDescription Make payment
      *
      * @apiParam {String} id generated payment uuid
-     * @apiParam {String} destination_account destination account
-     * @apiParam {String} source_amount source amount
-     * @apiParam {String} destination_amount destination amount
-     * @apiParam {String} source_memo memo for the source
-     * @apiParam {String} destination_memo memo for the destination
+     * @apiParam {String} destination destination account
+     * @apiParam {String} sourceAmount source amount
+     * @apiParam {String} destinationAmount destination amount
      * @apiParam {String} message text message for the destination
-     * @apiParam {String} quote quote
      *
-     * @apiExample {shell} Make a payment with the destination_amount
+     * @apiExample {shell} Make a payment
      *    curl -X PUT -H "Authorization: Basic YWxpY2U6YWxpY2U=" -H "Content-Type: application/json" -d
      *    '{
-     *        "destination_account": "bob@wallet.example",
-     *        "destination_amount": "1"
+     *        "destination": "bob@wallet.example",
+     *        "sourceAmount": "5",
+     *        "destinationAmount": "5",
+     *        "message": "Some money for you!"
      *    }'
      *    https://wallet.example/payments/9efa70ec-08b9-11e6-b512-3e1d05defe78
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
+     *    {
+     *      "id": "a36e3447-8ca5-4bc4-a586-7769e3dea63a"
+     *      "destination": "bob@wallet.example",
+     *      "sourceAmount": "5",
+     *      "destinationAmount": "5",
+     *      "message": "Some money for you!",
+     *    }
      */
 
     // TODO handle payment creation. Shouldn't rely on notification service
@@ -136,7 +142,6 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
       let payment = this.body
 
       payment.id = id
-      payment.source_user = this.req.user.id
 
       const destination = yield utils.parseDestination({
         destination: payment.destination
@@ -189,15 +194,15 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
      *
      * @apiDescription Request a quote
      *
-     * @apiParam {String} destination destination
-     * @apiParam {String} source_amount source amount
-     * @apiParam {String} destination_amount destination amount
+     * @apiParam {String} destination destination (email or a username)
+     * @apiParam {String} sourceAmount source amount (optional, used if destinationAmount is not provided)
+     * @apiParam {String} destinationAmount destination amount (optional, used if sourceAmount is not provided)
      *
      * @apiExample {shell} Request a quote
      *    curl -X POST -H "Authorization: Basic YWxpY2U6YWxpY2U=" -H "Content-Type: application/json" -d
      *    '{
      *        "destination": "bob@wallet.example",
-     *        "destination_amount": "10"
+     *        "destinationAmount": "10"
      *    }'
      *    https://wallet.example/payments/quote
      *
@@ -218,11 +223,41 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
       this.body = yield spsp.quote({
         source: this.req.user,
         destination: destination,
-        sourceAmount: this.body.source_amount,
-        destinationAmount: this.body.destination_amount
+        sourceAmount: this.body.sourceAmount,
+        destinationAmount: this.body.destinationAmount
       })
     }
 
+    /**
+     * @api {POST} /receivers/:username Setup a payment
+     * @apiName Setup
+     * @apiGroup Receiver
+     * @apiVersion 1.0.0
+     *
+     * @apiDescription Setup a payment
+     *
+     * @apiParam {String} amount destination amount
+     * @apiParam {String} sender_identifier sender identifier
+     * @apiParam {String} memo memo
+     *
+     * @apiExample {shell} Setup a payment
+     *    curl -X POST -H "Authorization: Basic YWxpY2U6YWxpY2U=" -H "Content-Type: application/json" -d
+     *    '{
+     *        "amount": "10",
+     *        "sender_identifier": "alice@wallet1.example"
+     *        "memo": "Some money for you!"
+     *    }'
+     *    https://wallet2.example/payments/alice
+     *
+     * @apiSuccessExample {json} 200 Response:
+     *    HTTP/1.1 200 OK
+     *    {
+     *      "address": "wallet2.alice.ae09e9c0-c4f9-423f-91de-fa1733640b2f",
+     *      "amount": "10.00",
+     *      "expires_at": "2016-09-06T22:47:01.668Z",
+     *      "condition": "cc:0:3:XcJRQrVJQKsXrXnpHIk1Nm7PBm5JfnFgmd8ocsexjO4:32"
+     *    }
+     */
     static * setup() {
       const sourceAccount = this.body.sender_identifier
       const memo = this.body.memo
