@@ -298,158 +298,11 @@
     "groupTitle": "Payment"
   },
   {
-    "type": "POST",
-    "url": "/payments/quote",
-    "title": "Request a quote",
-    "name": "Quote",
-    "group": "Payment",
-    "version": "1.0.0",
-    "description": "<p>Request a quote</p>",
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "destination",
-            "description": "<p>destination (email or a username)</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "sourceAmount",
-            "description": "<p>source amount (optional, used if destinationAmount is not provided)</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "destinationAmount",
-            "description": "<p>destination amount (optional, used if sourceAmount is not provided)</p>"
-          }
-        ]
-      }
-    },
-    "examples": [
-      {
-        "title": "Request a quote",
-        "content": "curl -X POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"destination\": \"bob@wallet.example\",\n    \"destinationAmount\": \"10\"\n}'\nhttps://wallet.example/payments/quote",
-        "type": "shell"
-      }
-    ],
-    "success": {
-      "examples": [
-        {
-          "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"sourceAmount\": \"10\",\n  \"destinationAmount\": \"10\"\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "filename": "api/src/controllers/payments.js",
-    "groupTitle": "Payment"
-  },
-  {
-    "type": "POST",
-    "url": "/receivers/:username",
-    "title": "Setup a payment",
-    "name": "Setup",
-    "group": "Payment",
-    "version": "1.0.0",
-    "description": "<p>Setup a payment</p>",
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "amount",
-            "description": "<p>destination amount</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "sender_identifier",
-            "description": "<p>sender identifier</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "memo",
-            "description": "<p>memo</p>"
-          }
-        ]
-      }
-    },
-    "examples": [
-      {
-        "title": "Setup a payment",
-        "content": "curl -X POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"amount\": \"10\",\n    \"sender_identifier\": \"alice@wallet1.example\"\n    \"memo\": \"Some money for you!\"\n}'\nhttps://wallet2.example/payments/alice",
-        "type": "shell"
-      }
-    ],
-    "success": {
-      "examples": [
-        {
-          "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"address\": \"wallet2.alice.ae09e9c0-c4f9-423f-91de-fa1733640b2f\",\n  \"amount\": \"10.00\",\n  \"expires_at\": \"2016-09-06T22:47:01.668Z\",\n  \"condition\": \"cc:0:3:XcJRQrVJQKsXrXnpHIk1Nm7PBm5JfnFgmd8ocsexjO4:32\"\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "filename": "api/src/controllers/payments.js",
-    "groupTitle": "Payment"
-  },
-  {
-    "type": "get",
-    "url": "/receivers/:username",
-    "title": "Get receiver details",
-    "name": "GetReceiver",
-    "group": "Receiver",
-    "version": "1.0.0",
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "username",
-            "description": "<p>receiver username</p>"
-          }
-        ]
-      }
-    },
-    "examples": [
-      {
-        "title": "Get receiver details",
-        "content": "curl -X GET\nhttps://wallet.example/receivers/alice",
-        "type": "shell"
-      }
-    ],
-    "success": {
-      "examples": [
-        {
-          "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"type\": \"payee\",\n  \"ledger\": \"https://wallet.example/ledger\",\n  \"account\": \"https://wallet.example/ledger/accounts/alice\",\n  \"payments\": \"https://wallet.example/receiver/alice/payments\"\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "filename": "api/src/controllers/users.js",
-    "groupTitle": "Receiver"
-  },
-  {
     "type": "put",
     "url": "/payments/:id",
     "title": "Make payment",
     "name": "PutPayments",
-    "group": "Receiver",
+    "group": "Payment",
     "version": "1.0.0",
     "description": "<p>Make payment</p>",
     "parameter": {
@@ -505,6 +358,153 @@
         {
           "title": "200 Response:",
           "content": "HTTP/1.1 200 OK",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "api/src/controllers/payments.js",
+    "groupTitle": "Payment"
+  },
+  {
+    "type": "POST",
+    "url": "/payments/quote",
+    "title": "Request a quote",
+    "name": "Quote",
+    "group": "Payment",
+    "version": "1.0.0",
+    "description": "<p>Request a quote</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "destination",
+            "description": "<p>destination (email or a username)</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "sourceAmount",
+            "description": "<p>source amount (optional, used if destinationAmount is not provided)</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "destinationAmount",
+            "description": "<p>destination amount (optional, used if sourceAmount is not provided)</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Request a quote",
+        "content": "curl -X POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"destination\": \"bob@wallet.example\",\n    \"destinationAmount\": \"10\"\n}'\nhttps://wallet.example/payments/quote",
+        "type": "shell"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "200 Response:",
+          "content": "HTTP/1.1 200 OK\n{\n  \"sourceAmount\": \"10\",\n  \"destinationAmount\": \"10\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "api/src/controllers/payments.js",
+    "groupTitle": "Payment"
+  },
+  {
+    "type": "get",
+    "url": "/receivers/:username",
+    "title": "Get receiver details",
+    "name": "GetReceiver",
+    "group": "Receiver",
+    "version": "1.0.0",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "username",
+            "description": "<p>receiver username</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Get receiver details",
+        "content": "curl -X GET\nhttps://wallet.example/receivers/alice",
+        "type": "shell"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "200 Response:",
+          "content": "HTTP/1.1 200 OK\n{\n  \"type\": \"payee\",\n  \"ledger\": \"https://wallet.example/ledger\",\n  \"account\": \"https://wallet.example/ledger/accounts/alice\",\n  \"payments\": \"https://wallet.example/receiver/alice/payments\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "api/src/controllers/users.js",
+    "groupTitle": "Receiver"
+  },
+  {
+    "type": "POST",
+    "url": "/receivers/:username",
+    "title": "Setup a payment",
+    "name": "Setup",
+    "group": "Receiver",
+    "version": "1.0.0",
+    "description": "<p>Setup a payment</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "amount",
+            "description": "<p>destination amount</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "sender_identifier",
+            "description": "<p>sender identifier</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "memo",
+            "description": "<p>memo</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Setup a payment",
+        "content": "curl -X POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"amount\": \"10\",\n    \"sender_identifier\": \"alice@wallet1.example\"\n    \"memo\": \"Some money for you!\"\n}'\nhttps://wallet2.example/payments/alice",
+        "type": "shell"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "200 Response:",
+          "content": "HTTP/1.1 200 OK\n{\n  \"address\": \"wallet2.alice.ae09e9c0-c4f9-423f-91de-fa1733640b2f\",\n  \"amount\": \"10.00\",\n  \"expires_at\": \"2016-09-06T22:47:01.668Z\",\n  \"condition\": \"cc:0:3:XcJRQrVJQKsXrXnpHIk1Nm7PBm5JfnFgmd8ocsexjO4:32\"\n}",
           "type": "json"
         }
       ]
