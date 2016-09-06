@@ -313,7 +313,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "destination",
-            "description": "<p>destination</p>"
+            "description": "<p>destination (email or a username)</p>"
           },
           {
             "group": "Parameter",
