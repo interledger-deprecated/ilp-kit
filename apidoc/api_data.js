@@ -406,6 +406,45 @@ define({ "api": [
     "groupTitle": "Payment"
   },
   {
+    "type": "get",
+    "url": "/receivers/:username",
+    "title": "Get receiver details",
+    "name": "GetReceiver",
+    "group": "Receiver",
+    "version": "1.0.0",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "username",
+            "description": "<p>receiver username</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Get receiver details",
+        "content": "curl -X GET\nhttps://wallet.example/receivers/alice",
+        "type": "shell"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "200 Response:",
+          "content": "HTTP/1.1 200 OK\n{\n  \"type\": \"payee\",\n  \"ledger\": \"https://wallet.example/ledger\",\n  \"account\": \"https://wallet.example/ledger/accounts/alice\",\n  \"payments\": \"https://wallet.example/receiver/alice/payments\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "api/src/controllers/users.js",
+    "groupTitle": "Receiver"
+  },
+  {
     "type": "put",
     "url": "/payments/:id",
     "title": "Make payment",
@@ -472,45 +511,6 @@ define({ "api": [
     },
     "filename": "api/src/controllers/payments.js",
     "groupTitle": "Receiver"
-  },
-  {
-    "type": "get",
-    "url": "/receivers/:username",
-    "title": "Get receiver details",
-    "name": "GetReceiver",
-    "group": "User",
-    "version": "1.0.0",
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "username",
-            "description": "<p>receiver username</p>"
-          }
-        ]
-      }
-    },
-    "examples": [
-      {
-        "title": "Get receiver details",
-        "content": "curl -X GET\nhttps://wallet.example/receivers/alice",
-        "type": "shell"
-      }
-    ],
-    "success": {
-      "examples": [
-        {
-          "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"type\": \"payee\",\n  \"ledger\": \"https://wallet.example/ledger\",\n  \"account\": \"https://wallet.example/ledger/accounts/alice\",\n  \"payments\": \"https://wallet.example/receiver/alice/payments\"\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "filename": "api/src/controllers/users.js",
-    "groupTitle": "User"
   },
   {
     "type": "get",
@@ -608,7 +608,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Update user email",
-        "content": "curl -X PUT -H \"Content-Type: application/json\" -d\n'{\n    \"email\": \"alice@example.com\"\n}'\nhttps://wallet.example/users/alice",
+        "content": "curl -X PUT -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"email\": \"alice@example.com\"\n}'\nhttps://wallet.example/users/alice",
         "type": "shell"
       }
     ],
@@ -693,7 +693,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Verify user email address",
-        "content": "curl -X PUT -H \"Content-Type: application/json\" -d\n'{\n    \"code\": \"1f7aade2946667fac85ebaf7259182ead6b1fe062b5e8bb0ffa1b9d417431acb\"\n}'\nhttps://wallet.example/users/alice/verify",
+        "content": "curl -X PUT -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"code\": \"1f7aade2946667fac85ebaf7259182ead6b1fe062b5e8bb0ffa1b9d417431acb\"\n}'\nhttps://wallet.example/users/alice/verify",
         "type": "shell"
       }
     ],
