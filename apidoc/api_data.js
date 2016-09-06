@@ -152,7 +152,7 @@ define({ "api": [
     "description": "<p>Get wallet config</p>",
     "examples": [
       {
-        "title": "Find path",
+        "title": "Get wallet config",
         "content": "curl -X GET\nhttps://wallet.example/config",
         "type": "shell"
       }
@@ -188,7 +188,7 @@ define({ "api": [
       "examples": [
         {
           "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"subject\": \"acct:alice@wallet.example\",\n  \"links\": [\n    {\n      \"rel\": \"https://interledger.org/rel/ledgerUri\",\n      \"href\": \"https://wallet.example/ledger\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/socketIOUri\",\n      \"href\": \"https://wallet.example/socket.io\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/ledgerAccount\",\n      \"href\": \"https://wallet.example/ledger/accounts/alice\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/sender/payment\",\n      \"href\": \"https://wallet.example/payments\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/sender/pathfind\",\n      \"href\": \"https://wallet.example/payments/findPath\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/receiver\",\n      \"href\": \"https://wallet.example/receivers/alice\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/receiver/payment\",\n      \"href\": \"https://wallet.example/receivers/alice/payments\"\n    }\n  ]\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"subject\": \"acct:alice@wallet.example\",\n  \"links\": [\n    {\n      \"rel\": \"https://interledger.org/rel/ledgerUri\",\n      \"href\": \"https://wallet.example/ledger\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/socketIOUri\",\n      \"href\": \"https://wallet.example/socket.io\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/ledgerAccount\",\n      \"href\": \"https://wallet.example/ledger/accounts/alice\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/sender/payment\",\n      \"href\": \"https://wallet.example/payments\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/sender/quote\",\n      \"href\": \"https://wallet.example/payments/quote\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/receiver\",\n      \"href\": \"https://wallet.example/receivers/alice\"\n    }\n  ]\n}",
           "type": "json"
         }
       ]
@@ -251,60 +251,6 @@ define({ "api": [
     "groupTitle": "Misc"
   },
   {
-    "type": "POST",
-    "url": "/payments/findPath",
-    "title": "Find path",
-    "name": "FindPath",
-    "group": "Payment",
-    "version": "1.0.0",
-    "description": "<p>Find path</p>",
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "destination",
-            "description": "<p>destination</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "source_amount",
-            "description": "<p>source amount</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "destination_amount",
-            "description": "<p>destination amount</p>"
-          }
-        ]
-      }
-    },
-    "examples": [
-      {
-        "title": "Find path",
-        "content": "curl -X POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"destination\": \"bob@wallet.example\",\n    \"destination_amount\": \"10\"\n}'\nhttps://wallet.example/payments/findPath",
-        "type": "shell"
-      }
-    ],
-    "success": {
-      "examples": [
-        {
-          "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"sourceAmount\": \"10\",\n  \"destinationAmount\": \"10\"\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "filename": "api/src/controllers/payments.js",
-    "groupTitle": "Payment"
-  },
-  {
     "type": "get",
     "url": "/payments",
     "title": "User payments history",
@@ -343,34 +289,7 @@ define({ "api": [
       "examples": [
         {
           "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"list\": [\n    {\n      \"id\": \"15a3cbb8-d0f3-410e-8a59-14e8dee14abd\",\n      \"source_user\": 1,\n      \"source_account\": \"https://wallet.example/ledger/accounts/alice\",\n      \"destination_user\": 2,\n      \"destination_account\": \"https://wallet.example/ledger/accounts/bob\",\n      \"transfers\": \"https://wallet.example/ledger/transfers/3d4c9c8e-204a-4213-9e91-88b64dad8604\",\n      \"state\": null,\n      \"source_amount\": \"12\",\n      \"destination_amount\": \"12\",\n      \"created_at\": \"2016-04-19T20:18:18.040Z\",\n      \"completed_at\": null,\n      \"updated_at\": \"2016-04-19T20:18:18.040Z\",\n      \"sourceUserUsername\": \"alice\",\n      \"destinationUserUsername\": \"bob\"\n    },\n    {\n      \"id\": \"e1d3c588-807c-4d4f-b25c-61842b5ead6d\",\n      \"source_user\": 1,\n      \"source_account\": \"https://wallet.example/ledger/accounts/alice\",\n      \"destination_user\": 2,\n      \"destination_account\": \"https://wallet.example/ledger/accounts/bob\",\n      \"transfers\": \"https://wallet.example/ledger/transfers/d1fa49d3-c955-4833-803a-df0c43eab044\",\n      \"state\": null,\n      \"source_amount\": \"1\",\n      \"destination_amount\": \"1\",\n      \"created_at\": \"2016-04-19T20:15:57.055Z\",\n      \"completed_at\": null,\n      \"updated_at\": \"2016-04-19T20:15:57.055Z\",\n      \"sourceUserUsername\": \"alice\",\n      \"destinationUserUsername\": \"bob\"\n    }\n  ],\n  \"totalPages\": 5\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "filename": "api/src/controllers/payments.js",
-    "groupTitle": "Payment"
-  },
-  {
-    "type": "POST",
-    "url": "/receivers/:username/payments",
-    "title": "Prepare a payment",
-    "name": "PreparePayment",
-    "group": "Payment",
-    "version": "1.0.0",
-    "description": "<p>Prepare a payment</p>",
-    "examples": [
-      {
-        "title": "Prepare a payment",
-        "content": "curl -X POST\nhttps://wallet.example/receivers/alice/payments",
-        "type": "shell"
-      }
-    ],
-    "success": {
-      "examples": [
-        {
-          "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"paymentId\": \"1bbeea29-f9aa-49aa-abb1-9954400c9ca7\",\n  \"receipt_condition\": \"cc:0:3:eAOobLmr23UI0wZgfmW1mis_b7cxrrRpNqvI2c37LI4:32\"\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"list\": [\n    {\n      \"id\": \"15a3cbb8-d0f3-410e-8a59-14e8dee14abd\",\n      \"source_user\": 1,\n      \"source_account\": \"https://wallet.example/ledger/accounts/alice\",\n      \"destination_user\": 2,\n      \"destination_account\": \"https://wallet.example/ledger/accounts/bob\",\n      \"transfer\": \"https://wallet.example/ledger/transfers/3d4c9c8e-204a-4213-9e91-88b64dad8604\",\n      \"state\": null,\n      \"source_amount\": \"12\",\n      \"destination_amount\": \"12\",\n      \"created_at\": \"2016-04-19T20:18:18.040Z\",\n      \"completed_at\": null,\n      \"updated_at\": \"2016-04-19T20:18:18.040Z\",\n      \"sourceUserUsername\": \"alice\",\n      \"destinationUserUsername\": \"bob\"\n    },\n    {\n      \"id\": \"e1d3c588-807c-4d4f-b25c-61842b5ead6d\",\n      \"source_user\": 1,\n      \"source_account\": \"https://wallet.example/ledger/accounts/alice\",\n      \"destination_user\": 2,\n      \"destination_account\": \"https://wallet.example/ledger/accounts/bob\",\n      \"transfer\": \"https://wallet.example/ledger/transfers/d1fa49d3-c955-4833-803a-df0c43eab044\",\n      \"state\": null,\n      \"source_amount\": \"1\",\n      \"destination_amount\": \"1\",\n      \"created_at\": \"2016-04-19T20:15:57.055Z\",\n      \"completed_at\": null,\n      \"updated_at\": \"2016-04-19T20:15:57.055Z\",\n      \"sourceUserUsername\": \"alice\",\n      \"destinationUserUsername\": \"bob\"\n    }\n  ],\n  \"totalPages\": 5\n}",
           "type": "json"
         }
       ]
@@ -442,8 +361,8 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "path",
-            "description": "<p>path</p>"
+            "field": "quote",
+            "description": "<p>quote</p>"
           }
         ]
       }
@@ -460,6 +379,60 @@ define({ "api": [
         {
           "title": "200 Response:",
           "content": "HTTP/1.1 200 OK",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "api/src/controllers/payments.js",
+    "groupTitle": "Payment"
+  },
+  {
+    "type": "POST",
+    "url": "/payments/quote",
+    "title": "Request a quote",
+    "name": "Quote",
+    "group": "Payment",
+    "version": "1.0.0",
+    "description": "<p>Request a quote</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "destination",
+            "description": "<p>destination</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "source_amount",
+            "description": "<p>source amount</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "destination_amount",
+            "description": "<p>destination amount</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Request a quote",
+        "content": "curl -X POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"destination\": \"bob@wallet.example\",\n    \"destination_amount\": \"10\"\n}'\nhttps://wallet.example/payments/quote",
+        "type": "shell"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "200 Response:",
+          "content": "HTTP/1.1 200 OK\n{\n  \"sourceAmount\": \"10\",\n  \"destinationAmount\": \"10\"\n}",
           "type": "json"
         }
       ]
