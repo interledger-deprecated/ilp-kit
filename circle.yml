@@ -12,9 +12,7 @@ test:
   override:
 #   - npm run lint
     - npm test
-    - npm run test-api:
-        environment:
-          API_LEDGER_URI: http://localhost:3001
+    - npm run test-api
 
 deployment:
   production:
