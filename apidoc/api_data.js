@@ -348,8 +348,8 @@ define({ "api": [
     },
     "examples": [
       {
-        "title": "Make a payment with the destinationAmount",
-        "content": "curl -X PUT -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"destination\": \"bob@wallet.example\",\n    \"destinationAmount\": \"1\"\n}'\nhttps://wallet.example/payments/9efa70ec-08b9-11e6-b512-3e1d05defe78",
+        "title": "Make a payment",
+        "content": "curl -X PUT -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"destination\": \"bob@wallet.example\",\n    \"sourceAmount\": \"5\",\n    \"destinationAmount\": \"5\",\n    \"memo\": \"Some money for you!\"\n}'\nhttps://wallet.example/payments/9efa70ec-08b9-11e6-b512-3e1d05defe78",
         "type": "shell"
       }
     ],
