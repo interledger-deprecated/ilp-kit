@@ -319,14 +319,14 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "source_amount",
+            "field": "sourceAmount",
             "description": "<p>source amount</p>"
           },
           {
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "destination_amount",
+            "field": "destinationAmount",
             "description": "<p>destination amount</p>"
           }
         ]
