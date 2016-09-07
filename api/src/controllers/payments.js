@@ -16,6 +16,7 @@ const PaymentFactory = require('../models/payment')
 // TODO handle these cases
 const InvalidLedgerAccountError = require('../errors/invalid-ledger-account-error')
 const LedgerInsufficientFundsError = require('../errors/ledger-insufficient-funds-error')
+const NoQuote = require('../errors/no-quote-error')
 
 PaymentsControllerFactory.constitute = [Auth, PaymentFactory, Log, Ledger, Config, Utils, SPSP, Socket, UserFactory]
 function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, spsp, socket, User) {
@@ -220,12 +221,16 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
         destination: this.body.destination
       })
 
-      this.body = yield spsp.quote({
-        source: this.req.user,
-        destination: destination,
-        sourceAmount: this.body.sourceAmount,
-        destinationAmount: this.body.destinationAmount
-      })
+      try {
+        this.body = yield spsp.quote({
+          source: this.req.user,
+          destination: destination,
+          sourceAmount: this.body.sourceAmount,
+          destinationAmount: this.body.destinationAmount
+        })
+      } catch (e) {
+        throw new NoQuote('No quote for a specified destination/amount has been found')
+      }
     }
 
     /**

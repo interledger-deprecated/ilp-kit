@@ -131,8 +131,8 @@ export default class SendForm extends Component {
       quoting, fail, data, fields: {destination, sourceAmount, destinationAmount, message} } = this.props
     const { config } = this.context
 
-    const isSendingAmountFieldDisabled = !destination.value || fail.id || (quoting && this.lastQuotingField === 'destination')
-    const isReceivingAmountFieldDisabled = !destination.value || fail.id || (quoting && this.lastQuotingField === 'source')
+    const isSendingAmountFieldDisabled = !destination.value || (quoting && this.lastQuotingField === 'destination')
+    const isReceivingAmountFieldDisabled = !destination.value || (quoting && this.lastQuotingField === 'source')
 
     // TODO initial render should show a currency
     return (
@@ -150,6 +150,7 @@ export default class SendForm extends Component {
               switch (fail.id) {
                 case 'LedgerInsufficientFundsError': return 'You have insufficient funds to make the payment'
                 case 'NotFoundError': return 'Account not found'
+                case 'NoQuoteError': return "Couldn't find a quote for the specified recipient or amount"
                 default: return 'Something went wrong'
               }
             })()}
