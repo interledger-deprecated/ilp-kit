@@ -13,9 +13,6 @@ const Socket = require('../lib/socket')
 const Utils = require('../lib/utils')
 const UserFactory = require('../models/user')
 const PaymentFactory = require('../models/payment')
-// TODO handle these cases
-const InvalidLedgerAccountError = require('../errors/invalid-ledger-account-error')
-const LedgerInsufficientFundsError = require('../errors/ledger-insufficient-funds-error')
 const NoQuote = require('../errors/no-quote-error')
 
 PaymentsControllerFactory.constitute = [Auth, PaymentFactory, Log, Ledger, Config, Utils, SPSP, Socket, UserFactory]
@@ -133,7 +130,6 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
      *    }
      */
 
-    // TODO handle payment creation. Shouldn't rely on notification service
     static * putResource() {
       const _this = this
 

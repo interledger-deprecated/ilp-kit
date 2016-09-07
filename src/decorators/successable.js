@@ -1,39 +1,56 @@
 import React, {Component} from 'react'
 
 // Always use after @connect it uses the success prop
-// TODO asking for formKey because redux-form formKey is empty for some reason
 export default function successable() {
-
   return (DecoratedComponent) => {
     return class extends Component {
-      constructor(props, context) {
-        super(props, context)
-
-        this.state = {success: false}
+      state = {
+        success: false,
+        fail: false
       }
 
       componentWillUnmount() {
         clearTimeout(this.timer)
       }
 
-      success = (keep) => {
+      setTimer = () => {
         const self = this
-        self.setState({success: true})
-
-        // Don't hide the success message if the keep is true
-        if (keep) return;
 
         this.timer = setTimeout(() => {
           self.setState({
             ...self.state,
-            success: false
+            success: false,
+            fail: false
           })
         }, 5000) // Hide in 5 seconds
       }
 
+      success = (temp) => {
+        this.setState({ success: true })
+        if (temp) this.setTimer()
+      }
+
+      fail = (error, temp) => {
+        this.setState({ fail: error || true })
+        if (temp) this.setTimer()
+      }
+
+      permSuccess = () => this.success()
+      tempSuccess = () => this.success(true)
+      permFail = (error) => this.fail(error)
+      tempFail = (error) => this.fail(error, true)
+      reset = () => this.setState({success: false, fail: false})
+
       render() {
         return (
-          <DecoratedComponent {...this.props} succeed={this.success} success={this.state.success} />
+          <DecoratedComponent {...this.props}
+                              permSuccess={this.permSuccess}
+                              tempSuccess={this.tempSuccess}
+                              success={this.state.success}
+                              permFail={this.permFail}
+                              tempFail={this.tempFail}
+                              fail={this.state.fail}
+                              reset={this.reset} />
         )
       }
     }

@@ -17,7 +17,6 @@ module.exports = class Mailer {
 
     var auth = {
       auth: {
-        // TODO needs to be an environment variable
         api_key: config.data.getIn(['mailgun', 'api_key']),
         domain: config.data.getIn(['mailgun', 'domain'])
       }

@@ -26,14 +26,14 @@ export default class ForgotPasswordForm extends Component {
     error: PropTypes.object,
 
     // Successable
-    succeed: PropTypes.func,
+    permSuccess: PropTypes.func,
     success: PropTypes.bool
   }
 
   handleSubmit = (data) => {
     return this.props.submit(data)
       .then(() => {
-        this.props.succeed(true)
+        this.props.permSuccess()
 
         tracker.track('Forgot password')
       })

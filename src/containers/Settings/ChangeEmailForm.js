@@ -36,7 +36,7 @@ export default class ChangeEmailForm extends Component {
     submitFailed: PropTypes.bool,
 
     // Successable
-    succeed: PropTypes.func,
+    tempSuccess: PropTypes.func,
     success: PropTypes.bool,
 
     // Auth
@@ -47,7 +47,7 @@ export default class ChangeEmailForm extends Component {
   save = (data) => {
     return this.props.save({username: this.props.user.username}, data)
       .then(() => {
-        this.props.succeed()
+        this.props.tempSuccess()
 
         tracker.track('Email change', {status: 'success'})
       })

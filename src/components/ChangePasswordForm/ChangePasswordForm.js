@@ -29,7 +29,7 @@ export default class ChangePasswordForm extends Component {
     error: PropTypes.object,
 
     // Successable
-    succeed: PropTypes.func,
+    permSuccess: PropTypes.func,
     success: PropTypes.bool
   }
 
@@ -42,7 +42,7 @@ export default class ChangePasswordForm extends Component {
 
     return this.props.submit(data)
       .then(() => {
-        this.props.succeed(true)
+        this.props.permSuccess()
 
         tracker.track('Change password')
       })

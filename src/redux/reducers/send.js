@@ -1,11 +1,10 @@
-import * as types from '../actionTypes';
+import * as types from '../actionTypes'
 
 const initialState = {
-  fail: {},
   quote: {},
   quoting: false,
   destinationInfo: {}
-};
+}
 
 export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
@@ -13,63 +12,47 @@ export default function reducer(state = initialState, action = {}) {
       // TODO handle the affect this has on source/destination amounts and quoting
       return {
         ...state,
-        fail: {},
         destinationInfo: action.result
       }
     case types.DESTINATION_CHANGE_FAIL:
       return {
         ...state,
-        fail: action.error,
         destinationInfo: {}
       }
     case types.REQUEST_QUOTE:
       return {
         ...state,
         quote: {},
-        quoting: true,
-        fail: {}
-      };
+        quoting: true
+      }
     case types.REQUEST_QUOTE_SUCCESS:
       if (action.result && action.result.debits) {
         return {
           ...state,
           quote: action.result,
           quoting: false
-        };
+        }
       }
 
       return {
         ...state,
         quote: action.result,
-        quoting: false,
-        fail: {}
-      };
+        quoting: false
+      }
     case types.REQUEST_QUOTE_FAIL:
       return {
         ...state,
         quote: {},
-        quoting: false,
-        fail: action.error
-      };
-    case types.SEND:
-      return {
-        ...state,
-        fail: {}
-      };
+        quoting: false
+      }
     case types.SEND_SUCCESS:
       return {
         ...state,
-        fail: {},
         quote: {}
-      };
-    case types.SEND_FAIL:
-      return {
-        ...state,
-        fail: action.error
-      };
+      }
     case types.DESTROY:
-      return initialState;
+      return initialState
     default:
-      return state;
+      return state
   }
 }

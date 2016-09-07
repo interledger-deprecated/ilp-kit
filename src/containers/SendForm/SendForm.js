@@ -25,7 +25,6 @@ import { Input } from 'components'
     user: state.auth.user,
     destinationInfo: state.send.destinationInfo,
     send: state.send,
-    fail: state.send.fail,
     quote: state.send.quote,
     quoting: state.send.quoting
   }),
@@ -50,9 +49,13 @@ export default class SendForm extends Component {
     initializeForm: PropTypes.func,
 
     // Successable
-    succeed: PropTypes.func,
+    permSuccess: PropTypes.func,
+    tempSuccess: PropTypes.func,
     success: PropTypes.bool,
-    fail: PropTypes.object
+    permFail: PropTypes.func,
+    tempFail: PropTypes.func,
+    fail: PropTypes.any,
+    reset: PropTypes.func
   }
 
   static contextTypes = {
@@ -96,6 +99,8 @@ export default class SendForm extends Component {
   // TODO introduce a latency
   handleDestinationChange = (target) => {
     this.props.destinationChange(target.value)
+      .then(this.props.reset)
+      .catch(this.props.permFail)
   }
 
   // TODO there should be a feedback on a failed pathfinding
@@ -105,7 +110,7 @@ export default class SendForm extends Component {
     this.props.requestQuote({
       destination: this.props.values.destination,
       sourceAmount: target.value
-    })
+    }).catch(this.props.permFail)
 
     this.lastQuotingField = 'source'
   }
@@ -123,7 +128,7 @@ export default class SendForm extends Component {
 
   handleSubmit = (data) => {
     tracker.track('payment')
-    return this.props.transfer(data).then(this.props.succeed)
+    return this.props.transfer(data).then(this.props.tempSuccess)
   }
 
   render() {
@@ -131,8 +136,12 @@ export default class SendForm extends Component {
       quoting, fail, data, fields: {destination, sourceAmount, destinationAmount, message} } = this.props
     const { config } = this.context
 
-    const isSendingAmountFieldDisabled = !destination.value || (quoting && this.lastQuotingField === 'destination')
-    const isReceivingAmountFieldDisabled = !destination.value || (quoting && this.lastQuotingField === 'source')
+    const isSendingAmountFieldDisabled = !destination.value
+      || fail.id === 'NotFoundError'
+      || (quoting && this.lastQuotingField === 'destination')
+    const isReceivingAmountFieldDisabled = !destination.value
+      || fail.id === 'NotFoundError'
+      || (quoting && this.lastQuotingField === 'source')
 
     // TODO initial render should show a currency
     return (
