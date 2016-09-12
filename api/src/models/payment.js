@@ -71,6 +71,7 @@ function PaymentFactory (sequelize, validator, container, User) {
           + ' sum(destination_amount) as destination_amount,'
           + ' message,'
           + ' date_trunc(\'minute\', created_at) AS time_slot,'
+          + ' max(created_at) AS recent_date,'
           + ' count(*) as transfers'
         + ' FROM "Payments"'
         + ' WHERE state = \'success\' '
@@ -82,7 +83,7 @@ function PaymentFactory (sequelize, validator, container, User) {
           + ' )'
         + ' GROUP BY source_account, destination_account, message, time_slot'
           // TODO order by doesn't work correctly. probably because of the time_slot value
-        + ' ORDER BY time_slot DESC'
+        + ' ORDER BY recent_date DESC'
         + ' OFFSET ' + limit * (page - 1)
         + ' LIMIT ' + limit,
         {model: Payment.DbModel}

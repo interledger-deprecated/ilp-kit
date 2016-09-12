@@ -59,8 +59,8 @@ export default class HistoryItem extends Component {
                 <div className={cx('message')}>
                   {item.message}
                 </div>}
-                <div className={cx('date')} title={moment(item.time_slot).format('LLL')}>
-                  {moment(item.time_slot).fromNow()}
+                <div className={cx('date')} title={moment(item.recent_date).format('LLL')}>
+                  {moment(item.recent_date).fromNow()}
                 </div>
               </div>
             </div>
