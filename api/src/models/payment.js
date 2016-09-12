@@ -172,8 +172,8 @@ function PaymentFactory (sequelize, validator, container, User) {
       unique: true
     },
     state: Sequelize.ENUM('pending', 'success', 'fail'),
-    source_amount: Sequelize.INTEGER,
-    destination_amount: Sequelize.INTEGER,
+    source_amount: Sequelize.FLOAT,
+    destination_amount: Sequelize.FLOAT,
     message: Sequelize.STRING(1024), // TODO decide on the size
     execution_condition: Sequelize.STRING(1024), // TODO decide on the size
     created_at: Sequelize.DATE,
