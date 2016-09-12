@@ -37,10 +37,10 @@ module.exports = class Socket {
 
   // Add a subscribed user
   addUser(username) {
-    let self = this
+    const self = this
 
     // TODO should socket be aware of the ledger? may need to move this somewhere else
-    self.ledger.on('transfer_' + username, function(transfer){
+    self.ledger.on('transfer_' + username, (transfer) => {
       self.transfer(username, transfer)
     })
 
@@ -49,7 +49,7 @@ module.exports = class Socket {
 
   // Remove the user if it doesn't have subscriptions
   cleanup(username) {
-    let self = this
+    const self = this
 
     if (self.users[username] && _.isEmpty(self.users[username].subscriptions)) {
       delete this.users[username]
@@ -60,20 +60,21 @@ module.exports = class Socket {
 
   // Add a subscription under the user
   addSubscription(username, socket) {
-    let self = this
+    const self = this
 
     self.log.info('Subscribe ' + username)
 
     // Add the subscription
-    let user = self.users[username] || self.addUser(username)
+    const user = self.users[username] || self.addUser(username)
+
     user.subscriptions[socket.id] = socket
   }
 
   // Remove the subscription
   removeSubscription(id) {
-    let self = this
+    const self = this
 
-    _.map(self.users, function(s, key){
+    _.map(self.users, (s, key) => {
       if (s.subscriptions[id]) {
         delete s.subscriptions[id]
         self.cleanup(key)
@@ -82,13 +83,15 @@ module.exports = class Socket {
   }
 
   emitToUser(username, event, data) {
-    _.map(this.users[username].subscriptions, function(subscription){
+    if (!this.users[username]) return
+
+    _.map(this.users[username].subscriptions, (subscription) => {
       subscription.emit(event, data)
     })
   }
 
   attach (app) {
-    let self = this
+    const self = this
 
     // TODO ensure the username is the currently logged in user
     app.io.route('subscribe', function (next, username) {
@@ -104,11 +107,11 @@ module.exports = class Socket {
   }
 
   transfer(username, transfer) {
-    let self = this
+    const self = this
 
     // TODO move this logic somewhere else?
     self.Payment.findOne({where: {transfer: transfer.id}})
-      .then(function (data) {
+      .then((data) => {
         self.log.info('payment for ' + username)
 
         self.emitToUser(username, 'payment', data)
@@ -130,7 +133,7 @@ module.exports = class Socket {
     self.emitToUser(username, 'payment', payment)
 
     co(function *() {
-      var account = yield self.ledger.getAccount({username: username}, true)
+      const account = yield self.ledger.getAccount({username: username}, true)
       self.updateBalance(username, account.balance)
     }).catch((err) => {
       // TODO handle
@@ -138,7 +141,7 @@ module.exports = class Socket {
   }
 
   updateBalance(username, balance) {
-    let self = this
+    const self = this
 
     self.log.info('balance update for ' + username)
 

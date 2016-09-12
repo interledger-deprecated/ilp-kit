@@ -51,6 +51,10 @@
     font-size: 20px;
   }
 }
+.transfers {
+  text-align: right;
+  color: $history-date-text-color;
+}
 .outgoing {
   color: $history-negative;
 }

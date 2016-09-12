@@ -13,6 +13,7 @@ const Socket = require('../lib/socket')
 const Utils = require('../lib/utils')
 const UserFactory = require('../models/user')
 const PaymentFactory = require('../models/payment')
+const InsufficientFundsError = require('../errors/ledger-insufficient-funds-error')
 const NoQuote = require('../errors/no-quote-error')
 
 PaymentsControllerFactory.constitute = [Auth, PaymentFactory, Log, Ledger, Config, Utils, SPSP, Socket, UserFactory]
@@ -90,7 +91,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
       const payments = yield Payment.getUserPayments(this.req.user, page, limit)
 
       this.body = {
-        list: payments.rows,
+        list: payments.list,
         totalPages: Math.ceil(payments.count / limit)
       }
     }
@@ -145,13 +146,23 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
       })
 
       // Interledger payment
-      const transfer = yield spsp.pay({
-        source: this.req.user,
-        destination: destination,
-        sourceAmount: payment.sourceAmount,
-        destinationAmount: payment.destinationAmount,
-        memo: payment.message
-      })
+      let transfer
+
+      try {
+        transfer = yield spsp.pay({
+          source: this.req.user,
+          destination: destination,
+          sourceAmount: payment.sourceAmount,
+          destinationAmount: payment.destinationAmount,
+          memo: payment.message
+        })
+      } catch (e) {
+        if (e.response && e.response.body && e.response.body.id && e.response.body.id === 'InsufficientFundsError') {
+          throw new InsufficientFundsError()
+        }
+
+        throw e
+      }
 
       // If the payment is local the receiver already created it in the db
       let dbPayment = yield Payment.findOne({
@@ -164,9 +175,10 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
 
       dbPayment.setDataExternal({
         source_user: this.req.user.id,
+        source_account: this.req.user.account,
         destination_account: destination.accountUri,
-        source_amount: payment.sourceAmount,
-        destination_amount: payment.destinationAmount,
+        source_amount: parseFloat(payment.sourceAmount),
+        destination_amount: parseFloat(payment.destinationAmount),
         transfer: transfer.uuid,
         message: payment.message,
         execution_condition: transfer.executionCondition,
@@ -280,7 +292,8 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
         state: 'pending',
         source_account: sourceAccount,
         destination_user: destinationUser.id,
-        destination_amount: destinationAmount,
+        destination_account: destinationUser.account,
+        destination_amount: parseFloat(destinationAmount),
         message: memo,
         execution_condition: paymentParams.condition
       }

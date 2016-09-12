@@ -59,7 +59,9 @@ export default class HistoryItem extends Component {
                 <div className={cx('message')}>
                   {item.message}
                 </div>}
-                <div className={cx('date')} title={moment(item.created_at).format('LLL')}>{moment(item.created_at).fromNow()}</div>
+                <div className={cx('date')} title={moment(item.time_slot).format('LLL')}>
+                  {moment(item.time_slot).fromNow()}
+                </div>
               </div>
             </div>
             <div className="col-xs-4">
@@ -67,6 +69,10 @@ export default class HistoryItem extends Component {
                 {/* TODO Show both source and destination amounts */}
                 {config.currencySymbol}{type === 'outgoing' ? amount(item.source_amount) : amount(item.destination_amount)}
               </div>
+              {item.transfers > 1 &&
+              <div className={cx('transfers')}>
+                {item.transfers} transfers
+              </div>}
             </div>
           </div>
         {/* </a> */}

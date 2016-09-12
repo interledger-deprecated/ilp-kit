@@ -26,12 +26,22 @@ export default function successable() {
       }
 
       success = (temp) => {
-        this.setState({ success: true })
+        this.setState({
+          success: true,
+          fail: false
+        })
+
+        clearTimeout(this.timer)
         if (temp) this.setTimer()
       }
 
       fail = (error, temp) => {
-        this.setState({ fail: error || true })
+        this.setState({
+          success: false,
+          fail: error || true
+        })
+
+        clearTimeout(this.timer)
         if (temp) this.setTimer()
       }
 

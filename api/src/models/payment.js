@@ -54,9 +54,62 @@ function PaymentFactory (sequelize, validator, container, User) {
       }
     }
 
-    static getUserPayments (user, page, limit) {
+    static * getUserPayments(user, page, limit) {
       page = page > 0 ? Number(page) : 1
       limit = Number(limit)
+
+      // TODO the current grouping mechanism is not ideal.
+      //  It groups by time intervals, so the same payment stream can be
+      //  represented in different rows, and different payment streams can
+      //  appear in the same row
+
+      // TODO switch to a legit sequalize format
+
+      const list = yield sequelize.query(
+        'SELECT source_account, destination_account,'
+          + ' sum(source_amount) as source_amount,'
+          + ' sum(destination_amount) as destination_amount,'
+          + ' message,'
+          + ' date_trunc(\'minute\', created_at) AS time_slot,'
+          + ' count(*) as transfers'
+        + ' FROM "Payments"'
+        + ' WHERE state = \'success\' '
+          + ' AND ('
+            + ' source_user = ' + user.id
+            + " OR source_account = '" + user.account + "'"
+            + ' OR destination_user = ' + user.id
+            + " OR destination_account = '" + user.account + "'"
+          + ' )'
+        + ' GROUP BY source_account, destination_account, message, time_slot'
+          // TODO order by doesn't work correctly. probably because of the time_slot value
+        + ' ORDER BY time_slot DESC'
+        + ' OFFSET ' + limit * (page - 1)
+        + ' LIMIT ' + limit,
+        {model: Payment.DbModel}
+      )
+
+      // TODO:PERFORMANCE this selects the rows
+      const count = yield sequelize.query(
+        'SELECT count(source_amount), destination_account,'
+          + ' sum(source_amount) as source_amount,'
+          + ' sum(destination_amount) as destination_amount,'
+          + ' message,'
+          + ' date_trunc(\'minute\', created_at) AS time_slot'
+        + ' FROM "Payments"'
+        + ' WHERE state = \'success\' '
+          + ' AND ('
+            + ' source_user = ' + user.id
+            + " OR source_account = '" + user.account + "'"
+            + ' OR destination_user = ' + user.id
+            + " OR destination_account = '" + user.account + "'"
+          + ' )'
+        + ' GROUP BY source_account, destination_account, message, time_slot'
+      )
+
+      return {
+        list,
+        count: count[1].rowCount
+      }
 
       return Payment.DbModel.findAndCountAll({
         // This is how we get a flat object that includes user username
@@ -119,8 +172,8 @@ function PaymentFactory (sequelize, validator, container, User) {
       unique: true
     },
     state: Sequelize.ENUM('pending', 'success', 'fail'),
-    source_amount: Sequelize.STRING(1024), // TODO put the right type
-    destination_amount: Sequelize.STRING(1024), // TODO put the right type
+    source_amount: Sequelize.INTEGER,
+    destination_amount: Sequelize.INTEGER,
     message: Sequelize.STRING(1024), // TODO decide on the size
     execution_condition: Sequelize.STRING(1024), // TODO decide on the size
     created_at: Sequelize.DATE,

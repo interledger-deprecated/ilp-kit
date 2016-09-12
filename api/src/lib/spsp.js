@@ -122,10 +122,11 @@ module.exports = class SPSP {
       dbPayment.state = 'success'
       yield dbPayment.save()
 
+      // Destroy the receiver
+      self.receiver.stopListening()
+
       // Notify the clients
       self.socket.payment(destinationUser.username, dbPayment)
-
-      self.receiver.stopListening()
     }))
 
     return this.receiver.createRequest({

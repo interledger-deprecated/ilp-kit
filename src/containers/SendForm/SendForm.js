@@ -128,7 +128,9 @@ export default class SendForm extends Component {
 
   handleSubmit = (data) => {
     tracker.track('payment')
-    return this.props.transfer(data).then(this.props.tempSuccess)
+    return this.props.transfer(data)
+      .then(this.props.tempSuccess)
+      .catch(this.props.permFail)
   }
 
   render() {
@@ -201,7 +203,7 @@ export default class SendForm extends Component {
               </div>
             </div>
             <button type="submit" className="btn btn-complete"
-              disabled={(!data && pristine) || invalid || submitting || quoting || fail.id}>
+              disabled={(!data && pristine) || invalid || submitting || quoting || fail.id === 'NotFoundError'}>
               {submitting ? 'Sending...' : 'Send'}
             </button>
           </form>

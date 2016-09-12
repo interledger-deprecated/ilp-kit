@@ -28,12 +28,13 @@ export const toggleJson = (id, transfer) => (dispatch, getState) => {
 }
 
 // TODO separate module for WS stuff?
-export const addPayment = (data) => (dispatch, getState) => {
-  const duplicate = getState().history.list.filter((item) => {
+export const addPayment = (data) => (dispatch) => {
+  // TODO There's no id anymore, but this might become an issue
+  /* const duplicate = getState().history.list.filter((item) => {
     return item.id === data.id
   })[0]
 
-  if (duplicate) return false
+  if (duplicate) return false */
 
   /* const change = getState().auth.user.account === data.destination_account
    ? Number(data.destination_amount)

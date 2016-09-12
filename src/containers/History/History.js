@@ -14,7 +14,7 @@ const cx = classNames.bind(styles)
 
 // TODO not sure the component is the best place for this
 const paginationActionCreators = initActionCreators({
-  limit: 10,
+  limit: 20,
   path: '/payments'
 })
 

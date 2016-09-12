@@ -38,10 +38,39 @@ function reducer(state = {}, action = {}) {
           state.list.pop()
         }
 
+        // Try to fit in a group
+        let didItFit
+
+        let newList = state.list.map((item) => {
+          // Need to put it in the same time slot
+          if (action.result.time_slot !== item.time_slot) return item
+
+          // source and destination accounts need to be the same
+          if (action.result.source_account !== item.source_account
+            || action.result.destination_account !== item.destination_account) {
+            return item
+          }
+
+          // Oh yea
+          didItFit = true
+
+          return {
+            ...item,
+            transfers: (item.transfers || 1) + 1,
+            source_amount: item.source_amount + action.result.source_amount,
+            destination_amount: item.destination_amount + action.result.destination_amount
+          }
+        })
+
+        // Make it an individual payment
+        if (!didItFit) {
+          newList = [action.result].concat(newList)
+        }
+
         return {
           ...state,
           // Add the new payment
-          list: [action.result].concat(state.list)
+          list: newList
         }
       }
 
