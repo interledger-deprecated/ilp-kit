@@ -51,10 +51,6 @@
     font-size: 20px;
   }
 }
-.transfers {
-  text-align: right;
-  color: $history-date-text-color;
-}
 .outgoing {
   color: $history-negative;
 }
@@ -87,6 +83,61 @@
     background: $container-background-color;
   }
 }
+
+.transfersCount {
+  display: block;
+  text-align: right;
+  color: $history-date-text-color;
+
+  a {
+    color: $history-date-text-color !important;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+}
+.transfersContainer {
+  & > div {
+    max-height: 300px;
+    margin-top: 15px;
+    overflow: auto;
+  }
+
+  .date {
+    padding-left: 83px;
+    font-size: 15px;
+    line-height: 25px;
+  }
+  .amount {
+    font-size: 15px;
+    line-height: 25px;
+  }
+
+  // Animation
+  .appear {
+    max-height: 0;
+    transition: all .3s ease-in;
+  }
+  .appearActive {
+    max-height: 300px;
+  }
+  .enter {
+    max-height: 0;
+    transition: all .3s ease-in;
+  }
+  .enterActive {
+    max-height: 300px;
+  }
+  .leave {
+    max-height: 300px;
+    transition: all .3s ease-out;
+  }
+  .leaveActive {
+    max-height: 0;
+  }
+}
+
 .jsonContainer {
   padding: 5px 35px 0;
 }

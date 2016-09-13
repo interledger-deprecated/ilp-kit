@@ -72,7 +72,7 @@ function PaymentFactory (sequelize, validator, container, User) {
           + ' message,'
           + ' date_trunc(\'minute\', created_at) AS time_slot,'
           + ' max(created_at) AS recent_date,'
-          + ' count(*) as transfers'
+          + ' count(*) as transfers_count'
         + ' FROM "Payments"'
         + ' WHERE state = \'success\' '
           + ' AND ('
@@ -82,7 +82,6 @@ function PaymentFactory (sequelize, validator, container, User) {
             + " OR destination_account = '" + user.account + "'"
           + ' )'
         + ' GROUP BY source_account, destination_account, message, time_slot'
-          // TODO order by doesn't work correctly. probably because of the time_slot value
         + ' ORDER BY recent_date DESC'
         + ' OFFSET ' + limit * (page - 1)
         + ' LIMIT ' + limit,
@@ -111,34 +110,26 @@ function PaymentFactory (sequelize, validator, container, User) {
         list,
         count: count[1].rowCount
       }
+    }
 
-      return Payment.DbModel.findAndCountAll({
-        // This is how we get a flat object that includes user username
-        attributes: {include: [
-          [Sequelize.col('SourceUser.username'), 'sourceUserUsername'],
-          [Sequelize.col('SourceUser.profile_picture'), 'sourceUserProfilePicture'],
-          [Sequelize.col('DestinationUser.username'), 'destinationUserUsername'],
-          [Sequelize.col('DestinationUser.profile_picture'), 'destinationUserProfilePicture']
-        ]},
-        where: {
-          $or: [
-            {source_user: user.id},
-            {source_account: user.account},
-            {destination_user: user.id},
-            {destination_account: user.account}
-          ]
-        },
-        limit: limit,
-        offset: limit * (page - 1),
-        include: [
-          // attributes: [] because we want a flat object. See above
-          { model: User.DbModel, as: 'SourceUser', attributes: [] },
-          { model: User.DbModel, as: 'DestinationUser', attributes: [] }
-        ],
-        order: [
-          ['created_at', 'DESC']
-        ]
-      })
+    static getTransfers(user, timeSlot) {
+      return sequelize.query(
+        'SELECT source_amount, destination_amount, created_at'
+      + ' FROM "Payments"'
+      + ' WHERE state = \'success\' '
+        + ' AND ('
+          + ' source_user = ' + user.id
+          + " OR source_account = '" + user.account + "'"
+          + ' OR destination_user = ' + user.id
+          + " OR destination_account = '" + user.account + "'"
+        + ' )'
+        + ' AND ('
+          + " date_trunc('minute', created_at) = '" + timeSlot + "'" // TODO careful
+        + ' )'
+        // TODO order by doesn't work correctly. probably because of the time_slot value
+      + ' ORDER BY created_at DESC',
+        {model: Payment.DbModel}
+      )
     }
 
     static getPayment (transfer) {

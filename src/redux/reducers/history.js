@@ -1,13 +1,14 @@
 import * as types from '../actionTypes'
+import moment from 'moment'
 
 import paginate from 'redux-pagination'
 
 function reducer(state = {}, action = {}) {
-  function updateInHistory(paymentId, update) {
+  function updateInHistory(timeSlot, update) {
     return {
       ...state,
       list: state.list.map(payment => {
-        if (payment.id === paymentId) {
+        if (payment.time_slot === timeSlot) {
           return {
             ...payment,
             ...update
@@ -56,7 +57,7 @@ function reducer(state = {}, action = {}) {
 
           return {
             ...item,
-            transfers: (item.transfers || 1) + 1,
+            transfers_count: (item.transfers_count || 1) + 1,
             source_amount: item.source_amount + action.result.source_amount,
             destination_amount: item.destination_amount + action.result.destination_amount
           }
@@ -77,6 +78,19 @@ function reducer(state = {}, action = {}) {
       return state
     case types.LOGOUT_SUCCESS:
       return {}
+    case types.LOAD_TRANSFERS:
+      return updateInHistory(action.timeSlot, {
+        transfersLoading: true
+      })
+    case types.LOAD_TRANSFERS_SUCCESS:
+      return updateInHistory(action.timeSlot, {
+        transfers: action.result,
+        transfersLoading: false
+      })
+    case types.LOAD_TRANSFERS_FAIL:
+      return updateInHistory(action.timeSlot, {
+        transfersLoading: false
+      })
     default:
       return state
   }

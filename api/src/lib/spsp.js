@@ -126,6 +126,7 @@ module.exports = class SPSP {
       self.receiver.stopListening()
 
       // Notify the clients
+      // TODO should probably have the same format as the payment in history
       self.socket.payment(destinationUser.username, dbPayment)
     }))
 

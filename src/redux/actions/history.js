@@ -50,3 +50,11 @@ export const addPayment = (data) => (dispatch) => {
     result: data
   })
 }
+
+export const loadTransfers = (payment) => {
+  return {
+    timeSlot: payment.time_slot,
+    types: [types.LOAD_TRANSFERS, types.LOAD_TRANSFERS_SUCCESS, types.LOAD_TRANSFERS_FAIL],
+    promise: (client) => client.get('/payments/transfers/' + payment.time_slot)
+  }
+}

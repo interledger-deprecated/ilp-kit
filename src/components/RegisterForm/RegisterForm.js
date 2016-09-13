@@ -40,7 +40,7 @@ export default class RegisterForm extends Component {
     const hideFakes = this.state && this.state.hideFakes
 
     return (
-      <form onSubmit={handleSubmit(register)} autoComplete="off" autoComplete="false">
+      <form onSubmit={handleSubmit(register)} autoComplete="off">
         {fail && fail.id &&
         <Alert bsStyle="danger">
           {fail.id === 'UsernameTakenError' &&

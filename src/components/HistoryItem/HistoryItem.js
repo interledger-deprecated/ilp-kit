@@ -1,4 +1,5 @@
 import React, {Component, PropTypes} from 'react'
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import moment from 'moment'
 
 import { contextualizePayment } from '../../utils/api'
@@ -15,11 +16,16 @@ export default class HistoryItem extends Component {
   static propTypes = {
     item: PropTypes.object,
     user: PropTypes.object,
-    toggleJson: PropTypes.func
+    toggleJson: PropTypes.func,
+    loadTransfers: PropTypes.func
   }
 
   static contextTypes = {
     config: PropTypes.object
+  }
+
+  state = {
+    showTransfers: false
   }
 
   toggleLedgerTransfer = (event) => {
@@ -29,16 +35,31 @@ export default class HistoryItem extends Component {
     tracker.track('HistoryItem toggle details')
   }
 
+  toggleTransfers = (event) => {
+    // TODO show loading
+    if (!this.props.item.transfers) {
+      this.props.loadTransfers(this.props.item)
+    }
+
+    this.setState({
+      ...this.state,
+      showTransfers: !this.state.showTransfers
+    })
+
+    event.preventDefault()
+  }
+
   render() {
     const item = contextualizePayment(this.props.item, this.props.user)
     const config = this.context.config || {}
+    const { showTransfers } = this.state
 
     const type = item.counterpartyAccount === item.destination_account ? 'outgoing' : 'incoming'
 
     const profilePic = (type === 'outgoing' ? item.destinationUserProfilePicture : item.sourceUserProfilePicture) || require('./placeholder.png')
 
     return (
-      <div className={cx('item')}>
+      <div className={cx('item')} key={item.time_slot}>
         {/* <a href="" onClick={this.toggleLedgerTransfer} className={cx('link')}> */}
           <div className="row">
             <div className="col-xs-8">
@@ -69,13 +90,53 @@ export default class HistoryItem extends Component {
                 {/* TODO Show both source and destination amounts */}
                 {config.currencySymbol}{type === 'outgoing' ? amount(item.source_amount) : amount(item.destination_amount)}
               </div>
-              {item.transfers > 1 &&
-              <div className={cx('transfers')}>
-                {item.transfers} transfers
+
+              {item.transfers_count > 1 &&
+              <div className={cx('transfersCount')}>
+                {!item.transfersLoading &&
+                <a href="" onClick={this.toggleTransfers}>
+                  {item.transfers_count} transfers
+                </a>}
+
+                {item.transfersLoading &&
+                <span>Loading...</span>}
               </div>}
             </div>
           </div>
         {/* </a> */}
+
+
+        <ReactCSSTransitionGroup
+          transitionName={{
+            enter: cx('enter'),
+            enterActive: cx('enterActive'),
+            leave: cx('leave'),
+            leaveActive: cx('leaveActive'),
+            appear: cx('appear'),
+            appearActive: cx('appearActive')
+          }}
+          transitionAppear
+          transitionEnterTimeout={300}
+          transitionLeaveTimeout={300}
+          component="div"
+          className={cx('row', 'transfersContainer')}>
+          {showTransfers &&
+          <div className={cx('col-sm-12')} key={item.time_slot + 'transfers'}>
+            {item.transfers && item.transfers.map((transfer) => {
+              return (
+                <div className="row">
+                <span className={cx('col-xs-8', 'date')}>
+                  {moment(transfer.created_at).format('LLL')}
+                </span>
+                  <span className={cx('col-xs-4', 'amount')}>
+                  {config.currencySymbol}{type === 'outgoing' ? amount(transfer.source_amount) : amount(transfer.destination_amount)}
+                </span>
+                </div>
+              )
+            })}
+          </div>}
+        </ReactCSSTransitionGroup>
+
         {item.showJson && item.json &&
         <div className="row">
           <div className={cx('col-sm-12', 'jsonContainer')}>

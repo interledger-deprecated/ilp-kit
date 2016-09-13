@@ -23,6 +23,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
   return class PaymentsController {
     static init(router) {
       router.get('/payments', Auth.checkAuth, this.getHistory)
+      router.get('/payments/transfers/:timeSlot', Auth.checkAuth, this.getTransfers)
       router.post('/payments/quote', Auth.checkAuth, this.quote)
       router.put('/payments/:id', Auth.checkAuth, Payment.createBodyParser(), this.putResource)
 
@@ -85,8 +86,8 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
      *    }
      */
     static * getHistory() {
-      const page = this.query.page
-      const limit = this.query.limit
+      const page = this.query.page || 1
+      const limit = this.query.limit || 10
 
       const payments = yield Payment.getUserPayments(this.req.user, page, limit)
 
@@ -94,6 +95,11 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
         list: payments.list,
         totalPages: Math.ceil(payments.count / limit)
       }
+    }
+
+    // TODO document this
+    static * getTransfers() {
+      this.body = yield Payment.getTransfers(this.req.user, this.params.timeSlot)
     }
 
     /**
@@ -180,7 +186,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
         source_amount: parseFloat(payment.sourceAmount),
         destination_amount: parseFloat(payment.destinationAmount),
         transfer: transfer.uuid,
-        message: payment.message,
+        message: payment.message || null,
         execution_condition: transfer.executionCondition,
         state: 'success'
       })

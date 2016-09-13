@@ -33,6 +33,7 @@ export default class Home extends Component {
     user: PropTypes.object,
     loadingPage: PropTypes.bool,
     toggleJson: PropTypes.func,
+    loadTransfers: PropTypes.func,
 
     getPage: PropTypes.func
   }
@@ -48,7 +49,7 @@ export default class Home extends Component {
   }
 
   render() {
-    const {history, totalPages, user, toggleJson, loadingPage} = this.props
+    const {history, totalPages, user, toggleJson, loadTransfers, loadingPage} = this.props
 
     return (
       <div className={cx('container')}>
@@ -63,7 +64,7 @@ export default class Home extends Component {
             {history && history.map(item => {
               return (
                 <li key={item.id}>
-                  <HistoryItem item={item} user={user} toggleJson={toggleJson}/>
+                  <HistoryItem item={item} user={user} toggleJson={toggleJson} loadTransfers={loadTransfers} />
                 </li>
               )
             })}
