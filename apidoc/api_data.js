@@ -450,7 +450,7 @@ define({ "api": [
       "examples": [
         {
           "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"type\": \"payee\",\n  \"account\": \"https://wallet.example/ledger/accounts/alice\",\n  \"payments\": \"https://wallet.example/receiver/alice\"\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"type\": \"payee\",\n  \"account\": \"wallet.alice\",\n  \"currency_code\": \"USD\",\n  \"currency_symbol\": \"$\",\n  \"image_url\": \"http://server.example/picture.jpg\"\n}",
           "type": "json"
         }
       ]
