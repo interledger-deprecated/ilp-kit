@@ -8,7 +8,7 @@ const crypto = require('crypto')
 
 module.exports = class WalletConfig {
   constructor () {
-    let localConfig = {}
+    const localConfig = {}
     localConfig.ledger = {
       uri: Config.getEnv(envPrefix, 'LEDGER_URI'),
       public_uri: Config.getEnv(envPrefix, 'LEDGER_PUBLIC_URI') || Config.getEnv(envPrefix, 'LEDGER_URI'),
@@ -16,7 +16,11 @@ module.exports = class WalletConfig {
         name: Config.getEnv(envPrefix, 'LEDGER_ADMIN_NAME'),
         pass: Config.getEnv(envPrefix, 'LEDGER_ADMIN_PASS')
       },
-      prefix: Config.getEnv('LEDGER_ILP_PREFIX')
+      prefix: Config.getEnv('LEDGER_ILP_PREFIX'),
+      currency: {
+        code: Config.getEnv('LEDGER_CURRENCY_CODE'),
+        symbol: Config.getEnv('LEDGER_CURRENCY_SYMBOL')
+      }
     }
 
     // Google Analytics / Mixpanel tracking

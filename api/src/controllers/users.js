@@ -358,24 +358,27 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
      *    HTTP/1.1 200 OK
      *    {
      *      "type": "payee",
-     *      "ledger": "https://wallet.example/ledger",
-     *      "account": "https://wallet.example/ledger/accounts/alice",
-     *      "payments": "https://wallet.example/receiver/alice/payments"
+     *      "account": "wallet.alice",
+     *      "currency_code": "USD",
+     *      "currency_symbol": "$",
+     *      "image_url": "http://server.example/picture.jpg"
      *    }
      */
-    static * getReceiver () {
-      const ledgerUri = config.data.getIn(['ledger', 'public_uri'])
+    static * getReceiver() {
+      const ledgerPrefix = config.data.getIn(['ledger', 'prefix'])
       const user = yield User.findOne({where: {username: this.params.username}})
 
       if (!user) {
         // TODO throw exception
+        return this.status = 404
       }
 
       this.body = {
-        "type": "payee",
-        "ledger": ledgerUri,
-        "account": ledgerUri + "/accounts/" + user.username,
-        "payments": config.data.getIn(['server', 'base_uri']) + "/receiver/" + user.username + "/payments"
+        'type': 'payee',
+        'account': ledgerPrefix + user.username,
+        'currency_code': config.data.getIn(['ledger', 'currency', 'code']),
+        'currency_symbol': config.data.getIn(['ledger', 'currency', 'symbol']),
+        'image_url': user.profile_picture
       }
     }
   }

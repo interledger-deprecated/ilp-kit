@@ -94,7 +94,7 @@ export default class Home extends Component {
           {!user.email_verified &&
           <Alert bsStyle="danger">
             An email has been sent to <strong>{user.email}</strong>.
-            Please click the link in that message to confirm your email address.&nbsp;
+            Please follow the steps in the message to confirm your email address.&nbsp;
             {!verificationEmailSent && <a href="" onClick={this.resendVerification}>Resend the message</a>}
             {verificationEmailSent && <strong>Verification email sent!</strong>}
           </Alert>}
