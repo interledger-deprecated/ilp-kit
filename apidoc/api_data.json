@@ -450,7 +450,7 @@
       "examples": [
         {
           "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"type\": \"payee\",\n  \"ledger\": \"https://wallet.example/ledger\",\n  \"account\": \"https://wallet.example/ledger/accounts/alice\",\n  \"payments\": \"https://wallet.example/receiver/alice/payments\"\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"type\": \"payee\",\n  \"account\": \"https://wallet.example/ledger/accounts/alice\",\n  \"payments\": \"https://wallet.example/receiver/alice\"\n}",
           "type": "json"
         }
       ]
