@@ -99,7 +99,18 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
 
     // TODO document this
     static * getTransfers() {
-      this.body = yield Payment.getTransfers(this.req.user, this.params.timeSlot)
+      const timeSlot = this.params.timeSlot
+      const sourceAccount = this.query.sourceAccount
+      const destinationAccount = this.query.destinationAccount
+
+      if (sourceAccount !== this.req.user.account && destinationAccount !== this.req.user.account) {
+        // TODO throw an exception
+        return this.status = 404
+      }
+
+      this.body = yield Payment.getTransfers({
+        sourceAccount, destinationAccount, timeSlot
+      })
     }
 
     /**
@@ -137,6 +148,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
      *    }
      */
 
+    // TODO don't allow payments to self
     static * putResource() {
       const _this = this
 

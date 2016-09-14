@@ -62,10 +62,10 @@ export default class Home extends Component {
               enterActive: cx('enter-active'),
               leave: cx('leave'),
               leaveActive: cx('leave-active')
-            }} transitionAppearTimeout={1000} transitionEnterTimeout={1000}>
+            }} transitionAppearTimeout={1000} transitionEnterTimeout={1000} transitionLeaveTimeout={0}>
             {history && history.map(item => {
               return (
-                <li key={item.id}>
+                <li key={'item' + item.time_slot}>
                   <HistoryItem item={item} user={user} toggleJson={toggleJson} loadTransfers={loadTransfers} />
                 </li>
               )

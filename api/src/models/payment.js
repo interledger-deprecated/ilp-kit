@@ -112,21 +112,14 @@ function PaymentFactory (sequelize, validator, container, User) {
       }
     }
 
-    static getTransfers(user, timeSlot) {
+    static getTransfers(params) {
       return sequelize.query(
         'SELECT source_amount, destination_amount, created_at'
       + ' FROM "Payments"'
       + ' WHERE state = \'success\' '
-        + ' AND ('
-          + ' source_user = ' + user.id
-          + " OR source_account = '" + user.account + "'"
-          + ' OR destination_user = ' + user.id
-          + " OR destination_account = '" + user.account + "'"
-        + ' )'
-        + ' AND ('
-          + " date_trunc('minute', created_at) = '" + timeSlot + "'" // TODO careful
-        + ' )'
-        // TODO order by doesn't work correctly. probably because of the time_slot value
+        + " AND source_account = '" + params.sourceAccount + "'"
+        + " AND destination_account = '" + params.destinationAccount + "'"
+        + " AND date_trunc('minute', created_at) = '" + params.timeSlot + "'"
       + ' ORDER BY created_at DESC',
         {model: Payment.DbModel}
       )

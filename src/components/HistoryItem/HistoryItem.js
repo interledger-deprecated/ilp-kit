@@ -116,6 +116,7 @@ export default class HistoryItem extends Component {
             appearActive: cx('appearActive')
           }}
           transitionAppear
+          transitionAppearTimeout={300}
           transitionEnterTimeout={300}
           transitionLeaveTimeout={300}
           component="div"
@@ -124,13 +125,13 @@ export default class HistoryItem extends Component {
           <div className={cx('col-sm-12')} key={item.time_slot + 'transfers'}>
             {item.transfers && item.transfers.map((transfer) => {
               return (
-                <div className="row">
-                <span className={cx('col-xs-8', 'date')}>
-                  {moment(transfer.created_at).format('LLL')}
-                </span>
+                <div className="row" key={transfer.source_account + transfer.created_at}>
+                  <span className={cx('col-xs-8', 'date')}>
+                    {moment(transfer.created_at).format('LLL')}
+                  </span>
                   <span className={cx('col-xs-4', 'amount')}>
-                  {config.currencySymbol}{type === 'outgoing' ? amount(transfer.source_amount) : amount(transfer.destination_amount)}
-                </span>
+                    {config.currencySymbol}{type === 'outgoing' ? amount(transfer.source_amount) : amount(transfer.destination_amount)}
+                  </span>
                 </div>
               )
             })}

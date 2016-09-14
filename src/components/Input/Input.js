@@ -46,6 +46,24 @@ export default class Input extends Component {
     this.refs.input.focus()
   }
 
+  domOnlyProps = (object) => {
+    const newObject = {...object}
+    delete newObject.initialValue
+    delete newObject.autofill
+    delete newObject.onUpdate
+    delete newObject.valid
+    delete newObject.invalid
+    delete newObject.dirty
+    delete newObject.pristine
+    delete newObject.active
+    delete newObject.touched
+    delete newObject.visited
+    delete newObject.autofilled
+    delete newObject.error
+
+    return newObject
+  }
+
   renderInput() {
     const { object, type, disabled, size, focus } = this.props
 
@@ -53,7 +71,7 @@ export default class Input extends Component {
       <span>
         <input type={type} ref="input"
           className={cx('form-control', size ? 'input-' + size : '')}
-          autoFocus={focus} {...object} onChange={this.onChange} disabled={disabled} />
+          autoFocus={focus} {...this.domOnlyProps(object)} onChange={this.onChange} disabled={disabled} />
 
         {object.dirty && object.error && <div className="text-danger">{object.error}</div>}
       </span>
