@@ -23,15 +23,5 @@
   background: #fff;
   max-height: 100px; // Should be bigger then the actual value
   opacity: 1;
-  transition: background-color 1s ease, max-height .5s ease, opacity .5s ease;
-}
-.leave {
-  max-height: 100px; // Should be bigger then the actual value
-  opacity: 1;
-}
-.leave-active {
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  transition: max-height .5s ease, opacity .5s ease;
+  transition: background-color 1s ease, max-height 1s ease, opacity 1s ease;
 }

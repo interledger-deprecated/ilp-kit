@@ -56,11 +56,13 @@ export default class Home extends Component {
         <ul className={cx('list')}>
           {history && history.length > 0 &&
             <ReactCSSTransitionGroup transitionName={{
+              appear: cx('enter'),
+              appearActive: cx('enter-active'),
               enter: cx('enter'),
               enterActive: cx('enter-active'),
               leave: cx('leave'),
               leaveActive: cx('leave-active')
-            }} transitionEnterTimeout={1000} transitionLeaveTimeout={300}>
+            }} transitionAppearTimeout={1000} transitionEnterTimeout={1000}>
             {history && history.map(item => {
               return (
                 <li key={item.id}>
