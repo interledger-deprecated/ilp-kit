@@ -300,7 +300,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
         destination_user: destinationUser.id,
         destination_account: destinationUser.account,
         destination_amount: parseFloat(destinationAmount),
-        message: memo,
+        message: memo || null,
         execution_condition: paymentParams.condition
       }
 
