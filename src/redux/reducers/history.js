@@ -1,5 +1,5 @@
 import * as types from '../actionTypes'
-import moment from 'moment'
+import moment from 'moment-timezone'
 
 import paginate from 'redux-pagination'
 
@@ -33,49 +33,61 @@ function reducer(state = {}, action = {}) {
     case types.PAYMENT_JSON_HIDE:
       return updateInHistory(action.id, {showJson: false})
     case types.WS_PAYMENT:
-      if (state.currentPage === 1) {
-        if (state.totalPages > 1) {
-          // remove the last payment
-          state.list.pop()
+      // Only do these things when the user is on the first page
+      if (state.currentPage !== 1) return state
+
+      // Try to fit in a group
+      let didItFit
+      const timeSlot = moment(action.result.created_at).tz('UTC').startOf('minute').format('YYYY-MM-DD HH:mm:ss')
+
+      // Go thru the existing groups
+      let newList = state.list.map((item) => {
+        // Is this group in the same time slot as the new payment?
+        if (timeSlot !== item.time_slot) return item
+
+        // Are the source and destination accounts the same with the new payment?
+        if (action.result.source_account !== item.source_account
+          || action.result.destination_account !== item.destination_account) {
+          return item
         }
 
-        // Try to fit in a group
-        let didItFit
-
-        let newList = state.list.map((item) => {
-          // Need to put it in the same time slot
-          if (action.result.time_slot !== item.time_slot) return item
-
-          // source and destination accounts need to be the same
-          if (action.result.source_account !== item.source_account
-            || action.result.destination_account !== item.destination_account) {
-            return item
-          }
-
-          // Oh yea
-          didItFit = true
-
-          return {
-            ...item,
-            transfers_count: (item.transfers_count || 1) + 1,
-            source_amount: item.source_amount + action.result.source_amount,
-            destination_amount: item.destination_amount + action.result.destination_amount
-          }
-        })
-
-        // Make it an individual payment
-        if (!didItFit) {
-          newList = [action.result].concat(newList)
+        // ok good, now add the new payment to the group
+        const newGroup = {
+          ...item,
+          time_slot: timeSlot,
+          transfers_count: (item.transfers_count || 1) + 1,
+          source_amount: item.source_amount + action.result.source_amount,
+          destination_amount: item.destination_amount + action.result.destination_amount
         }
 
-        return {
-          ...state,
-          // Add the new payment
-          list: newList
+        // payment found a group to join
+        didItFit = true
+
+        // add the payment to transfers list
+        if (newGroup.transfers && newGroup.transfers.length > 0) {
+          newGroup.transfers.unshift(action.result)
         }
+
+        return newGroup
+      })
+
+      // New payment didn't find a group to join, add a new group
+      if (!didItFit) {
+        newList = [{
+          ...action.result,
+          time_slot: timeSlot
+        }].concat(newList)
       }
 
-      return state
+      // Remove the last payment on the first page.
+      if (state.totalPages > 1) {
+        newList.pop()
+      }
+
+      return {
+        ...state,
+        list: newList
+      }
     case types.LOGOUT_SUCCESS:
       return {}
     case types.LOAD_TRANSFERS:
