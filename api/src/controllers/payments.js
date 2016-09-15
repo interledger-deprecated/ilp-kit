@@ -202,10 +202,10 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
         execution_condition: transfer.executionCondition,
         state: 'success'
       })
-      dbPayment.save()
+      dbPayment = yield dbPayment.save()
 
       // Notify the clients
-      socket.payment(this.req.user.username, dbPayment)
+      socket.payment(this.req.user.username, Payment.fromDatabaseModel(dbPayment).getDataExternal())
 
       log.debug('Ledger transfer payment ID ' + id)
 

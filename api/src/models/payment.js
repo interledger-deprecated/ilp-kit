@@ -20,6 +20,10 @@ function PaymentFactory (sequelize, validator, container, User) {
     }
 
     static convertToExternal (data) {
+      delete data.source_user
+      delete data.destination_user
+      delete data.completed_at
+
       return data
     }
 
