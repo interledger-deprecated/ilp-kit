@@ -6,6 +6,12 @@
   background: #fff;
   border-color: #e7e7e7;
 }
+.navbar-collapse > .navbar-text {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
 .navbar-nav > li {
   &.active {
     background: transparent;
@@ -19,10 +25,6 @@
     &:hover, &:active, &:focus {
       background: transparent !important;
     }
-  }
-  & > .navbar-text {
-    margin-top: 20px;
-    margin-bottom: 20px;
   }
   .dropdown-menu {
     border: 1px solid #e7e7e7;

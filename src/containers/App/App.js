@@ -7,6 +7,7 @@ import Navbar from 'react-bootstrap/lib/Navbar'
 import Nav from 'react-bootstrap/lib/Nav'
 import NavItem from 'react-bootstrap/lib/NavItem'
 import NavDropdown from 'react-bootstrap/lib/NavDropdown'
+import MenuItem from 'react-bootstrap/lib/MenuItem'
 
 import DocumentMeta from 'react-document-meta'
 import { isLoaded as isAuthLoaded, load as loadAuth, loadConfig, logout, updateBalance, verify } from 'redux/actions/auth'
@@ -155,35 +156,24 @@ export default class App extends Component {
         <Navbar fixedTop className={this.navBar} expanded={ this.state.navExpanded } onToggle={ this.onNavbarToggle }>
           <Navbar.Header>
             <Navbar.Brand>
-              <IndexLinkContainer to="/">
-                <a>{config.app.title}</a>
-              </IndexLinkContainer>
+              {config.app.title}
             </Navbar.Brand>
             <Navbar.Toggle />
           </Navbar.Header>
           <Navbar.Collapse>
             <Nav pullRight>
-              <li>
-                <Navbar.Text>
-                  {user.profile_picture &&
-                  <img className={cx('profilePic')} src={user.profile_picture} />}
-                  Hi {user.username}
-                </Navbar.Text>
-              </li>
               <IndexLinkContainer to="/">
                 <NavItem onClick={this.onNavItemClick}>Home</NavItem>
               </IndexLinkContainer>
-              <NavDropdown title="Dev Tools">
-                <li>
-                  <a href="https://interledger.org/five-bells-wallet/apidoc" target="_blank" onClick={this.onNavItemClick}>
-                    API docs
-                  </a>
-                </li>
-                <li>
-                  <a href="https://github.com/interledger/five-bells-wallet-client" target="_blank" onClick={this.onNavItemClick}>
-                    Wallet Client
-                  </a>
-                </li>
+              <NavDropdown title="Dev Tools" id="devtools">
+                <MenuItem href="https://interledger.org/five-bells-wallet/apidoc"
+                          target="_blank" onClick={this.onNavItemClick}>
+                  API docs
+                </MenuItem>
+                <MenuItem href="https://github.com/interledger/five-bells-wallet-client"
+                          target="_blank" onClick={this.onNavItemClick}>
+                  Wallet Client
+                </MenuItem>
               </NavDropdown>
               {!user.github_id &&
               <LinkContainer to="/settings">
@@ -195,6 +185,11 @@ export default class App extends Component {
                 </NavItem>
               </LinkContainer>
             </Nav>
+            <Navbar.Text pullRight>
+              {user.profile_picture &&
+              <img className={cx('profilePic')} src={user.profile_picture} />}
+              Hi {user.username}
+            </Navbar.Text>
           </Navbar.Collapse>
         </Navbar>}
 
