@@ -1,6 +1,7 @@
 import React, {Component, PropTypes} from 'react'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import moment from 'moment'
+import TimeAgo from 'react-timeago'
 
 import { contextualizePayment } from '../../utils/api'
 import { getAccountName } from '../../utils/account'
@@ -49,6 +50,20 @@ export default class HistoryItem extends Component {
     event.preventDefault()
   }
 
+  timeAgoFormatter = (value, unit, suffix) => {
+    if (unit !== 'second') {
+      return [value, unit + (value !== 1 ? 's' : ''), suffix].join(' ')
+    }
+
+    if (suffix === 'ago') {
+      return 'a few seconds ago'
+    }
+
+    if (suffix === 'from now') {
+      return 'in a few seconds'
+    }
+  }
+
   render() {
     const item = contextualizePayment(this.props.item, this.props.user)
     const config = this.context.config || {}
@@ -81,7 +96,7 @@ export default class HistoryItem extends Component {
                   {item.message}
                 </div>}
                 <div className={cx('date')} title={moment(item.recent_date).format('LLL')}>
-                  {moment(item.recent_date).fromNow()}
+                  <TimeAgo date={item.recent_date} formatter={this.timeAgoFormatter} />
                 </div>
               </div>
             </div>

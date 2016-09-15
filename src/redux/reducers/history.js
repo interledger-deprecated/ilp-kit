@@ -55,6 +55,7 @@ function reducer(state = {}, action = {}) {
         const newGroup = {
           ...item,
           time_slot: timeSlot,
+          recent_date: action.result.created_at,
           transfers_count: (item.transfers_count || 1) + 1,
           source_amount: item.source_amount + action.result.source_amount,
           destination_amount: item.destination_amount + action.result.destination_amount
@@ -75,7 +76,8 @@ function reducer(state = {}, action = {}) {
       if (!didItFit) {
         newList = [{
           ...action.result,
-          time_slot: timeSlot
+          time_slot: timeSlot,
+          recent_date: action.result.created_at
         }].concat(newList)
       }
 
