@@ -74,7 +74,7 @@ function PaymentFactory (sequelize, validator, container, User) {
           + ' sum(source_amount) as source_amount,'
           + ' sum(destination_amount) as destination_amount,'
           + ' message,'
-          + ' date_trunc(\'minute\', created_at) AS time_slot,'
+          + ' date_trunc(\'hour\', created_at) AS time_slot,'
           + ' max(created_at) AS recent_date,'
           + ' count(*) as transfers_count'
         + ' FROM "Payments"'
@@ -98,7 +98,7 @@ function PaymentFactory (sequelize, validator, container, User) {
           + ' sum(source_amount) as source_amount,'
           + ' sum(destination_amount) as destination_amount,'
           + ' message,'
-          + ' date_trunc(\'minute\', created_at) AS time_slot'
+          + ' date_trunc(\'hour\', created_at) AS time_slot'
         + ' FROM "Payments"'
         + ' WHERE state = \'success\' '
           + ' AND ('
@@ -123,7 +123,7 @@ function PaymentFactory (sequelize, validator, container, User) {
       + ' WHERE state = \'success\' '
         + " AND source_account = '" + params.sourceAccount + "'"
         + " AND destination_account = '" + params.destinationAccount + "'"
-        + " AND date_trunc('minute', created_at) = '" + params.timeSlot + "'"
+        + " AND date_trunc('hour', created_at) = '" + params.timeSlot + "'"
       + ' ORDER BY created_at DESC',
         {model: Payment.DbModel}
       )

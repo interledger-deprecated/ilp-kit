@@ -38,7 +38,7 @@ function reducer(state = {}, action = {}) {
 
       // Try to fit in a group
       let didItFit
-      const timeSlot = moment(action.result.created_at).tz('UTC').startOf('minute').format('YYYY-MM-DD HH:mm:ss')
+      const timeSlot = moment(action.result.created_at).tz('UTC').startOf('hour').format('YYYY-MM-DD HH:mm:ss')
 
       // Go thru the existing groups
       let newList = state.list.map((item) => {
