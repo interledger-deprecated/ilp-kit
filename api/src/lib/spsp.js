@@ -5,7 +5,7 @@ const uuid = require ('uuid4')
 const superagent = require('superagent-promise')(require('superagent'), Promise)
 
 const ILP = require('ilp')
-const FiveBellsLedgerPlugin = require('ilp-plugin-bells')
+const FiveBellsLedgerAdminPlugin = require('ilp-plugin-bells-admin')
 
 const PaymentFactory = require('../models/payment')
 const Config = require('./config')
@@ -24,6 +24,10 @@ module.exports = class SPSP {
 
     this.adminName = this.config.data.getIn(['ledger', 'admin', 'name'])
     this.adminPass = this.config.data.getIn(['ledger', 'admin', 'pass'])
+
+    this.instance = { 
+      ws: null
+    }
   }
 
   /**
@@ -33,11 +37,12 @@ module.exports = class SPSP {
     const sourceAccount = this.ledgerPublicUri + '/accounts/' + params.source.username
 
     this.sender = ILP.createSender({
-      _plugin: FiveBellsLedgerPlugin,
+      _plugin: FiveBellsLedgerAdminPlugin,
       prefix: this.ledgerPrefix,
       account: sourceAccount,
       username: this.adminName,
-      password: this.adminPass
+      password: this.adminPass,
+      instance: this.instance
     })
 
     // One of the amounts should be supplied to get a quote for the other one
@@ -100,11 +105,12 @@ module.exports = class SPSP {
       + '/accounts/' + destinationUser.username
 
     self.receiver = ILP.createReceiver({
-      _plugin: FiveBellsLedgerPlugin,
+      _plugin: FiveBellsLedgerAdminPlugin,
       prefix: prefix,
       account: destinationAccount,
       username: self.adminName,
-      password: self.adminPass
+      password: self.adminPass,
+      instance: self.instance
     })
 
     yield self.receiver.listen()
