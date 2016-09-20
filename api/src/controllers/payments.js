@@ -295,6 +295,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
       const destinationAmount = this.body.amount
 
       // Get the user from the db. We need the id in the payment
+      // TODO cache
       const destinationUser = yield User.findOne({
         where: {username: this.params.username}
       })

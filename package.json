@@ -57,21 +57,21 @@
       }
     },
     "start-dev": {
-      "command": "node ./bin/server.js",
+      "command": "unbuffer node ./bin/server.js",
       "env": {
         "NODE_PATH": "./src",
         "NODE_ENV": "development"
       }
     },
     "start-dev-api": {
-      "command": "node ./bin/api.js",
+      "command": "unbuffer node ./bin/api.js",
       "env": {
         "NODE_PATH": "./api",
         "NODE_ENV": "development"
       }
     },
     "start-dev-ledger": {
-      "command": "node ./bin/ledger.js",
+      "command": "unbuffer node ./bin/ledger.js",
       "env": {
         "NODE_PATH": "./node_modules/five-bells-ledger",
         "NODE_ENV": "development"

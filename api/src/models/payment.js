@@ -167,6 +167,14 @@ function PaymentFactory (sequelize, validator, container, User) {
     execution_condition: Sequelize.STRING(1024), // TODO decide on the size
     created_at: Sequelize.DATE,
     completed_at: Sequelize.DATE
+  }, {
+    indexes: [
+      {
+        name: 'Payments_execution_condition_idx',
+        method: 'BTREE',
+        fields: ['execution_condition']
+      }
+    ]
   })
 
   container.schedulePostConstructor((User) => {
