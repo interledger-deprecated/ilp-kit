@@ -25,7 +25,10 @@ module.exports = class SPSP {
     this.adminName = this.config.data.getIn(['ledger', 'admin', 'name'])
     this.adminPass = this.config.data.getIn(['ledger', 'admin', 'pass'])
 
-    this.instance = { 
+    this.senderInstance = {
+      ws: null
+    }
+    this.receiverInstance = {
       ws: null
     }
   }
@@ -42,7 +45,7 @@ module.exports = class SPSP {
       account: sourceAccount,
       username: this.adminName,
       password: this.adminPass,
-      instance: this.instance
+      instance: this.senderInstance
     })
 
     // One of the amounts should be supplied to get a quote for the other one
@@ -110,7 +113,7 @@ module.exports = class SPSP {
       account: destinationAccount,
       username: self.adminName,
       password: self.adminPass,
-      instance: self.instance
+      instance: self.receiverInstance
     })
 
     yield self.receiver.listen()
