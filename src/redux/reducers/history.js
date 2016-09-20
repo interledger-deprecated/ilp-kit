@@ -38,7 +38,10 @@ function reducer(state = {}, action = {}) {
 
       // Try to fit in a group
       let didItFit
-      const timeSlot = moment(action.result.created_at).tz('UTC').startOf('hour').format('YYYY-MM-DD HH:mm:ss')
+      const timeSlot = moment(action.result.created_at)
+        .tz('UTC')
+        .startOf('hour')
+        .format('YYYY-MM-DD[T]HH:mm:ss.000[Z]')
 
       // Go thru the existing groups
       let newList = state.list.map((item) => {
@@ -54,9 +57,8 @@ function reducer(state = {}, action = {}) {
         // ok good, now add the new payment to the group
         const newGroup = {
           ...item,
-          time_slot: timeSlot,
           recent_date: action.result.created_at,
-          transfers_count: (item.transfers_count || 1) + 1,
+          transfers_count: (+item.transfers_count || 1) + 1,
           source_amount: item.source_amount + action.result.source_amount,
           destination_amount: item.destination_amount + action.result.destination_amount
         }
