@@ -25,42 +25,82 @@ module.exports = class SPSP {
     this.adminName = this.config.data.getIn(['ledger', 'admin', 'name'])
     this.adminPass = this.config.data.getIn(['ledger', 'admin', 'pass'])
 
-    this.senderInstance = {
-      ws: null
-    }
-    this.receiverInstance = {
-      ws: null
-    }
+    this.senderPluginInstance = {ws: null}
+    this.receiverPluginInstance = {ws: null}
+    this.senders = {}
   }
 
   /**
    * Sender
    */
-  * quote(params) {
-    const sourceAccount = this.ledgerPublicUri + '/accounts/' + params.source.username
 
-    this.sender = ILP.createSender({
-      _plugin: FiveBellsLedgerAdminPlugin,
-      prefix: this.ledgerPrefix,
-      account: sourceAccount,
-      username: this.adminName,
-      password: this.adminPass,
-      instance: this.senderInstance
-    })
+  // Get or create a sender instance
+  allocateSender(username) {
+    // TODO expire senders
+    if (!this.senders[username]) {
+      const sourceAccount = this.ledgerPublicUri + '/accounts/' + username
+
+      this.senders[username] = {
+        instance: ILP.createSender({
+          _plugin: FiveBellsLedgerAdminPlugin,
+          prefix: this.ledgerPrefix,
+          account: sourceAccount,
+          username: this.adminName,
+          password: this.adminPass,
+          instance: this.senderPluginInstance
+        }),
+        allocations: 0
+      }
+    }
+
+    this.senders[username].allocations += 1
+
+    return this.senders[username].instance
+  }
+
+  // Deallocate a single sender (destroys the object if there are no more allocations)
+  * deallocateSender(username) {
+    const sender = this.senders[username]
+
+    if (!sender) return
+
+    sender.allocations -= 1
+
+    if (sender.allocations < 1) {
+      try {
+        yield sender.instance.stopListening()
+      } catch (e) {}
+
+      delete this.senders[username]
+    }
+  }
+
+  * quote(params) {
+    const username = params.source.username
+    const sender = this.allocateSender(username)
 
     // One of the amounts should be supplied to get a quote for the other one
-    const sourceAmount = params.sourceAmount || (
-      yield this.sender.quoteDestinationAmount(
-        params.destination.ilpAddress,
-        params.destinationAmount))
-    const destinationAmount = params.destinationAmount || (
-      yield this.sender.quoteSourceAmount(
-        params.destination.ilpAddress,
-        params.sourceAmount))
+    let sourceAmount, destinationAmount
 
-    return {
-      sourceAmount,
-      destinationAmount
+    try {
+      sourceAmount = params.sourceAmount || (
+        yield sender.quoteDestinationAmount(
+          params.destination.ilpAddress,
+          params.destinationAmount))
+      destinationAmount = params.destinationAmount || (
+        yield sender.quoteSourceAmount(
+          params.destination.ilpAddress,
+          params.sourceAmount))
+
+      yield this.deallocateSender(username)
+
+      return {
+        sourceAmount,
+        destinationAmount
+      }
+    } catch (e) {
+      // Make sure to deallocate even if the quoting failed
+      yield this.deallocateSender(username)
     }
   }
 
@@ -73,6 +113,8 @@ module.exports = class SPSP {
   }
 
   * pay(params) {
+    const sender = this.allocateSender(params.source.username)
+
     const quote = yield this.setup({
       paymentUri: params.destination.paymentUri,
       amount: params.destinationAmount,
@@ -80,7 +122,7 @@ module.exports = class SPSP {
       memo: params.memo
     })
 
-    const paymentParams = yield this.sender.quoteRequest(quote)
+    const paymentParams = yield sender.quoteRequest(quote)
 
     // Sometimes 'paymentParams' comes with a (slightly) different sourceAmount
     paymentParams.sourceAmount = params.sourceAmount
@@ -93,7 +135,9 @@ module.exports = class SPSP {
       return
     }
 
-    yield this.sender.payRequest(paymentParams)
+    yield sender.payRequest(paymentParams)
+
+    yield this.deallocateSender(params.source.username)
 
     return paymentParams
   }
@@ -113,7 +157,7 @@ module.exports = class SPSP {
       account: destinationAccount,
       username: self.adminName,
       password: self.adminPass,
-      instance: self.receiverInstance
+      instance: self.receiverPluginInstance
     })
 
     try {
