@@ -124,7 +124,13 @@ module.exports = class SPSP {
       throw e
     }
 
-    self.receiver.on('incoming', co.wrap(function *(transfer) {
+    const request = this.receiver.createRequest({
+      amount: destinationAmount
+    })
+
+    const requestId = request.address.replace(prefix + destinationUser.username + '.', '')
+
+    self.receiver.on('incoming:' + requestId, co.wrap(function *(transfer) {
       // Get the db payment
       const dbPayment = yield self.Payment.findOne({
         where: {
@@ -145,8 +151,6 @@ module.exports = class SPSP {
       self.socket.payment(destinationUser.username, dbPayment)
     }))
 
-    return this.receiver.createRequest({
-      amount: destinationAmount
-    })
+    return request
   }
 }
