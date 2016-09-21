@@ -116,7 +116,13 @@ module.exports = class SPSP {
       instance: self.receiverInstance
     })
 
-    yield self.receiver.listen()
+    try {
+      yield self.receiver.listen()
+    } catch (e) {
+      self.receiver.stopListening()
+
+      throw e
+    }
 
     self.receiver.on('incoming', co.wrap(function *(transfer) {
       // Get the db payment
