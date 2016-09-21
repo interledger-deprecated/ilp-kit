@@ -107,7 +107,7 @@ module.exports = class SPSP {
     const destinationAccount = self.config.data.getIn(['ledger', 'public_uri'])
       + '/accounts/' + destinationUser.username
 
-    self.receiver = ILP.createReceiver({
+    const receiver = ILP.createReceiver({
       _plugin: FiveBellsLedgerAdminPlugin,
       prefix: prefix,
       account: destinationAccount,
@@ -117,20 +117,20 @@ module.exports = class SPSP {
     })
 
     try {
-      yield self.receiver.listen()
+      yield receiver.listen()
     } catch (e) {
-      self.receiver.stopListening()
+      receiver.stopListening()
 
       throw e
     }
 
-    const request = this.receiver.createRequest({
+    const request = receiver.createRequest({
       amount: destinationAmount
     })
 
     const requestId = request.address.replace(prefix + destinationUser.username + '.', '')
 
-    self.receiver.on('incoming:' + requestId, co.wrap(function *(transfer) {
+    receiver.on('incoming:' + requestId, co.wrap(function *(transfer) {
       // Get the db payment
       const dbPayment = yield self.Payment.findOne({
         where: {
@@ -144,7 +144,7 @@ module.exports = class SPSP {
       yield dbPayment.save()
 
       // Destroy the receiver
-      self.receiver.stopListening()
+      receiver.stopListening()
 
       // Notify the clients
       // TODO should probably have the same format as the payment in history
