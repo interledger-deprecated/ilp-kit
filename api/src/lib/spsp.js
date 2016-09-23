@@ -37,8 +37,7 @@ module.exports = class SPSP {
    */
 
   // Get or create a sender instance
-  allocateSender(username) {
-    // TODO expire senders
+  getSender(username) {
     if (!this.senders[username]) {
       const sourceAccount = this.ledgerPublicUri + '/accounts/' + username
 
@@ -50,69 +49,56 @@ module.exports = class SPSP {
           username: this.adminName,
           password: this.adminPass,
           instance: this.senderPluginInstance
-        }),
-        allocations: 0
+        })
       }
 
       debug('created a sender object')
     }
 
-    this.senders[username].allocations += 1
-
-    debug('allocating a sender. Total number: ' + this.senders[username].allocations)
+    // Destroy the sender if it hasn't been used for 15 seconds
+    this.scheduleSenderDestroy(username)
 
     return this.senders[username].instance
   }
 
-  // Deallocate a single sender (destroys the object if there are no more allocations)
-  * deallocateSender(username) {
-    const sender = this.senders[username]
+  // Destroy the sender
+  scheduleSenderDestroy(username) {
+    const self = this
+    const sender = self.senders[username]
 
     if (!sender) return
 
-    sender.allocations -= 1
-
-    debug('deallocated a sender. Total number: ' + sender.allocations)
-
-    if (sender.allocations < 1) {
+    // Keep the listeners alive for 15 more seconds
+    clearTimeout(sender.timeout)
+    sender.timeout = setTimeout(co.wrap(function *() {
       try {
         yield sender.instance.stopListening()
       } catch (e) {}
 
-      debug('destroyed the sender object')
+      delete self.senders[username]
 
-      delete this.senders[username]
-    }
+      debug('destroyed the sender object')
+    }), 15000)
   }
 
   * quote(params) {
     const username = params.source.username
-    const sender = this.allocateSender(username)
+    const sender = this.getSender(username)
 
     // One of the amounts should be supplied to get a quote for the other one
-    let sourceAmount, destinationAmount
+    const sourceAmount = params.sourceAmount || (
+      yield sender.quoteDestinationAmount(
+        params.destination.ilpAddress,
+        params.destinationAmount))
 
-    try {
-      sourceAmount = params.sourceAmount || (
-        yield sender.quoteDestinationAmount(
-          params.destination.ilpAddress,
-          params.destinationAmount))
-      destinationAmount = params.destinationAmount || (
-        yield sender.quoteSourceAmount(
-          params.destination.ilpAddress,
-          params.sourceAmount))
+    const destinationAmount = params.destinationAmount || (
+      yield sender.quoteSourceAmount(
+        params.destination.ilpAddress,
+        params.sourceAmount))
 
-      yield this.deallocateSender(username)
-
-      return {
-        sourceAmount,
-        destinationAmount
-      }
-    } catch (e) {
-      // Make sure to deallocate even if the quoting failed
-      yield this.deallocateSender(username)
-
-      throw e
+    return {
+      sourceAmount,
+      destinationAmount
     }
   }
 
@@ -125,51 +111,42 @@ module.exports = class SPSP {
   }
 
   * pay(params) {
-    const sender = this.allocateSender(params.source.username)
+    const sender = this.getSender(params.source.username)
 
-    try {
-      const quote = yield this.setup({
-        paymentUri: params.destination.paymentUri,
-        amount: params.destinationAmount,
-        sender_identifier: params.source.username,
-        memo: params.memo
-      })
+    const quote = yield this.setup({
+      paymentUri: params.destination.paymentUri,
+      amount: params.destinationAmount,
+      sender_identifier: params.source.username,
+      memo: params.memo
+    })
 
-      const paymentParams = yield sender.quoteRequest(quote)
+    const paymentParams = yield sender.quoteRequest(quote)
 
-      // Sometimes 'paymentParams' comes with a (slightly) different sourceAmount.
-      // TODO Need to make sure it's not too different
-      // paymentParams.sourceAmount = params.sourceAmount
-      paymentParams.uuid = uuid()
+    // Sometimes 'paymentParams' comes with a (slightly) different sourceAmount.
+    // TODO Need to make sure it's not too different
+    // paymentParams.sourceAmount = params.sourceAmount
+    paymentParams.uuid = uuid()
 
-      // TODO any rounding stuff here?
-      // Make sure the deliverable amount is what the user agreed with
-      if (parseFloat(paymentParams.destinationAmount) !== parseFloat(params.destinationAmount)) {
-        // TODO handle
-        return
-      }
-
-      yield sender.payRequest(paymentParams)
-
-      // Deallocate the sender
-      yield this.deallocateSender(params.source.username)
-
-      return paymentParams
-    } catch (e) {
-      // Make sure to deallocate even if the payment failed
-      yield this.deallocateSender(params.source.username)
-
-      throw e
+    // TODO any rounding stuff here?
+    // Make sure the deliverable amount is what the user agreed with
+    if (parseFloat(paymentParams.destinationAmount) !== parseFloat(params.destinationAmount)) {
+      // TODO handle
+      return
     }
+
+    yield sender.payRequest(paymentParams)
+
+    return paymentParams
   }
 
   /**
    * Receiver
    */
-  // Get or create a receiver instance
-  * allocateReceiver(username) {
+  // Get a receiver instance
+  * getReceiver(username) {
+    const self = this
+
     if (!this.receivers[username]) {
-      const self = this
       const destinationAccount = this.ledgerPublicUri + '/accounts/' + username
       const instance = ILP.createReceiver({
         _plugin: FiveBellsLedgerAdminPlugin,
@@ -180,86 +157,70 @@ module.exports = class SPSP {
         instance: this.receiverPluginInstance
       })
 
-      // Deallocate the receiver in case if we don't hear from it anymore
-      const receiverTimeout = setTimeout(co.wrap(function *() {
-        yield self.deallocateReceiver(username)
-      }), 10000) // TODO don't hardcode
+      yield instance.listen()
+
+      // Handle incoming payments
+      // TODO remove the listener?
+      instance.on('incoming', co.wrap(function *(transfer) {
+        debug('incoming payment', transfer)
+
+        // Get the db payment
+        const dbPayment = yield self.Payment.findOne({
+          where: {
+            // TODO should it really be referenced by a condition?
+            execution_condition: transfer.executionCondition
+          }
+        })
+
+        // Update the db payment
+        dbPayment.state = 'success'
+        yield dbPayment.save()
+
+        // Notify the clients
+        // TODO should probably have the same format as the payment in history
+        self.socket.payment(username, dbPayment)
+      }))
 
       // Add the receiver to the list
       this.receivers[username] = {
-        instance,
-        allocations: 0
+        instance
       }
 
-      try {
-        yield instance.listen()
-        // Handle incoming payments
-        // TODO remove the listener?
-        instance.on('incoming', co.wrap(function *(transfer) {
-          debug('incoming payment', transfer)
-
-          // Get the db payment
-          const dbPayment = yield self.Payment.findOne({
-            where: {
-              // TODO should it really be referenced by a condition?
-              execution_condition: transfer.executionCondition
-            }
-          })
-
-          // Update the db payment
-          dbPayment.state = 'success'
-          yield dbPayment.save()
-
-          // Notify the clients
-          // TODO should probably have the same format as the payment in history
-          self.socket.payment(username, dbPayment)
-
-          // Deallocate the receiver
-          clearTimeout(receiverTimeout)
-          yield self.deallocateReceiver(username)
-        }))
-
-        debug('created a receiver object')
-      } catch (e) {
-        instance.stopListening()
-
-        throw e
-      }
+      debug('created a receiver object')
     }
 
-    this.receivers[username].allocations += 1
-
-    debug('allocated a receiver. Total number: ' + this.receivers[username].allocations)
+    // Destroy the receiver if it hasn't been used for 15 seconds
+    self.scheduleReceiverDestroy(username)
 
     return this.receivers[username].instance
   }
 
-  // Deallocate a single receiver (destroys the object if there are no more allocations)
-  * deallocateReceiver(username) {
-    const receiver = this.receivers[username]
+  // Destroy the receiver object
+  scheduleReceiverDestroy(username) {
+    const self = this
+    const receiver = self.receivers[username]
 
     if (!receiver) return
 
-    receiver.allocations -= 1
+    // Keep the listeners alive for 15 seconds
+    clearTimeout(receiver.timeout)
 
-    debug('deallocated a receiver. Total number: ' + receiver.allocations)
-
-    if (receiver.allocations < 1) {
+    receiver.timeout = setTimeout(co.wrap(function *() {
       try {
         yield receiver.instance.stopListening()
       } catch (e) {}
 
-      debug('destroyed the receiver object')
+      delete self.receivers[username]
 
-      delete this.receivers[username]
-    }
+      debug('destroyed the receiver object')
+    }), 15000)
   }
 
   * createRequest(destinationUser, destinationAmount) {
     const self = this
     const username = destinationUser.username
 
-    const receiver = yield self.allocateReceiver(username)
+    const receiver = yield self.getReceiver(username)
 
     const request = receiver.createRequest({
       amount: destinationAmount
