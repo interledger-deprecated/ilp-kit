@@ -28,6 +28,7 @@ module.exports = class SPSP {
     this.senderPluginInstance = {ws: null}
     this.receiverPluginInstance = {ws: null}
     this.senders = {}
+    this.receivers = {}
   }
 
   /**
@@ -101,6 +102,8 @@ module.exports = class SPSP {
     } catch (e) {
       // Make sure to deallocate even if the quoting failed
       yield this.deallocateSender(username)
+
+      throw e
     }
   }
 
@@ -115,65 +118,112 @@ module.exports = class SPSP {
   * pay(params) {
     const sender = this.allocateSender(params.source.username)
 
-    const quote = yield this.setup({
-      paymentUri: params.destination.paymentUri,
-      amount: params.destinationAmount,
-      sender_identifier: params.source.username,
-      memo: params.memo
-    })
+    try {
+      const quote = yield this.setup({
+        paymentUri: params.destination.paymentUri,
+        amount: params.destinationAmount,
+        sender_identifier: params.source.username,
+        memo: params.memo
+      })
 
-    const paymentParams = yield sender.quoteRequest(quote)
+      const paymentParams = yield sender.quoteRequest(quote)
 
-    // Sometimes 'paymentParams' comes with a (slightly) different sourceAmount
-    paymentParams.sourceAmount = params.sourceAmount
-    paymentParams.uuid = uuid()
+      // Sometimes 'paymentParams' comes with a (slightly) different sourceAmount
+      paymentParams.sourceAmount = params.sourceAmount
+      paymentParams.uuid = uuid()
 
-    // TODO any rounding stuff here?
-    // Make sure the deliverable amount is what the user agreed with
-    if (parseFloat(paymentParams.destinationAmount) !== parseFloat(params.destinationAmount)) {
-      // TODO handle
-      return
+      // TODO any rounding stuff here?
+      // Make sure the deliverable amount is what the user agreed with
+      if (parseFloat(paymentParams.destinationAmount) !== parseFloat(params.destinationAmount)) {
+        // TODO handle
+        return
+      }
+
+      yield sender.payRequest(paymentParams)
+
+      // Deallocate the sender
+      yield this.deallocateSender(params.source.username)
+
+      return paymentParams
+    } catch (e) {
+      // Make sure to deallocate even if the payment failed
+      yield this.deallocateSender(params.source.username)
+
+      throw e
     }
-
-    yield sender.payRequest(paymentParams)
-
-    yield this.deallocateSender(params.source.username)
-
-    return paymentParams
   }
 
   /**
    * Receiver
    */
+  // Get or create a receiver instance
+  * allocateReceiver(username) {
+    // TODO expire receivers
+    if (!this.receivers[username]) {
+      const destinationAccount = this.ledgerPublicUri + '/accounts/' + username
+      const instance = ILP.createReceiver({
+        _plugin: FiveBellsLedgerAdminPlugin,
+        prefix: this.ledgerPrefix,
+        account: destinationAccount,
+        username: this.adminName,
+        password: this.adminPass,
+        instance: this.receiverPluginInstance
+      })
+
+      this.receivers[username] = {
+        instance,
+        allocations: 0
+      }
+
+      try {
+        yield instance.listen()
+      } catch (e) {
+        instance.stopListening()
+
+        throw e
+      }
+    }
+
+    this.receivers[username].allocations += 1
+
+    return this.receivers[username].instance
+  }
+
+  // Deallocate a single receiver (destroys the object if there are no more allocations)
+  * deallocateReceiver(username) {
+    const receiver = this.receivers[username]
+
+    if (!receiver) return
+
+    receiver.allocations -= 1
+
+    if (receiver.allocations < 1) {
+      try {
+        yield receiver.instance.stopListening()
+      } catch (e) {}
+
+      delete this.receivers[username]
+    }
+  }
+
   * createRequest(destinationUser, destinationAmount) {
     const self = this
-    const prefix = self.config.data.getIn(['ledger', 'prefix'])
-    const destinationAccount = self.config.data.getIn(['ledger', 'public_uri'])
-      + '/accounts/' + destinationUser.username
+    const username = destinationUser.username
 
-    const receiver = ILP.createReceiver({
-      _plugin: FiveBellsLedgerAdminPlugin,
-      prefix: prefix,
-      account: destinationAccount,
-      username: self.adminName,
-      password: self.adminPass,
-      instance: self.receiverPluginInstance
-    })
+    const receiver = yield self.allocateReceiver(username)
 
-    try {
-      yield receiver.listen()
-    } catch (e) {
-      receiver.stopListening()
-
-      throw e
-    }
+    // Deallocate the receiver in case if we don't hear from the receiver anymore
+    const receiverTimeout = setTimeout(co.wrap(function *() { 
+      yield self.deallocateReceiver(username)
+    }), 10000) // TODO don't hardcode
 
     const request = receiver.createRequest({
       amount: destinationAmount
     })
 
-    const requestId = request.address.replace(prefix + destinationUser.username + '.', '')
+    const requestId = request.address.replace(self.ledgerPrefix + username + '.', '')
 
+    // Remove this listener on finish
     receiver.on('incoming:' + requestId, co.wrap(function *(transfer) {
       // Get the db payment
       const dbPayment = yield self.Payment.findOne({
@@ -187,12 +237,13 @@ module.exports = class SPSP {
       dbPayment.state = 'success'
       yield dbPayment.save()
 
-      // Destroy the receiver
-      receiver.stopListening()
-
       // Notify the clients
       // TODO should probably have the same format as the payment in history
-      self.socket.payment(destinationUser.username, dbPayment)
+      self.socket.payment(username, dbPayment)
+
+      // Deallocate the receiver
+      clearTimeout(receiverTimeout)
+      yield self.deallocateReceiver(username)
     }))
 
     return request

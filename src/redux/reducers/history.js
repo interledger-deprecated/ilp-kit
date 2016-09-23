@@ -83,8 +83,8 @@ function reducer(state = {}, action = {}) {
         }].concat(newList)
       }
 
-      // Remove the last payment on the first page.
-      if (state.totalPages > 1) {
+      // Remove the last payment on the first page if a new payment group has been created
+      if (state.totalPages > 1 && !didItFit) {
         newList.pop()
       }
 
