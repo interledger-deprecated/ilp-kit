@@ -3,6 +3,7 @@
 const co = require('co')
 const uuid = require ('uuid4')
 const superagent = require('superagent-promise')(require('superagent'), Promise)
+const debug = require('debug')('five-bells-wallet:spsp')
 
 const ILP = require('ilp')
 const FiveBellsLedgerAdminPlugin = require('ilp-plugin-bells-admin')
@@ -25,8 +26,8 @@ module.exports = class SPSP {
     this.adminName = this.config.data.getIn(['ledger', 'admin', 'name'])
     this.adminPass = this.config.data.getIn(['ledger', 'admin', 'pass'])
 
-    this.senderPluginInstance = {ws: null}
-    this.receiverPluginInstance = {ws: null}
+    this.senderPluginInstance = null
+    this.receiverPluginInstance = null
     this.senders = {}
     this.receivers = {}
   }
@@ -52,9 +53,13 @@ module.exports = class SPSP {
         }),
         allocations: 0
       }
+
+      debug('created a sender object')
     }
 
     this.senders[username].allocations += 1
+
+    debug('allocating a sender. Total number: ' + this.senders[username].allocations)
 
     return this.senders[username].instance
   }
@@ -67,10 +72,14 @@ module.exports = class SPSP {
 
     sender.allocations -= 1
 
+    debug('deallocated a sender. Total number: ' + sender.allocations)
+
     if (sender.allocations < 1) {
       try {
         yield sender.instance.stopListening()
       } catch (e) {}
+
+      debug('destroyed the sender object')
 
       delete this.senders[username]
     }
@@ -128,8 +137,9 @@ module.exports = class SPSP {
 
       const paymentParams = yield sender.quoteRequest(quote)
 
-      // Sometimes 'paymentParams' comes with a (slightly) different sourceAmount
-      paymentParams.sourceAmount = params.sourceAmount
+      // Sometimes 'paymentParams' comes with a (slightly) different sourceAmount.
+      // TODO Need to make sure it's not too different
+      // paymentParams.sourceAmount = params.sourceAmount
       paymentParams.uuid = uuid()
 
       // TODO any rounding stuff here?
@@ -158,8 +168,8 @@ module.exports = class SPSP {
    */
   // Get or create a receiver instance
   * allocateReceiver(username) {
-    // TODO expire receivers
     if (!this.receivers[username]) {
+      const self = this
       const destinationAccount = this.ledgerPublicUri + '/accounts/' + username
       const instance = ILP.createReceiver({
         _plugin: FiveBellsLedgerAdminPlugin,
@@ -170,6 +180,12 @@ module.exports = class SPSP {
         instance: this.receiverPluginInstance
       })
 
+      // Deallocate the receiver in case if we don't hear from it anymore
+      const receiverTimeout = setTimeout(co.wrap(function *() {
+        yield self.deallocateReceiver(username)
+      }), 10000) // TODO don't hardcode
+
+      // Add the receiver to the list
       this.receivers[username] = {
         instance,
         allocations: 0
@@ -177,6 +193,33 @@ module.exports = class SPSP {
 
       try {
         yield instance.listen()
+        // Handle incoming payments
+        // TODO remove the listener?
+        instance.on('incoming', co.wrap(function *(transfer) {
+          debug('incoming payment', transfer)
+
+          // Get the db payment
+          const dbPayment = yield self.Payment.findOne({
+            where: {
+              // TODO should it really be referenced by a condition?
+              execution_condition: transfer.executionCondition
+            }
+          })
+
+          // Update the db payment
+          dbPayment.state = 'success'
+          yield dbPayment.save()
+
+          // Notify the clients
+          // TODO should probably have the same format as the payment in history
+          self.socket.payment(username, dbPayment)
+
+          // Deallocate the receiver
+          clearTimeout(receiverTimeout)
+          yield self.deallocateReceiver(username)
+        }))
+
+        debug('created a receiver object')
       } catch (e) {
         instance.stopListening()
 
@@ -185,6 +228,8 @@ module.exports = class SPSP {
     }
 
     this.receivers[username].allocations += 1
+
+    debug('allocated a receiver. Total number: ' + this.receivers[username].allocations)
 
     return this.receivers[username].instance
   }
@@ -197,10 +242,14 @@ module.exports = class SPSP {
 
     receiver.allocations -= 1
 
+    debug('deallocated a receiver. Total number: ' + receiver.allocations)
+
     if (receiver.allocations < 1) {
       try {
         yield receiver.instance.stopListening()
       } catch (e) {}
+
+      debug('destroyed the receiver object')
 
       delete this.receivers[username]
     }
@@ -212,39 +261,11 @@ module.exports = class SPSP {
 
     const receiver = yield self.allocateReceiver(username)
 
-    // Deallocate the receiver in case if we don't hear from the receiver anymore
-    const receiverTimeout = setTimeout(co.wrap(function *() { 
-      yield self.deallocateReceiver(username)
-    }), 10000) // TODO don't hardcode
-
     const request = receiver.createRequest({
       amount: destinationAmount
     })
 
-    const requestId = request.address.replace(self.ledgerPrefix + username + '.', '')
-
-    // Remove this listener on finish
-    receiver.on('incoming:' + requestId, co.wrap(function *(transfer) {
-      // Get the db payment
-      const dbPayment = yield self.Payment.findOne({
-        where: {
-          // TODO should it really be referenced by a condition?
-          execution_condition: transfer.executionCondition
-        }
-      })
-
-      // Update the db payment
-      dbPayment.state = 'success'
-      yield dbPayment.save()
-
-      // Notify the clients
-      // TODO should probably have the same format as the payment in history
-      self.socket.payment(username, dbPayment)
-
-      // Deallocate the receiver
-      clearTimeout(receiverTimeout)
-      yield self.deallocateReceiver(username)
-    }))
+    // const requestId = request.address.replace(self.ledgerPrefix + username + '.', '')
 
     return request
   }
