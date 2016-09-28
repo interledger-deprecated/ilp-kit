@@ -51,7 +51,9 @@ module.exports = class App {
     app.proxy = true;
 
     app.keys = [this.config.get('sessionSecret')]
-    app.use(session(app))
+    app.use(session({
+      maxAge: 2592000
+    }, app))
 
     socket.attach(app)
     auth.attach(app)
