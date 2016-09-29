@@ -36,6 +36,7 @@ module.exports = class Auth {
         // TODO this whole function is a dup from local register flow
         co.wrap(function * (accessToken, refreshToken, profile, done) {
           const email = profile.emails[0] && profile.emails[0].value
+          const name = profile.displayName
 
           // Find a user by github id or email address
           let dbUser = yield User.findOne({
@@ -57,11 +58,12 @@ module.exports = class Auth {
           // User doesn't exist
           // TODO custom username
           // TODO what if the username already exists
-          let userObj = {
+          const userObj = {
             username: profile.username,
             password: self.generateGithubPassword(profile.id),
             email: email,
             email_verified: true,
+            name: name,
             github_id: profile.id,
             profile_picture: profile.photos[0].value
           }
