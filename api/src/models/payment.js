@@ -72,7 +72,11 @@ function PaymentFactory (sequelize, validator, container, User) {
       const list = yield sequelize.query(
         'SELECT source_account, destination_account,'
           + ' sum(source_amount) as source_amount,'
+          + ' source_name,'
+          + ' source_image_url,'
           + ' sum(destination_amount) as destination_amount,'
+          + ' destination_name,'
+          + ' destination_image_url,'
           + ' message,'
           + ' date_trunc(\'hour\', created_at) AS time_slot,'
           + ' max(created_at) AS recent_date,'
@@ -85,7 +89,9 @@ function PaymentFactory (sequelize, validator, container, User) {
             + ' OR destination_user = ' + user.id
             + " OR destination_account = '" + user.account + "'"
           + ' )'
-        + ' GROUP BY source_account, destination_account, message, time_slot'
+        + ' GROUP BY source_account, source_name, source_image_url, '
+          + 'destination_account, destination_name, destination_image_url,'
+          + ' message, time_slot'
         + ' ORDER BY recent_date DESC'
         + ' OFFSET ' + limit * (page - 1)
         + ' LIMIT ' + limit,
@@ -154,15 +160,19 @@ function PaymentFactory (sequelize, validator, container, User) {
     },
     source_user: Sequelize.INTEGER,
     source_account: Sequelize.STRING(1024),
+    source_amount: Sequelize.FLOAT,
+    source_name: Sequelize.STRING,
+    source_image_url: Sequelize.STRING,
     destination_user: Sequelize.INTEGER,
     destination_account: Sequelize.STRING(1024),
+    destination_amount: Sequelize.FLOAT,
+    destination_name: Sequelize.STRING,
+    destination_image_url: Sequelize.STRING,
     transfer: {
       type: Sequelize.STRING(512),
       unique: true
     },
     state: Sequelize.ENUM('pending', 'success', 'fail'),
-    source_amount: Sequelize.FLOAT,
-    destination_amount: Sequelize.FLOAT,
     message: Sequelize.STRING(1024), // TODO decide on the size
     execution_condition: Sequelize.STRING(1024), // TODO decide on the size
     created_at: Sequelize.DATE,

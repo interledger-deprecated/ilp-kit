@@ -71,7 +71,7 @@ export default class HistoryItem extends Component {
 
     const type = item.counterpartyAccount === item.destination_account ? 'outgoing' : 'incoming'
 
-    const profilePic = (type === 'outgoing' ? item.destinationUserProfilePicture : item.sourceUserProfilePicture) || require('./placeholder.png')
+    const profilePic = (type === 'outgoing' ? item.destination_image_url : item.source_image_url) || require('./placeholder.png')
 
     return (
       <div className={cx('item')} key={item.time_slot}>

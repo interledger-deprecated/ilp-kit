@@ -194,9 +194,11 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
       dbPayment.setDataExternal({
         source_user: this.req.user.id,
         source_account: this.req.user.account,
-        destination_account: destination.accountUri,
         source_amount: parseFloat(payment.sourceAmount),
+        destination_account: destination.accountUri,
         destination_amount: parseFloat(payment.destinationAmount),
+        destination_name: destination.name,
+        destination_image_url: destination.imageUrl,
         transfer: transfer.uuid,
         message: payment.message || null,
         execution_condition: transfer.executionCondition,

@@ -171,6 +171,14 @@ export default class SendForm extends Component {
             <div className="form-group">
               <Input object={destination} label="Recipient" size="lg" focus onChange={this.handleDestinationChange} debounce />
             </div>
+            {destinationInfo.currencyCode &&
+            <div className={cx('destinationPreview')}>
+              <img src={destinationInfo.imageUrl || require('../../components/HistoryItem/placeholder.png')} />
+              <div className={cx('info')}>
+                <div className={cx('name')}>{destinationInfo.name || destination.value}</div>
+                <div className={cx('currency')}>Accepts {destinationInfo.currencyCode}({destinationInfo.currencySymbol})</div>
+              </div>
+            </div>}
             <div>
               <Input object={message} label="Message" size="lg" />
             </div>
@@ -194,7 +202,7 @@ export default class SendForm extends Component {
                   {disabled: isReceivingAmountFieldDisabled},
                   {focused: destinationAmount.active})}>
                   <span className="input-group-addon">
-                    {(destinationInfo && destinationInfo.ledger && destinationInfo.ledger.currencySymbol) || config.currencySymbol}
+                    {(destinationInfo && destinationInfo.currencySymbol) || config.currencySymbol}
                   </span>
                   <Input object={destinationAmount} size="lg" onChange={this.handleDestinationAmountChange} debounce disabled={isReceivingAmountFieldDisabled} />
                 </div>

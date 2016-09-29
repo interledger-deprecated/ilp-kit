@@ -93,10 +93,9 @@ module.exports = class Utils {
    *
    * options
    *  - destination - string
-   *  - retrieveLedgerInfo - bool (retrieves ledger info (currency, api endpoints, etc))
    */
   * parseDestination(options) {
-    let self = this
+    const self = this
 
     const destination = options.destination
 
@@ -126,17 +125,19 @@ module.exports = class Utils {
       yield self.getAccount(accountUri)
     }
 
-    let parsedDestination = {
+    // Get SPSP receiver info
+    const receiver = yield self.getAccount(paymentUri)
+
+    const parsedDestination = {
       type: this.isForeignAccountUri(accountUri) ? 'foreign' : 'local',
       accountUri: accountUri,
       ledgerUri: ledgerUri,
       paymentUri: paymentUri,
-      ilpAddress: ilpAddress
-    }
-
-    // TODO:PERFORMANCE api should already know the current ledgerInfo at this point
-    if (options.retrieveLedgerInfo) {
-      parsedDestination.ledgerInfo = yield self.ledger.getInfo(parsedDestination.ledgerUri)
+      ilpAddress: ilpAddress,
+      currencyCode: receiver.currency_code,
+      currencySymbol: receiver.currency_symbol,
+      name: receiver.name,
+      imageUrl: receiver.image_url
     }
 
     return parsedDestination

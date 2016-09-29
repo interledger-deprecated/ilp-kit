@@ -378,6 +378,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
         'account': ledgerPrefix + user.username,
         'currency_code': config.data.getIn(['ledger', 'currency', 'code']),
         'currency_symbol': config.data.getIn(['ledger', 'currency', 'symbol']),
+        'name': user.name,
         'image_url': user.profile_picture
       }
     }

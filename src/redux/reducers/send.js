@@ -48,7 +48,8 @@ export default function reducer(state = initialState, action = {}) {
     case types.SEND_SUCCESS:
       return {
         ...state,
-        quote: {}
+        quote: {},
+        destinationInfo: {}
       }
     case types.DESTROY:
       return initialState

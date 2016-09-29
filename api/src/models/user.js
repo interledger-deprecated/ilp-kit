@@ -158,6 +158,9 @@ function UserFactory (sequelize, validator, ledger, config) {
       type: Sequelize.STRING,
       unique: true
     },
+    name: {
+      type: Sequelize.STRING
+    },
     email: {
       type: Sequelize.STRING,
       unique: true

@@ -39,18 +39,10 @@ function MiscControllerFactory (Auth, log, config, ledger, utils) {
      *      }
      *    }
      */
-    static * destination () {
-      let destination = yield utils.parseDestination({
-        destination: this.query.destination,
-        retrieveLedgerInfo: true
+    static * destination() {
+      this.body = yield utils.parseDestination({
+        destination: this.query.destination
       })
-
-      this.body = {
-        ledger: {
-          currencyCode: destination.ledgerInfo && destination.ledgerInfo.currency_code,
-          currencySymbol: destination.ledgerInfo && destination.ledgerInfo.currency_symbol
-        }
-      }
     }
 
     /**
