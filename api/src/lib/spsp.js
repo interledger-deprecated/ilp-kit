@@ -106,6 +106,8 @@ module.exports = class SPSP {
     return (yield superagent.post(options.paymentUri, {
       amount: options.amount,
       sender_identifier: options.sender_identifier,
+      sender_name: options.sender_name,
+      sender_image_url: options.sender_image_url,
       memo: options.memo
     })).body
   }
@@ -117,6 +119,8 @@ module.exports = class SPSP {
       paymentUri: params.destination.paymentUri,
       amount: params.destinationAmount,
       sender_identifier: params.source.username,
+      sender_name: params.source.name, 
+      sender_image_url: params.source.profile_picture,
       memo: params.memo
     })
 

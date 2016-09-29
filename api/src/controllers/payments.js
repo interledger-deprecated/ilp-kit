@@ -293,6 +293,8 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
      */
     static * setup() {
       const sourceAccount = this.body.sender_identifier
+      const name = this.body.sender_name
+      const image_url = this.body.sender_image_url
       const memo = this.body.memo
       const destinationAmount = this.body.amount
 
@@ -312,6 +314,8 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
       const paymentObj = {
         state: 'pending',
         source_account: sourceAccount,
+        source_name: name,
+        source_image_url: image_url,
         destination_user: destinationUser.id,
         destination_account: destinationUser.account,
         destination_amount: parseFloat(destinationAmount),
