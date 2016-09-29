@@ -189,9 +189,9 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
      *      "id": 1
      *    }
      */
-    static * putResource () {
+    static * putResource() {
       const data = this.body
-      let user = this.req.user
+      const user = this.req.user
 
       // TODO:SECURITY sanity checking
 
@@ -220,6 +220,8 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
           link: User.getVerificationLink(user.username, user.email)
         })
       }
+
+      user.name = data.name
 
       try {
         yield user.save()

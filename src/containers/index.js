@@ -8,5 +8,5 @@ export History from './History/History';
 export Button from './Button/Button';
 
 export Settings from './Settings/Settings';
-export ChangeEmailForm from './Settings/ChangeEmailForm';
+export ProfileForm from './Settings/ProfileForm';
 export ChangePasswordForm from './Settings/ChangePasswordForm';

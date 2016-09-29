@@ -10,8 +10,8 @@ import { resetFormOnSuccess } from 'decorators'
 import { Input } from 'components'
 
 @reduxForm({
-  form: 'emailSettings',
-  fields: ['email']
+  form: 'profileSettings',
+  fields: ['email', 'name']
   // TODO local validation
 }, state => ({
   user: state.auth.user,
@@ -19,12 +19,13 @@ import { Input } from 'components'
   // TODO server side rendering for initialValues is messed up
   // https://github.com/erikras/redux-form/issues/896
   initialValues: {
-    email: (state.auth.user && state.auth.user.email) || undefined
+    email: (state.auth.user && state.auth.user.email) || undefined,
+    name: (state.auth.user && state.auth.user.name) || undefined
   }
 }), actions)
 @successable()
-@resetFormOnSuccess('emailSettings')
-export default class ChangeEmailForm extends Component {
+@resetFormOnSuccess('profileSettings')
+export default class ProfileForm extends Component {
   static propTypes = {
     // Redux Form
     fields: PropTypes.object,
@@ -49,28 +50,28 @@ export default class ChangeEmailForm extends Component {
       .then(() => {
         this.props.tempSuccess()
 
-        tracker.track('Email change', {status: 'success'})
+        tracker.track('Profile change', {status: 'success'})
       })
       .catch((error) => {
-        tracker.track('Email change', {status: 'fail', error: error})
+        tracker.track('Profile change', {status: 'fail', error: error})
 
         throw {_error: error}
       })
   }
 
   render() {
-    const { fields: { email }, pristine, invalid,
+    const { fields: { email, name }, pristine, invalid,
       handleSubmit, submitting, success, error, submitFailed } = this.props
 
     return (
       <div className="panel panel-default">
         <div className="panel-heading">
-          <div className="panel-title">Change Email</div>
+          <div className="panel-title">Edit Profile</div>
         </div>
         <div className="panel-body">
           {success &&
           <Alert bsStyle="success">
-            <strong>Holy guacamole!</strong> Email has been successfully changed!
+            <strong>Holy guacamole!</strong> Your profile has been successfully changed!
           </Alert>}
 
           {error && error.id &&
@@ -78,7 +79,6 @@ export default class ChangeEmailForm extends Component {
             <strong>Woops! </strong>
             {(() => {
               switch (error.id) {
-                case 'InvalidBodyError': return 'Email is invalid'
                 case 'EmailTakenError': return 'Email is already taken'
                 default: return 'Something went wrong'
               }
@@ -87,8 +87,10 @@ export default class ChangeEmailForm extends Component {
 
           <form onSubmit={handleSubmit(this.save)}>
             <Input object={email} label="Email" type="email" size="lg" focus />
+            <Input object={name} label="Name" type="text" size="lg" />
+
             <button type="submit" className="btn btn-primary" disabled={pristine || (invalid && !submitFailed) || submitting}>
-              {submitting ? ' Saving...' : ' Change Email'}
+              {submitting ? ' Saving...' : ' Save'}
             </button>
           </form>
         </div>

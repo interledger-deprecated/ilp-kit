@@ -119,7 +119,7 @@ module.exports = class SPSP {
       paymentUri: params.destination.paymentUri,
       amount: params.destinationAmount,
       sender_identifier: params.source.username,
-      sender_name: params.source.name, 
+      sender_name: params.source.name,
       sender_image_url: params.source.profile_picture,
       memo: params.memo
     })
