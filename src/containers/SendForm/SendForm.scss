@@ -31,3 +31,20 @@
     }
   }
 }
+.advanced {
+  margin: 10px 0 0 0;
+
+  .description {
+    margin: 0 0 10px;
+  }
+}
+.advancedLink {
+  text-align: right;
+  font-size: 10px;
+  line-height: 35px;
+
+  a {
+    color: #b9b9b9;
+    border-bottom: 1px dashed #d9d9d9;
+  }
+}

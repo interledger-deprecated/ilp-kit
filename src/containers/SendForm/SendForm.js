@@ -17,7 +17,7 @@ import { Input } from 'components'
 
 @reduxForm({
   form: 'send',
-  fields: ['destination', 'sourceAmount', 'destinationAmount', 'message'],
+  fields: ['destination', 'sourceAmount', 'destinationAmount', 'message', 'repeats', 'interval'],
   validate: sendValidation
 })
 @connect(
@@ -28,7 +28,7 @@ import { Input } from 'components'
     quote: state.send.quote,
     quoting: state.send.quoting
   }),
-  sendActions)
+  {...sendActions, resetData: sendActions.reset})
 @successable()
 @resetFormOnSuccess('send')
 export default class SendForm extends Component {
@@ -45,6 +45,7 @@ export default class SendForm extends Component {
     requestQuote: PropTypes.func.isRequired,
     quote: PropTypes.object,
     quoting: PropTypes.bool,
+    resetData: PropTypes.func,
     data: PropTypes.object,
     initializeForm: PropTypes.func,
 
@@ -61,6 +62,8 @@ export default class SendForm extends Component {
   static contextTypes = {
     config: PropTypes.object
   }
+
+  state = {}
 
   componentDidMount() {
     const { data, initializeForm } = this.props
@@ -126,17 +129,70 @@ export default class SendForm extends Component {
     this.lastQuotingField = 'destination'
   }
 
+  transfer = (data) => {
+    return this.props.transfer(data)
+      .catch((err) => {
+        this.props.permFail(err)
+        clearInterval(this.interval)
+      })
+  }
+
+  stopRepeatedPayments = () => {}
+
   handleSubmit = (data) => {
     tracker.track('payment')
-    return this.props.transfer(data)
-      .then(this.props.tempSuccess)
-      .catch(this.props.permFail)
+
+    // TODO should also work if no interval is provided
+    // TODO should be able to cancel the interval
+
+    // Single payment
+    if (!data.repeats || !data.interval) {
+      return this.transfer(data).then(() => {
+        this.props.tempSuccess()
+        this.props.resetData()
+      })
+    }
+
+    // Repeated payments
+    return new Promise((resolve) => {
+      this.stopRepeatedPayments = () => {
+        resolve()
+        this.props.tempSuccess()
+        this.props.resetData()
+        clearInterval(this.interval)
+      }
+
+      this.interval = setInterval(() => {
+        data.repeats--
+
+        this.transfer(data).then(() => {
+          if (data.repeats === 0) {
+            this.stopRepeatedPayments()
+          }
+        })
+      }, data.interval)
+    })
+  }
+
+  toggleAdvanced = (event) => {
+    if (this.state.showAdvanced) {
+      this.props.fields.repeats.onChange('')
+      this.props.fields.interval.onChange('')
+    }
+
+    this.setState({
+      ...this.state,
+      showAdvanced: !this.state.showAdvanced
+    })
+
+    event.preventDefault()
   }
 
   render() {
     const { pristine, invalid, handleSubmit, submitting, success, destinationInfo,
-      quoting, fail, data, fields: {destination, sourceAmount, destinationAmount, message} } = this.props
+      quoting, fail, data, fields: {destination, sourceAmount, destinationAmount, message, repeats, interval} } = this.props
     const { config } = this.context
+    const { showAdvanced } = this.state
 
     const isSendingAmountFieldDisabled = !destination.value
       || fail.id === 'NotFoundError'
@@ -182,6 +238,7 @@ export default class SendForm extends Component {
             <div>
               <Input object={message} label="Message" size="lg" />
             </div>
+
             <div className="row">
               <div className="col-sm-6 form-group">
                 <label>Sending</label>
@@ -210,10 +267,40 @@ export default class SendForm extends Component {
                 {destinationAmount.dirty && destinationAmount.error && <div className="text-danger">{destinationAmount.error}</div>}
               </div>
             </div>
-            <button type="submit" className="btn btn-complete"
-              disabled={(!data && pristine) || invalid || submitting || quoting || fail.id === 'NotFoundError'}>
-              {submitting ? 'Sending...' : 'Send'}
-            </button>
+
+            {showAdvanced &&
+            <div className={cx('advanced')}>
+              <div className={cx('row', 'description')}>
+                These fields are for streaming payments. The wallet will submit the same payment <i>"repeat"</i> times every <i>"interval"</i> milliseconds.
+              </div>
+              <div className="row">
+                <div className="col-sm-6 form-group">
+                  <label>Repeats</label>
+                  <Input object={repeats} />
+                </div>
+                <div className="col-sm-6 form-group">
+                  <label>Interval</label>
+                  <Input object={interval} />
+                </div>
+              </div>
+            </div>}
+
+            <div className="row">
+              <div className="col-sm-5">
+                <button type="submit" className="btn btn-complete btn-block"
+                  disabled={(!data && pristine) || invalid || submitting || quoting || fail.id === 'NotFoundError'}>
+                  {submitting ? 'Sending...' : 'Send'}
+                </button>
+              </div>
+
+              <div className={cx('col-sm-7', 'advancedLink')}>
+                {!submitting &&
+                <a href="" onClick={this.toggleAdvanced}>{showAdvanced ? 'Hide' : 'Show'} Advanced Options</a>}
+
+                {showAdvanced && submitting && this.interval &&
+                <button type="button" onClick={this.stopRepeatedPayments} className="btn btn-danger">Stop</button>}
+              </div>
+            </div>
           </form>
         </div>
       </div>

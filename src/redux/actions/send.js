@@ -36,6 +36,11 @@ export const transfer = (values) => (dispatch, getState) => dispatch({
   })
 })
 
+export const reset = () => ({
+  type: types.SEND_RESET
+})
+
+
 // TODO there's gotta be a way to automate this somehow (fallback to default state)
 export const unmount = () => ({
   type: types.DESTROY

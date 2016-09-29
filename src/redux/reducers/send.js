@@ -47,6 +47,10 @@ export default function reducer(state = initialState, action = {}) {
       }
     case types.SEND_SUCCESS:
       return {
+        ...state
+      }
+    case types.SEND_RESET:
+      return {
         ...state,
         quote: {},
         destinationInfo: {}

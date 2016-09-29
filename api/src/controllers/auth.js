@@ -59,7 +59,7 @@ function AuthsControllerFactory (Auth, User, log, ledger, Users, mailer) {
        */
 
       // GitHub OAuth
-      router.get('/auth/github', passport.authenticate('github'))
+      router.get('/auth/github', passport.authenticate('github')) 
 
       /**
        * @api {get} /auth/github/callback Github Auth Callback

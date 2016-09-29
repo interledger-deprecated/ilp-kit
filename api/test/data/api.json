@@ -3,6 +3,7 @@
     "admin": {
       "id": 1,
       "account": "http://localhost/accounts/admin",
+      "name": null,
       "username": "admin",
       "balance": 0,
       "github_id": null,
@@ -13,6 +14,7 @@
     "alice": {
       "id": 1,
       "account": "http://localhost/accounts/alice",
+      "name": null,
       "username": "alice",
       "balance": 1000,
       "github_id": null,
@@ -23,6 +25,7 @@
     "bob": {
       "id": 1,
       "account": "http://localhost/accounts/bob",
+      "name": null,
       "username": "bob",
       "balance": 1000,
       "github_id": null,
