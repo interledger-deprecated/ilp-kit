@@ -188,7 +188,7 @@ export default class App extends Component {
             <Navbar.Text pullRight>
               {user.profile_picture &&
               <img className={cx('profilePic')} src={user.profile_picture} />}
-              Hi {user.username}
+              Hi {user.displayName}
             </Navbar.Text>
           </Navbar.Collapse>
         </Navbar>}

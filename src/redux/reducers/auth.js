@@ -1,5 +1,19 @@
 import * as types from '../actionTypes'
 
+const extendUser = (user) => {
+  const extendedUser = {
+    ...user,
+    displayName: user.username
+  }
+
+  if (user.name) {
+    extendedUser.firstName = user.name.split(' ')[0]
+    extendedUser.displayName = extendedUser.firstName
+  }
+
+  return extendedUser
+}
+
 export const initialState = {
   loaded: false,
   fail: {},
@@ -19,7 +33,7 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         loading: false,
         loaded: true,
-        user: action.result
+        user: extendUser(action.result)
       };
     case types.AUTH_LOAD_FAIL:
       return {
@@ -31,7 +45,7 @@ export default function reducer(state = initialState, action = {}) {
     case types.AUTH_SAVE_SUCCESS:
       return {
         ...state,
-        user: action.result
+        user: extendUser(action.result)
       };
     case types.EMAIL_VERIFICATION_SUCCESS:
       return {
@@ -61,7 +75,7 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         loggingIn: false,
-        user: action.result,
+        user: extendUser(action.result),
         verified: false
       };
     case types.LOGIN_FAIL:
@@ -80,7 +94,7 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         registering: false,
-        user: action.result
+        user: extendUser(action.result)
       };
     case types.REGISTER_FAIL:
       return {
