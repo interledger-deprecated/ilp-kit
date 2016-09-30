@@ -49,7 +49,7 @@ module.exports = function (config) {
         extensions: ['', '.json', '.js']
       },
       plugins: [
-        new webpack.IgnorePlugin(/\.json$/),
+        new webpack.IgnorePlugin(/webpack-stats\.json$/),
         new webpack.NoErrorsPlugin(),
         new webpack.DefinePlugin({
           __CLIENT__: true,

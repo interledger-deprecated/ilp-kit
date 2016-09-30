@@ -96,7 +96,7 @@ export default class HistoryItem extends Component {
                   {item.message}
                 </div>}
                 <div className={cx('date')} title={moment(item.recent_date).format('LLL')}>
-                  <TimeAgo date={item.recent_date} formatter={this.timeAgoFormatter} />
+                  <TimeAgo date={item.recent_date || item.created_at} formatter={this.timeAgoFormatter} />
                 </div>
               </div>
             </div>
