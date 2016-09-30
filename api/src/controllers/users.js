@@ -51,6 +51,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
      *    {
      *      "username": "alice",
      *      "account": "https://wallet.example/ledger/accounts/alice",
+     *      "name": "Alice Faye",
      *      "balance": "1000",
      *      "id": 1
      *    }
@@ -177,6 +178,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
      *    curl -X PUT -H "Authorization: Basic YWxpY2U6YWxpY2U=" -H "Content-Type: application/json" -d
      *    '{
      *        "email": "alice@example.com"
+     *        "name": "Alice Faye"
      *    }'
      *    https://wallet.example/users/alice
      *
@@ -185,6 +187,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
      *    {
      *      "username": "alice",
      *      "account": "https://wallet.example/ledger/accounts/alice",
+     *      "name": "Alice Faye",
      *      "balance": "1000",
      *      "id": 1
      *    }
@@ -363,6 +366,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
      *      "account": "wallet.alice",
      *      "currency_code": "USD",
      *      "currency_symbol": "$",
+     *      "name": "Alice Faye",
      *      "image_url": "http://server.example/picture.jpg"
      *    }
      */

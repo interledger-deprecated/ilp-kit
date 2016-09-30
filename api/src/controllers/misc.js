@@ -33,9 +33,16 @@ function MiscControllerFactory (Auth, log, config, ledger, utils) {
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
      *    {
-     *      "ledger": {
+     *      {
+     *        "type": "local",
+     *        "accountUri": "http://wallet.example/ledger/accounts/alice",
+     *        "ledgerUri": "http://wallet.example/ledger",
+     *        "paymentUri": "http://wallet.example/api/receivers/alice",
+     *        "ilpAddress": "wallet.alice",
      *        "currencyCode": "USD",
-     *        "currencySymbol": "$"
+     *        "currencySymbol": "$",
+     *        "name": "Alice Faye",
+     *        "imageUrl": ""
      *      }
      *    }
      */
