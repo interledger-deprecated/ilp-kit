@@ -52,7 +52,7 @@ module.exports = class App {
 
     app.keys = [this.config.get('sessionSecret')]
     app.use(session({
-      maxAge: 2592000
+      maxAge: 2592000000
     }, app))
 
     socket.attach(app)
