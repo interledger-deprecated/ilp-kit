@@ -33,20 +33,23 @@ import { Input } from 'components'
 @resetFormOnSuccess('send')
 export default class SendForm extends Component {
   static propTypes = {
-    fields: PropTypes.object.isRequired,
-    invalid: PropTypes.bool.isRequired,
-    pristine: PropTypes.bool.isRequired,
+    user: PropTypes.object.isRequired,
     destinationChange: PropTypes.func.isRequired,
     destinationInfo: PropTypes.object,
-    submitting: PropTypes.bool.isRequired,
-    handleSubmit: PropTypes.func.isRequired,
-    values: PropTypes.object,
     transfer: PropTypes.func.isRequired,
     requestQuote: PropTypes.func.isRequired,
     quote: PropTypes.object,
     quoting: PropTypes.bool,
     resetData: PropTypes.func,
     data: PropTypes.object,
+
+    // Form
+    fields: PropTypes.object.isRequired,
+    invalid: PropTypes.bool.isRequired,
+    pristine: PropTypes.bool.isRequired,
+    submitting: PropTypes.bool.isRequired,
+    handleSubmit: PropTypes.func.isRequired,
+    values: PropTypes.object,
     initializeForm: PropTypes.func,
 
     // Successable
@@ -101,6 +104,11 @@ export default class SendForm extends Component {
 
   // TODO introduce a latency
   handleDestinationChange = (target) => {
+    // TODO check for webfinger email too
+    if (target.value === this.props.user.username) {
+      return this.props.permFail({id: 'SendToSelfError'})
+    }
+
     this.props.destinationChange(target.value)
       .then(this.props.reset)
       .catch(this.props.permFail)
@@ -195,10 +203,10 @@ export default class SendForm extends Component {
     const { showAdvanced } = this.state
 
     const isSendingAmountFieldDisabled = !destination.value
-      || fail.id === 'NotFoundError'
+      || fail.id === 'NotFoundError' || fail.id === 'SendToSelfError'
       || (quoting && this.lastQuotingField === 'destination')
     const isReceivingAmountFieldDisabled = !destination.value
-      || fail.id === 'NotFoundError'
+      || fail.id === 'NotFoundError' || fail.id === 'SendToSelfError'
       || (quoting && this.lastQuotingField === 'source')
 
     // TODO initial render should show a currency
@@ -218,6 +226,7 @@ export default class SendForm extends Component {
                 case 'LedgerInsufficientFundsError': return 'You have insufficient funds to make the payment'
                 case 'NotFoundError': return 'Account not found'
                 case 'NoQuoteError': return "Couldn't find a quote for the specified recipient or amount"
+                case 'SendToSelfError': return "There's no point in sending money to yourself"
                 default: return 'Something went wrong'
               }
             })()}
@@ -288,7 +297,7 @@ export default class SendForm extends Component {
             <div className="row">
               <div className="col-sm-5">
                 <button type="submit" className="btn btn-complete btn-block"
-                  disabled={(!data && pristine) || invalid || submitting || quoting || fail.id === 'NotFoundError'}>
+                  disabled={(!data && pristine) || invalid || submitting || quoting || fail.id === 'NotFoundError' || fail.id === 'SendToSelfError'}>
                   {submitting ? 'Sending...' : 'Send'}
                 </button>
               </div>
