@@ -7,6 +7,7 @@ import Alert from 'react-bootstrap/lib/Alert'
 
 import { SendForm } from 'containers'
 import { History } from 'containers'
+import { Stats } from 'containers'
 
 import classNames from 'classnames/bind'
 import styles from './Home.scss'
@@ -36,6 +37,8 @@ export default class Home extends Component {
     config: PropTypes.object
   }
 
+  state = {}
+
   reload = () => {
     this.props.reload({username: this.props.user.username})
   }
@@ -50,9 +53,21 @@ export default class Home extends Component {
     this.props.resendVerificationEmail(this.props.user.username)
   }
 
+  toggleStats = (event) => {
+    this.setState({
+      ...this.state,
+      showStats: !this.state.showStats
+    })
+
+    event.preventDefault()
+
+    tracker.track('Toggle Stats')
+  }
+
   render() {
-    const {user, verified, verificationEmailSent} = this.props
-    const {config} = this.context
+    const { user, verified, verificationEmailSent } = this.props
+    const { config } = this.context
+    const { showStats } = this.state
 
     return (
       <div className="row">
@@ -83,10 +98,22 @@ export default class Home extends Component {
           {/* History */}
           <div className="panel panel-default">
             <div className="panel-heading">
-              <div className="panel-title">Payment History</div>
+              <div className="panel-title">
+                {showStats &&
+                <a href="" onClick={this.toggleStats}>Payment History</a>}
+                {!showStats &&
+                <span>Payment History</span>}
+              </div>
+              <div className="panel-title pull-right">
+                {showStats &&
+                <span>Stats</span>}
+                {!showStats &&
+                <a href="" onClick={this.toggleStats}>Stats</a>}
+              </div>
             </div>
             <div className="panel-body">
-              <History />
+              {!showStats && <History />}
+              {showStats && <Stats />}
             </div>
           </div>
         </div>

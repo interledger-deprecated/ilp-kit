@@ -28,6 +28,8 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
       router.put('/payments/:id', Auth.checkAuth, Payment.createBodyParser(), this.putResource)
 
       router.post('/receivers/:username', this.setup)
+
+      router.get('/payments/stats', Auth.checkAuth, this.getStats)
     }
 
     /**
@@ -335,6 +337,10 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
         console.log('payments:299', 'woops', e)
         // TODO handle
       }
+    }
+
+    static * getStats() {
+      this.body = yield Payment.getUserStats(this.req.user)
     }
   }
 }

@@ -148,6 +148,33 @@ function PaymentFactory (sequelize, validator, container, User) {
         }]
       })
     }
+
+    static * getUserStats(user) {
+      const result = yield sequelize.query(
+        'SELECT source_account, destination_account,'
+          + ' sum(source_amount) as source_amount,'
+          + ' source_name,'
+          + ' source_image_url,'
+          + ' sum(destination_amount) as destination_amount,'
+          + ' destination_name,'
+          + ' destination_image_url,'
+          + ' count(*) as transfers_count,'
+          + ' max(created_at) AS recent_date'
+        + ' FROM "Payments"'
+        + ' WHERE state = \'success\' '
+        + ' AND ('
+          + ' source_user = ' + user.id
+          + " OR source_account = '" + user.account + "'"
+          + ' OR destination_user = ' + user.id
+          + " OR destination_account = '" + user.account + "'"
+        + ' )'
+        + ' GROUP BY source_account, source_name, source_image_url, '
+        + 'destination_account, destination_name, destination_image_url'
+        + ' ORDER BY recent_date DESC'
+      )
+
+      return result[0]
+    }
   }
 
   Payment.validateExternal = validator.create('Payment')
