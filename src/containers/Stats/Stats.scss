@@ -1,6 +1,8 @@
 @import '../../theme/variables.scss';
 
 .stat {
+  margin: 5px 0;
+
   &.header {
     font-weight: bold;
     border-bottom: 1px solid #eeeeee;

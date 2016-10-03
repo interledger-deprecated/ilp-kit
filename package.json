@@ -154,6 +154,7 @@
     "react-bootstrap": "^0.30.3",
     "react-document-meta": "^2.0.3",
     "react-dom": "^15.3.2",
+    "react-dropzone-component": "^1.2.0",
     "react-ga": "^1.4.1",
     "react-paginate": "^2.2.3",
     "react-redux": "^4.4.5",

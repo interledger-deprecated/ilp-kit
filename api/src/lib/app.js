@@ -34,7 +34,13 @@ module.exports = class App {
 
     const app = this.app = new Koa()
 
-    app.use(bodyParser())
+    app.use(bodyParser({
+      multipart: true,
+      formidable: {
+        keepExtensions: true,
+        uploadDir: __dirname + './../../../uploads' // TODO variable
+      }
+    }))
     app.use(function *(next) {
       if (this.request.method === 'POST' || this.request.method === 'PUT') {
         // the parsed body will store in this.request.body

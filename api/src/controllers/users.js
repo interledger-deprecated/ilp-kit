@@ -2,6 +2,7 @@
 
 module.exports = UsersControllerFactory
 
+const fs = require('fs')
 const request = require('five-bells-shared/utils/request')
 const Auth = require('../lib/auth')
 const Log = require('../lib/log')
@@ -26,6 +27,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
       router.post('/users/:username', User.createBodyParser(), this.postResource)
       router.put('/users/:username', Auth.checkAuth, this.putResource)
       router.post('/users/:username/reload', Auth.checkAuth, this.reload)
+      router.get('/users/:username/profilepic', this.getProfilePicture)
 
       // Email verification
       router.put('/users/:username/verify', this.verify)
@@ -372,7 +374,8 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
      */
     static * getReceiver() {
       const ledgerPrefix = config.data.getIn(['ledger', 'prefix'])
-      const user = yield User.findOne({where: {username: this.params.username}})
+      let user = yield User.findOne({where: {username: this.params.username}})
+      user = user.getDataExternal()
 
       if (!user) {
         // TODO throw exception
@@ -387,6 +390,13 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
         'name': user.name,
         'image_url': user.profile_picture
       }
+    }
+
+    static * getProfilePicture() {
+      const user = yield User.findOne({where: {username: this.params.username}})
+
+      const img = fs.readFileSync(__dirname + '/../../../uploads/' + user.profile_picture)
+      this.body = img
     }
   }
 }

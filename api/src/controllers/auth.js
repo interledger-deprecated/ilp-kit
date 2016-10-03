@@ -3,6 +3,7 @@
 module.exports = AuthsControllerFactory
 
 const request = require('five-bells-shared/utils/request')
+const path = require('path')
 const passport = require('koa-passport')
 const Auth = require('../lib/auth')
 const Log = require('../lib/log')
@@ -79,6 +80,7 @@ function AuthsControllerFactory (Auth, User, log, ledger, Users, mailer) {
       router.get('/auth/load', this.load)
       router.post('/auth/forgot-password', this.forgotPassword)
       router.post('/auth/change-password', this.changePassword)
+      router.post('/auth/profilepic', this.changeProfilePicture)
 
       // Logout. Clears the session
       router.post('/auth/logout', this.logout)
@@ -172,6 +174,24 @@ function AuthsControllerFactory (Auth, User, log, ledger, Users, mailer) {
       }, true)
 
       this.body = dbUser.getDataExternal()
+    }
+
+    static * changeProfilePicture() {
+      const files = this.body.files
+
+      let user = this.req.user
+
+      user = yield User.findOne({where: {id: user.id}})
+
+      user.profile_picture = path.basename(files.file.path)
+
+      try {
+        yield user.save()
+      } catch (e) {
+        console.log('auth.js:191', e)
+      }
+
+      this.body = yield user.getDataExternal()
     }
 
     /**
