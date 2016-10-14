@@ -82,7 +82,7 @@ export default class ProfileForm extends Component {
       // TODO:UX upload progress photo placeholders
     },
     // TODO handle error
-    success: (file, response) => {
+    success: () => {
       // this.props.save(response)
       tracker.track('Profile picture upload')
     },

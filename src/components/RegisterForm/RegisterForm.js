@@ -57,8 +57,8 @@ export default class RegisterForm extends Component {
               <input type="password" name="fakepasswordremembered" ref="fakepass" />
             </div>}
 
-          <Input object={username} label="Username" size="lg" focus />
-          <Input object={email} label="Email" size="lg" />
+          <Input object={username} label="Username" size="lg" focus autoCapitalize="off" />
+          <Input object={email} label="Email" size="lg" autoCapitalize="off" />
           <Input object={password} label="Password" size="lg" type="password" />
         </div>
         <button type="submit" className="btn btn-complete" disabled={pristine || invalid || submitting}>

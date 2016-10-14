@@ -66,7 +66,7 @@ export default class ForgotPasswordForm extends Component {
         {!success &&
         <div>
           <div>
-            <Input object={resource} label="Username or Email" size="lg" focus />
+            <Input object={resource} label="Username or Email" size="lg" focus autoCapitalize="off" />
           </div>
           <div className="row">
             <button type="submit" className="btn btn-complete" disabled={pristine || (invalid && !submitFailed) || submitting}>

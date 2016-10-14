@@ -40,7 +40,7 @@ export default class LoginForm extends Component {
 
         <div>
           {/* TODO:UX autofill the username after email verification */}
-          <Input object={username} label="Username or Email" size="lg" focus />
+          <Input object={username} label="Username or Email" size="lg" focus autoCapitalize="off" />
           <Input object={password} label="Password" size="lg" type="password" />
         </div>
         <div className="row">

@@ -10,6 +10,7 @@ export default class Input extends Component {
     label: PropTypes.string,
     size: PropTypes.string,
     focus: PropTypes.bool,
+    autoCapitalize: PropTypes.string,
     onChange: PropTypes.func,
     debounce: PropTypes.bool
   }
@@ -65,13 +66,15 @@ export default class Input extends Component {
   }
 
   renderInput() {
-    const { object, type, disabled, size, focus } = this.props
+    const { object, type, disabled, size, focus, autoCapitalize } = this.props
 
     return (
       <span>
         <input type={type} ref="input"
-          className={cx('form-control', size ? 'input-' + size : '')}
-          autoFocus={focus} {...this.domOnlyProps(object)} onChange={this.onChange} disabled={disabled} />
+               className={cx('form-control', size ? 'input-' + size : '')}
+               autoFocus={focus} {...this.domOnlyProps(object)}
+               onChange={this.onChange} disabled={disabled}
+               autoCapitalize={autoCapitalize} />
 
         {object.dirty && object.error && <div className="text-danger">{object.error}</div>}
       </span>
