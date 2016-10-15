@@ -180,6 +180,7 @@ function AuthsControllerFactory (Auth, User, log, ledger, Users, mailer) {
       const files = this.body.files
 
       let user = this.req.user
+      if (!user) throw new NotFoundError("No active user session")
 
       user = yield User.findOne({where: {id: user.id}})
 

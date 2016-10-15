@@ -127,6 +127,8 @@ function UserFactory (sequelize, validator, ledger, config) {
     }
 
     verifyForgotPasswordCode(code) {
+      if (!code) throw new InvalidBodyError("Missing code")
+
       const parts = code.split('.')
       const date = parts[0]
       const hash = parts[1]
@@ -136,6 +138,7 @@ function UserFactory (sequelize, validator, ledger, config) {
       const currentDate = Math.floor(Date.now() / 1000)
 
       // Code is only valid for an hour
+      console.log('CURRENT:', currentDate, date)
       if (currentDate > date + 3600) {
         // TODO should this be an invalid body error?
         throw new InvalidBodyError("The code has been expired")
