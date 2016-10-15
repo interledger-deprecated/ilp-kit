@@ -3,6 +3,7 @@ node_modules/
 dist/
 /web/
 /apidoc-out/
+/coverage/
 *.iml
 webpack-stats.json
 webpack-assets.json
