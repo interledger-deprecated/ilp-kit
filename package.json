@@ -120,7 +120,7 @@
     "hoist-non-react-statics": "^1.0.3",
     "http-proxy": "^1.12.0",
     "ilp": "^6.2.0",
-    "ilp-plugin-bells-admin": "interledger/js-ilp-plugin-bells-admin",
+    "ilp-plugin-bells-admin": "interledgerjs/ilp-plugin-bells-admin",
     "kcors": "^1.0.1",
     "koa": "^1.1.2",
     "koa-body": "^1.4.0",
