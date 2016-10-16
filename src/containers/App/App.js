@@ -170,7 +170,7 @@ export default class App extends Component {
                           target="_blank" onClick={this.onNavItemClick}>
                   API docs
                 </MenuItem>
-                <MenuItem href="https://github.com/interledger/five-bells-wallet-client"
+                <MenuItem href="https://github.com/interledgerjs/five-bells-wallet-client"
                           target="_blank" onClick={this.onNavItemClick}>
                   Wallet Client
                 </MenuItem>

@@ -1,7 +1,7 @@
 # Five Bells Wallet [![circle][circle-image]][circle-url]
 
-[circle-image]: https://circleci.com/gh/interledger/five-bells-wallet.svg?style=shield&circle-token=65d802e1ea641aabcc95f8d28f2c6ade577716a9
-[circle-url]: https://circleci.com/gh/interledger/five-bells-wallet
+[circle-image]: https://circleci.com/gh/interledgerjs/five-bells-wallet.svg?style=shield&circle-token=65d802e1ea641aabcc95f8d28f2c6ade577716a9
+[circle-url]: https://circleci.com/gh/interledgerjs/five-bells-wallet
 
 Five Bells Wallet
 
@@ -34,12 +34,12 @@ Five Bells Wallet
 
 ## Prerequisites
 
-- [Five Bells Ledger](https://github.com/interledger/five-bells-ledger) instance
+- [Five Bells Ledger](https://github.com/interledgerjs/five-bells-ledger) instance
 
 ## Installation
 
 ```bash
-git clone git@github.com:interledger/five-bells-wallet.git
+git clone git@github.com:interledgerjs/five-bells-wallet.git
 cd five-bells-wallet
 npm install
 ```
@@ -100,7 +100,7 @@ Here's an example of an Apache 2.4 virtual host with enabled port forwarding.
 Unless you're hosting an external ledger, you can optionally run a five-bells-ledger instance inside the five-bells-wallet. 
 To do so, all you need to do is leave the `API_LEDGER_URI` environment variable empty, and the software will automatically run a five-bells-ledger instance.
 
-Five-bells-ledger instance comes with default environment variables, but you can change them specifying any of the five-bells-ledger [environment variables](https://github.com/interledger/five-bells-ledger#step-3-run-it).
+Five-bells-ledger instance comes with default environment variables, but you can change them specifying any of the five-bells-ledger [environment variables](https://github.com/interledgerjs/five-bells-ledger#step-3-run-it).
 
 ### Environment variables
 
@@ -139,7 +139,7 @@ Name | Example | Description |
 `CLIENT_PUBLIC_PORT` | `80` | Client public port (if different from `CLIENT_PORT`)
 
 ##### Default five-bells-ledger environment variables 
-(used if the `API_LEDGER_URI` is not specified). You can read more about these variables in the [five-bells-ledger readme](https://github.com/interledger/five-bells-ledger#step-3-run-it).
+(used if the `API_LEDGER_URI` is not specified). You can read more about these variables in the [five-bells-ledger readme](https://github.com/interledgerjs/five-bells-ledger#step-3-run-it).
 
 Name | Default |
 ---- | ------- |
@@ -266,7 +266,7 @@ LEDGER_ILP_PREFIX=wallet2.
 
 ### Setup five-bells-connector
 
-> Note: five-bells-wallet currently works with [five-bells-connector v8.1.0](https://github.com/interledger/five-bells-connector/tree/v8.1.0)
+> Note: five-bells-wallet currently works with [five-bells-connector v8.1.0](https://github.com/interledgerjs/five-bells-connector/tree/v8.1.0)
 
 - Create a trader user on both wallet1 and wallet2 instances with username: `trader`, password: `trader`.
 

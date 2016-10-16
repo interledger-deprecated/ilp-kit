@@ -6,10 +6,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/interledger/five-bells-wallet"
+    "url": "https://github.com/interledgerjs/five-bells-wallet"
   },
   "author": "Interledger Team <info@interledger.org>",
-  "homepage": "https://github.com/interledger/five-bells-wallet",
+  "homepage": "https://github.com/interledgerjs/five-bells-wallet",
   "keywords": [
     "five-bells",
     "ilp",

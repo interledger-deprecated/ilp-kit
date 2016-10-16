@@ -1,7 +1,7 @@
 {
   "name": "five-bells-wallet",
   "description": "Five Bells Wallet",
-  "repository": "https://github.com/interledger/five-bells-wallet",
+  "repository": "https://github.com/interledgerjs/five-bells-wallet",
   "logo": "http://node-js-sample.herokuapp.com/node.svg",
   "keywords": [
     "five-bells",
