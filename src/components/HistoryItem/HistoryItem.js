@@ -73,6 +73,7 @@ export default class HistoryItem extends Component {
 
     const profilePic = (type === 'outgoing' ? item.destination_image_url : item.source_image_url) || require('./placeholder.png')
 
+    // TODO payments grouping / message
     return (
       <div className={cx('item')} key={item.time_slot}>
         {/* <a href="" onClick={this.toggleLedgerTransfer} className={cx('link')}> */}

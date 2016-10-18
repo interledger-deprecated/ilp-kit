@@ -34,6 +34,7 @@ module.exports = class Utils {
     try {
       response = yield superagent.get(accountUri).end()
     } catch (e) {
+      console.error(e)
       throw new NotFoundError("Unknown account")
     }
 
@@ -77,6 +78,7 @@ module.exports = class Utils {
         )
       })
     } catch(e) {
+      console.error(e)
       throw new NotFoundError("Unknown account")
     }
 
@@ -106,6 +108,8 @@ module.exports = class Utils {
 
     // Webfinger lookup
     if (self.isWebfinger(destination) || self.isForeignAccountUri(destination)) {
+      // TODO use debug module
+      console.log('webfinger account')
       const account = yield self.getWebfingerAccount(destination)
 
       accountUri = account.accountUri
@@ -116,6 +120,7 @@ module.exports = class Utils {
 
     // Local account
     else {
+      console.log('normal account')
       accountUri = self.isAccountUri(destination) ? destination : self.ledgerUriPublic + '/accounts/' + destination
       ledgerUri = self.ledgerUriPublic
       paymentUri = self.localUri + '/receivers/' + destination

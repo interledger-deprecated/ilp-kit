@@ -60,7 +60,7 @@
       }
     },
     "start-prod-connector": {
-      "command": "sh -ac 'source ./connector.list ; npm start'",
+      "command": "bash -ac 'source ./connector.list ; npm start'",
       "env": {
         "NODE_ENV": "production"
       }
@@ -80,14 +80,14 @@
       }
     },
     "start-dev-ledger": {
-      "command": "unbuffer node ./bin/ledger.js",
+      "command": "node ./bin/ledger.js | bunyan --color",
       "env": {
         "NODE_PATH": "./node_modules/five-bells-ledger",
         "NODE_ENV": "development"
       }
     },
     "start-dev-connector": {
-      "command": "sh -ac 'source ./connector.list ; node ./node_modules/ilp-connector/src/index.js'",
+      "command": "bash -ac 'source ./connector.list ; node ./node_modules/ilp-connector/src/index.js'",
       "env": {
         "NODE_ENV": "development"
       }

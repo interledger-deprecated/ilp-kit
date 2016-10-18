@@ -259,6 +259,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
           destinationAmount: this.body.destinationAmount
         })
       } catch (e) {
+        console.error(e)
         throw new NoQuote('No quote for a specified destination/amount has been found')
       }
     }
