@@ -9,3 +9,4 @@ webpack-stats.json
 npm-debug.log
 src/theme/variables.scss
 uploads/
+connector.list

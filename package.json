@@ -20,20 +20,23 @@
     "finance"
   ],
   "scripts": {
-    "start": "concurrent --kill-others \"npm run start-prod-ledger\" \"npm run start-prod\" \"npm run start-prod-api\"",
+    "start": "concurrent --kill-others \"npm run start-prod-ledger\" \"npm run start-prod-connector\" \"npm run start-prod\" \"npm run start-prod-api\"",
     "start-prod": "better-npm-run start-prod",
     "start-prod-api": "better-npm-run start-prod-api",
     "start-prod-ledger": "better-npm-run start-prod-ledger",
+    "start-prod-connector": "better-npm-run start-prod-connector",
     "build": "cp -n src/theme/variables.scss.example src/theme/variables.scss ; better-npm-run build",
     "lint": "eslint -c .eslintrc src api",
     "start-dev": "better-npm-run start-dev",
     "start-dev-api": "better-npm-run start-dev-api",
     "start-dev-ledger": "better-npm-run start-dev-ledger",
+    "start-dev-connector": "better-npm-run start-dev-connector",
     "watch-client": "better-npm-run watch-client",
-    "dev": "concurrent --kill-others \"npm run watch-client\" \"npm run start-dev-ledger\" \"npm run start-dev\" \"npm run start-dev-api\"",
+    "dev": "concurrent --kill-others \"npm run watch-client\" \"npm run start-dev-ledger\" \"npm run start-dev-connector\" \"npm run start-dev\" \"npm run start-dev-api\"",
     "test": "cp -n src/theme/variables.scss.example src/theme/variables.scss ; karma start",
     "test-api": "mocha",
-    "apidoc": "apidoc -i api/src/controllers/ -o apidoc-out"
+    "apidoc": "apidoc -i api/src/controllers/ -o apidoc-out",
+    "configure": "./node_modules/ilp-connector-cli/bin/configure.js -o connector.list"
   },
   "betterScripts": {
     "start-prod": {
@@ -56,6 +59,12 @@
         "NODE_ENV": "production"
       }
     },
+    "start-prod-connector": {
+      "command": "sh -ac 'source ./connector.list ; npm start'",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
     "start-dev": {
       "command": "unbuffer node ./bin/server.js",
       "env": {
@@ -74,6 +83,12 @@
       "command": "unbuffer node ./bin/ledger.js",
       "env": {
         "NODE_PATH": "./node_modules/five-bells-ledger",
+        "NODE_ENV": "development"
+      }
+    },
+    "start-dev-connector": {
+      "command": "sh -ac 'source ./connector.list ; node ./node_modules/ilp-connector/src/index.js'",
+      "env": {
         "NODE_ENV": "development"
       }
     },
@@ -147,6 +162,7 @@
     "phantomjs-prebuilt": "^2.1.7",
     "piping": "^0.3.0",
     "pretty-error": "^1.2.0",
+    "raw-loader": "^0.5.1",
     "react": "^15.3.2",
     "react-addons-create-fragment": "^15.3.2",
     "react-addons-css-transition-group": "^15.3.2",
@@ -186,7 +202,7 @@
     "babel-plugin-typecheck": "^3.6.0",
     "better-npm-run": "^0.0.8",
     "bootstrap-sass": "^3.3.6",
-    "bootstrap-sass-loader": "^1.0.10",
+    "bootstrap-sass-loader": "vhpoet/bootstrap-sass-loader",
     "chai": "^3.3.0",
     "clean-webpack-plugin": "^0.1.10",
     "co-mocha": "^1.1.2",

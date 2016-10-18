@@ -46,6 +46,12 @@ npm install
 
 ## Usage
 
+### Configuring the connector
+
+```bash
+npm run configure
+```
+
 ### Running Dev Wallet
 
 _You must specify the required environment variables before running the below command_
