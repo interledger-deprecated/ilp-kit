@@ -61,7 +61,7 @@
       }
     },
     "start-prod-connector": {
-      "command": "bash -ac 'source ./connector.list ; node ./node_modules/ilp-connector/src/index.js'",
+      "command": "test -n \"$CONNECTOR_ENABLE\" && bash -ac 'source ./connector.list ; node ./node_modules/ilp-connector/src/index.js'",
       "env": {
         "NODE_ENV": "production"
       }
@@ -88,7 +88,7 @@
       }
     },
     "start-dev-connector": {
-      "command": "bash -ac 'source ./connector.list ; node ./node_modules/ilp-connector/src/index.js'",
+      "command": "test -n \"$CONNECTOR_ENABLE\" && bash -ac 'source ./connector.list ; node ./node_modules/ilp-connector/src/index.js'",
       "env": {
         "NODE_ENV": "development"
       }
