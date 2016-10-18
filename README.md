@@ -20,8 +20,8 @@ Five Bells Wallet
   - [Hosts File](#hosts-file)
   - [Database](#database)
   - [Apache Virtual Hosts](#apache-virtual-hosts)
-  - [Wallet 1 + Ledger 1 Instance](wallet-1--ledger-1-instance)
-  - [Wallet 2 + Ledger 2 Instance](wallet-2--ledger-2-instance)
+  - [Wallet 1 + Ledger 1 Instance](#wallet-1--ledger-1-instance)
+  - [Wallet 2 + Ledger 2 Instance](#wallet-2--ledger-2-instance)
   - [Setup five-bells-connector](#setup-five-bells-connector)
 - [Architecture](#architecture)
   - [Backend (REST API)](#backend-rest-api)
@@ -54,8 +54,14 @@ npm run configure
 
 ### Running Dev Wallet
 
-_You must specify the required environment variables before running the below command_
+_You must specify the required environment variables before running below commands_
 
+Build the vendor files (run this every time package dependencies change)
+```bash
+npm run build-dlls 
+```
+
+Run a development server
 ```bash
 npm run dev
 ```
@@ -251,7 +257,7 @@ LEDGER_ILP_PREFIX=wallet1.
 
 > Note: Use `LEDGER_DB_SYNC=true` environment variable for both wallet1 and wallet2 to create the ledger db tables first time when you run each of the instances.
 
-### Wallet 2 + Ledger 2
+### Wallet 2 + Ledger 2 instance
 
 Run with these environment variables
 ```
