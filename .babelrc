@@ -5,7 +5,8 @@
     "transform-runtime",
     "add-module-exports",
     "transform-decorators-legacy",
-    "transform-react-display-name"
+    "transform-react-display-name",
+    "lodash"
   ],
 
   "env": {
@@ -16,8 +17,7 @@
           "transforms": [{
             "transform": "react-transform-catch-errors",
             "imports": ["react", "redbox-react"]
-          }
-          ]
+          }]
         }]
       ]
     }

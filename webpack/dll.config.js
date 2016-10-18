@@ -33,8 +33,6 @@ combinedPlugins = combinedPlugins.concat(babelrcObjectDevelopment.plugins);
 var babelLoaderQuery = Object.assign({}, babelrcObjectDevelopment, babelrcObject, {plugins: combinedPlugins});
 delete babelLoaderQuery.env;
 
-babelLoaderQuery.cacheDirectory = true
-
 // Since we use .babelrc for client and server, and we don't want HMR enabled on the server, we have to add
 // the babel plugin react-transform-hmr manually here.
 
@@ -65,23 +63,75 @@ reactTransform[1].transforms.push({
 });
 
 module.exports = {
+  cache: true,
   devtool: 'eval',
   context: path.resolve(__dirname, '..'),
   entry: {
-    'main': [
-      'webpack-hot-middleware/client?path=http://' + host + ':' + port + '/__webpack_hmr',
-      'bootstrap-sass!./src/theme/bootstrap.config.js',
-      'font-awesome-webpack!./src/theme/font-awesome.config.js',
-      './src/client.js'
+    app_assets: ['./src/client.js'],
+    // TODO maybe include all deps by default?
+    vendor: [
+      'babel-polyfill',
+
+      'babel-runtime/core-js/array/from',
+      'babel-runtime/core-js/get-iterator',
+      'babel-runtime/core-js/is-iterable',
+      'babel-runtime/core-js/json/stringify',
+      'babel-runtime/core-js/number/is-integer',
+      'babel-runtime/core-js/number/is-safe-integer',
+      'babel-runtime/core-js/object/define-property',
+      'babel-runtime/core-js/object/get-own-property-descriptor',
+      'babel-runtime/core-js/object/get-own-property-names',
+      'babel-runtime/core-js/object/get-prototype-of',
+      'babel-runtime/core-js/promise',
+      'babel-runtime/helpers/create-class',
+      'babel-runtime/helpers/createClass',
+      'babel-runtime/helpers/defineProperty',
+      'babel-runtime/helpers/get',
+      'babel-runtime/helpers/possibleConstructorReturn',
+      'babel-runtime/helpers/slicedToArray',
+      'babel-runtime/helpers/to-consumable-array',
+      'babel-runtime/helpers/toConsumableArray',
+
+      'classnames/bind',
+      'lodash',
+      'moment',
+      'moment-timezone',
+      'react',
+      'react-addons-create-fragment',
+      'react-addons-css-transition-group',
+      'react-bootstrap',
+      'react-document-meta',
+      'react-dom',
+      'react-dropzone-component',
+      'react-ga',
+      'react-paginate',
+      'react-redux',
+      'react-router',
+      'react-router-bootstrap',
+      'react-router-redux',
+      'react-timeago',
+      'react-waypoint',
+      'redux',
+      'redux-async-connect',
+      'redux-form',
+      'redux-pagination',
+      'socket.io-client',
+      'superagent',
+      'uuid4',
+
+      // Dev deps
+      'redux-devtools',
+      'redux-devtools-log-monitor',
+      'redux-devtools-dock-monitor'
     ]
   },
   output: {
     path: assetsPath,
-    filename: 'app.js',
-    publicPath: 'http://' + host + ':' + port + '/dist/'
+    filename: '[name].dll.js',
+    library: '[name]',
+    publicPath: 'http://' + host + ':' + (port - 1) + '/dist/'
   },
   module: {
-    // TODO add happypack https://github.com/erikras/react-redux-universal-hot-example/pull/1201
     loaders: [
       { test: /\.jsx?$/, exclude: /node_modules/, loaders: ['babel?' + JSON.stringify(babelLoaderQuery)]},
       { test: /\.json$/, loader: 'json-loader' },
@@ -105,9 +155,9 @@ module.exports = {
   },
   plugins: [
     new LodashModuleReplacementPlugin(),
-    new webpack.DllReferencePlugin({
-      context: path.join( __dirname, '../' ),
-      manifest: require(path.join(assetsPath, 'vendor-manifest.json')),
+    new webpack.DllPlugin({
+      name: '[name]',
+      path: path.join( assetsPath, '[name]-manifest.json' ),
     }),
     // hot reload
     new webpack.HotModuleReplacementPlugin(),
@@ -117,6 +167,7 @@ module.exports = {
       __SERVER__: false,
       __DEVELOPMENT__: true,
       __DEVTOOLS__: true  // <-------- DISABLE redux-devtools HERE
-    })
+    }),
+    webpackIsomorphicToolsPlugin.development()
   ]
 };

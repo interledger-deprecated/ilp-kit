@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react';
-import lodash from 'lodash';
+// import _extend from 'lodash/extend';
 
 import classNames from 'classnames/bind';
 import styles from './PrettyJson.scss';
@@ -41,6 +41,6 @@ export default class PrettyJson extends Component {
       }
     }
 
-    return React.createElement('pre', lodash.extend({}, this.props, { className: 'json-pretty', dangerouslySetInnerHTML: { __html: this._pretty(json) } }));
+    return React.createElement('pre', _extend({}, this.props, { className: 'json-pretty', dangerouslySetInnerHTML: { __html: this._pretty(json) } }));
   }
 }

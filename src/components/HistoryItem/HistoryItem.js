@@ -7,8 +7,6 @@ import { contextualizePayment } from '../../utils/api'
 import { getAccountName } from '../../utils/account'
 import { amount } from '../../utils/amount'
 
-import { PrettyJson } from 'components'
-
 import classNames from 'classnames/bind'
 import styles from './HistoryItem.scss'
 const cx = classNames.bind(styles)

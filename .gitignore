@@ -4,9 +4,10 @@ dist/
 /web/
 /apidoc-out/
 *.iml
-webpack-assets.json
 webpack-stats.json
+webpack-assets.json
 npm-debug.log
 src/theme/variables.scss
 uploads/
 connector.list
+keys/
