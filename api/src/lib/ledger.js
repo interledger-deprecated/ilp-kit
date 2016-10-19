@@ -109,9 +109,11 @@ module.exports = class Ledger extends EventEmitter {
   }
 
   createAccount(user) {
+    const reload = this.config.data.get('reload')
+
     let data = {
       name: user.username,
-      balance: user.balance ? ''+user.balance : '1000'
+      balance: reload ? '1000' : '0'
     }
 
     if (user.password) {
@@ -121,6 +123,6 @@ module.exports = class Ledger extends EventEmitter {
     return this.putAccount({
       username: this.config.getIn(['ledger', 'admin', 'name']),
       password: this.config.getIn(['ledger', 'admin', 'pass'])
-    }, data)
+    }, data);
   }
 }
