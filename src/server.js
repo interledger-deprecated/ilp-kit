@@ -13,6 +13,7 @@ import PrettyError from 'pretty-error';
 import http from 'http';
 import forceSSL from 'express-force-ssl';
 import url from 'url';
+import fs from 'fs';
 
 import { match } from 'react-router';
 import { ReduxAsyncConnect, loadOnServer } from 'redux-async-connect';
@@ -107,6 +108,41 @@ proxyLedger.on('error', (error, req, res) => {
   json = {error: 'server_error', reason: 'Ledger is unavailable'};
   res.end(JSON.stringify(json));
 });
+
+if (process.env.CONNECTOR_ENABLE) {
+  fs.readFileSync('connector.list').toString().split('\n').forEach(
+    (line) => {
+      const port = line.match(/CONNECTOR_PORT="(.*)"/)
+
+      if (port && port[1]) {
+        const API_CONNECTOR_URI = 'http://' + (process.env.API_PRIVATE_HOSTNAME || process.env.CONNECTOR_HOSTNAME) + ':' + port[1]
+
+        const proxyConnector = httpProxy.createProxyServer({
+          target: API_CONNECTOR_URI,
+          ws: true
+        });
+
+        // Proxy to self hosted connector
+        app.use('/connector', (req, res) => {
+          proxyConnector.web(req, res);
+        });
+
+        proxyConnector.on('error', (error, req, res) => {
+          let json;
+          if (error.code !== 'ECONNRESET') {
+            console.error('proxy error', error);
+          }
+          // if (!res.headersSent) {
+          //   res.writeHead(500, {'content-type': 'application/json'});
+          // }
+
+          json = {error: 'server_error', reason: 'Connector is unavailable'};
+          res.end(JSON.stringify(json));
+        });
+      }
+    }
+  );
+}
 
 app.use((req, res) => {
   if (__DEVELOPMENT__) {
