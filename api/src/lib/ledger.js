@@ -109,7 +109,7 @@ module.exports = class Ledger extends EventEmitter {
   }
 
   createAccount(user) {
-    const reload = this.config.data.get('reload')
+    const reload = this.config.get('reload')
 
     let data = {
       name: user.username,
