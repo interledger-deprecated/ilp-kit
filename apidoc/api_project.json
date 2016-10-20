@@ -1,8 +1,8 @@
 {
-  "name": "five-bells-wallet",
+  "name": "ilp-kit",
   "version": "1.0.0",
-  "description": "Five Bells Wallet",
-  "title": "Five Bells Wallet",
+  "description": "ILP kit",
+  "title": "ILP kit",
   "url": "https://wallet.example",
   "order": [
     "User",
@@ -14,7 +14,7 @@
   "apidoc": "0.2.0",
   "generator": {
     "name": "apidoc",
-    "time": "2016-10-20T20:58:18.190Z",
+    "time": "2016-10-20T21:38:36.335Z",
     "url": "http://apidocjs.com",
     "version": "0.16.1"
   }
