@@ -68,14 +68,14 @@
       }
     },
     "start-dev": {
-      "command": "unbuffer node ./bin/server.js",
+      "command": "node ./bin/server.js",
       "env": {
         "NODE_PATH": "./src",
         "NODE_ENV": "development"
       }
     },
     "start-dev-api": {
-      "command": "unbuffer node ./bin/api.js",
+      "command": "node ./bin/api.js",
       "env": {
         "NODE_PATH": "./api",
         "NODE_ENV": "development"
