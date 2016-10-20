@@ -1,15 +1,15 @@
 {
-  "name": "five-bells-wallet",
+  "name": "ilp-kit",
   "version": "1.0.0",
-  "description": "Five Bells Wallet",
+  "description": "ILP kit",
   "main": "bin/server.js",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/interledgerjs/five-bells-wallet"
+    "url": "https://github.com/interledgerjs/ilp-kit"
   },
   "author": "Interledger Team <info@interledger.org>",
-  "homepage": "https://github.com/interledgerjs/five-bells-wallet",
+  "homepage": "https://github.com/interledgerjs/ilp-kit",
   "keywords": [
     "five-bells",
     "ilp",

@@ -128,7 +128,7 @@ export default class Home extends Component {
           {/*
           <div className="panel panel-default">
             <div className="panel-heading">
-              <div className="panel-title">Use Five Bells Wallet as your default payment provider</div>
+              <div className="panel-title">Use ILP kit as your default payment provider</div>
             </div>
             <div className="panel-body">
               <button className="btn btn-complete btn-block" onClick={this.handleDefaultPayment}>Set as default</button>

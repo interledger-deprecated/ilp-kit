@@ -1,9 +1,7 @@
-# Five Bells Wallet [![circle][circle-image]][circle-url]
+# ILP kit [![circle][circle-image]][circle-url]
 
-[circle-image]: https://circleci.com/gh/interledgerjs/five-bells-wallet.svg?style=shield&circle-token=65d802e1ea641aabcc95f8d28f2c6ade577716a9
-[circle-url]: https://circleci.com/gh/interledgerjs/five-bells-wallet
-
-Five Bells Wallet
+[circle-image]: https://circleci.com/gh/interledgerjs/ilp-kit.svg?style=shield&circle-token=65d802e1ea641aabcc95f8d28f2c6ade577716a9
+[circle-url]: https://circleci.com/gh/interledgerjs/ilp-kit
 
 ## Table of contents
 
@@ -14,7 +12,7 @@ Five Bells Wallet
   - [Building Production Wallet](#building-production-wallet)
   - [Running Production Wallet](#running-production-wallet)
   - [Port Forwarding](#port-forwarding)
-  - [Running a ledger instance in the five-bells-wallet process](#running-a-ledger-instance-in-the-five-bells-wallet-process)
+  - [Running a ledger instance in the ilp-kit process](#running-a-ledger-instance-in-the-ilp-kit-process)
   - [Environment variables](#environment-variables)
 - [Interledger Setup](#interledger-setup)
   - [Hosts File](#hosts-file)
@@ -39,8 +37,8 @@ Five Bells Wallet
 ## Installation
 
 ```bash
-git clone git@github.com:interledgerjs/five-bells-wallet.git
-cd five-bells-wallet
+git clone git@github.com:interledgerjs/ilp-kit.git
+cd ilp-kit
 npm install
 ```
 
@@ -88,7 +86,7 @@ Here's an example of an Apache 2.4 virtual host with enabled port forwarding.
 
 > NOTE: Current webfinger implementation will not work if the public port is not 443 or 80.
 
-> NOTE: At the moment you need to have a 443 virtual host in addition to 80 virtual host if you're use 80 as a public port. 443 virtual host is used for the webfinger lookups. This is a [reported issue](https://github.com/e14n/webfinger/issues/27) in the webfinger lib used by the five-bells-wallet.
+> NOTE: At the moment you need to have a 443 virtual host in addition to 80 virtual host if you're use 80 as a public port. 443 virtual host is used for the webfinger lookups. This is a [reported issue](https://github.com/e14n/webfinger/issues/27) in the webfinger lib used by the ilp-kit.
 
 ```
 <VirtualHost *:443> 
@@ -107,9 +105,9 @@ Here's an example of an Apache 2.4 virtual host with enabled port forwarding.
 </VirtualHost> 
 ```
 
-### Running a ledger instance in the five-bells-wallet process
+### Running a ledger instance in the ilp-kit process
 
-Unless you're hosting an external ledger, you can optionally run a five-bells-ledger instance inside the five-bells-wallet. 
+Unless you're hosting an external ledger, you can optionally run a five-bells-ledger instance inside the ilp-kit. 
 To do so, all you need to do is leave the `API_LEDGER_URI` environment variable empty, and the software will automatically run a five-bells-ledger instance.
 
 Five-bells-ledger instance comes with default environment variables, but you can change them specifying any of the five-bells-ledger [environment variables](https://github.com/interledgerjs/five-bells-ledger#step-3-run-it).
@@ -133,7 +131,7 @@ Name | Example | Description |
 
 Name | Example | Description |
 ---- | ------- | ----------- |
-`API_PUBLIC_HTTPS` | `''` | Whether or not the publicly visible instance of Five Bells Wallet is using HTTPS.
+`API_PUBLIC_HTTPS` | `''` | Whether or not the publicly visible instance of ILP kit is using HTTPS.
 `API_PRIVATE_HOSTNAME` | `localhost` | Private API hostname.
 `API_PUBLIC_PORT` | `''` | Api public port.
 `API_SECRET` | `qO2UX+fdl+tg0a1bYt` | Api secret. Used to generate the session, oauth and condition secrets.
@@ -279,7 +277,7 @@ LEDGER_ILP_PREFIX=wallet2.
 
 ### Setup five-bells-connector
 
-> Note: five-bells-wallet currently works with [five-bells-connector v8.1.0](https://github.com/interledgerjs/five-bells-connector/tree/v8.1.0)
+> Note: ilp-kit currently works with [five-bells-connector v8.1.0](https://github.com/interledgerjs/five-bells-connector/tree/v8.1.0)
 
 - Create a trader user on both wallet1 and wallet2 instances with username: `trader`, password: `trader`.
 
@@ -295,13 +293,13 @@ CONNECTOR_QUOTE_FULL_PATH=true
 ```
 
 ## Architecture
-Five Bells Wallet consists of a [Node.js](https://github.com/nodejs/node) (developed on v5.6) backend (REST API) and a client built using [React](https://github.com/facebook/react).
+ILP kit consists of a [Node.js](https://github.com/nodejs/node) (developed on v5.6) backend (REST API) and a client built using [React](https://github.com/facebook/react).
 
 ### Backend (REST API)
 The backend is responsible for communicating with the ILP ledger, creating accounts, sending payments and keeping the payment history.
 
 #### API docs
-[http://interledger.org/five-bells-wallet/apidoc](http://interledger.org/five-bells-wallet/apidoc/)
+[http://interledger.org/ilp-kit/apidoc](http://interledger.org/ilp-kit/apidoc/)
 
 #### SPSP
 

@@ -1,7 +1,7 @@
 {
-  "name": "five-bells-wallet",
-  "description": "Five Bells Wallet",
-  "repository": "https://github.com/interledgerjs/five-bells-wallet",
+  "name": "ilp-kit",
+  "description": "ILP kit",
+  "repository": "https://github.com/interledgerjs/ilp-kit",
   "logo": "http://node-js-sample.herokuapp.com/node.svg",
   "keywords": [
     "five-bells",

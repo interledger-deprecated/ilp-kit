@@ -166,13 +166,13 @@ export default class App extends Component {
                 <NavItem onClick={this.onNavItemClick}>Home</NavItem>
               </IndexLinkContainer>
               <NavDropdown title="Dev Tools" id="devtools">
-                <MenuItem href="https://interledger.org/five-bells-wallet/apidoc"
+                <MenuItem href="https://interledger.org/ilp-kit/apidoc"
                           target="_blank" onClick={this.onNavItemClick}>
                   API docs
                 </MenuItem>
-                <MenuItem href="https://github.com/interledgerjs/five-bells-wallet-client"
+                <MenuItem href="https://github.com/interledgerjs/ilp-kit-client"
                           target="_blank" onClick={this.onNavItemClick}>
-                  Wallet Client
+                  ILP Kit Client
                 </MenuItem>
               </NavDropdown>
               {!user.github_id &&

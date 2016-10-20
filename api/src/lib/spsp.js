@@ -3,7 +3,7 @@
 const co = require('co')
 const uuid = require ('uuid4')
 const superagent = require('superagent-promise')(require('superagent'), Promise)
-const debug = require('debug')('five-bells-wallet:spsp')
+const debug = require('debug')('ilp-kit:spsp')
 
 const ILP = require('ilp')
 const FiveBellsLedgerAdminPlugin = require('ilp-plugin-bells-admin')
