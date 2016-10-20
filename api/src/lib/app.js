@@ -1,5 +1,6 @@
 "use strict"
 
+const fs = require('fs')
 const co = require('co')
 const Koa = require('koa.io')
 const bodyParser = require('koa-body')
@@ -34,13 +35,19 @@ module.exports = class App {
 
     const app = this.app = new Koa()
 
+    const uploadDir = __dirname + '/../../../uploads'
+
+    // Create if doesn't exist
+    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir)
+
     app.use(bodyParser({
       multipart: true,
       formidable: {
         keepExtensions: true,
-        uploadDir: __dirname + './../../../uploads' // TODO variable
+        uploadDir
       }
     }))
+
     app.use(function *(next) {
       if (this.request.method === 'POST' || this.request.method === 'PUT') {
         // the parsed body will store in this.request.body
