@@ -113,6 +113,10 @@ export const logout = () => ({
     })
 })
 
+export const updatePic = () => ({
+  type: types.AUTH_UPDATE_PIC
+})
+
 export const save = (opts, data) => ({
   types: [types.AUTH_SAVE, types.AUTH_SAVE_SUCCESS, types.AUTH_SAVE_FAIL],
   promise: (client) => client.put('/users/' + opts.username, {data})

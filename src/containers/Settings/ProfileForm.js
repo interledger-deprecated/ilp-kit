@@ -71,7 +71,7 @@ export default class ProfileForm extends Component {
   }
 
   dropzoneCoreConfig = {
-    dictDefaultMessage: 'Drop an image to use as a profile picture'
+    dictDefaultMessage: 'Drop an image or click to upload a picture'
   }
 
   dropzoneEventHandlers = {
@@ -82,8 +82,8 @@ export default class ProfileForm extends Component {
       // TODO:UX upload progress photo placeholders
     },
     // TODO handle error
-    success: () => {
-      // this.props.save(response)
+    success: (data, file) => {
+      this.props.updatePic()
       tracker.track('Profile picture upload')
     },
     complete: (file) => {
@@ -97,7 +97,7 @@ export default class ProfileForm extends Component {
 
   render() {
     const { fields: { email, name }, pristine, invalid,
-      handleSubmit, submitting, success, error, submitFailed } = this.props
+      handleSubmit, submitting, success, error, submitFailed, user } = this.props
 
     return (
       <div className="panel panel-default">
@@ -121,12 +121,19 @@ export default class ProfileForm extends Component {
             })()}
           </Alert>}
 
-          <DropzoneComponent
-            config={this.dropzoneConfig}
-            djsConfig={this.dropzoneCoreConfig}
-            eventHandlers={this.dropzoneEventHandlers}
-            className={cx('dropzone')}
-          />
+          <div className="row">
+            <div className="col-sm-3">
+              <img src={user.profile_picture || require('../../components/HistoryItem/placeholder.png')} className={cx('profilePic')} />
+            </div>
+            <div className="col-sm-9">
+              <DropzoneComponent
+                config={this.dropzoneConfig}
+                djsConfig={this.dropzoneCoreConfig}
+                eventHandlers={this.dropzoneEventHandlers}
+                className={cx('dropzone')}
+              />
+            </div>
+          </div>
 
           <form onSubmit={handleSubmit(this.save)}>
             <Input object={email} label="Email" type="email" size="lg" focus />

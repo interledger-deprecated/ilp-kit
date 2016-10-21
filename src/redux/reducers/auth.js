@@ -35,6 +35,14 @@ export default function reducer(state = initialState, action = {}) {
         loaded: true,
         user: extendUser(action.result)
       };
+    case types.AUTH_UPDATE_PIC:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          profile_picture: state.user.profile_picture + '?c=' + Math.random()
+        }
+      }
     case types.AUTH_LOAD_FAIL:
       return {
         ...state,

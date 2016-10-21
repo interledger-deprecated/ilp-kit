@@ -2,7 +2,16 @@
 
 .dropzone {
   border: 1px dashed #d9d9d9;
-  padding: 20px;
-  cursor: pointer;
+  padding: 26px 10px;
   margin: 0 0 10px;
+  cursor: pointer;
+  text-align: center;
+
+  &:hover {
+    background-color: #f9f9f9;
+  }
+}
+.profilePic {
+  margin: 0 0 10px;
+  width: 100%;
 }
