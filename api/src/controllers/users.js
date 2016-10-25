@@ -134,8 +134,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
       try {
         ledgerUser = yield ledger.createAccount(userObj)
       } catch (e) {
-        // TODO throw exception
-        console.log('users.js:113', e)
+        throw new UsernameTakenError("Ledger rejected username")
       }
 
       userObj.account = ledgerUser.id
@@ -375,12 +374,13 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
     static * getReceiver() {
       const ledgerPrefix = config.data.getIn(['ledger', 'prefix'])
       let user = yield User.findOne({where: {username: this.params.username}})
-      user = user.getDataExternal()
 
       if (!user) {
         // TODO throw exception
         return this.status = 404
       }
+
+      user = user.getDataExternal()
 
       this.body = {
         'type': 'payee',
@@ -395,7 +395,18 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
     static * getProfilePicture() {
       const user = yield User.findOne({where: {username: this.params.username}})
 
-      const img = fs.readFileSync(__dirname + '/../../../uploads/' + user.profile_picture)
+      if (!user) {
+        // TODO throw exception
+        return this.status = 404
+      }
+
+      const file = __dirname + '/../../../uploads/' + user.profile_picture
+
+      if (!fs.existsSync(file)) {
+        return this.status = 422
+      }
+    
+      const img = fs.readFileSync(file)
       this.body = img
     }
   }

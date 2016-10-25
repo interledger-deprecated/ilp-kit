@@ -16,11 +16,12 @@ const DB = require('./db')
 const Log = require('./log')
 const Ledger = require('./ledger')
 const SPSP = require('./spsp')
+const User = require('../models/user')
 const Socket = require('./socket')
 
 module.exports = class App {
-  static constitute () { return [ Config, Auth, Router, Validator, Ledger, SPSP, DB, Log, Socket ] }
-  constructor (config, auth, router, validator, ledger, spsp, db, log, socket ) {
+  static constitute () { return [ Config, Auth, Router, Validator, Ledger, SPSP, DB, Log, Socket, User ] }
+  constructor (config, auth, router, validator, ledger, spsp, db, log, socket, user) {
     this.config = config.data
     this.auth = auth
     this.router = router
@@ -28,6 +29,7 @@ module.exports = class App {
     this.validator = validator
     this.ledger = ledger
     this.spsp = spsp
+    this.user = user
     this.db = db
     this.log = log('app')
 

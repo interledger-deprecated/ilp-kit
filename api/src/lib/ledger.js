@@ -43,7 +43,7 @@ module.exports = class Ledger extends EventEmitter {
       this.log.info('getting ledger info ' + ledgerUri)
       response = yield superagent.get(ledgerUri).end()
     } catch (err) {
-      if (err.status !== 422) throw err
+      throw err
     }
 
     return response.body
@@ -58,12 +58,12 @@ module.exports = class Ledger extends EventEmitter {
         .auth(admin ? this.config.getIn(['ledger', 'admin', 'name']) : user.username, admin ? this.config.getIn(['ledger', 'admin', 'pass']): user.password)
         .end()
     } catch (e) {
-      if (e.response && e.response.body) {
-        if (e.response.body.id === 'NotFoundError') {
-          throw new NotFoundError(e.response.body.message)
-        } else if (e.response.body.id === 'UnauthorizedError') {
-          throw new NotFoundError(e.response.body.message)
-        }
+      if (e.response && e.response.body &&
+         (e.response.body.id === 'NotFoundError' ||
+          e.response.body.id === 'UnauthorizedError')) {
+        throw new NotFoundError(e.response.body.message)
+      } else {
+        throw e
       }
     }
 
@@ -73,14 +73,10 @@ module.exports = class Ledger extends EventEmitter {
   * putAccount(auth, data) {
     let response
 
-    try {
-      response = yield superagent
-        .put(this.ledgerUri + '/accounts/' + data.name)
-        .send(data)
-        .auth(auth.username, auth.password)
-    } catch (e) {
-      // TODO handle
-    }
+    response = yield superagent
+      .put(this.ledgerUri + '/accounts/' + data.name)
+      .send(data)
+      .auth(auth.username, auth.password)
 
     return response.body
   }
