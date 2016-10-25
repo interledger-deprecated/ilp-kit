@@ -13,7 +13,7 @@ import classNames from 'classnames/bind'
 import styles from './SendForm.scss'
 const cx = classNames.bind(styles)
 
-import { Input } from 'components'
+import Input from 'components/Input/Input'
 
 @reduxForm({
   form: 'send',

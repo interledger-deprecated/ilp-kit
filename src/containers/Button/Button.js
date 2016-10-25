@@ -1,6 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 
-import { PayButton } from 'components';
+import PayButton from 'components/PayButton/PayButton';
 
 import classNames from 'classnames/bind';
 import styles from './Button.scss';

@@ -5,9 +5,9 @@ import { amount } from '../../utils/amount'
 
 import Alert from 'react-bootstrap/lib/Alert'
 
-import { SendForm } from 'containers'
-import { History } from 'containers'
-import { Stats } from 'containers'
+import SendForm from 'containers/SendForm/SendForm'
+import History from 'containers/History/History'
+import Stats from 'containers/Stats/Stats'
 
 import classNames from 'classnames/bind'
 import styles from './Home.scss'

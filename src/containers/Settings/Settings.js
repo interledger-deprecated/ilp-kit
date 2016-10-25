@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 
-import { ProfileForm } from 'containers'
-import { ChangePasswordForm } from 'containers'
+import ProfileForm from './ProfileForm'
+import ChangePasswordForm from './ChangePasswordForm'
 
 export default class Settings extends Component {
   render() {

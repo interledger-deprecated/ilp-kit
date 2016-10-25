@@ -78,6 +78,7 @@ module.exports = {
   output: {
     path: assetsPath,
     filename: 'app.js',
+    chunkFilename: '[name].app.js',
     publicPath: 'http://' + host + ':' + port + '/dist/'
   },
   module: {

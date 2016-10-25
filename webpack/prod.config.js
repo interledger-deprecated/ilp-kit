@@ -22,6 +22,38 @@ module.exports = {
       'bootstrap-sass!./src/theme/bootstrap.config.prod.js',
       'font-awesome-webpack!./src/theme/font-awesome.config.prod.js',
       './src/client.js'
+    ],
+    'vendor': [
+      'react',
+      'react-dom',
+      'react-dom/server',
+      'react-router',
+      'redux',
+      'react-redux',
+      'redux-async-connect',
+      'redux-form',
+      'socket.io-client',
+      'react-ga',
+      'serialize-javascript',
+      'uuid4',
+      'react-addons-css-transition-group',
+      'react-timeago',
+      'moment',
+      'moment-timezone',
+      'classnames/bind',
+      'react-waypoint',
+      'react-document-meta',
+      'react-router-redux',
+      'redux-pagination',
+      'react-dropzone-component',
+      'superagent',
+
+      'react-bootstrap/lib/Alert',
+      'react-bootstrap/lib/Navbar',
+      'react-bootstrap/lib/Nav',
+      'react-bootstrap/lib/NavItem',
+      'react-bootstrap/lib/NavDropdown',
+      'react-bootstrap/lib/MenuItem'
     ]
   },
   output: {
@@ -79,6 +111,10 @@ module.exports = {
         warnings: false
       }
     }),
+    // TODO:PERFORMANCE this is not a final solution to long term caching.
+    //   If the number of modules changes (add/remove modules), all of the chunknames change too
+    new webpack.optimize.CommonsChunkPlugin("vendor", "vendor-[chunkhash].js"),
+    new webpack.optimize.CommonsChunkPlugin({name: 'meta', chunks: ["vendor"]}),
 
     webpackIsomorphicToolsPlugin
   ]

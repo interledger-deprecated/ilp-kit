@@ -4,7 +4,7 @@ import registerValidation from './RegisterValidation'
 
 import Alert from 'react-bootstrap/lib/Alert'
 
-import { Input } from 'components'
+import Input from 'components/Input/Input'
 
 import classNames from 'classnames/bind';
 import styles from './RegisterForm.scss';

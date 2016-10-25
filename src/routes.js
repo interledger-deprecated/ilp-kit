@@ -1,15 +1,9 @@
 import React from 'react'
 import {Router, IndexRoute, Route} from 'react-router'
 import { isLoaded as isAuthLoaded, load } from 'redux/actions/auth'
-import {
-    App,
-    Auth,
-    Home,
-    Button,
-    Settings,
-    NotFound,
-    Widget
-  } from 'containers'
+import App from 'containers/App/App'
+import NotFound from 'containers/NotFound/NotFound'
+import Widget from 'containers/Widget/Widget'
 
 export default (store) => {
   const isAuth = () => {
@@ -38,10 +32,32 @@ export default (store) => {
     })
   }
 
+  const getHome = (nextState, cb) => {
+    require.ensure(['./containers/Home/Home'], (require) => {
+      cb(null, require('./containers/Home/Home'))
+    }, 'home')
+  }
+
+  const getAuth = (nextState, cb) => {
+    require.ensure(['./containers/Auth/Auth'], (require) => {
+      cb(null, require('./containers/Auth/Auth'))
+    }, 'auth')
+  }
+
   const rootComponent = (nextState, cb) => {
-    loadAuth(() => {
-      cb(null, isAuth() ? Home : Auth)
-    })
+    loadAuth(() => isAuth() ? getHome(null, cb) : getAuth(null, cb))
+  }
+
+  const getButton = (nextState, cb) => {
+    require.ensure(['./containers/Button/Button'], (require) => {
+      cb(null, require('./containers/Button/Button'))
+    }, 'button')
+  }
+
+  const getSettings = (nextState, cb) => {
+    require.ensure(['./containers/Settings/Settings'], (require) => {
+      cb(null, require('./containers/Settings/Settings'))
+    }, 'settings')
   }
 
   /**
@@ -56,16 +72,16 @@ export default (store) => {
 
         { /* Routes only available to guests */ }
         <Route onEnter={noAuth}>
-          <Route path="login" component={Auth}/>
-          <Route path="register" component={Auth}/>
-          <Route path="forgot-password" component={Auth}/>
-          <Route path="change-password/:username/:passwordChangeCode" component={Auth}/>
+          <Route path="login" getComponent={getAuth}/>
+          <Route path="register" getComponent={getAuth}/>
+          <Route path="forgot-password" getComponent={getAuth}/>
+          <Route path="change-password/:username/:passwordChangeCode" getComponent={getAuth}/>
         </Route>
 
         { /* Routes requiring Auth */ }
         <Route onEnter={requireAuth}>
-          <Route path="button" component={Button}/>
-          <Route path="settings" component={Settings}/>
+          <Route path="button" getComponent={getButton}/>
+          <Route path="settings" getComponent={getSettings}/>
         </Route>
 
         { /* Routes available to all */ }

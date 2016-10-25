@@ -5,7 +5,7 @@ import loginValidation from './LoginValidation'
 
 import Alert from 'react-bootstrap/lib/Alert'
 
-import { Input } from 'components'
+import Input from 'components/Input/Input'
 
 import classNames from 'classnames/bind';
 import styles from './LoginForm.scss';

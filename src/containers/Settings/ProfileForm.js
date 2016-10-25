@@ -8,7 +8,7 @@ import * as actions from 'redux/actions/auth'
 import { successable } from 'decorators'
 import { resetFormOnSuccess } from 'decorators'
 
-import { Input } from 'components'
+import Input from 'components/Input/Input'
 
 import classNames from 'classnames/bind'
 import styles from './ProfileForm.scss'

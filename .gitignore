@@ -11,3 +11,4 @@ src/theme/variables.scss
 uploads/
 connector.list
 keys/
+config.list

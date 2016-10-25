@@ -7,11 +7,11 @@ import createStore from 'redux/store'
 import ApiClient from 'helpers/ApiClient'
 const client = new ApiClient()
 
-import { HistoryItem } from '../'
+import HistoryItem from './HistoryItem'
 import mockStore from '../../../test/data/store'
 
 import classNames from 'classnames/bind'
-import styles from '../../components/HistoryItem/HistoryItem.scss'
+import styles from './HistoryItem.scss'
 const cx = classNames.bind(styles);
 
 describe('(component) HistoryItem', () => {

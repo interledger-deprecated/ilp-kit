@@ -9,7 +9,7 @@ import validation from './PasswordValidation'
 import { successable } from 'decorators'
 import { resetFormOnSuccess } from 'decorators'
 
-import { Input } from 'components'
+import Input from 'components/Input/Input'
 
 @reduxForm({
   form: 'passwordSettings',

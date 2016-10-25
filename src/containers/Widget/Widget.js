@@ -4,8 +4,8 @@ import * as authActions from 'redux/actions/auth';
 import { isLoaded as isAuthLoaded, load as loadAuth, loadConfig } from 'redux/actions/auth';
 import { asyncConnect } from 'redux-async-connect';
 
-import { SendForm } from 'containers';
-import { LoginForm } from 'components';
+import SendForm from 'containers/SendForm/SendForm';
+import LoginForm from 'components/LoginForm/LoginForm';
 
 import classNames from 'classnames/bind';
 import styles from './Widget.scss';

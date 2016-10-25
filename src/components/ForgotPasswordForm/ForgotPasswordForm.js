@@ -4,7 +4,7 @@ import Validation from './Validation'
 
 import Alert from 'react-bootstrap/lib/Alert'
 
-import { Input } from 'components'
+import Input from 'components/Input/Input'
 
 import { successable } from 'decorators'
 

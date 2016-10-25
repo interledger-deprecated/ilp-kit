@@ -5,10 +5,10 @@ import * as authActions from 'redux/actions/auth'
 
 import Alert from 'react-bootstrap/lib/Alert'
 
-import { LoginForm } from 'components'
-import { RegisterForm } from 'components'
-import { ForgotPasswordForm } from 'components'
-import { ChangePasswordForm } from 'components'
+import LoginForm from 'components/LoginForm/LoginForm'
+import RegisterForm from 'components/RegisterForm/RegisterForm'
+import ForgotPasswordForm from 'components/ForgotPasswordForm/ForgotPasswordForm'
+import ChangePasswordForm from 'components/ChangePasswordForm/ChangePasswordForm'
 
 import classNames from 'classnames/bind'
 import styles from './Auth.scss'

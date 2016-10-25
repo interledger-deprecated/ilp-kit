@@ -6,7 +6,7 @@ import * as historyActions from 'redux/actions/history'
 
 import { initActionCreators } from 'redux-pagination'
 
-import { HistoryItem } from 'components'
+import HistoryItem from 'components/HistoryItem/HistoryItem'
 
 import classNames from 'classnames/bind'
 import styles from './History.scss'
