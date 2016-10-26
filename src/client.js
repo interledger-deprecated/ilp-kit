@@ -10,7 +10,7 @@ import createStore from './redux/store'
 import ApiClient from './helpers/ApiClient'
 import io from 'socket.io-client'
 import {Provider} from 'react-redux'
-import { Router, browserHistory } from 'react-router'
+import { Router, browserHistory, match } from 'react-router'
 import { ReduxAsyncConnect } from 'redux-async-connect'
 import Tracker from './tracker'
 
@@ -42,20 +42,15 @@ function logPageView() {
   tracker.pageview(window.location.pathname)
 }
 
-const component = (
-  <Router render={(props) =>
-        <ReduxAsyncConnect {...props} helpers={{client}} filter={item => !item.deferred} />
-      } history={browserHistory} onUpdate={logPageView}>
-    {getRoutes(store)}
-  </Router>
-)
-
-ReactDOM.render(
-  <Provider store={store} key="provider">
-    {component}
-  </Provider>,
-  dest
-)
+match({ routes: getRoutes(store), history: browserHistory }, (error, redirectLocation, renderProps) => {
+  ReactDOM.render(
+    <Provider store={store} key="provider">
+      <Router
+        {...renderProps}
+        render={props => <ReduxAsyncConnect {...props} helpers={{client}} filter={item => !item.deferred} />}
+        onUpdate={logPageView} />
+    </Provider>, dest)
+})
 
 if (process.env.NODE_ENV !== 'production') {
   window.React = React // enable debugger

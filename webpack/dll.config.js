@@ -67,7 +67,11 @@ module.exports = {
   devtool: 'eval',
   context: path.resolve(__dirname, '..'),
   entry: {
-    app_assets: ['./src/client.js'],
+    app_assets: [
+      'bootstrap-sass!./src/theme/bootstrap.config.js',
+      'font-awesome-webpack!./src/theme/font-awesome.config.js',
+      './src/client.js'
+    ],
     // TODO maybe include all deps by default?
     vendor: [
       'babel-polyfill',
