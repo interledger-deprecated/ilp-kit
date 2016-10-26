@@ -131,3 +131,7 @@ export const verify = (username, code) => ({
   types: [types.EMAIL_VERIFICATION, types.EMAIL_VERIFICATION_SUCCESS, types.EMAIL_VERIFICATION_FAIL],
   promise: (client) => client.put('/users/' + username + '/verify', {data: {code}})
 })
+
+export const locationUpdate = () => ({
+  type: types.UPDATE_LOCATION_COMPLETE
+})

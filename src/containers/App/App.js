@@ -39,7 +39,8 @@ const cx = classNames.bind(styles)
 @connect(
   state => ({
     user: state.auth.user,
-    config: state.auth.config
+    config: state.auth.config,
+    loading: state.auth.loading
   }),
   {logout, pushState: routeActions.push, historyAddPayment, updateBalance, verify})
 export default class App extends Component {
@@ -53,6 +54,8 @@ export default class App extends Component {
     pushState: PropTypes.func.isRequired,
     params: PropTypes.object,
     store: PropTypes.object,
+    // TODO:UI add loading screen
+    loading: PropTypes.bool,
 
     verify: PropTypes.func
   }

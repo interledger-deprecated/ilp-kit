@@ -33,7 +33,7 @@ import Input from 'components/Input/Input'
 @resetFormOnSuccess('send')
 export default class SendForm extends Component {
   static propTypes = {
-    user: PropTypes.object.isRequired,
+    user: PropTypes.object,
     destinationChange: PropTypes.func.isRequired,
     destinationInfo: PropTypes.object,
     transfer: PropTypes.func.isRequired,
@@ -197,6 +197,8 @@ export default class SendForm extends Component {
   }
 
   render() {
+    if (!this.props.user) return null
+
     const { pristine, invalid, handleSubmit, submitting, success, destinationInfo,
       quoting, fail, data, fields: {destination, sourceAmount, destinationAmount, message, repeats, interval} } = this.props
     const { config } = this.context

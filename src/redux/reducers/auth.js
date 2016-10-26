@@ -18,7 +18,8 @@ export const initialState = {
   loaded: false,
   fail: {},
   config: {},
-  verified: false
+  verified: false,
+  loading: false
 }
 
 export default function reducer(state = initialState, action = {}) {
@@ -137,7 +138,17 @@ export default function reducer(state = initialState, action = {}) {
           balance: action.balance
         }
       };
+    case '@@router/UPDATE_LOCATION':
+      return {
+        ...state,
+        loading: true
+      }
+    case types.UPDATE_LOCATION_COMPLETE:
+      return {
+        ...state,
+        loading: false
+      }
     default:
-      return state;
+      return state
   }
 }

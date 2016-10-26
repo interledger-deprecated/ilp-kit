@@ -69,6 +69,9 @@ export default class Home extends Component {
     const { config } = this.context
     const { showStats } = this.state
 
+    // For some reason dynamic routers have problems with that state
+    if (!user) return null
+
     return (
       <div className="row">
         <div className="col-sm-8">

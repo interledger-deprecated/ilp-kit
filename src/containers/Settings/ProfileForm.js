@@ -99,6 +99,8 @@ export default class ProfileForm extends Component {
     const { fields: { email, name }, pristine, invalid,
       handleSubmit, submitting, success, error, submitFailed, user } = this.props
 
+    if (!user) return null
+
     return (
       <div className="panel panel-default">
         <div className="panel-heading">
