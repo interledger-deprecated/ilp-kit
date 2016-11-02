@@ -36,3 +36,12 @@ a {
     width: 95%;
   }
 }
+
+.navbar-collapse {
+  &.collapsing, &.in {
+    background: #fff;
+  }
+}
+.navbar-toggle {
+  border: 0;
+}
