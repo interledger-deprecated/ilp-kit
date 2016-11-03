@@ -1,12 +1,12 @@
 "use strict"
 
 const co = require('co')
-const uuid = require ('uuid4')
+const uuid = require('uuid4')
 const superagent = require('superagent-promise')(require('superagent'), Promise)
 const debug = require('debug')('ilp-kit:spsp')
 
 const ILP = require('ilp')
-const FiveBellsLedgerAdminPlugin = require('ilp-plugin-bells-admin')
+const PluginBellsFactory = require('ilp-plugin-bells').Factory 
 
 const PaymentFactory = require('../models/payment')
 const Config = require('./config')
@@ -20,16 +20,24 @@ module.exports = class SPSP {
     this.socket = socket
     this.config = config
 
-    this.ledgerPrefix = this.config.data.getIn(['ledger', 'prefix'])
-    this.ledgerPublicUri = this.config.data.getIn(['ledger', 'public_uri'])
-
-    this.adminName = this.config.data.getIn(['ledger', 'admin', 'name'])
-    this.adminPass = this.config.data.getIn(['ledger', 'admin', 'pass'])
-
-    this.senderPluginInstance = null
-    this.receiverPluginInstance = null
     this.senders = {}
     this.receivers = {}
+
+    this.factory = new PluginBellsFactory({
+      adminUsername: this.config.data.getIn(['ledger', 'admin', 'name']),
+      adminPassword: this.config.data.getIn(['ledger', 'admin', 'pass']),
+      adminAccount: this.config.data.getIn(['ledger', 'public_uri']) + '/accounts/admin'
+    })
+
+    // TODO figure out a better solution
+    // Waiting for the ledger to start
+    setTimeout(() => {
+      this.factory.connect()
+        .catch((err) => {
+          console.log('spsp:34', err)
+        })
+    }, 10000)
+
   }
 
   /**
@@ -37,19 +45,10 @@ module.exports = class SPSP {
    */
 
   // Get or create a sender instance
-  getSender(username) {
+  * getSender(username) {
     if (!this.senders[username]) {
-      const sourceAccount = this.ledgerPublicUri + '/accounts/' + username
-
       this.senders[username] = {
-        instance: ILP.createSender({
-          _plugin: FiveBellsLedgerAdminPlugin,
-          prefix: this.ledgerPrefix,
-          account: sourceAccount,
-          username: this.adminName,
-          password: this.adminPass,
-          instance: this.senderPluginInstance
-        })
+        instance: ILP.createSender(yield this.factory.create({ username }))
       }
 
       debug('created a sender object')
@@ -71,9 +70,8 @@ module.exports = class SPSP {
     // Keep the listeners alive for 15 more seconds
     clearTimeout(sender.timeout)
     sender.timeout = setTimeout(co.wrap(function *() {
-      try {
-        yield sender.instance.stopListening()
-      } catch (e) {}
+      // TODO destroy the plugin
+      yield sender.instance.stopListening()
 
       delete self.senders[username]
 
@@ -83,7 +81,7 @@ module.exports = class SPSP {
 
   * quote(params) {
     const username = params.source.username
-    const sender = this.getSender(username)
+    const sender = yield this.getSender(username)
 
     // One of the amounts should be supplied to get a quote for the other one
     const sourceAmount = params.sourceAmount || (
@@ -113,7 +111,7 @@ module.exports = class SPSP {
   }
 
   * pay(params) {
-    const sender = this.getSender(params.source.username)
+    const sender = yield this.getSender(params.source.username)
 
     const quote = yield this.setup({
       paymentUri: params.destination.paymentUri,
@@ -151,15 +149,7 @@ module.exports = class SPSP {
     const self = this
 
     if (!this.receivers[username]) {
-      const destinationAccount = this.ledgerPublicUri + '/accounts/' + username
-      const instance = ILP.createReceiver({
-        _plugin: FiveBellsLedgerAdminPlugin,
-        prefix: this.ledgerPrefix,
-        account: destinationAccount,
-        username: this.adminName,
-        password: this.adminPass,
-        instance: this.receiverPluginInstance
-      })
+      const instance = ILP.createReceiver(yield this.factory.create({ username }))
 
       yield instance.listen()
 
@@ -210,9 +200,8 @@ module.exports = class SPSP {
     clearTimeout(receiver.timeout)
 
     receiver.timeout = setTimeout(co.wrap(function *() {
-      try {
-        yield receiver.instance.stopListening()
-      } catch (e) {}
+      // TODO destroy the plugin
+      yield receiver.instance.stopListening()
 
       delete self.receivers[username]
 
@@ -229,8 +218,6 @@ module.exports = class SPSP {
     const request = receiver.createRequest({
       amount: destinationAmount
     })
-
-    // const requestId = request.address.replace(self.ledgerPrefix + username + '.', '')
 
     return request
   }
