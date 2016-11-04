@@ -4,7 +4,7 @@ const appHelper = require('./helpers/app')
 
 describe('Health', function(){
   beforeEach(function * () {
-    this.agent = appHelper.create()
+    this.agent = yield appHelper.create()
   })
 
   describe('GET /health', function () {
