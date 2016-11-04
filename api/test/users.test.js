@@ -6,7 +6,7 @@ const assert = require('chai').assert
 describe('Users', () => {
 
   beforeEach(function * () {
-    this.agent = appHelper.create()
+    this.agent = yield appHelper.create()
 
     // Create the user
     yield this.agent

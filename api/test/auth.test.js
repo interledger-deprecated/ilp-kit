@@ -6,7 +6,7 @@ const exampleApiData = require('./data/api')
 describe('Auth', () => {
 
   beforeEach(function * () {
-    this.agent = appHelper.create()
+    this.agent = yield appHelper.create()
 
     // Create the user
     yield this.agent

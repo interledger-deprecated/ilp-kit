@@ -5,7 +5,7 @@ const webfingerMock = require('./data/webfinger')
 
 describe('Webfinger', () => {
   beforeEach(function * () {
-    this.agent = appHelper.create()
+    this.agent = yield appHelper.create()
 
     yield this.agent
       .post('/users/alice')

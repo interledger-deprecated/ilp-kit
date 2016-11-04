@@ -140,6 +140,7 @@
     "ilp-connector": "^12.1.1",
     "ilp-kit-cli": "github:interledgerjs/ilp-kit-cli",
     "ilp-plugin-bells": "^8.2.0",
+    "istanbul": "^0.4.5",
     "kcors": "^1.0.1",
     "koa": "^1.1.2",
     "koa-body": "^1.4.0",
