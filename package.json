@@ -38,7 +38,7 @@
     "tesqt": "cp -n src/theme/variables.scss.example src/theme/variables.scss ; karma start",
     "test-api": "istanbul test -- _mocha",
     "apidoc": "apidoc -i api/src/controllers/ -o apidoc-out",
-    "configure": "./node_modules/ilp-connector-cli/bin/configure.js -o connector.list"
+    "configure": "./node_modules/ilp-kit-cli/bin/configure.js -o connector.list"
   },
   "betterScripts": {
     "start-prod": {
@@ -138,6 +138,7 @@
     "http-proxy": "^1.12.0",
     "ilp": "^7.1.0",
     "ilp-connector": "^12.1.1",
+    "ilp-kit-cli": "github:interledgerjs/ilp-kit-cli",
     "ilp-plugin-bells": "^8.2.0",
     "kcors": "^1.0.1",
     "koa": "^1.1.2",

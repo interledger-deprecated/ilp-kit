@@ -6,7 +6,7 @@ const superagent = require('superagent-promise')(require('superagent'), Promise)
 const debug = require('debug')('ilp-kit:spsp')
 
 const ILP = require('ilp')
-const PluginBellsFactory = require('ilp-plugin-bells').Factory 
+const PluginBellsFactory = require('ilp-plugin-bells').Factory
 
 const PaymentFactory = require('../models/payment')
 const Config = require('./config')
