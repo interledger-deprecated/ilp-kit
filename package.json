@@ -20,13 +20,13 @@
     "finance"
   ],
   "scripts": {
-    "start": "concurrent --kill-others \"npm run start-prod-ledger\" \"npm run start-prod-connector\" \"npm run start-prod\" \"npm run start-prod-api\"",
+    "start": "source ./env.list ; concurrent --kill-others \"npm run start-prod-ledger\" \"npm run start-prod-connector\" \"npm run start-prod\" \"npm run start-prod-api\"",
     "start-prod": "better-npm-run start-prod",
     "start-prod-api": "better-npm-run start-prod-api",
     "start-prod-ledger": "better-npm-run start-prod-ledger",
     "start-prod-connector": "better-npm-run start-prod-connector",
     "build": "cp -n src/theme/variables.scss.example src/theme/variables.scss ; better-npm-run build",
-    "build-dlls": "./node_modules/.bin/webpack --progress --config webpack/dll.config.js",
+    "build-dlls": "source ./env.list ; ./node_modules/.bin/webpack --progress --config webpack/dll.config.js",
     "postinstall": "npm rebuild node-sass",
     "lint": "eslint -c .eslintrc src api",
     "start-dev": "better-npm-run start-dev",
@@ -34,11 +34,11 @@
     "start-dev-ledger": "better-npm-run start-dev-ledger",
     "start-dev-connector": "better-npm-run start-dev-connector",
     "watch-client": "better-npm-run watch-client",
-    "dev": "concurrent --kill-others \"npm run watch-client\" \"npm run start-dev-ledger\" \"npm run start-dev-connector\" \"npm run start-dev\" \"npm run start-dev-api\"",
+    "dev": "source ./env.list ; concurrent --kill-others \"npm run watch-client\" \"npm run start-dev-ledger\" \"npm run start-dev-connector\" \"npm run start-dev\" \"npm run start-dev-api\"",
     "tesqt": "cp -n src/theme/variables.scss.example src/theme/variables.scss ; karma start",
     "test-api": "istanbul test -- _mocha",
     "apidoc": "apidoc -i api/src/controllers/ -o apidoc-out",
-    "configure": "./node_modules/ilp-kit-cli/bin/configure.js -o connector.list"
+    "configure": "./node_modules/ilp-kit-cli/bin/configure.js -o env.list"
   },
   "betterScripts": {
     "start-prod": {
@@ -62,7 +62,7 @@
       }
     },
     "start-prod-connector": {
-      "command": "test -n \"$CONNECTOR_ENABLE\" && bash -ac 'source ./connector.list ; node ./node_modules/ilp-connector/src/index.js'",
+      "command": "test -n \"$CONNECTOR_ENABLE\" ; node ./node_modules/ilp-connector/src/index.js'",
       "env": {
         "NODE_ENV": "production"
       }
@@ -89,7 +89,7 @@
       }
     },
     "start-dev-connector": {
-      "command": "test -n \"$CONNECTOR_ENABLE\" && bash -ac 'source ./connector.list ; node ./node_modules/ilp-connector/src/index.js'",
+      "command": "test -n \"$CONNECTOR_ENABLE\" ; node ./node_modules/ilp-connector/src/index.js'",
       "env": {
         "NODE_ENV": "development"
       }

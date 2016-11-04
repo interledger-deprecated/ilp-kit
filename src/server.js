@@ -110,7 +110,8 @@ proxyLedger.on('error', (error, req, res) => {
 });
 
 if (process.env.CONNECTOR_ENABLE) {
-  fs.readFileSync('connector.list').toString().split('\n').forEach(
+  // TODO remove hardcode
+  fs.readFileSync('env.list').toString().split('\n').forEach(
     (line) => {
       const port = line.match(/CONNECTOR_PORT="(.*)"/)
 

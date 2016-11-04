@@ -1,3 +1,5 @@
+const crypto = require('crypto')
+
 const env = process.env
 
 if (!env.API_LEDGER_URI) {
@@ -16,6 +18,11 @@ if (!env.API_LEDGER_URI) {
   env.LEDGER_ILP_PREFIX = env.LEDGER_ILP_PREFIX || 'localhost.'
   env.API_LEDGER_ADMIN_NAME = env.LEDGER_ADMIN_NAME || 'admin'
   env.API_LEDGER_ADMIN_PASS = env.LEDGER_ADMIN_PASS || 'admin'
+
+  const secret = env.API_SECRET || 'secret' // 'secret' for tests
+
+  env.API_ED25519_SECRET_KEY = crypto.createHmac('sha256', secret).update('API_ED25519').digest('base64')
+  env.LEDGER_ED25519_SECRET_KEY = crypto.createHmac('sha256', secret).update('LEDGER_ED25519').digest('base64')
 
   const protocol = env.API_PUBLIC_HTTPS ? 'https:' : 'http:'
 

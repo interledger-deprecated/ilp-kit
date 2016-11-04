@@ -1,5 +1,8 @@
 require('babel-polyfill')
-require('../bin/normalizeEnv')
+
+if (process && !process.browser) {
+  require('../bin/normalizeEnv')
+}
 
 const environment = {
   development: {
