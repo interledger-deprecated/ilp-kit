@@ -7,7 +7,7 @@ if (!env.API_LEDGER_URI) {
   const ledgerPublicPort = (clientPublicPort !== '80' && clientPublicPort !== '443') ? ':' + clientPublicPort : ''
 
   env.API_PORT = env.API_PORT || clientPublicPort
-  env.LEDGER_DB_URI = env.LEDGER_DB_URI || env.API_DB_URI + '-ledger'
+  env.LEDGER_DB_URI = env.LEDGER_DB_URI || env.API_DB_URI
   env.LEDGER_HOSTNAME = env.LEDGER_HOSTNAME || env.API_HOSTNAME || 'localhost'
   env.LEDGER_PORT = env.LEDGER_PORT || Number(env.API_PORT) + 1
   env.LEDGER_PUBLIC_PORT = env.LEDGER_PUBLIC_PORT || clientPublicPort
