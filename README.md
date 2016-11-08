@@ -32,7 +32,8 @@
 
 ## Prerequisites
 
-- [Five Bells Ledger](https://github.com/interledgerjs/five-bells-ledger) instance
+- Node.js >= 5.6
+- Postgres
 
 ## Installation
 
