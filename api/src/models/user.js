@@ -73,6 +73,21 @@ function UserFactory (sequelize, validator, ledger, config) {
       return config.data.get(['client_host']) + '/verify/' + username + '/' + User.getVerificationCode(email)
     }
 
+    static * ensureAdminExists() {
+      const username = config.data.getIn(['ledger', 'admin', 'name'])
+
+      let admin = yield this.findOne({where: {username}})
+
+      if (!admin) {
+        admin = new this()
+
+        admin.username = username
+        admin.account = config.data.get(['ledger', 'public_uri']) + '/accounts/' + username 
+
+        return admin.save()
+      }
+    }
+
     * changeEmail (email, verified) {
       if (this.email === email) return this
 
