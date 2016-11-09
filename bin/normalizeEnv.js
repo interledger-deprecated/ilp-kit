@@ -16,7 +16,7 @@ if (!env.API_LEDGER_URI) {
   env.LEDGER_CURRENCY_SYMBOL = env.LEDGER_CURRENCY_SYMBOL || '$'
   env.LEDGER_PUBLIC_HTTPS = env.LEDGER_PUBLIC_HTTPS || !!env.API_PUBLIC_HTTPS
   env.LEDGER_ILP_PREFIX = env.LEDGER_ILP_PREFIX || 'localhost.'
-  env.API_LEDGER_ADMIN_NAME = env.LEDGER_ADMIN_NAME || 'admin'
+  env.API_LEDGER_ADMIN_USER = env.LEDGER_ADMIN_USER || 'admin'
   env.API_LEDGER_ADMIN_PASS = env.LEDGER_ADMIN_PASS || 'admin'
 
   const secret = env.API_SECRET || 'secret' // 'secret' for tests
