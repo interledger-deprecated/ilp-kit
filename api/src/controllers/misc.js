@@ -72,17 +72,18 @@ function MiscControllerFactory (Auth, log, config, ledger, utils) {
      *      "currencySymbol": "$"
      *    }
      */
-    static * config () {
+    static * config() {
       const ledgerInfo = yield ledger.getInfo()
 
-      let response = {
+      const response = {
         ledgerUri: config.data.getIn(['ledger', 'public_uri']),
         currencyCode: ledgerInfo.currency_code,
         currencySymbol: ledgerInfo.currency_symbol,
         track: {
           ga: config.data.getIn(['track', 'ga']),
           mixpanel: config.data.getIn(['track', 'mixpanel'])
-        }
+        },
+        githubAuth: (config.data.getIn(['github', 'client_id']) && config.data.getIn(['github', 'client_secret']))
       }
 
       if (config.data.get('reload')) {

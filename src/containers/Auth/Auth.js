@@ -40,6 +40,10 @@ export default class Home extends Component {
     changePassword: PropTypes.func
   }
 
+  static contextTypes = {
+    config: PropTypes.object
+  }
+
   componentWillMount() {
     this.setCurrentView()
   }
@@ -62,6 +66,7 @@ export default class Home extends Component {
   render() {
     const {authFail, login, register, forgot, changePassword, verified, params} = this.props
     const {currentView} = this.state
+    const {config} = this.context
 
     return (
       <div className="row">
@@ -92,12 +97,13 @@ export default class Home extends Component {
                 <ChangePasswordForm submit={changePassword} username={params.username} code={params.passwordChangeCode} fail={authFail} />}
               </div>
             </div>
+            {config.githubAuth &&
             <div className={cx('oauthContainer', 'clearfix')}>
               <div className="pull-left">Or login using</div>
               <div className="pull-right">
                 <a href="/api/auth/github" className="btn btn-primary">Github</a>
               </div>
-            </div>
+            </div>}
           </div>
         </div>
       </div>
