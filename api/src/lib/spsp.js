@@ -23,10 +23,13 @@ module.exports = class SPSP {
     this.senders = {}
     this.receivers = {}
 
+    const adminUsername = this.config.data.getIn(['ledger', 'admin', 'name'])
+    const adminPassword = this.config.data.getIn(['ledger', 'admin', 'pass'])
+
     this.factory = new PluginBellsFactory({
-      adminUsername: this.config.data.getIn(['ledger', 'admin', 'name']),
-      adminPassword: this.config.data.getIn(['ledger', 'admin', 'pass']),
-      adminAccount: this.config.data.getIn(['ledger', 'public_uri']) + '/accounts/admin'
+      adminUsername: adminUsername,
+      adminPassword: adminPassword,
+      adminAccount: this.config.data.getIn(['ledger', 'public_uri']) + '/accounts/' + adminUsername
     })
 
     // TODO figure out a better solution
