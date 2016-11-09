@@ -81,23 +81,6 @@ export default class Home extends Component {
             Your email has been verified!
           </Alert>}
 
-          {/* Balance */}
-          <div className="panel panel-default">
-            <div className="panel-body">
-              <div className={cx('balanceContainer')}>
-                <div className={cx('balanceDescription')}>Your Balance</div>
-                <div className={cx('balance')}>
-                  {amount(user.balance, config.currencySymbol)}
-                  {config.reload && <span className={cx('but')}>*</span>}
-                </div>
-                {config.reload &&
-                  <div>
-                    <button className="btn btn-complete btn-lg" onClick={this.reload}>Get More</button>
-                    <div className={cx('balanceFake')}>* Don't get too excited, this is fake money</div>
-                  </div>}
-              </div>
-            </div>
-          </div>
           {/* History */}
           <div className="panel panel-default">
             <div className="panel-heading">
@@ -121,13 +104,6 @@ export default class Home extends Component {
           </div>
         </div>
         <div className="col-sm-4">
-          {!user.email_verified &&
-          <Alert bsStyle="danger">
-            An email has been sent to <strong>{user.email}</strong>.
-            Please follow the steps in the message to confirm your email address.&nbsp;
-            {!verificationEmailSent && <a href="" onClick={this.resendVerification}>Resend the message</a>}
-            {verificationEmailSent && <strong>Verification email sent!</strong>}
-          </Alert>}
           {/*
           <div className="panel panel-default">
             <div className="panel-heading">
@@ -138,6 +114,23 @@ export default class Home extends Component {
             </div>
           </div>
           */}
+          {/* Balance */}
+          <div className="panel panel-default">
+            <div className="panel-body">
+              <div className={cx('balanceContainer')}>
+                <div className={cx('balanceDescription')}>Your Balance</div>
+                <div className={cx('balance')}>
+                  {amount(user.balance, config.currencySymbol)}
+                  {config.reload && <span className={cx('but')}>*</span>}
+                </div>
+                {config.reload &&
+                <div>
+                  <button className="btn btn-complete btn-lg" onClick={this.reload}>Get More</button>
+                  <div className={cx('balanceFake')}>* Don't get too excited, this is fake money</div>
+                </div>}
+              </div>
+            </div>
+          </div>
           <div className="panel panel-default">
             <div className="panel-heading">
               <div className="panel-title">Send Money</div>
@@ -146,6 +139,13 @@ export default class Home extends Component {
               <SendForm />
             </div>
           </div>
+          {!user.email_verified &&
+          <Alert bsStyle="danger">
+            An email has been sent to <strong>{user.email}</strong>.
+            Please follow the steps in the message to confirm your email address.&nbsp;
+            {!verificationEmailSent && <a href="" onClick={this.resendVerification}>Resend the message</a>}
+            {verificationEmailSent && <strong>Verification email sent!</strong>}
+          </Alert>}
         </div>
       </div>
     )

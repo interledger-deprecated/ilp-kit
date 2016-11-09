@@ -8,8 +8,9 @@
     margin-bottom: -10px;
   }
   .balance {
-    font-size: 60px;
+    font-size: 40px;
     line-height: 80px;
+    white-space: nowrap;
   }
   .but {
     font-size: 17px;
@@ -20,5 +21,5 @@
 .balanceFake {
   color: $faded-text-color;
   font-size: 12px;
-  margin: 10px;
+  margin: 10px 0;
 }
