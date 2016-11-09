@@ -87,7 +87,7 @@ export default class Home extends Component {
               <div className={cx('balanceContainer')}>
                 <div className={cx('balanceDescription')}>Your Balance</div>
                 <div className={cx('balance')}>
-                  {config.currencySymbol}{amount(user.balance)}
+                  {amount(user.balance, config.currencySymbol)}
                   {config.reload && <span className={cx('but')}>*</span>}
                 </div>
                 {config.reload &&
