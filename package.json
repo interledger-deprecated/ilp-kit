@@ -62,7 +62,7 @@
       }
     },
     "start-prod-connector": {
-      "command": "test -n \"$CONNECTOR_ENABLE\" ; node ./node_modules/ilp-connector/src/index.js'",
+      "command": "test -n \"$CONNECTOR_ENABLE\" ; node ./node_modules/ilp-connector/src/index.js",
       "env": {
         "NODE_ENV": "production"
       }
@@ -89,7 +89,7 @@
       }
     },
     "start-dev-connector": {
-      "command": "test -n \"$CONNECTOR_ENABLE\" ; node ./node_modules/ilp-connector/src/index.js'",
+      "command": "test -n \"$CONNECTOR_ENABLE\" ; node ./node_modules/ilp-connector/src/index.js",
       "env": {
         "NODE_ENV": "development"
       }
