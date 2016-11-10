@@ -53,6 +53,7 @@ if (!getVar('API_LEDGER_URI')) {
   envVars.API_LEDGER_ADMIN_USER = getVar('LEDGER_ADMIN_USER') || getVar('LEDGER_ADMIN_USER', 'admin')
   envVars.API_LEDGER_ADMIN_PASS = getVar('LEDGER_ADMIN_PASS') || getVar('LEDGER_ADMIN_PASS', 'admin')
   envVars.LEDGER_ED25519_SECRET_KEY = generateSecret(secret, 'LEDGER_ED25519')
+  envVars.LEDGER_ENABLE = true
 
   const protocol = getVar('API_PUBLIC_HTTPS') ? 'https:' : 'http:'
 
@@ -62,5 +63,10 @@ if (!getVar('API_LEDGER_URI')) {
 
 // Set envVars in environment
 _.each(envVars, (envVar, index) => {
+  if (index === 'CONNECTOR_LEDGERS') {
+    // Remove single quotes
+    envVar = envVar.substring(1, envVar.length - 1)
+  }
+
   if (!process.env[index]) process.env[index] = envVar
 })

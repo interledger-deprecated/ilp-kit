@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-if (!process.env.API_LEDGER_URI) {
-  require('./normalizeEnv')
+require('./normalizeEnv')
+
+if (process.env.LEDGER_ENABLE) {
   require('../node_modules/five-bells-ledger/src/services/app').start()
 }
