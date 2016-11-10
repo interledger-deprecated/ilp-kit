@@ -20,7 +20,7 @@
     "finance"
   ],
   "scripts": {
-    "start": "concurrent --kill-others \"npm run start-prod-ledger\" \"npm run start-prod-connector\" \"npm run start-prod\" \"npm run start-prod-api\"",
+    "start": "DEBUG_COLORS=1 concurrently -p \"[{name}]\" -n \"ledger,connector,api,wallet\" -c \"red,magenta,blue,cyan\" -k \"npm run start-prod-ledger\" \"npm run start-prod-connector\" \"npm run start-prod-api\" \"npm run start-prod\"",
     "start-prod": "better-npm-run start-prod",
     "start-prod-api": "better-npm-run start-prod-api",
     "start-prod-ledger": "better-npm-run start-prod-ledger",
@@ -34,7 +34,7 @@
     "start-dev-ledger": "better-npm-run start-dev-ledger",
     "start-dev-connector": "better-npm-run start-dev-connector",
     "watch-client": "better-npm-run watch-client",
-    "dev": "concurrent --kill-others \"npm run watch-client\" \"npm run start-dev-ledger\" \"npm run start-dev-connector\" \"npm run start-dev\" \"npm run start-dev-api\"",
+    "dev": "DEBUG_COLORS=1 concurrently -p \"[{name}]\" -n \"watcher,ledger,connector,api,wallet\" -c \"yellow,red,magenta,blue,cyan\" -k \"npm run watch-client\" \"npm run start-dev-ledger\" \"npm run start-dev-connector\" \"npm run start-dev-api\" \"npm run start-dev\"",
     "tesqt": "cp -n src/theme/variables.scss.example src/theme/variables.scss ; karma start",
     "test-api": "istanbul test -- _mocha",
     "apidoc": "apidoc -i api/src/controllers/ -o apidoc-out",
@@ -215,7 +215,7 @@
     "chai": "^3.3.0",
     "clean-webpack-plugin": "^0.1.10",
     "co-mocha": "^1.1.2",
-    "concurrently": "^0.1.1",
+    "concurrently": "^3.1.0",
     "css-loader": "^0.23.1",
     "eslint": "1.10.3",
     "eslint-config-airbnb": "0.1.0",
