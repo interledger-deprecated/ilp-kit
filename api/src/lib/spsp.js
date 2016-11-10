@@ -23,7 +23,7 @@ module.exports = class SPSP {
     this.senders = {}
     this.receivers = {}
 
-    const adminUsername = this.config.data.getIn(['ledger', 'admin', 'name'])
+    const adminUsername = this.config.data.getIn(['ledger', 'admin', 'user'])
     const adminPassword = this.config.data.getIn(['ledger', 'admin', 'pass'])
 
     this.factory = new PluginBellsFactory({

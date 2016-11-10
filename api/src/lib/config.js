@@ -11,7 +11,7 @@ module.exports = class WalletConfig {
       uri: Config.getEnv(envPrefix, 'LEDGER_URI'),
       public_uri: Config.getEnv(envPrefix, 'LEDGER_PUBLIC_URI') || Config.getEnv(envPrefix, 'LEDGER_URI'),
       admin: {
-        name: Config.getEnv(envPrefix, 'LEDGER_ADMIN_USER'),
+        user: Config.getEnv(envPrefix, 'LEDGER_ADMIN_USER'),
         pass: Config.getEnv(envPrefix, 'LEDGER_ADMIN_PASS')
       },
       prefix: Config.getEnv('LEDGER_ILP_PREFIX'),

@@ -74,7 +74,7 @@ function UserFactory (sequelize, validator, ledger, config) {
     }
 
     static * ensureAdminExists() {
-      const username = config.data.getIn(['ledger', 'admin', 'name'])
+      const username = config.data.getIn(['ledger', 'admin', 'user'])
 
       let admin = yield this.findOne({where: {username}})
 
@@ -82,7 +82,7 @@ function UserFactory (sequelize, validator, ledger, config) {
         admin = new this()
 
         admin.username = username
-        admin.account = config.data.get(['ledger', 'public_uri']) + '/accounts/' + username 
+        admin.account = config.data.get(['ledger', 'public_uri']) + '/accounts/' + username
 
         return admin.save()
       }
