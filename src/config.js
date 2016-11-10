@@ -1,9 +1,5 @@
 require('babel-polyfill')
 
-if (process && !process.browser) {
-  require('../bin/normalizeEnv')
-}
-
 const environment = {
   development: {
     isProduction: false
@@ -11,7 +7,7 @@ const environment = {
   production: {
     isProduction: true
   }
-}[process.env.NODE_ENV || 'development'];
+}[process.env.NODE_ENV || 'development']
 
 module.exports = Object.assign({
   host: process.env.CLIENT_HOST,
@@ -26,4 +22,4 @@ module.exports = Object.assign({
       charSet: 'utf-8'
     }
   }
-}, environment);
+}, environment)

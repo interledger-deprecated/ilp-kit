@@ -5,8 +5,9 @@ if (process.env.NODE_ENV !== 'production') {
     ignore: /(\/\.|~$|\.json$)/i,
     respawnOnExit: false
   })) {
-    return;
+    return
   }
 }
 
-require('../api/app');
+require('./normalizeEnv')
+require('../api/app')

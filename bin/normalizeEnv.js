@@ -1,31 +1,60 @@
+const fs = require('fs')
 const crypto = require('crypto')
+const _ = require('lodash')
 
-const env = process.env
+const envVars = {}
 
-if (!env.API_LEDGER_URI) {
-  const clientPublicPort = env.CLIENT_PUBLIC_PORT || env.CLIENT_PORT || '80'
+const generateSecret = (secret, name) => {
+  return crypto.createHmac('sha256', secret).update(name).digest('base64')
+}
+
+const getVar = (name, def = false) => {
+  return process.env[name] || envVars[name] || def
+}
+
+// get env vars from the env file
+try {
+  const envFile = fs.readFileSync('env.list')
+  const fileLines = envFile.toString().split('\n')
+
+  fileLines.forEach((line) => {
+    if (line.indexOf('export') > -1) {
+      const keyPairString = line.replace('export ', '')
+      const keyPairArray = keyPairString.split('=')
+
+      envVars[keyPairArray[0]] = keyPairArray.slice(1).join('=')
+    }
+  })
+} catch (err) {
+  console.log('Env file doesn\'t exist')
+}
+
+// Secrets
+const secret = getVar('API_SECRET', 'secret') // 'secret' for tests
+envVars.API_ED25519_SECRET_KEY = generateSecret(secret, 'API_ED25519')
+
+// Add ledger env vars
+if (!getVar('API_LEDGER_URI')) {
+  const clientPublicPort = getVar('CLIENT_PUBLIC_PORT') || getVar('CLIENT_PORT', '80')
   const ledgerPublicPort = (clientPublicPort !== '80' && clientPublicPort !== '443') ? ':' + clientPublicPort : ''
 
-  env.API_PORT = env.API_PORT || clientPublicPort
-  env.LEDGER_DB_URI = env.LEDGER_DB_URI || env.API_DB_URI
-  env.LEDGER_HOSTNAME = env.LEDGER_HOSTNAME || env.API_HOSTNAME || 'localhost'
-  env.LEDGER_PORT = env.LEDGER_PORT || Number(env.API_PORT) + 1
-  env.LEDGER_PUBLIC_PORT = env.LEDGER_PUBLIC_PORT || clientPublicPort
-  env.LEDGER_PUBLIC_PATH = env.LEDGER_PUBLIC_PATH || 'ledger'
-  env.LEDGER_CURRENCY_CODE = env.LEDGER_CURRENCY_CODE || 'USD'
-  env.LEDGER_CURRENCY_SYMBOL = env.LEDGER_CURRENCY_SYMBOL || '$'
-  env.LEDGER_PUBLIC_HTTPS = env.LEDGER_PUBLIC_HTTPS || !!env.API_PUBLIC_HTTPS
-  env.LEDGER_ILP_PREFIX = env.LEDGER_ILP_PREFIX || 'localhost.'
-  env.API_LEDGER_ADMIN_USER = env.LEDGER_ADMIN_USER || 'admin'
-  env.API_LEDGER_ADMIN_PASS = env.LEDGER_ADMIN_PASS || 'admin'
+  envVars.LEDGER_DB_URI = getVar('LEDGER_DB_URI') || getVar('API_DB_URI')
+  envVars.LEDGER_HOSTNAME = getVar('LEDGER_HOSTNAME') || getVar('API_HOSTNAME', 'localhost')
+  envVars.LEDGER_PORT = getVar('LEDGER_PORT') || Number(getVar('API_PORT')) + 1
+  envVars.LEDGER_PUBLIC_PORT = getVar('LEDGER_PUBLIC_PORT', clientPublicPort)
+  envVars.LEDGER_PUBLIC_PATH = getVar('LEDGER_PUBLIC_PATH', 'ledger')
+  envVars.LEDGER_PUBLIC_HTTPS = getVar('LEDGER_PUBLIC_HTTPS') || getVar('API_PUBLIC_HTTPS')
+  envVars.API_LEDGER_ADMIN_USER = getVar('LEDGER_ADMIN_USER') || getVar('LEDGER_ADMIN_USER', 'admin')
+  envVars.API_LEDGER_ADMIN_PASS = getVar('LEDGER_ADMIN_PASS') || getVar('LEDGER_ADMIN_PASS', 'admin')
+  envVars.LEDGER_ED25519_SECRET_KEY = generateSecret(secret, 'LEDGER_ED25519')
 
-  const secret = env.API_SECRET || 'secret' // 'secret' for tests
+  const protocol = getVar('API_PUBLIC_HTTPS') ? 'https:' : 'http:'
 
-  env.API_ED25519_SECRET_KEY = crypto.createHmac('sha256', secret).update('API_ED25519').digest('base64')
-  env.LEDGER_ED25519_SECRET_KEY = crypto.createHmac('sha256', secret).update('LEDGER_ED25519').digest('base64')
-
-  const protocol = env.API_PUBLIC_HTTPS ? 'https:' : 'http:'
-
-  env.API_LEDGER_URI = 'http://' + (env.API_PRIVATE_HOSTNAME || env.LEDGER_HOSTNAME) + ':' + env.LEDGER_PORT
-  env.API_LEDGER_PUBLIC_URI = protocol + '//' + env.LEDGER_HOSTNAME + ledgerPublicPort + '/' + env.LEDGER_PUBLIC_PATH
+  envVars.API_LEDGER_URI = 'http://' + (getVar('API_PRIVATE_HOSTNAME') || getVar('LEDGER_HOSTNAME')) + ':' + getVar('LEDGER_PORT')
+  envVars.API_LEDGER_PUBLIC_URI = protocol + '//' + getVar('LEDGER_HOSTNAME') + ledgerPublicPort + '/' + getVar('LEDGER_PUBLIC_PATH')
 }
+
+// Set envVars in environment
+_.each(envVars, (envVar, index) => {
+  if (!process.env[index]) process.env[index] = envVar
+})

@@ -1,7 +1,5 @@
 "use strict"
 
-require('../../../bin/normalizeEnv')
-
 const Config = require('five-bells-shared').Config
 const envPrefix = 'api'
 const crypto = require('crypto')
