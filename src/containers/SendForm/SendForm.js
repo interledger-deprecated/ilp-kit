@@ -252,7 +252,7 @@ export default class SendForm extends Component {
 
             <div className="row">
               <div className="col-sm-6 form-group">
-                <label>Sending</label>
+                <label>You Send</label>
                 <div className={cx('input-group',
                   {disabled: isSendingAmountFieldDisabled},
                   {focused: sourceAmount.active})}>
@@ -265,7 +265,7 @@ export default class SendForm extends Component {
                 {sourceAmount.dirty && sourceAmount.error && <div className="text-danger">{sourceAmount.error}</div>}
               </div>
               <div className="col-sm-6 form-group">
-                <label>Receiving</label>
+                <label>They Receive</label>
                 <div className={cx('input-group',
                   {disabled: isReceivingAmountFieldDisabled},
                   {focused: destinationAmount.active})}>
