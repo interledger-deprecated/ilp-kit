@@ -26,7 +26,13 @@ try {
     }
   })
 } catch (err) {
-  console.log('Env file doesn\'t exist')
+  // Both env.list and environment variables are missing
+  if (!process.env.API_DB_URI) {
+    console.log('API_DB_URI is not set. Did you configure ilp-kit? \n'
+      + 'To configure ilp-kit, run: npm run configure')
+
+    process.exit()
+  }
 }
 
 // Secrets
