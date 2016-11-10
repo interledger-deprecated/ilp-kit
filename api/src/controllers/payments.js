@@ -170,7 +170,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
 
       try {
         transfer = yield spsp.pay({
-          source: this.req.user,
+          source: this.req.user.getDataExternal(),
           destination: destination,
           sourceAmount: payment.sourceAmount,
           destinationAmount: payment.destinationAmount,

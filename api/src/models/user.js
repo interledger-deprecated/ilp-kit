@@ -27,7 +27,7 @@ function UserFactory (sequelize, validator, ledger, config) {
       delete data.created_at
       delete data.updated_at
 
-      if (data.profile_picture && data.profile_picture.indexOf('http') === -1) {
+      if (data.profile_picture && data.profile_picture.indexOf('://') === -1) {
         data.profile_picture = config.data.getIn(['server', 'base_uri'])
           + '/users/' + data.username + '/profilepic'
       }
