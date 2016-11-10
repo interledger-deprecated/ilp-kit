@@ -5,7 +5,7 @@ const envPrefix = 'api'
 const crypto = require('crypto')
 
 module.exports = class WalletConfig {
-  constructor () {
+  constructor() {
     const localConfig = {}
     localConfig.ledger = {
       uri: Config.getEnv(envPrefix, 'LEDGER_URI'),

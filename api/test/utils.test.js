@@ -14,7 +14,7 @@ describe('Utils', () => {
 
     this.utils = container.constitute(Utils)
   })
-  
+
   it('detects a valid account URI', function () {
     assert.isTrue(this.utils.isAccountUri('http://example'))
     assert.isTrue(this.utils.isAccountUri('https://example'))
@@ -70,7 +70,7 @@ describe('Utils', () => {
             href: 'address'
           }]
         })
-      
+
       this.destination = {
         type: 'local',
         accountUri: 'account',
@@ -144,7 +144,7 @@ describe('Utils', () => {
       })
 
     nock('http://localhost')
-      .get('/receivers/alice')
+      .get('/api/receivers/alice')
       .reply(200, {
         name: 'alice',
         imageUrl: 'picture',
@@ -158,7 +158,7 @@ describe('Utils', () => {
       type: 'local',
       accountUri: 'http://localhost/ledger/accounts/alice',
       ledgerUri: 'http://localhost/ledger',
-      paymentUri: 'http://localhost/receivers/alice',
+      paymentUri: 'http://localhost/api/receivers/alice',
       ilpAddress: 'localhost.alice',
       currencyCode: 'XDG',
       currencySymbol: 'D',
@@ -168,4 +168,4 @@ describe('Utils', () => {
 
     assert(nock.isDone(), 'nock should be called')
   })
-}) 
+})

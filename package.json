@@ -35,8 +35,8 @@
     "start-dev-connector": "better-npm-run start-dev-connector",
     "watch-client": "better-npm-run watch-client",
     "dev": "DEBUG_COLORS=1 concurrently -p \"[{name}]\" -n \"watcher,ledger,connector,api,wallet\" -c \"yellow,red,magenta,blue,cyan\" \"npm run watch-client\" \"npm run start-dev-ledger\" \"npm run start-dev-connector\" \"npm run start-dev-api\" \"npm run start-dev\"",
-    "tesqt": "cp -n src/theme/variables.scss.example src/theme/variables.scss ; karma start",
-    "test-api": "istanbul test -- _mocha",
+    "test": "cp -n src/theme/variables.scss.example src/theme/variables.scss ; karma start",
+    "test-api": ". ./test.env.list ; istanbul test -- _mocha",
     "apidoc": "apidoc -i api/src/controllers/ -o apidoc-out",
     "configure": "./node_modules/ilp-kit-cli/bin/configure.js -o env.list"
   },
@@ -256,6 +256,6 @@
     "webpack-hot-middleware": "^2.12.2"
   },
   "engines": {
-    "node": "5.6.0"
+    "node": "6.9.1"
   }
 }

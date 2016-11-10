@@ -7,7 +7,7 @@
     },
     {
       "rel": "https://interledger.org/rel/socketIOUri",
-      "href": "http://localhost/socket.io"
+      "href": "http://localhost/api/socket.io"
     },
     {
       "rel": "https://interledger.org/rel/ilpAddress",
@@ -19,15 +19,15 @@
     },
     {
       "rel" : "https://interledger.org/rel/sender/payment",
-      "href" : "http://localhost/payments"
+      "href" : "http://localhost/api/payments"
     },
     {
       "rel" : "https://interledger.org/rel/sender/quote",
-      "href" : "http://localhost/payments/quote"
+      "href" : "http://localhost/api/payments/quote"
     },
     {
       "rel" : "https://interledger.org/rel/receiver",
-      "href" : "http://localhost/receivers/alice"
+      "href" : "http://localhost/api/receivers/alice"
     }
   ]
 }

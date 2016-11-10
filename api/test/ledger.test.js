@@ -1,5 +1,7 @@
 "use strict"
 
+require('../../bin/normalizeEnv')
+
 const constitute = require('constitute')
 const Ledger = require('../src/lib/ledger')
 const assert = require('chai').assert
@@ -16,7 +18,7 @@ describe('Ledger', () => {
   })
 
   it('gets ledger info successfully', function * () {
-    nock('http://localhost:81')
+    nock('http://localhost:3101')
       .get('/')
       .reply(200, {
         info: 'some stuff'
@@ -28,7 +30,7 @@ describe('Ledger', () => {
   })
 
   it('throws on getInfo error', function * () {
-    nock('http://localhost:81')
+    nock('http://localhost:3101')
       .get('/')
       .reply(404)
 
@@ -41,19 +43,19 @@ describe('Ledger', () => {
   })
 
   it('gets an account successfully', function * () {
-    nock('http://localhost:81')
+    nock('http://localhost:3101')
       .get('/accounts/alice')
       .reply(200, {
         info: 'some stuff'
       })
-    
+
     assert.deepEqual(
       yield this.ledger.getAccount({ username: 'alice', password: 'alice'}),
       { info: 'some stuff' })
   })
 
   it('uses admin credentials in getAccount', function * () {
-    nock('http://localhost:81', {
+    nock('http://localhost:3101', {
         reqheaders: { 'authorization': 'Basic Auth' }
       })
       .get('/accounts/alice')
@@ -67,13 +69,13 @@ describe('Ledger', () => {
   })
 
   it('handles a not found error in getAccount', function * () {
-    nock('http://localhost:81')
+    nock('http://localhost:3101')
       .get('/accounts/alice')
       .reply(404, {
         id: 'NotFoundError',
         message: 'error'
       })
-    
+
     try {
       yield this.ledger.getAccount({ username: 'alice', password: 'alice'}),
       assert(false, 'getAccount should fail')
@@ -84,13 +86,13 @@ describe('Ledger', () => {
   })
 
   it('handles an unauthorized error in getAccount', function * () {
-    nock('http://localhost:81')
+    nock('http://localhost:3101')
       .get('/accounts/alice')
       .reply(401, {
         id: 'UnauthorizedError',
         message: 'error'
       })
-    
+
     try {
       yield this.ledger.getAccount({ username: 'alice', password: 'alice'}),
       assert(false, 'getAccount should fail')
@@ -101,7 +103,7 @@ describe('Ledger', () => {
   })
 
   it('handles an unexpected error in getAccount', function * () {
-    nock('http://localhost:81')
+    nock('http://localhost:3101')
       .get('/accounts/alice')
       .reply(451, {
         id: 'UnavailableForLegalReasons',
@@ -117,7 +119,7 @@ describe('Ledger', () => {
   })
 
   it('puts an account successfully', function * () {
-    nock('http://localhost:81')
+    nock('http://localhost:3101')
       .put('/accounts/alice')
       .reply(201, {
         info: 'some stuff'
@@ -131,7 +133,7 @@ describe('Ledger', () => {
   })
 
   it('handles throws an error when it fails to put account', function * () {
-    nock('http://localhost:81')
+    nock('http://localhost:3101')
       .put('/accounts/alice')
       .reply(404, {
         info: 'some stuff'
@@ -143,7 +145,7 @@ describe('Ledger', () => {
         { name: 'alice', password: 'alice' })
       assert(false, 'putAccount should have failed')
     } catch (e) {
-      assert(true) 
+      assert(true)
     }
   })
 
@@ -151,7 +153,7 @@ describe('Ledger', () => {
     beforeEach(function * () {
       this.reply = { info: 'some stuff' }
 
-      nock('http://localhost:81')
+      nock('http://localhost:3101')
         .put('/accounts/alice')
         .reply(201, this.reply)
     })
