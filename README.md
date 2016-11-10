@@ -147,8 +147,9 @@ Name | Example | Description |
 `API_MAILGUN_DOMAIN` | | One of the domains attached to the Mailgun account.
 `WALLET_FORCE_HTTPS` | `true` | Force all connections to use HTTPS.
 `WALLET_TRUST_XFP_HEADER` | `true` | Trust the `X-Forwarded-Proto` header.
-`CLIENT_PUBLIC_PORT` | `80` | Client public port (if different from `CLIENT_PORT`)
 `CONNECTOR_ENABLE` | `false` | Run a connector instance
+`CLIENT_PUBLIC_PORT` | `80` | Client public port (if different from `CLIENT_PORT`)
+`CLIENT_TITLE` | `ILP Kit` | Browser title and logo
 
 ##### Default five-bells-ledger environment variables 
 (used if the `API_LEDGER_URI` is not specified). You can read more about these variables in the [five-bells-ledger readme](https://github.com/interledgerjs/five-bells-ledger#step-3-run-it).

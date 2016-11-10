@@ -47,7 +47,8 @@ module.exports = class WalletConfig {
     localConfig.reload = Config.getEnv(envPrefix, 'RELOAD')
 
     // Client url
-    localConfig.client_host = "https://" + Config.getEnv('CLIENT_HOST')
+    localConfig.client_host = 'https://' + Config.getEnv('CLIENT_HOST')
+    localConfig.client_title = Config.getEnv('CLIENT_TITLE') || 'ILP Kit'
 
     if (!localConfig.sessionSecret) {
       if (process.env.NODE_ENV === 'production') {

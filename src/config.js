@@ -16,8 +16,6 @@ module.exports = Object.assign({
   apiPort: process.env.API_PORT || '3000',
   ledgerUri: process.env.API_LEDGER_URI,
   app: {
-    title: 'ILP kit',
-    description: 'ILP kit',
     meta: {
       charSet: 'utf-8'
     }

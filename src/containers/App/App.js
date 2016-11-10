@@ -144,12 +144,18 @@ export default class App extends Component {
   }
 
   render() {
-    const {user} = this.props
+    const { user } = this.props
+    const appConfig = this.props.config
+
+    const meta = {
+      ...config.app,
+      title: appConfig.title
+    }
 
     return (
       <div className={cx('container')}>
         <script src="https://web-payments.net/polyfill.js"></script>
-        <DocumentMeta {...config.app}/>
+        <DocumentMeta {...meta}/>
 
         <div className={cx('waypoint')}>
           <Waypoint onEnter={this._handleWaypointEnter} onLeave={this._handleWaypointLeave} />
@@ -159,7 +165,7 @@ export default class App extends Component {
         <Navbar fixedTop className={this.navBar} expanded={ this.state.navExpanded } onToggle={ this.onNavbarToggle }>
           <Navbar.Header>
             <Navbar.Brand>
-              {config.app.title}
+              {appConfig.title}
             </Navbar.Brand>
             <Navbar.Toggle />
           </Navbar.Header>

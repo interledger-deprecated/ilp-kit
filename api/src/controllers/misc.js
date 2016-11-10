@@ -79,6 +79,7 @@ function MiscControllerFactory (Auth, log, config, ledger, utils) {
         ledgerUri: config.data.getIn(['ledger', 'public_uri']),
         currencyCode: ledgerInfo.currency_code,
         currencySymbol: ledgerInfo.currency_symbol,
+        title: config.data.get('client_title'),
         track: {
           ga: config.data.getIn(['track', 'ga']),
           mixpanel: config.data.getIn(['track', 'mixpanel'])
