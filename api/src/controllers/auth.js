@@ -5,6 +5,7 @@ module.exports = AuthsControllerFactory
 const request = require('five-bells-shared/utils/request')
 const path = require('path')
 const passport = require('koa-passport')
+const sharp = require('sharp')
 const Auth = require('../lib/auth')
 const Log = require('../lib/log')
 const Ledger = require('../lib/ledger')
@@ -184,7 +185,15 @@ function AuthsControllerFactory (Auth, User, log, ledger, Users, mailer) {
 
       user = yield User.findOne({where: {id: user.id}})
 
-      user.profile_picture = path.basename(files.file.path)
+      const newFilePath = files.file.path.replace(/(\.[\w\d_-]+)$/i, '_square$1')
+
+      // Resize
+      sharp(files.file.path)
+        .resize(200, 200)
+        .crop(sharp.strategy.center)
+        .toFile(newFilePath)
+
+      user.profile_picture = path.basename(newFilePath)
 
       try {
         yield user.save()
