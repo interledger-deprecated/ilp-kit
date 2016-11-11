@@ -217,7 +217,7 @@ export default class SendForm extends Component {
         <div className="col-sm-12">
           {success &&
           <Alert bsStyle="success">
-            <strong>Holy guacamole!</strong> You've just sent some money!
+            You've just sent some money!
           </Alert>}
 
           {fail && fail.id &&

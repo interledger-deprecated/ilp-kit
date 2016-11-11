@@ -109,7 +109,7 @@ export default class ProfileForm extends Component {
         <div className="panel-body">
           {success &&
           <Alert bsStyle="success">
-            <strong>Holy guacamole!</strong> Your profile has been successfully changed!
+            Your profile has been successfully changed!
           </Alert>}
 
           {error && error.id &&

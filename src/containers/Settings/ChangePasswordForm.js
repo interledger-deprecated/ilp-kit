@@ -68,7 +68,7 @@ export default class ChangePasswordForm extends Component {
         <div className="panel-body">
           {success &&
           <Alert bsStyle="success">
-            <strong>Holy guacamole!</strong> Password has been successfully changed!
+            Password has been successfully changed!
           </Alert>}
 
           {error && error.id &&
