@@ -20,7 +20,7 @@
   - [Apache Virtual Hosts](#apache-virtual-hosts)
   - [Wallet 1 + Ledger 1 Instance](#wallet-1--ledger-1-instance)
   - [Wallet 2 + Ledger 2 Instance](#wallet-2--ledger-2-instance)
-  - [Setup five-bells-connector](#setup-five-bells-connector)
+  - [Setup ilp-connector](#setup-ilp-connector)
 - [Mail Setup](#mail-setup)
 - [Architecture](#architecture)
   - [Backend (REST API)](#backend-rest-api)
@@ -46,7 +46,9 @@ npm install
 
 ## Usage
 
-### Configuring the connector
+### Configurator
+
+To run the ILP kit you will need to specify all of the required environment variables. `ilp-kit-cli` simplifies this by guiding you through the environment variables and creates an `env.list` which will be run automatically by the kit.
 
 ```bash
 npm run configure
@@ -278,9 +280,9 @@ API_SECRET=qO2UX+fdl+tg0a1bYtXoBVQHN4pkn2hFB5Ont6CYj50=
 LEDGER_ILP_PREFIX=wallet2.
 ```
 
-### Setup five-bells-connector
+### Setup ilp-connector
 
-> Note: ilp-kit currently works with [five-bells-connector v8.1.0](https://github.com/interledgerjs/five-bells-connector/tree/v8.1.0)
+> Note: ilp-kit currently works with [ilp-connector v8.1.0](https://github.com/interledgerjs/ilp-connector/tree/v8.1.0)
 
 - Create a trader user on both wallet1 and wallet2 instances with username: `trader`, password: `trader`.
 
