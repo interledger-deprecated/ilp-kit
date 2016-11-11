@@ -38,10 +38,15 @@ module.exports = class WalletConfig {
       secret: this.generateSecret('oauth:github')
     }
 
-    // Mailgun
+    // Email
     localConfig.mailgun = {
       api_key: Config.getEnv(envPrefix, 'MAILGUN_API_KEY'),
       domain: Config.getEnv(envPrefix, 'MAILGUN_DOMAIN')
+    }
+
+    localConfig.email = {
+      sender_name: Config.getEnv(envPrefix, 'EMAIL_SENDER_NAME') || 'info',
+      sender_address: Config.getEnv(envPrefix, 'EMAIL_SENDER_ADDRESS') || 'contact@' + localConfig.mailgun.domain
     }
 
     localConfig.reload = Config.getEnv(envPrefix, 'RELOAD')

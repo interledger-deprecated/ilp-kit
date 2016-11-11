@@ -33,7 +33,7 @@
 
 ## Prerequisites
 
-- Node.js >= 5.6
+- Node.js >= 6.9
 - Postgres
 
 ## Installation
@@ -148,6 +148,8 @@ Name | Example | Description |
 `API_GITHUB_CLIENT_SECRET` | | Github application client secret (used for github oauth).
 `API_MAILGUN_API_KEY` | | Mailgun api key (for sending emails).
 `API_MAILGUN_DOMAIN` | | One of the domains attached to the Mailgun account.
+`API_EMAIL_SENDER_NAME` | info | Email sender name
+`API_EMAIL_SENDER_ADDRESS` | contact@`API_MAILGUN_DOMAIN` | Email sender address
 `WALLET_FORCE_HTTPS` | `true` | Force all connections to use HTTPS.
 `WALLET_TRUST_XFP_HEADER` | `true` | Trust the `X-Forwarded-Proto` header.
 `CONNECTOR_ENABLE` | `false` | Run a connector instance
@@ -298,7 +300,7 @@ CONNECTOR_QUOTE_FULL_PATH=true
 ```
 
 ## Mail setup
-You will need to configure the email service if you want the password recovery and changing email to work (It also sends a welcome email once a user signs up). ILP kit uses [Mailgun](http://mailgun.com/) email service, so you need to create an account with them and attach/verify your domain. Set the `API_MAILGUN_API_KEY` and `API_MAILGUN_DOMAIN` environment variables when you setup the Mailgun.
+You will need to configure the email service if you want the password recovery and changing email to work (It also sends a welcome email once a user signs up). ILP kit uses [Mailgun](http://mailgun.com/) email service, so you need to create an account with them and attach/verify your domain. Set the `API_MAILGUN_API_KEY`, `API_MAILGUN_DOMAIN`, `API_EMAIL_SENDER_NAME`, `API_EMAIL_SENDER_ADDRESS` environment variables after setting up the Mailgun.
 
 Additionally you can setup a mail forwarder if you want to be able to receive replies to your automated emails. Mailgun uses [Routes](https://mailgun.com/app/routes) for forwarding. Just create a `catch_all` route forwarding incoming mails to your email address of choice.
 

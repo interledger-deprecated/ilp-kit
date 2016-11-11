@@ -69,8 +69,8 @@ module.exports = class Mailer {
   * send(params) {
     const self = this
 
-    const title = this.config.data.get('client_title')
-    const domain = this.config.data.getIn(['mailgun', 'domain'])
+    const senderName = this.config.data.getIn(['email', 'sender_name'])
+    const senderAddress = this.config.data.getIn(['email', 'sender_address'])
     const template = new EmailTemplate(path.join(templatesDir, params.template))
 
     try {
@@ -84,7 +84,7 @@ module.exports = class Mailer {
           }
 
           self.transporter.sendMail({
-            from: '"' + title + ' " <contact@' + domain + '>',
+            from: '"' + senderName + ' " <' + senderAddress +'>',
             to: params.to,
             subject: results.subject,
             html: results.html,
