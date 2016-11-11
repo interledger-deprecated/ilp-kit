@@ -54,6 +54,9 @@ function reducer(state = {}, action = {}) {
           return item
         }
 
+        // Is message the same?
+        if (action.result.message !== item.message) return item
+
         // ok good, now add the new payment to the group
         const newGroup = {
           ...item,
