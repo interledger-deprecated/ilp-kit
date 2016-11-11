@@ -75,12 +75,6 @@ export default class Home extends Component {
     return (
       <div className="row">
         <div className="col-sm-8">
-          {/* TODO:UX Invalid verification error */}
-          {verified &&
-          <Alert bsStyle="success">
-            Your email has been verified!
-          </Alert>}
-
           {/* History */}
           <div className="panel panel-default">
             <div className="panel-heading">
@@ -114,6 +108,11 @@ export default class Home extends Component {
             </div>
           </div>
           */}
+          {/* TODO:UX Invalid verification error */}
+          {verified &&
+          <Alert bsStyle="success">
+            Your email has been verified!
+          </Alert>}
           {/* Balance */}
           <div className="panel panel-default">
             <div className="panel-body">

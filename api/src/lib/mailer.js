@@ -11,11 +11,12 @@ const EmailTemplate = require('email-templates').EmailTemplate
 const templatesDir = path.resolve(__dirname, '..', 'email')
 
 module.exports = class Mailer {
-  static constitute () { return [ Log, Config ] }
-  constructor (log, config) {
+  static constitute() { return [ Log, Config ] }
+  constructor(log, config) {
     this.log = log('mailer')
+    this.config = config
 
-    var auth = {
+    const auth = {
       auth: {
         api_key: config.data.getIn(['mailgun', 'api_key']),
         domain: config.data.getIn(['mailgun', 'domain'])
@@ -26,8 +27,8 @@ module.exports = class Mailer {
     this.transporter = nodemailer.createTransport(mg(auth));
   }
 
-  sendWelcome (params) {
-    let locals = {
+  sendWelcome(params) {
+    const locals = {
       name: params.name,
       link: params.link
     }
@@ -39,8 +40,8 @@ module.exports = class Mailer {
     })
   }
 
-  changeEmail (params) {
-    let locals = {
+  changeEmail(params) {
+    const locals = {
       name: params.name,
       link: params.link
     }
@@ -52,8 +53,8 @@ module.exports = class Mailer {
     })
   }
 
-  forgotPassword (params) {
-    let locals = {
+  forgotPassword(params) {
+    const locals = {
       name: params.name,
       link: params.link
     }
@@ -65,40 +66,40 @@ module.exports = class Mailer {
     })
   }
 
-  * send (params) {
+  * send(params) {
     const self = this
 
+    const title = this.config.data.get('client_title')
+    const domain = this.config.data.getIn(['mailgun', 'domain'])
     const template = new EmailTemplate(path.join(templatesDir, params.template))
 
     try {
-      yield new Promise(function(reject, resolve){
+      yield new Promise((reject, resolve) => {
         // TODO figure out the responses
         // TODO sometimes may go to spam folder. investigate and read this
         // https://documentation.mailgun.com/best_practices.html#email-best-practices
-        template.render(params.locals, function (err, results) {
+        template.render(params.locals, (err, results) => {
           if (err) {
             return reject(err)
           }
 
           self.transporter.sendMail({
-            // TODO differentiate red and blue
-            from: '"Five Bells Team " <wallet@ilpdemo.org>',
+            from: '"' + title + ' " <contact@' + domain + '>',
             to: params.to,
             subject: results.subject,
             html: results.html,
             text: results.text
-          }, function (err, responseStatus) {
-            if (err) {
-              return reject(err)
-            }
+          }, (error, responseStatus) => {
+            if (error) return reject(error)
+
             self.log.info('Email sent', responseStatus)
 
             resolve(responseStatus)
           })
         })
       })
-    } catch(err) {
-      self.log.critical(err)
+    } catch (error) {
+      self.log.critical(error)
     }
   }
 }

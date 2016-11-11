@@ -21,6 +21,7 @@
   - [Wallet 1 + Ledger 1 Instance](#wallet-1--ledger-1-instance)
   - [Wallet 2 + Ledger 2 Instance](#wallet-2--ledger-2-instance)
   - [Setup five-bells-connector](#setup-five-bells-connector)
+- [Mail Setup](#mail-setup)
 - [Architecture](#architecture)
   - [Backend (REST API)](#backend-rest-api)
     - [API docs](#api-docs)
@@ -293,6 +294,11 @@ CONNECTOR_ADMIN_PASS=admin
 CONNECTOR_CREDENTIALS='{"http://wallet1.com/ledger":{"account_uri":"http://wallet1.com/ledger/accounts/trader","username":"trader","password":"trader"},"http://wallet2.com/ledger":{"account_uri":"http://wallet2.com/ledger/accounts/trader","username":"trader","password":"trader"}}'
 CONNECTOR_QUOTE_FULL_PATH=true
 ```
+
+## Mail setup
+You will need to configure the email service if you want the password recovery and changing email to work (It also sends a welcome email once a user signs up). ILP kit uses [Mailgun](http://mailgun.com/) email service, so you need to create an account with them and attach/verify your domain. Set the `API_MAILGUN_API_KEY` and `API_MAILGUN_DOMAIN` environment variables when you setup the Mailgun.
+
+Additionally you can setup a mail forwarder if you want to be able to receive replies to your automated emails. Mailgun uses [Routes](https://mailgun.com/app/routes) for forwarding. Just create a `catch_all` route forwarding incoming mails to your email address of choice.
 
 ## Architecture
 ILP kit consists of a [Node.js](https://github.com/nodejs/node) (developed on v5.6) backend (REST API) and a client built using [React](https://github.com/facebook/react).
