@@ -154,7 +154,7 @@ export default class App extends Component {
 
     return (
       <div className={cx('container')}>
-        <script src="https://web-payments.net/polyfill.js"></script>
+        {/* <script src="https://web-payments.net/polyfill.js"></script> */}
         <DocumentMeta {...meta}/>
 
         <div className={cx('waypoint')}>
@@ -176,7 +176,7 @@ export default class App extends Component {
               </IndexLinkContainer>
               {user.isAdmin &&
               <LinkContainer to="/invites">
-                <NavItem onClick={this.onNavItemClick}>Invite Codes</NavItem>
+                <NavItem onClick={this.onNavItemClick}>Invites</NavItem>
               </LinkContainer>}
               {!user.github_id &&
               <LinkContainer to="/settings">
