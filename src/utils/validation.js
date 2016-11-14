@@ -70,6 +70,12 @@ export function match(field) {
   }
 }
 
+export function uuid(value) {
+  if (!isEmpty(value) && !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value)) {
+    return 'Invalid'
+  }
+}
+
 export function createValidator(rules) {
   return (data = {}) => {
     const errors = {}

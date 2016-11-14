@@ -11,22 +11,24 @@ const Socket = require('../lib/socket')
 const Config = require('../lib/config')
 const Mailer = require('../lib/mailer')
 const UserFactory = require('../models/user')
+const InviteFactory = require('../models/invite')
 
 const UsernameTakenError = require('../errors/username-taken-error')
 const EmailTakenError = require('../errors/email-taken-error')
 const PasswordsDontMatchError = require('../errors/passwords-dont-match-error')
 const InvalidVerification = require('../errors/invalid-verification-error')
+const ServerError = require('../errors/server-error')
 
-UsersControllerFactory.constitute = [Auth, UserFactory, Log, Ledger, Socket, Config, Mailer]
-function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer) {
-  log = log('users');
+UsersControllerFactory.constitute = [Auth, UserFactory, InviteFactory, Log, Ledger, Socket, Config, Mailer]
+function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config, mailer) {
+  log = log('users')
 
   return class UsersController {
-    static init (router) {
-      router.get('/users/:username', Auth.checkAuth, this.getResource)
+    static init(router) {
+      router.get('/users/:username', auth.checkAuth, this.getResource)
       router.post('/users/:username', User.createBodyParser(), this.postResource)
-      router.put('/users/:username', Auth.checkAuth, this.putResource)
-      router.post('/users/:username/reload', Auth.checkAuth, this.reload)
+      router.put('/users/:username', auth.checkAuth, this.putResource)
+      router.post('/users/:username/reload', auth.checkAuth, this.reload)
       router.get('/users/:username/profilepic', this.getProfilePicture)
 
       // Email verification
@@ -58,7 +60,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
      *      "id": 1
      *    }
      */
-    static * getResource () {
+    static * getResource() {
       let username = this.params.username
       request.validateUriParameter('username', username, 'Identifier')
       username = username.toLowerCase()
@@ -101,13 +103,13 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
      */
 
     // TODO should support both create and update
-    static * postResource () {
+    static * postResource() {
       let username = this.params.username
       // TODO also validate email
       request.validateUriParameter('username', username, 'Identifier')
       username = username.toLowerCase()
 
-      let userObj = this.body
+      const userObj = this.body
 
       let dbUser = yield User.findOne({where: {
         $or: [
@@ -116,25 +118,36 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
         ]
       }})
 
-      // TODO check if the https://account already exists
+      // TODO check if the ledger account already exists (probably not)
       if (dbUser) {
         // Username is already taken
         if (dbUser.username === username) {
-          throw new UsernameTakenError("Username is already taken")
+          throw new UsernameTakenError('Username is already taken')
         }
 
         // Email is already taken
-        throw new EmailTakenError("Email is already taken")
+        throw new EmailTakenError('Email is already taken')
       }
 
       userObj.username = username
+
+      let invite
+
+      // Invite code
+      if (userObj.inviteCode) {
+        invite = yield Invite.findOne({where: {code: userObj.inviteCode, claimed: false}})
+
+        if (invite) {
+          userObj.balance = invite.amount
+        }
+      }
 
       // Create a ledger account
       let ledgerUser
       try {
         ledgerUser = yield ledger.createAccount(userObj)
       } catch (e) {
-        throw new UsernameTakenError("Ledger rejected username")
+        throw new UsernameTakenError('Ledger rejected username')
       }
 
       userObj.account = ledgerUser.id
@@ -144,10 +157,20 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
       dbUser.setDataExternal(userObj)
 
       try {
-        yield dbUser.save()
+        dbUser = yield dbUser.save()
+        dbUser = User.fromDatabaseModel(dbUser)
+
+        // Invite codes can only be used once
+        if (invite) {
+          invite.user_id = dbUser.id
+          invite.claimed = true
+
+          yield invite.save()
+        }
+
+	// TODO:SECURITY account should be funded at this point
       } catch (e) {
-        // TODO throw exception
-        console.log('users.js:125', e)
+        throw new ServerError()
       }
 
       yield mailer.sendWelcome({
@@ -159,7 +182,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
       const user = yield dbUser.appendLedgerAccount(ledgerUser)
 
       // TODO callbacks?
-      this.req.logIn(user, function (err) {})
+      this.req.logIn(user, err => {})
 
       log.debug('created user ' + username)
 
@@ -234,7 +257,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
         log.warn(e)
       }
 
-      this.req.logIn(user, function (err) {})
+      this.req.logIn(user, err => {})
 
       this.body = user.getDataExternal()
     }
@@ -297,7 +320,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
      *      "email_verified": true
      *    }
      */
-    static * verify () {
+    static * verify() {
       let username = this.params.username
       request.validateUriParameter('username', username, 'Identifier')
       username = username.toLowerCase()
@@ -405,7 +428,7 @@ function UsersControllerFactory (Auth, User, log, ledger, socket, config, mailer
       if (!fs.existsSync(file)) {
         return this.status = 422
       }
-    
+
       const img = fs.readFileSync(file)
       this.body = img
     }

@@ -14,8 +14,8 @@ const Config = require('./config')
 const Ledger = require('./ledger')
 
 module.exports = class Auth {
-  static constitute () { return [ UserFactory, Config, Ledger ] }
-  constructor (User, config, ledger) {
+  static constitute() { return [ UserFactory, Config, Ledger ] }
+  constructor(User, config, ledger) {
     const self = this
     self.config = config
     self.ledger = ledger
@@ -103,7 +103,7 @@ module.exports = class Auth {
 
     passport.deserializeUser(function(userObj, done) {
       User.findOne({where: {username: userObj.username}})
-        .then(co.wrap(function * (dbUser){
+        .then(co.wrap(function * (dbUser) {
           if (!dbUser) {
             return done(new UnauthorizedError('Unknown or invalid account / password'))
           }
@@ -111,18 +111,23 @@ module.exports = class Auth {
           const user = yield dbUser.appendLedgerAccount()
           user.password = userObj.password
 
+          // isAdmin
+          if (dbUser.username === self.config.data.getIn(['ledger', 'admin', 'user'])) {
+            user.isAdmin = true
+          }
+
           done(null, user)
         }))
     })
   }
 
-  attach (app) {
+  attach(app) {
     // Authentication
     app.use(passport.initialize())
     app.use(passport.session())
   }
 
-  * checkAuth (next) {
+  * checkAuth(next) {
     // Local Strategy
     if (this.isAuthenticated()) {
       return yield next
@@ -176,7 +181,7 @@ module.exports = class Auth {
     )))
   }
 
-  generateGithubPassword (userId) {
+  generateGithubPassword(userId) {
     return crypto.createHmac('sha256', this.config.data.getIn(['github', 'secret'])).update(userId).digest('base64')
   }
 }

@@ -6,6 +6,8 @@ import Alert from 'react-bootstrap/lib/Alert'
 
 import Input from 'components/Input/Input'
 
+import { loadCode } from 'redux/actions/invite'
+
 import classNames from 'classnames/bind';
 import styles from './RegisterForm.scss';
 const cx = classNames.bind(styles);
@@ -13,12 +15,17 @@ const cx = classNames.bind(styles);
 // TODO async validation on username
 @reduxForm({
   form: 'register',
-  fields: ['username', 'email', 'password'],
+  fields: ['username', 'email', 'password', 'inviteCode'],
   validate: registerValidation
-})
-
+}, state => ({
+  invite: state.invite.invite
+}), {loadCode})
 export default class RegisterForm extends Component {
   static propTypes = {
+    invite: PropTypes.object,
+    loadCode: PropTypes.func,
+
+    // Form
     fields: PropTypes.object.isRequired,
     invalid: PropTypes.bool.isRequired,
     pristine: PropTypes.bool.isRequired,
@@ -28,6 +35,8 @@ export default class RegisterForm extends Component {
     fail: PropTypes.object
   }
 
+  state = {}
+
   componentDidMount() {
     // this.refs.fakeuser.style = {display: 'none'}
     setTimeout(() => {
@@ -35,9 +44,40 @@ export default class RegisterForm extends Component {
     }, 1)
   }
 
+  handleAddInviteCodeClick = (e) => {
+    e.preventDefault()
+
+    this.setState({
+      ...this.state,
+      showInviteInput: true
+    })
+  }
+
+  // TODO:UX Invite code async validation
+  handleAddInviteCode = (input) => {
+    // redux-form onChange needs to happen first
+    // TODO try without a timeout
+    setTimeout(() => {
+      if (!this.props.fields.inviteCode.valid || !input.value) return
+
+      this.props.loadCode(input.value)
+        .then(code => {
+          if (!code) return
+
+          this.setState({
+            ...this.state,
+            showInviteInput: false
+          })
+        })
+    }, 50)
+  }
+
   render() {
-    const { handleSubmit, register, fail, fields: {username, email, password}, pristine, invalid, submitting } = this.props
+    const { invite, handleSubmit, register, fail,
+      fields: { username, email, password, inviteCode },
+      pristine, invalid, submitting } = this.props
     const hideFakes = this.state && this.state.hideFakes
+    const { showInviteInput } = this.state
 
     return (
       <form onSubmit={handleSubmit(register)} autoComplete="off">
@@ -60,6 +100,38 @@ export default class RegisterForm extends Component {
           <Input object={username} label="Username" size="lg" focus autoCapitalize="off" />
           <Input object={email} label="Email" size="lg" autoCapitalize="off" />
           <Input object={password} label="Password" size="lg" type="password" />
+
+          {/* Invite code: Step 1 */}
+          {!showInviteInput && !invite.code &&
+          <a href="" className={cx('inviteLink')} onClick={this.handleAddInviteCodeClick}>Have an invite code?</a>}
+
+          {/* Invite code: Step 2 */}
+          {showInviteInput &&
+            <Input object={inviteCode} label="Invite Code" size="lg" focus
+                   onChange={this.handleAddInviteCode} />}
+
+          {/* Invite code: Step 3 */}
+          {invite.code && !showInviteInput &&
+          <div className={cx('inviteCode', 'row')}>
+            {/* Invite code has been added */}
+            {!invite.claimed &&
+            <div>
+              <span className={cx('text', 'col-sm-8')}>Invite code has been added!</span>
+              {/* TODO:REFACTOR shouldn't use the global config */}
+              <span className={cx('balance', 'col-sm-4')}>
+                <span className={cx('label')}>Balance </span>
+                <span className={cx('number')}>
+                  {config.currencySymbol}{invite.amount}
+                </span>
+              </span>
+            </div>}
+
+            {/* Invite code has already been claimed */}
+            {invite.claimed &&
+            <div>
+              Provided invite code has already been used. <a href="" onClick={this.handleAddInviteCodeClick}>Try another one</a>
+            </div>}
+          </div>}
         </div>
         <button type="submit" className="btn btn-complete" disabled={pristine || invalid || submitting}>
           {submitting ? ' Registering...' : ' Register'}

@@ -1,9 +1,6 @@
 "use strict"
 
-const _ = require('lodash')
-const co = require('co')
 const superagent = require('superagent-promise')(require('superagent'), Promise)
-const crypto = require('crypto')
 const Container = require('constitute').Container
 const EventEmitter = require('events').EventEmitter
 
@@ -17,8 +14,8 @@ const NotFoundError = require('../errors/not-found-error')
 
 // TODO exception handling
 module.exports = class Ledger extends EventEmitter {
-  static constitute () { return [Config, Log, Container] }
-  constructor (config, log, container) {
+  static constitute() { return [Config, Log, Container] }
+  constructor(config, log, container) {
     super()
 
     const self = this
@@ -49,7 +46,7 @@ module.exports = class Ledger extends EventEmitter {
     return response.body
   }
 
-  * getAccount (user, admin) {
+  * getAccount(user, admin) {
     let response
 
     try {
@@ -82,7 +79,7 @@ module.exports = class Ledger extends EventEmitter {
   }
 
   updateAccount(user, admin) {
-    let data = {
+    const data = {
       name: user.username
     }
 
@@ -107,23 +104,18 @@ module.exports = class Ledger extends EventEmitter {
   createAccount(user) {
     const reload = this.config.get('reload')
 
-    let data = {
+    const data = {
       name: user.username,
-      balance: reload ? '1000' : '0'
+      balance: reload ? '1000' : '' + (user.balance || 0)
     }
 
     if (user.password) {
       data.password = user.password
     }
 
-    console.log('ledger:119', {
-      username: this.config.getIn(['ledger', 'admin', 'user']),
-      password: this.config.getIn(['ledger', 'admin', 'pass'])
-    })
-
     return this.putAccount({
       username: this.config.getIn(['ledger', 'admin', 'user']),
       password: this.config.getIn(['ledger', 'admin', 'pass'])
-    }, data);
+    }, data)
   }
 }

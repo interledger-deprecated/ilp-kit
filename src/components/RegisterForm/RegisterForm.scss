@@ -11,3 +11,26 @@
   left: -10000px;
   background: #000;
 }
+.inviteLink {
+  display: block;
+  text-align: right;
+}
+.inviteCode {
+  margin: 10px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .balance {
+    display: block;
+    height: 50px;
+    text-align: center;
+
+    .number {
+      display: block;
+      margin: 5px 0;
+      color: #1DE9B6;
+      font-size: 30px;
+    }
+  }
+}

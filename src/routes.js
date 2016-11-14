@@ -68,6 +68,14 @@ export default (store) => {
     }, 'settings')
   }
 
+  const getInvites = (nextState, cb) => {
+    require.ensure(['./containers/Invites/Invites'], (require) => {
+      cb(null, require('./containers/Invites/Invites'))
+
+      store.dispatch(locationUpdate())
+    }, 'invites')
+  }
+
   /**
    * Please keep routes in alphabetical order
    */
@@ -90,6 +98,7 @@ export default (store) => {
         <Route onEnter={requireAuth}>
           <Route path="button" getComponent={getButton}/>
           <Route path="settings" getComponent={getSettings}/>
+          <Route path="invites" getComponent={getInvites}/>
         </Route>
 
         { /* Routes available to all */ }

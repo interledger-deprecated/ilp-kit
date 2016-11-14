@@ -9,15 +9,16 @@ const UsersController = require('../controllers/users')
 const PaymentsController = require('../controllers/payments')
 const WebfingerController = require('../controllers/webfinger')
 const MiscController = require('../controllers/misc')
+const InviteController = require('../controllers/invites')
 
 module.exports = class Router {
-  static constitute () { return [ Container ] }
-  constructor (container) {
+  static constitute() { return [ Container ] }
+  constructor(container) {
     this.container = container
     this.router = makeRouter()
   }
 
-  setupDefaultRoutes () {
+  setupDefaultRoutes() {
     const health = this.container.constitute(HealthController)
     health.init(this.router)
 
@@ -35,9 +36,12 @@ module.exports = class Router {
 
     const misc = this.container.constitute(MiscController)
     misc.init(this.router)
+
+    const invites = this.container.constitute(InviteController)
+    invites.init(this.router)
   }
 
-  attach (app) {
+  attach(app) {
     app.use(this.router.middleware())
     app.use(this.router.routes())
   }
