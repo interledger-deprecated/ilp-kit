@@ -42,17 +42,15 @@ export default class Invites extends Component {
             </div>
             {/* TODO:UX add claimed user */}
             {/* TODO:UX delete invite code */}
-            <div className={cx('col-sm-2')}>
+            <div className={cx('col-sm-4', 'amountColumn')}>
               <span className={cx('lbl')}>Amount</span>
-              {code.amount}
+              <span className={cx('amount')}>{code.amount}</span>
             </div>
             <div className={cx('col-sm-2')}>
               <span className={cx('lbl')}>Claimed</span>
-              {code.claimed ? 'Yes' : 'No'}
-            </div>
-            <div className={cx('col-sm-2')}>
-              <span className={cx('lbl')}>User</span>
-              {code.user_id && code.User.username}
+              {!code.claimed && <span className={cx('claimed')}>No</span>}
+
+              {code.user_id && <strong>{code.User.username}</strong>}
             </div>
           </div>
         </div>

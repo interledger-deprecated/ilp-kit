@@ -1,3 +1,4 @@
+@import 'variables';
 @import 'mixins';
 
 .lbl {
@@ -7,4 +8,16 @@
   border-bottom: 1px dotted #626262;
 
   @include singleLinkColor(#626262);
+}
+.amountColumn {
+  text-align: center;
+}
+.amount {
+  display: block;
+  margin: 3px 0;
+  font-size: 20px;
+  color: $brand-color;
+}
+.claimed {
+  color: #d9d9d9;
 }
