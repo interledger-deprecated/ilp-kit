@@ -62,10 +62,5 @@ if (!getVar('API_LEDGER_URI')) {
 
 // Set envVars in environment
 _.each(envVars, (envVar, index) => {
-  if (index === 'CONNECTOR_LEDGERS') {
-    // Remove single quotes
-    envVar = envVar.substring(1, envVar.length - 1)
-  }
-
   if (!process.env[index]) process.env[index] = envVar
 })

@@ -59,6 +59,7 @@ export default class Invites extends Component {
           </div>
         </div>
 
+        {/* TODO:UX ask for confirmation */}
         <a href="" className={cx('deleteButton')} onClick={this.handleRemove.bind(null, invite.code)}>
           <i className="fa fa-times" />
         </a>
