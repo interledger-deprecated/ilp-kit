@@ -55,7 +55,8 @@ export default class Home extends Component {
   setCurrentView(props) {
     const prps = props || this.props
     const fullPath = prps.route.path
-    let currentView = fullPath && fullPath.split('/')[0]
+    let currentView = fullPath && fullPath.match(/[a-zA-Z-]*/i)[0]
+
     if (currentView === 'verify') currentView = 'login'
 
     this.setState({
@@ -90,7 +91,7 @@ export default class Home extends Component {
                 {currentView === 'login' &&
                 <LoginForm login={login} fail={authFail} />}
                 {currentView === 'register' &&
-                <RegisterForm register={register} fail={authFail} />}
+                <RegisterForm register={register} fail={authFail} params={params} />}
                 {currentView === 'forgot-password' &&
                 <ForgotPasswordForm submit={forgot} fail={authFail} />}
                 {currentView === 'change-password' &&

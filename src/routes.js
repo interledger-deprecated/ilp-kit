@@ -89,7 +89,7 @@ export default (store) => {
         { /* Routes only available to guests */ }
         <Route onEnter={noAuth}>
           <Route path="login" getComponent={getAuth}/>
-          <Route path="register" getComponent={getAuth}/>
+          <Route path="register(/:inviteCode)" getComponent={getAuth}/>
           <Route path="forgot-password" getComponent={getAuth}/>
           <Route path="change-password/:username/:passwordChangeCode" getComponent={getAuth}/>
         </Route>

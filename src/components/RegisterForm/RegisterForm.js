@@ -24,6 +24,7 @@ export default class RegisterForm extends Component {
   static propTypes = {
     invite: PropTypes.object,
     loadCode: PropTypes.func,
+    params: PropTypes.object,
 
     // Form
     fields: PropTypes.object.isRequired,
@@ -42,6 +43,22 @@ export default class RegisterForm extends Component {
     setTimeout(() => {
       this.setState({hideFakes: true})
     }, 1)
+
+    this.handleUrlInviteCode()
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.params !== nextProps.params) {
+      this.handleUrlInviteCode(nextProps)
+    }
+  }
+
+  handleUrlInviteCode = (props = this.props) => {
+    const inviteCode = props.params.inviteCode
+
+    if (!inviteCode) return
+
+    this.handleAddInviteCode(inviteCode)
   }
 
   handleAddInviteCodeClick = (e) => {
@@ -55,12 +72,14 @@ export default class RegisterForm extends Component {
 
   // TODO:UX Invite code async validation
   handleAddInviteCode = (input) => {
+    const inviteCode = input.value || input
+
     // redux-form onChange needs to happen first
     // TODO try without a timeout
     setTimeout(() => {
-      if (!this.props.fields.inviteCode.valid || !input.value) return
+      if (!this.props.fields.inviteCode.valid || !inviteCode) return
 
-      this.props.loadCode(input.value)
+      this.props.loadCode(inviteCode)
         .then(code => {
           if (!code) return
 
@@ -111,26 +130,22 @@ export default class RegisterForm extends Component {
                    onChange={this.handleAddInviteCode} />}
 
           {/* Invite code: Step 3 */}
-          {invite.code && !showInviteInput &&
+          {invite.code && !invite.claimed && !showInviteInput &&
           <div className={cx('inviteCode', 'row')}>
-            {/* Invite code has been added */}
-            {!invite.claimed &&
-            <div>
-              <span className={cx('text', 'col-sm-8')}>Invite code has been added!</span>
-              {/* TODO:REFACTOR shouldn't use the global config */}
-              <span className={cx('balance', 'col-sm-4')}>
-                <span className={cx('label')}>Balance </span>
-                <span className={cx('number')}>
-                  {config.currencySymbol}{invite.amount}
-                </span>
+            <span className={cx('text', 'col-sm-7')}>Invite code has been added!</span>
+            {/* TODO:REFACTOR shouldn't use the global config */}
+            <span className={cx('balance', 'col-sm-5')}>
+              <span className={cx('label')}>Balance </span>
+              <span className={cx('number')}>
+                {config.currencySymbol}{invite.amount}
               </span>
-            </div>}
+            </span>
+          </div>}
 
-            {/* Invite code has already been claimed */}
-            {invite.claimed &&
-            <div>
-              Provided invite code has already been used. <a href="" onClick={this.handleAddInviteCodeClick}>Try another one</a>
-            </div>}
+          {/* Invite code has already been claimed */}
+          {invite.claimed &&
+          <div className={cx('claimed')}>
+            Provided invite code has already been used. <a href="" onClick={this.handleAddInviteCodeClick}>Try another one</a>
           </div>}
         </div>
         <button type="submit" className="btn btn-complete" disabled={pristine || invalid || submitting}>
