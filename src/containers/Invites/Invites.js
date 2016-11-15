@@ -8,8 +8,6 @@ import classNames from 'classnames/bind'
 import styles from './Invites.scss'
 const cx = classNames.bind(styles)
 
-import Clipboard from 'clipboard'
-
 @connect(
   state => ({
     codes: state.invite.codes
@@ -26,6 +24,8 @@ export default class Invites extends Component {
   }
 
   componentDidMount() {
+    const Clipboard = require('clipboard')
+
     new Clipboard('.copy')
   }
 
