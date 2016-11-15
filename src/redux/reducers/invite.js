@@ -34,6 +34,11 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         codes: [action.result].concat(state.codes)
       }
+    case types.REMOVE_INVITE_SUCCESS:
+      return {
+        ...state,
+        codes: state.codes.filter(invite => invite.code !== action.result.code)
+      }
     default:
       return state
   }

@@ -14,3 +14,9 @@ export const create = (data) => ({
   types: [types.CREATE_INVITE, types.CREATE_INVITE_SUCCESS, types.CREATE_INVITE_FAIL],
   promise: (client) => client.post('/invites', {data})
 })
+
+export const remove = (code) => ({
+  types: [types.REMOVE_INVITE, types.REMOVE_INVITE_SUCCESS, types.REMOVE_INVITE_FAIL],
+  promise: (client) => client.del('/invites/' + code)
+})
+

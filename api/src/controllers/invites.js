@@ -78,7 +78,7 @@ function InvitesControllerFactory(auth, config, Invite) {
 
       yield code.destroy()
 
-      this.status = 200
+      this.body = this.params
     }
   }
 }

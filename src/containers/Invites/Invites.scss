@@ -1,6 +1,13 @@
 @import 'variables';
 @import 'mixins';
 
+.invite {
+  position: relative;
+
+  &:hover .deleteButton {
+    opacity: 1;
+  }
+}
 .lbl {
   display: block;
 }
@@ -20,4 +27,16 @@
 }
 .claimed {
   color: #d9d9d9;
+}
+.deleteButton {
+  position: absolute;
+  top: 0;
+  right: 4px;
+  padding: 5px;
+  color: #626262;
+  opacity: 0;
+
+  &:hover {
+    color: #f55753;
+  }
 }

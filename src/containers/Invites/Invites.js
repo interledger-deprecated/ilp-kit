@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import ReactTooltip from 'react-tooltip'
 
-import { loadCodes } from 'redux/actions/invite'
+import { loadCodes, remove } from 'redux/actions/invite'
 import InviteCreateForm from 'containers/InviteCreateForm/InviteCreateForm'
 
 import classNames from 'classnames/bind'
@@ -13,7 +13,7 @@ const cx = classNames.bind(styles)
   state => ({
     codes: state.invite.codes
   }),
-  {loadCodes})
+  { loadCodes, remove })
 export default class Invites extends Component {
   static propTypes = {
     codes: PropTypes.array,
@@ -29,31 +29,39 @@ export default class Invites extends Component {
     new Clipboard('.copy')
   }
 
-  renderCode(code) {
+  handleRemove = (code, e) => {
+    e.preventDefault()
+
+    this.props.remove(code)
+  }
+
+  renderCode = (invite) => {
     return (
-      <div className="panel panel-default" key={code.code}>
+      <div className={cx('panel', 'panel-default', 'invite')} key={invite.code}>
         <div className="panel-body">
           <div className={cx('row')}>
             <div className={cx('col-sm-6')}>
               <span className={cx('lbl')}>Code</span>
               <a href="" onClick={e => {e.preventDefault()}} data-tip="click to copy the link"
-                 data-clipboard-text={config.clientUri + '/register/' + code.code}
-                 className={cx('code', 'copy')}>{code.code}</a>
+                 data-clipboard-text={config.clientUri + '/register/' + invite.code}
+                 className={cx('code', 'copy')}>{invite.code}</a>
             </div>
-            {/* TODO:UX add claimed user */}
-            {/* TODO:UX delete invite code */}
             <div className={cx('col-sm-4', 'amountColumn')}>
               <span className={cx('lbl')}>Amount</span>
-              <span className={cx('amount')}>{code.amount}</span>
+              <span className={cx('amount')}>{invite.amount}</span>
             </div>
             <div className={cx('col-sm-2')}>
               <span className={cx('lbl')}>Claimed</span>
-              {!code.claimed && <span className={cx('claimed')}>No</span>}
+              {!invite.claimed && <span className={cx('claimed')}>No</span>}
 
-              {code.user_id && <strong>{code.User.username}</strong>}
+              {invite.user_id && <strong>{invite.User.username}</strong>}
             </div>
           </div>
         </div>
+
+        <a href="" className={cx('deleteButton')} onClick={this.handleRemove.bind(null, invite.code)}>
+          <i className="fa fa-times" />
+        </a>
       </div>
     )
   }
