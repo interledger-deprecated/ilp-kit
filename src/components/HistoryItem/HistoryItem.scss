@@ -1,7 +1,7 @@
 // TODO:UX include only one var file
-@import '../../theme/variables.scss';
+@import 'variables';
 @import '../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss';
-@import '../../theme/pages/scss/var';
+@import 'pages/scss/var';
 
 .item {
   border-top: 1px solid $history-payment-separator-color;
