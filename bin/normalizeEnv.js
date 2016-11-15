@@ -18,12 +18,11 @@ try {
   const fileLines = envFile.toString().split('\n')
 
   fileLines.forEach((line) => {
-    if (line.indexOf('export') > -1) {
-      const keyPairString = line.replace('export ', '')
-      const keyPairArray = keyPairString.split('=')
+    if (!line) return
 
-      envVars[keyPairArray[0]] = keyPairArray.slice(1).join('=')
-    }
+    const keyPairArray = line.split('=')
+
+    envVars[keyPairArray[0]] = keyPairArray.slice(1).join('=')
   })
 } catch (err) {
   // Both env.list and environment variables are missing

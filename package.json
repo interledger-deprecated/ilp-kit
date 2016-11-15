@@ -140,7 +140,7 @@
     "http-proxy": "^1.12.0",
     "ilp": "^7.1.0",
     "ilp-connector": "^12.2.0",
-    "ilp-kit-cli": "github:interledgerjs/ilp-kit-cli",
+    "ilp-kit-cli": "^5.0.0",
     "ilp-plugin-bells": "^8.2.0",
     "istanbul": "^0.4.5",
     "kcors": "^1.0.1",
