@@ -26,7 +26,7 @@
     "start-prod-ledger": "better-npm-run start-prod-ledger",
     "start-prod-connector": "better-npm-run start-prod-connector",
     "build": "cp -n src/theme/variables.scss.example src/theme/variables.scss ; better-npm-run build",
-    "build-dlls": ". ./env.list ; ./node_modules/.bin/webpack --progress --config webpack/dll.config.js",
+    "build-dlls": "cp -n src/theme/variables.scss.example src/theme/variables.scss ; node ./bin/dlls.js",
     "postinstall": "npm rebuild node-sass",
     "lint": "eslint -c .eslintrc src api",
     "start-dev": "better-npm-run start-dev",
@@ -36,7 +36,7 @@
     "watch-client": "better-npm-run watch-client",
     "dev": "DEBUG_COLORS=1 concurrently -p \"[{name}]\" -n \"watcher,ledger,connector,api,wallet\" -c \"yellow,red,magenta,blue,cyan\" \"npm run watch-client\" \"npm run start-dev-ledger\" \"npm run start-dev-connector\" \"npm run start-dev-api\" \"npm run start-dev\"",
     "test": "cp -n src/theme/variables.scss.example src/theme/variables.scss ; karma start",
-    "test-api": ". ./test.env.list ; istanbul test -- _mocha",
+    "test-api": "better-npm-run test-api",
     "apidoc": "apidoc -i api/src/controllers/ -o apidoc-out",
     "configure": "./node_modules/ilp-kit-cli/bin/configure.js -o env.list"
   },
@@ -106,6 +106,12 @@
       "command": "webpack --verbose --colors --display-error-details --progress --config webpack/prod.config.js",
       "env": {
         "NODE_ENV": "production"
+      }
+    },
+    "test-api": {
+      "command": "node ./bin/testApi.js",
+      "env": {
+        "NODE_ENV": "test"
       }
     }
   },

@@ -14,7 +14,9 @@ const getVar = (name, def = false) => {
 
 // get env vars from the env file
 try {
-  const envFile = fs.readFileSync('env.list')
+  const file = process.env.NODE_ENV === 'test' ? 'test.env.list' : 'env.list'
+
+  const envFile = fs.readFileSync(file)
   const fileLines = envFile.toString().split('\n')
 
   fileLines.forEach((line) => {
