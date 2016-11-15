@@ -104,6 +104,9 @@ module.exports = {
     ],
     extensions: ['', '.json', '.js', '.jsx']
   },
+  sassLoader: {
+    includePaths: [path.resolve(__dirname, "../src/theme")]
+  },
   plugins: [
     new LodashModuleReplacementPlugin(),
     new webpack.DllReferencePlugin({

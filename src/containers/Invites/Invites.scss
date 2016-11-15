@@ -1,3 +1,10 @@
+@import 'mixins';
+
 .lbl {
   display: block;
+}
+.code {
+  border-bottom: 1px dotted #626262;
+
+  @include singleLinkColor(#626262);
 }

@@ -76,6 +76,7 @@ function MiscControllerFactory (Auth, log, config, ledger, utils) {
       const ledgerInfo = yield ledger.getInfo()
 
       const response = {
+        clientUri: config.data.get('client_host'),
         ledgerUri: config.data.getIn(['ledger', 'public_uri']),
         currencyCode: ledgerInfo.currency_code,
         currencySymbol: ledgerInfo.currency_symbol,

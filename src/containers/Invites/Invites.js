@@ -8,6 +8,8 @@ import classNames from 'classnames/bind'
 import styles from './Invites.scss'
 const cx = classNames.bind(styles)
 
+import Clipboard from 'clipboard'
+
 @connect(
   state => ({
     codes: state.invite.codes
@@ -23,6 +25,10 @@ export default class Invites extends Component {
     this.props.loadCodes()
   }
 
+  componentDidMount() {
+    new Clipboard('.copy')
+  }
+
   renderCode(code) {
     return (
       <div className="panel panel-default" key={code.code}>
@@ -30,8 +36,9 @@ export default class Invites extends Component {
           <div className={cx('row')}>
             <div className={cx('col-sm-6')}>
               <span className={cx('lbl')}>Code</span>
-              {/* TODO:UX click should copy the code */}
-              {code.code}
+              <a href="" onClick={e => {e.preventDefault()}} title="Click to copy"
+                 data-clipboard-text={config.clientUri + '/register/' + code.code}
+                 className={cx('code', 'copy')}>{code.code}</a>
             </div>
             {/* TODO:UX add claimed user */}
             {/* TODO:UX delete invite code */}
