@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
+import ReactTooltip from 'react-tooltip'
 
 import { loadCodes } from 'redux/actions/invite'
 import InviteCreateForm from 'containers/InviteCreateForm/InviteCreateForm'
@@ -25,7 +26,6 @@ export default class Invites extends Component {
 
   componentDidMount() {
     const Clipboard = require('clipboard')
-
     new Clipboard('.copy')
   }
 
@@ -36,7 +36,7 @@ export default class Invites extends Component {
           <div className={cx('row')}>
             <div className={cx('col-sm-6')}>
               <span className={cx('lbl')}>Code</span>
-              <a href="" onClick={e => {e.preventDefault()}} title="Click to copy"
+              <a href="" onClick={e => {e.preventDefault()}} data-tip="click to copy the link"
                  data-clipboard-text={config.clientUri + '/register/' + code.code}
                  className={cx('code', 'copy')}>{code.code}</a>
             </div>
@@ -82,8 +82,9 @@ export default class Invites extends Component {
               </div>
             </div>
           </div>
-
         </div>
+
+        <ReactTooltip />
       </div>
     )
   }
