@@ -64,6 +64,9 @@ npm run build-dlls
 ```
 
 Run a development server
+
+Note: development server assumes you have `bunyan` installed globally.
+
 ```bash
 npm run dev
 ```
