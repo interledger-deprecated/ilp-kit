@@ -58,6 +58,14 @@ export function maxValue(max) {
   }
 }
 
+export function lessThanBalance(balance) {
+  return value => {
+    if (value && value > balance) {
+      return `Sending amount should be less than your balance`
+    }
+  }
+}
+
 export function oneOf(enumeration) {
   return value => {
     if (!~enumeration.indexOf(value)) {

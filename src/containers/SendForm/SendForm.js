@@ -1,5 +1,4 @@
 import React, {Component, PropTypes} from 'react'
-import {connect} from 'react-redux'
 import {reduxForm} from 'redux-form'
 import sendValidation from './SendValidation'
 import * as sendActions from 'redux/actions/send'
@@ -19,16 +18,14 @@ import Input from 'components/Input/Input'
   form: 'send',
   fields: ['destination', 'sourceAmount', 'destinationAmount', 'message', 'repeats', 'interval'],
   validate: sendValidation
-})
-@connect(
-  state => ({
-    user: state.auth.user,
-    destinationInfo: state.send.destinationInfo,
-    send: state.send,
-    quote: state.send.quote,
-    quoting: state.send.quoting
-  }),
-  {...sendActions, resetData: sendActions.reset})
+}, state => ({
+  user: state.auth.user,
+  destinationInfo: state.send.destinationInfo,
+  send: state.send,
+  quote: state.send.quote,
+  quoting: state.send.quoting
+}),
+{...sendActions, resetData: sendActions.reset})
 @successable()
 @resetFormOnSuccess('send')
 export default class SendForm extends Component {
@@ -114,7 +111,7 @@ export default class SendForm extends Component {
       .then(this.props.reset)
       .catch(this.props.permFail)
   }
-  
+
   handleSourceAmountChange = (target) => {
     // It can only do a quote request when the destination is specified
     if (!this.props.values.destination) return
