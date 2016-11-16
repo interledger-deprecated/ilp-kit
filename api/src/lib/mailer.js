@@ -30,7 +30,8 @@ module.exports = class Mailer {
   sendWelcome(params) {
     const locals = {
       name: params.name,
-      link: params.link
+      link: params.link,
+      client_title: this.config.data.get('client_title')
     }
 
     return this.send({
@@ -84,7 +85,7 @@ module.exports = class Mailer {
           }
 
           self.transporter.sendMail({
-            from: '"' + senderName + ' " <' + senderAddress +'>',
+            from: '"' + senderName + ' " <' + senderAddress + '>',
             to: params.to,
             subject: results.subject,
             html: results.html,
