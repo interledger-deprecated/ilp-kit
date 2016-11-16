@@ -12,7 +12,8 @@ export default class Input extends Component {
     focus: PropTypes.bool,
     autoCapitalize: PropTypes.string,
     onChange: PropTypes.func,
-    debounce: PropTypes.bool
+    debounce: PropTypes.bool,
+    noErrors: PropTypes.bool
   }
 
   static defaultProps = {
@@ -66,7 +67,7 @@ export default class Input extends Component {
   }
 
   renderInput() {
-    const { object, type, disabled, size, focus, autoCapitalize } = this.props
+    const { object, type, disabled, size, focus, autoCapitalize, noErrors } = this.props
 
     return (
       <span>
@@ -76,7 +77,7 @@ export default class Input extends Component {
                onChange={this.onChange} disabled={disabled}
                autoCapitalize={autoCapitalize} />
 
-        {object.dirty && object.error && <div className="text-danger">{object.error}</div>}
+        {!noErrors && object.dirty && object.error && <div className="text-danger">{object.error}</div>}
       </span>
     )
   }

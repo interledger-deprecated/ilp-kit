@@ -1,10 +1,10 @@
-import {createValidator, required, integer, minValue} from 'utils/validation';
+import {createValidator, required, integer, number, minValue} from 'utils/validation';
 
 const sendValidation = createValidator({
   destination: [required],
   // TODO number validation
-  sourceAmount: [required],
-  destinationAmount: [required],
+  sourceAmount: [required, number],
+  destinationAmount: [required, number],
   repeats: [integer],
   interval: [integer, minValue(200)]
 });

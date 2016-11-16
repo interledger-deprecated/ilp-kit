@@ -36,6 +36,12 @@ export function integer(value) {
   }
 }
 
+export function number(value) {
+  if (value && isNaN(parseFloat(value)) || !isFinite(value)) {
+    return 'Must be a number'
+  }
+}
+
 export function minValue(min) {
   return value => {
     if (value && value < min) {

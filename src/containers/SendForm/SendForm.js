@@ -114,15 +114,17 @@ export default class SendForm extends Component {
       .then(this.props.reset)
       .catch(this.props.permFail)
   }
-
-  // TODO there should be a feedback on a failed pathfinding
+  
   handleSourceAmountChange = (target) => {
+    // It can only do a quote request when the destination is specified
     if (!this.props.values.destination) return
 
     // Clear the destination amount field
     if (this.props.values.destinationAmount) {
       this.props.fields.destinationAmount.onChange()
     }
+
+    if (!this.props.fields.sourceAmount.valid) return
 
     this.props.requestQuote({
       destination: this.props.values.destination,
@@ -133,12 +135,15 @@ export default class SendForm extends Component {
   }
 
   handleDestinationAmountChange = (target) => {
+    // It can only do a quote request when the destination is specified
     if (!this.props.values.destination) return
 
     // Clear the source amount field
     if (this.props.values.sourceAmount) {
       this.props.fields.sourceAmount.onChange()
     }
+
+    if (!this.props.fields.destinationAmount.valid) return
 
     this.props.requestQuote({
       destination: this.props.values.destination,
@@ -270,7 +275,9 @@ export default class SendForm extends Component {
                   <span className="input-group-addon">
                     {config.currencySymbol}
                   </span>
-                  <Input object={sourceAmount} size="lg" onChange={this.handleSourceAmountChange} debounce disabled={isSendingAmountFieldDisabled} />
+                  <Input object={sourceAmount} size="lg"
+                         disabled={isSendingAmountFieldDisabled} noErrors
+                         onChange={this.handleSourceAmountChange} debounce />
                 </div>
 
                 {sourceAmount.dirty && sourceAmount.error && <div className="text-danger">{sourceAmount.error}</div>}
@@ -283,7 +290,9 @@ export default class SendForm extends Component {
                   <span className="input-group-addon">
                     {(destinationInfo && destinationInfo.currencySymbol) || config.currencySymbol}
                   </span>
-                  <Input object={destinationAmount} size="lg" onChange={this.handleDestinationAmountChange} debounce disabled={isReceivingAmountFieldDisabled} />
+                  <Input object={destinationAmount} size="lg"
+                         disabled={isReceivingAmountFieldDisabled} noErrors
+                         onChange={this.handleDestinationAmountChange} debounce />
                 </div>
 
                 {destinationAmount.dirty && destinationAmount.error && <div className="text-danger">{destinationAmount.error}</div>}
