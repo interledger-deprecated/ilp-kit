@@ -7,8 +7,8 @@ export function amount(num, currency) {
   am = am.replace(/\.?0+$/, '')
 
   if (currency) {
-    am = '$' + am
-    am = am.replace('$-', '-$')
+    am = currency + am
+    am = am.replace(currency + '-', '-' + currency)
   }
 
   return am
