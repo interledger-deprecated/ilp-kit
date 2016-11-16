@@ -88,16 +88,17 @@ export default class SendForm extends Component {
 
   // TODO doesn't handle the initial render
   componentWillReceiveProps(nextProps) {
-    if (nextProps.quote
-      && ((nextProps.quote.sourceAmount && nextProps.quote.sourceAmount !== this.props.quote.sourceAmount)
-      || (nextProps.quote.destinationAmount && nextProps.quote.destinationAmount !== this.props.quote.destinationAmount))) {
+    const thisQuote = this.props.quote
+    const nextQuote = nextProps.quote
 
+    // Quote source or destination has been changed
+    if (thisQuote.sourceAmount !== nextQuote.sourceAmount || thisQuote.destinationAmount !== nextQuote.destinationAmount) {
       if (!nextProps.fields.sourceAmount.active) {
-        this.props.fields.sourceAmount.onChange(nextProps.quote.sourceAmount)
+        this.props.fields.sourceAmount.onChange(nextQuote.sourceAmount)
       }
 
       if (!nextProps.fields.destinationAmount.active) {
-        this.props.fields.destinationAmount.onChange(nextProps.quote.destinationAmount)
+        this.props.fields.destinationAmount.onChange(nextQuote.destinationAmount)
       }
     }
   }
@@ -118,6 +119,11 @@ export default class SendForm extends Component {
   handleSourceAmountChange = (target) => {
     if (!this.props.values.destination) return
 
+    // Clear the destination amount field
+    if (this.props.values.destinationAmount) {
+      this.props.fields.destinationAmount.onChange()
+    }
+
     this.props.requestQuote({
       destination: this.props.values.destination,
       sourceAmount: target.value
@@ -128,6 +134,11 @@ export default class SendForm extends Component {
 
   handleDestinationAmountChange = (target) => {
     if (!this.props.values.destination) return
+
+    // Clear the source amount field
+    if (this.props.values.sourceAmount) {
+      this.props.fields.sourceAmount.onChange()
+    }
 
     this.props.requestQuote({
       destination: this.props.values.destination,
