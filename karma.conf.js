@@ -1,4 +1,5 @@
-var webpack = require('webpack');
+var path = require('path')
+var webpack = require('webpack')
 
 module.exports = function (config) {
   config.set({
@@ -48,6 +49,9 @@ module.exports = function (config) {
         ],
         extensions: ['', '.json', '.js']
       },
+      sassLoader: {
+        includePaths: [path.resolve(__dirname, "./src/theme")]
+      },
       plugins: [
         new webpack.IgnorePlugin(/webpack-stats\.json$/),
         new webpack.NoErrorsPlugin(),
@@ -67,5 +71,5 @@ module.exports = function (config) {
       noInfo: true
     }
 
-  });
-};
+  })
+}
