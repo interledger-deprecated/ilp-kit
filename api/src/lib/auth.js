@@ -97,11 +97,11 @@ module.exports = class Auth {
       ))
     }
 
-    passport.serializeUser(function(user, done) {
+    passport.serializeUser((user, done) => {
       return done(null, user)
     })
 
-    passport.deserializeUser(function(userObj, done) {
+    passport.deserializeUser((userObj, done) => {
       User.findOne({where: {username: userObj.username}})
         .then(co.wrap(function * (dbUser) {
           if (!dbUser) {
@@ -175,6 +175,11 @@ module.exports = class Auth {
         // Append ledger account
         const user = yield dbUser.appendLedgerAccount(ledgerUser)
         user.password = password
+
+        // isAdmin
+        if (dbUser.username === self.config.data.getIn(['ledger', 'admin', 'user'])) {
+          user.isAdmin = true
+        }
 
         return done(null, user)
       }

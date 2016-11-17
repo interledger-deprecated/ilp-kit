@@ -1,8 +1,7 @@
 "use strict"
 
-module.exports = AuthsControllerFactory
+module.exports = AuthControllerFactory
 
-const request = require('five-bells-shared/utils/request')
 const path = require('path')
 const passport = require('koa-passport')
 const sharp = require('sharp')
@@ -16,12 +15,12 @@ const UsersControllerFactory = require('./users')
 const NotFoundError = require('../errors/not-found-error')
 const PasswordsDontMatchError = require('../errors/passwords-dont-match-error')
 
-AuthsControllerFactory.constitute = [Auth, UserFactory, Log, Ledger, UsersControllerFactory, Mailer]
-function AuthsControllerFactory (Auth, User, log, ledger, Users, mailer) {
+AuthControllerFactory.constitute = [UserFactory, Log, Ledger, UsersControllerFactory, Mailer]
+function AuthControllerFactory(User, log, ledger, Users, mailer) {
   log = log('auth')
 
   return class AuthController {
-    static init (router) {
+    static init(router) {
       /**
        * @api {post} /auth/login Login
        * @apiName Login
@@ -109,10 +108,10 @@ function AuthsControllerFactory (Auth, User, log, ledger, Users, mailer) {
      *      "id": 1
      *    }
      */
-    static * load () {
-      let user = this.req.user
+    static * load() {
+      const user = this.req.user
 
-      if (!user) throw new NotFoundError("No active user session")
+      if (!user) throw new NotFoundError('No active user session')
 
       this.body = user.getDataExternal()
     }
@@ -134,7 +133,7 @@ function AuthsControllerFactory (Auth, User, log, ledger, Users, mailer) {
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
      */
-    static * forgotPassword () {
+    static * forgotPassword() {
       const resource = this.body.resource
 
       // TODO think about github users
@@ -145,7 +144,7 @@ function AuthsControllerFactory (Auth, User, log, ledger, Users, mailer) {
         ]
       }})
 
-      if (!dbUser) throw new NotFoundError("Wrong username/email")
+      if (!dbUser) throw new NotFoundError('Wrong username/email')
 
       // TODO Send the email
       yield mailer.forgotPassword({
@@ -158,10 +157,10 @@ function AuthsControllerFactory (Auth, User, log, ledger, Users, mailer) {
       this.status = 200
     }
 
-    static * changePassword () {
+    static * changePassword() {
       const dbUser = yield User.findOne({where: { username: this.body.username }})
 
-      if (!dbUser) throw new NotFoundError("Wrong username")
+      if (!dbUser) throw new NotFoundError('Wrong username')
 
       if (this.body.password !== this.body.repeatPassword) {
         throw new PasswordsDontMatchError('Passwords don\'t match')
@@ -181,7 +180,7 @@ function AuthsControllerFactory (Auth, User, log, ledger, Users, mailer) {
       const files = this.body.files
 
       let user = this.req.user
-      if (!user) throw new NotFoundError("No active user session")
+      if (!user) throw new NotFoundError('No active user session')
 
       user = yield User.findOne({where: {id: user.id}})
 
@@ -219,7 +218,7 @@ function AuthsControllerFactory (Auth, User, log, ledger, Users, mailer) {
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
      */
-    static logout () {
+    static logout() {
       this.session = null
       this.status = 200
     }

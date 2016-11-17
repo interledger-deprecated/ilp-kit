@@ -4,7 +4,7 @@ const sendValidation = (values, props) => {
   return createValidator({
     destination: [required],
     // TODO number validation
-    sourceAmount: [required, number, lessThanBalance(props.user.balance)],
+    sourceAmount: [required, number, minValue(0.001), lessThanBalance(props.user.balance)],
     destinationAmount: [required, number],
     repeats: [integer],
     interval: [integer, minValue(200)]

@@ -34,7 +34,7 @@ $faded-text-color: #b0b0b0;
 $success-background: #DFF0D8;
 
 // Pages
-$history-payment-separator-color: #f0f0f0;
+$history-payment-separator-color: #f6f6f6;
 $history-date-text-color: #b0b0b0;
 $history-expand-text-color: #fff;
 $history-expand-background-color: $dark;
