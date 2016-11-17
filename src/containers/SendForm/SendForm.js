@@ -177,20 +177,23 @@ export default class SendForm extends Component {
     // Repeated payments
     return new Promise((resolve) => {
       this.stopRepeatedPayments = () => {
-        resolve()
-        this.props.tempSuccess()
-        this.props.resetData()
+        setTimeout(() => {
+          resolve()
+          this.props.tempSuccess()
+          this.props.resetData()
+        }, 1000)
+
         clearInterval(this.interval)
       }
 
       this.interval = setInterval(() => {
         data.repeats--
 
-        this.transfer(data).then(() => {
-          if (data.repeats === 0) {
-            this.stopRepeatedPayments()
-          }
-        })
+        this.transfer(data)
+
+        if (data.repeats < 1) {
+          this.stopRepeatedPayments()
+        }
       }, data.interval)
     })
   }
