@@ -38,6 +38,9 @@ module.exports = class WalletConfig {
       secret: this.generateSecret('oauth:github')
     }
 
+    // Registration
+    localConfig.registration = Config.castBool(Config.getEnv(envPrefix, 'REGISTRATION'), true)
+
     // Email
     localConfig.mailgun = {
       api_key: Config.getEnv(envPrefix, 'MAILGUN_API_KEY'),

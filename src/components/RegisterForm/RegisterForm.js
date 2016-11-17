@@ -72,7 +72,7 @@ export default class RegisterForm extends Component {
 
   // TODO:UX Invite code async validation
   handleAddInviteCode = (input) => {
-    const inviteCode = input.value || input
+    const inviteCode = input.value !== undefined ? input.value : input
 
     // redux-form onChange needs to happen first
     // TODO try without a timeout
@@ -103,9 +103,11 @@ export default class RegisterForm extends Component {
         {fail && fail.id &&
         <Alert bsStyle="danger">
           {fail.id === 'UsernameTakenError' &&
-          <div><strong>Woops!</strong> Username is already taken</div>}
+          <div>Username is already taken</div>}
           {fail.id === 'EmailTakenError' &&
-          <div><strong>Woops!</strong> Email is already taken</div>}
+          <div>Email is already taken</div>}
+          {fail.id === 'InvalidBodyError' &&
+          <div>Registration is disabled without an invite code</div>}
         </Alert>}
 
         <div>

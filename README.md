@@ -153,6 +153,7 @@ Name | Example | Description |
 `API_MAILGUN_DOMAIN` | | One of the domains attached to the Mailgun account.
 `API_EMAIL_SENDER_NAME` | info | Email sender name
 `API_EMAIL_SENDER_ADDRESS` | contact@`API_MAILGUN_DOMAIN` | Email sender address
+`API_REGISTRATION` | `true` | Enable/Disable registration
 `WALLET_FORCE_HTTPS` | `true` | Force all connections to use HTTPS.
 `WALLET_TRUST_XFP_HEADER` | `true` | Trust the `X-Forwarded-Proto` header.
 `CONNECTOR_ENABLE` | `false` | Run a connector instance

@@ -77,9 +77,10 @@ export default class Home extends Component {
               <li className={currentView === 'login' ? 'active' : ''}>
                 <Link to="/login" data-toggle="tab" role="tab" aria-expanded="true">Login</Link>
               </li>
+              {config.registration &&
               <li className={currentView === 'register' ? 'active' : ''}>
                 <Link to="/register" data-toggle="tab" role="tab" aria-expanded="true">Register</Link>
-              </li>
+              </li>}
             </ul>
             <div className="tab-content">
               <div className="tab-pane active">

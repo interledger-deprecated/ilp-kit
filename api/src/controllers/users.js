@@ -18,6 +18,7 @@ const EmailTakenError = require('../errors/email-taken-error')
 const PasswordsDontMatchError = require('../errors/passwords-dont-match-error')
 const InvalidVerification = require('../errors/invalid-verification-error')
 const ServerError = require('../errors/server-error')
+const InvalidBodyError = require('../errors/invalid-body-error')
 
 UsersControllerFactory.constitute = [Auth, UserFactory, InviteFactory, Log, Ledger, Socket, Config, Mailer]
 function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config, mailer) {
@@ -111,6 +112,24 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
 
       const userObj = this.body
 
+      // check if registration is enabled
+      if (!config.registration && !userObj.inviteCode) {
+        throw new InvalidBodyError('Registration is disabled without an invite code')
+      }
+
+      let invite
+
+      // Invite code
+      if (userObj.inviteCode) {
+        invite = yield Invite.findOne({where: {code: userObj.inviteCode, claimed: false}})
+
+        if (invite) {
+          userObj.balance = invite.amount
+        } else if (!config.registration) {
+          throw new InvalidBodyError('The invite code is wrong')
+        }
+      }
+
       let dbUser = yield User.findOne({where: {
         $or: [
           { username: username },
@@ -130,17 +149,6 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
       }
 
       userObj.username = username
-
-      let invite
-
-      // Invite code
-      if (userObj.inviteCode) {
-        invite = yield Invite.findOne({where: {code: userObj.inviteCode, claimed: false}})
-
-        if (invite) {
-          userObj.balance = invite.amount
-        }
-      }
 
       // Create a ledger account
       let ledgerUser
