@@ -41,7 +41,6 @@ module.exports = {
       'moment-timezone',
       'classnames/bind',
       'react-waypoint',
-      'react-document-meta',
       'react-router-redux',
       'redux-pagination',
       'react-dropzone-component',

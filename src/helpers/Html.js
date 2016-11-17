@@ -1,7 +1,6 @@
 import React, {Component, PropTypes} from 'react';
 import ReactDOM from 'react-dom/server';
 import serialize from 'serialize-javascript';
-import DocumentMeta from 'react-document-meta';
 
 /**
  * Wrapper component containing HTML metadata and boilerplate tags.
@@ -26,8 +25,6 @@ export default class Html extends Component {
     return (
       <html lang="en-us">
         <head>
-          {DocumentMeta.renderAsReact()}
-
           <link rel="shortcut icon" href="/favicon.png" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           {/* styles (will be present only in production with webpack extract text plugin) */}

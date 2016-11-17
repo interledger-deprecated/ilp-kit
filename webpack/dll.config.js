@@ -104,7 +104,6 @@ module.exports = {
       'react-addons-create-fragment',
       'react-addons-css-transition-group',
       'react-bootstrap',
-      'react-document-meta',
       'react-dom',
       'react-dropzone-component',
       'react-ga',

@@ -182,7 +182,6 @@
     "react-addons-css-transition-group": "^15.4.0",
     "react-addons-test-utils": "^15.4.0",
     "react-bootstrap": "^0.30.3",
-    "react-document-meta": "^2.0.3",
     "react-dom": "^15.4.0",
     "react-dropzone-component": "^1.2.0",
     "react-ga": "^1.4.1",

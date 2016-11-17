@@ -9,7 +9,6 @@ import NavItem from 'react-bootstrap/lib/NavItem'
 import NavDropdown from 'react-bootstrap/lib/NavDropdown'
 import MenuItem from 'react-bootstrap/lib/MenuItem'
 
-import DocumentMeta from 'react-document-meta'
 import { isLoaded as isAuthLoaded, load as loadAuth, loadConfig, logout, updateBalance, verify } from 'redux/actions/auth'
 import { routeActions } from 'react-router-redux'
 import { addPayment as historyAddPayment } from 'redux/actions/history'
@@ -155,7 +154,6 @@ export default class App extends Component {
     return (
       <div className={cx('container')}>
         {/* <script src="https://web-payments.net/polyfill.js"></script> */}
-        <DocumentMeta {...meta}/>
 
         <div className={cx('waypoint')}>
           <Waypoint onEnter={this._handleWaypointEnter} onLeave={this._handleWaypointLeave} />
