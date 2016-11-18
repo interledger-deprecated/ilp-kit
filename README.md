@@ -5,22 +5,9 @@
 
 ## Table of contents
 
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Usage](#usage)
-  - [Running Dev Wallet](#running-dev-wallet)
-  - [Building Production Wallet](#building-production-wallet)
-  - [Running Production Wallet](#running-production-wallet)
-  - [Port Forwarding](#port-forwarding)
-  - [Running a ledger instance in the ilp-kit process](#running-a-ledger-instance-in-the-ilp-kit-process)
-  - [Environment variables](#environment-variables)
-- [Interledger Setup](#interledger-setup)
-  - [Hosts File](#hosts-file)
-  - [Database](#database)
-  - [Apache Virtual Hosts](#apache-virtual-hosts)
-  - [Wallet 1 + Ledger 1 Instance](#wallet-1--ledger-1-instance)
-  - [Wallet 2 + Ledger 2 Instance](#wallet-2--ledger-2-instance)
-  - [Setup ilp-connector](#setup-ilp-connector)
+- [Setup](https://github.com/interledgerjs/ilp-kit/blob/master/docs/SETUP.md)
+- [Development](https://github.com/interledgerjs/ilp-kit/blob/master/docs/DEV.md)
+- [Environment variables](#environment-variables)
 - [Mail Setup](#mail-setup)
 - [Architecture](#architecture)
   - [Backend (REST API)](#backend-rest-api)
@@ -31,95 +18,11 @@
     - [Using Redux DevTools](#using-redux-devtools)
     - [Theme Customization](#theme-customization)
 
-## Prerequisites
+## [Setup](https://github.com/interledgerjs/ilp-kit/blob/master/docs/SETUP.md)
 
-- Node.js >= 6.9
-- Postgres
+## [Development](https://github.com/interledgerjs/ilp-kit/blob/master/docs/DEV.md)
 
-## Installation
-
-```bash
-git clone git@github.com:interledgerjs/ilp-kit.git
-cd ilp-kit
-npm install
-```
-
-## Usage
-
-### Configurator
-
-To run the ILP kit you will need to specify all of the required environment variables. `ilp-kit-cli` simplifies this by guiding you through the environment variables and creates an `env.list` which will be run automatically by the kit.
-
-```bash
-npm run configure
-```
-
-### Running Dev Wallet
-
-_You must specify the required environment variables before running below commands_
-
-Build the vendor files (run this every time package dependencies change)
-```bash
-npm run build-dlls 
-```
-
-Run a development server
-
-Note: development server assumes you have `bunyan` installed globally.
-
-```bash
-npm run dev
-```
-
-### Building Production Wallet
-
-```bash
-npm run build
-```
-
-### Running Production Wallet
-
-_You must specify the required environment variables before running the below command_
-
-```
-npm run start
-```
-
-### Port forwarding
-
-In most cases it makes sense to expose the wallet through 443 (or 80) port, in which case you need to setup a port forwarding that will forward `API_PORT` requests to `API_PUBLIC_PORT` (443 or 80). Note that the port forwarding should work for both http(s) and websocket connections.
-
-Here's an example of an Apache 2.4 virtual host with enabled port forwarding.
-
-> NOTE: Current webfinger implementation will not work if the public port is not 443 or 80.
-
-> NOTE: At the moment you need to have a 443 virtual host in addition to 80 virtual host if you're use 80 as a public port. 443 virtual host is used for the webfinger lookups. This is a [reported issue](https://github.com/e14n/webfinger/issues/27) in the webfinger lib used by the ilp-kit.
-
-```
-<VirtualHost *:443> 
-  ServerName wallet.com
-  
-  RewriteEngine On
-  RewriteCond %{HTTP:Connection} Upgrade [NC]
-  RewriteRule /(.*) ws://wallet.com:3000/$1 [P,L]
-
-  ProxyPass / http://wallet.com:3000/ retry=0
-  ProxyPassReverse / http://wallet.com:3000/
-  
-  SSLEngine on
-  SSLCertificateFile /etc/apache2/ssl/wallet.com.crt
-  SSLCertificateKeyFile /etc/apache2/ssl/wallet.com.key
-</VirtualHost> 
-```
-
-### Running a ledger instance in the ilp-kit process
-
-Unless you're hosting an external ledger, you can optionally run a five-bells-ledger instance inside the ilp-kit. 
-To do so, all you need to do is leave the `API_LEDGER_URI` environment variable empty, and the software will automatically run a five-bells-ledger instance.
-
-Five-bells-ledger instance comes with default environment variables, but you can change them specifying any of the five-bells-ledger [environment variables](https://github.com/interledgerjs/five-bells-ledger#step-3-run-it).
-
-### Environment variables
+## Environment variables
 
 ##### Required
 
@@ -138,9 +41,9 @@ Name | Example | Description |
 
 Name | Example | Description |
 ---- | ------- | ----------- |
-`API_PUBLIC_HTTPS` | `''` | Whether or not the publicly visible instance of ILP kit is using HTTPS.
+`API_PUBLIC_HTTPS` |  | Whether or not the publicly visible instance of ILP kit is using HTTPS.
 `API_PRIVATE_HOSTNAME` | `localhost` | Private API hostname.
-`API_PUBLIC_PORT` | `''` | Api public port.
+`API_PUBLIC_PORT` |  | Api public port.
 `API_SECRET` | `qO2UX+fdl+tg0a1bYt` | Api secret. Used to generate the session, oauth and condition secrets.
 `API_RELOAD` | `true` | Turn on/off the reload endpoint.
 `API_LEDGER_URI` | `http://wallet.com:2000` | Ledger URI: requests go to this uri (a ledger instance will be started by the wallet if this is not specified).
@@ -150,9 +53,9 @@ Name | Example | Description |
 `API_GITHUB_CLIENT_ID` | | Github application client id (used for github oauth).
 `API_GITHUB_CLIENT_SECRET` | | Github application client secret (used for github oauth).
 `API_MAILGUN_API_KEY` | | Mailgun api key (for sending emails).
-`API_MAILGUN_DOMAIN` | | One of the domains attached to the Mailgun account.
-`API_EMAIL_SENDER_NAME` | info | Email sender name
-`API_EMAIL_SENDER_ADDRESS` | contact@`API_MAILGUN_DOMAIN` | Email sender address
+`API_MAILGUN_DOMAIN` | `wallet.com` | One of the domains attached to the Mailgun account.
+`API_EMAIL_SENDER_NAME` | `info` | Email sender name
+`API_EMAIL_SENDER_ADDRESS` | `contact@wallet.com` | Email sender address
 `API_REGISTRATION` | `true` | Enable/Disable registration
 `WALLET_FORCE_HTTPS` | `true` | Force all connections to use HTTPS.
 `WALLET_TRUST_XFP_HEADER` | `true` | Trust the `X-Forwarded-Proto` header.
@@ -165,143 +68,16 @@ Name | Example | Description |
 
 Name | Default |
 ---- | ------- |
-`LEDGER_DB_URI` | `API_DB_URI + '-ledger'`
+`LEDGER_DB_URI` | `API_DB_URI`
 `LEDGER_ADMIN_USER` | `API_LEDGER_ADMIN_USER`
 `LEDGER_ADMIN_PASS` | `API_LEDGER_ADMIN_PASS`
 `LEDGER_HOSTNAME` | `API_HOSTNAME`
 `LEDGER_PORT` | `API_PORT + 1`
 `LEDGER_PUBLIC_PORT` | `CLIENT_PORT`
-`LEDGER_PUBLIC_PATH` | `'ledger'`
-`LEDGER_CURRENCY_CODE` | `'USD'`
-`LEDGER_CURRENCY_SYMBOL` | `'$'`
+`LEDGER_PUBLIC_PATH` | `ledger`
+`LEDGER_CURRENCY_CODE` | `USD`
+`LEDGER_CURRENCY_SYMBOL` | `$`
 `LEDGER_PUBLIC_HTTPS` | `API_PUBLIC_HTTPS`
-
-## Interledger Setup
-You might want to do an interledger setup to test interledger transfers. In this case you will need at least two wallet instances and a connector. Below is an example setup instructions for two wallets and a connector on a personal machine (development/testing use).
-
-### Hosts file
-
-Edit your hosts file (/private/etc/hosts on OSX). Add these two lines
-
-```
-127.0.0.1   wallet1.com
-127.0.0.1   wallet2.com
-```
-
-### Database
-
-Create 4 postgres databases. `wallet1`, `wallet1-ledger`, `wallet2`, `wallet2-ledger`.
-
-### Apache Virtual Hosts
-
-> Note: The wallet instances are running on port 80, but we also need to setup virtual hosts on port 443 for the webfinger lookups (issue mentioned above).
-
-```
-<VirtualHost *:80> 
-  ServerName wallet1.com
-
-  RewriteEngine On
-  RewriteCond %{HTTP:Connection} Upgrade [NC]  
-  RewriteRule /(.*) ws://wallet1.com:3010/$1 [P,L]
-
-  ProxyPass / http://wallet1.com:3010/ retry=0
-  ProxyPassReverse / http://wallet1.com:3010/  
-</VirtualHost> 
-
-<VirtualHost *:443> 
-  ServerName wallet1.com
-  ProxyPass / http://wallet1.com:3010/ retry=0
-  ProxyPassReverse / http://wallet1.com:3010/
-  RedirectMatch ^/$ https://wallet1.com
-  
-  SSLEngine on
-  SSLCertificateFile /etc/apache2/ssl/wallet1.com.crt
-  SSLCertificateKeyFile /etc/apache2/ssl/wallet1.com.key
-</VirtualHost>
-
-<VirtualHost *:80> 
-  ServerName wallet2.com
-
-  RewriteEngine On
-  RewriteCond %{HTTP:Connection} Upgrade [NC]
-  RewriteRule /(.*) ws://wallet2.com:3020/$1 [P,L]
-
-  ProxyPass / http://wallet2.com:3020/ retry=0
-  ProxyPassReverse / http://wallet2.com:3020/
-</VirtualHost> 
-
-<VirtualHost *:443> 
-  ServerName wallet2.com
-  ProxyPass / http://wallet2.com:3020/ retry=0
-  ProxyPassReverse / http://wallet2.com:3020/
-  RedirectMatch ^/$ https://wallet2.com
-  
-  SSLEngine on
-  SSLCertificateFile /etc/apache2/ssl/wallet2.com.crt
-  SSLCertificateKeyFile /etc/apache2/ssl/wallet2.com.key
-</VirtualHost> 
-```
-
-> Note: You can use self signed certificates.
-
-### Wallet 1 + Ledger 1 instance
-
-Run with these environment variables
-```
-API_PRIVATE_HOSTNAME=localhost
-API_HOSTNAME=wallet1.com
-API_PORT=3100
-API_PUBLIC_PORT=80 
-API_PUBLIC_PATH=/api 
-API_DB_URI=postgres://localhost/wallet1
-API_LEDGER_ADMIN_USER=admin
-API_LEDGER_ADMIN_PASS=admin
-API_RELOAD=true
-CLIENT_HOST=wallet1.com
-CLIENT_PORT=3010
-CLIENT_PUBLIC_PORT=80
-API_SECRET=qO2UX+fdl+tg0a1bYtXoBVQHN4pkn2hFB5Ont6CYj50=
-LEDGER_ILP_PREFIX=wallet1.
-```
-
-> Note: Use `LEDGER_DB_SYNC=true` environment variable for both wallet1 and wallet2 to create the ledger db tables first time when you run each of the instances.
-
-### Wallet 2 + Ledger 2 instance
-
-Run with these environment variables
-```
-API_PRIVATE_HOSTNAME=localhost
-API_HOSTNAME=wallet2.com
-API_PORT=3200
-API_PUBLIC_PORT=80 
-API_PUBLIC_PATH=/api 
-API_DB_URI=postgres://localhost/wallet2
-API_LEDGER_ADMIN_USER=admin
-API_LEDGER_ADMIN_PASS=admin
-API_RELOAD=true
-CLIENT_HOST=wallet2.com
-CLIENT_PORT=3020
-CLIENT_PUBLIC_PORT=80
-API_SECRET=qO2UX+fdl+tg0a1bYtXoBVQHN4pkn2hFB5Ont6CYj50=
-LEDGER_ILP_PREFIX=wallet2.
-```
-
-### Setup ilp-connector
-
-> Note: ilp-kit currently works with [ilp-connector v8.1.0](https://github.com/interledgerjs/ilp-connector/tree/v8.1.0)
-
-- Create a trader user on both wallet1 and wallet2 instances with username: `trader`, password: `trader`.
-
-Environment Variables
-```
-CONNECTOR_HOSTNAME=localhost
-CONNECTOR_PORT=5000
-CONNECTOR_LEDGERS='["USD@http://wallet1.com/ledger","EUR@http://wallet2.com/ledger"]' CONNECTOR_PAIRS='[["USD@http://wallet1.com/ledger", "EUR@http://wallet2.com/ledger"],["EUR@http://wallet2.com/ledger", "USD@http://wallet1.com/ledger"]]'
-CONNECTOR_ADMIN_USER=admin 
-CONNECTOR_ADMIN_PASS=admin 
-CONNECTOR_CREDENTIALS='{"http://wallet1.com/ledger":{"account_uri":"http://wallet1.com/ledger/accounts/trader","username":"trader","password":"trader"},"http://wallet2.com/ledger":{"account_uri":"http://wallet2.com/ledger/accounts/trader","username":"trader","password":"trader"}}'
-CONNECTOR_QUOTE_FULL_PATH=true
-```
 
 ## Mail setup
 You will need to configure the email service if you want the password recovery and changing email to work (It also sends a welcome email once a user signs up). ILP kit uses [Mailgun](http://mailgun.com/) email service, so you need to create an account with them and attach/verify your domain. Set the `API_MAILGUN_API_KEY`, `API_MAILGUN_DOMAIN`, `API_EMAIL_SENDER_NAME`, `API_EMAIL_SENDER_ADDRESS` environment variables after setting up the Mailgun.
@@ -309,7 +85,7 @@ You will need to configure the email service if you want the password recovery a
 Additionally you can setup a mail forwarder if you want to be able to receive replies to your automated emails. Mailgun uses [Routes](https://mailgun.com/app/routes) for forwarding. Just create a `catch_all` route forwarding incoming mails to your email address of choice.
 
 ## Architecture
-ILP kit consists of a [Node.js](https://github.com/nodejs/node) (developed on v5.6) backend (REST API) and a client built using [React](https://github.com/facebook/react).
+ILP kit consists of a [Node.js](https://github.com/nodejs/node) (developed on v6.9.1) backend (REST API) and a client built using [React](https://github.com/facebook/react).
 
 ### Backend (REST API)
 The backend is responsible for communicating with the ILP ledger, creating accounts, sending payments and keeping the payment history.
@@ -368,14 +144,6 @@ HTTP/1.1 200 OK
 The client is a web app built on [React](https://github.com/facebook/react) that implements user signup/signin, sending payments and payment history.
 
 Client state management is handled by [Redux](https://github.com/reactjs/redux).
-
-#### Using Redux DevTools
-
-In development, Redux Devtools are enabled by default. You can toggle visibility and move the dock around using the following keyboard shortcuts:
-
-- <kbd>Ctrl+H</kbd> Toggle DevTools Dock
-- <kbd>Ctrl+Q</kbd> Move Dock Position
-- see [redux-devtools-dock-monitor](https://github.com/gaearon/redux-devtools-dock-monitor) for more detail information.
 
 #### Theme Customization
 
