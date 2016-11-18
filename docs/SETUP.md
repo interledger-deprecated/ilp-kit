@@ -5,8 +5,10 @@
 > order to be as simple as possible. You can run ILP Kit on any other OS and
 > hosting provider, but there might be a couple additional steps.
 
+> _Don't hesitate to open issues or ask for help._
+
 ### Table of Contents
-- [Ilp Kit installation](#ilp-kit-setup)
+- [ILP Kit installation](#ilp-kit-setup)
   - [Get a server instance](#get-a-server-instance)
   - [Server setup](#server-setup)
   - [Postgresql setup](#postgresql-setup)
@@ -15,12 +17,15 @@
   - [Subdomain setup](#subdomain-setup)
   - [Set up SSL](#set-up-ssl)
   - [Set up proxy for ILP Kit](#set-up-proxy-for-ilp-kit)
-- [Ilp Kit configuration](#ilp-kit-configuration)
+- [ILP Kit configuration](#ilp-kit-configuration)
   - [Register account](#register-account)
   - [Configure environment](#configure-environment)
   - [Launch ILP Kit](#launch-ilp-kit)
   - [Issue some money](#issue-some-money)
 - [Enjoy](#enjoy)
+- [Appendix: Advanced Options](#appendix-advanced-options)
+  - [Mailgun setup](#mailgun-setup)
+  - [Github setup](#github-setup)
 
 # ILP Kit installation
 
@@ -102,7 +107,7 @@ postgres$ createdb ilpkit
 postgres$ exit
 ```
 
-## Ilp Kit setup
+## ILP Kit setup
 
 Perform these steps as your user, not as `postgres`. Clone `ilp-kit` and install
 dependencies with the following commands:
@@ -245,3 +250,84 @@ as `issuer`, you can send money to your primary account to have some cash.
 # Enjoy
 
 ![Sherry, Niles?](http://i.imgur.com/Xh5VCvv.jpg)
+
+# Appendix: Additional Options
+
+## Mailgun setup
+
+### Get a domain
+
+To send email verification and password resets, you'll need to set up Mailgun. Fortunately, they
+offer a free service that just requires you to own a domain name.
+
+First, you'll need to make an account on [Mailgun](http://mailgun.com). Follow
+their instructions to get your domain set up with their service. Once it's verified, go to
+[your domains page](https://mailgun.com/app/domains), and select the domain that your
+ILP Kit is using (eg. `niles.sharafian.com`). Under the "Domain Information" section, you'll
+see a field labelled "API Key." Copy this key down.
+
+### Edit `env.list`
+
+Because you didn't configure Mailgun before, you'll have to edit your `env.list` file
+(in your `ilp-kit` directory). Open the file in your [editor of choice](http://www.vim.org/).
+You'll see two lines that read:
+
+```sh
+API_MAILGUN_DOMAIN=
+API_MAILGUN_API_KEY=
+```
+
+Set these two fields to the domain you configured and the API key you copied down:
+
+```sh
+API_MAILGUN_DOMAIN=niles.sharafian.com
+API_MAILGUN_KEY=key-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+```
+
+Restart your ILP Kit for the changes to take effect.
+
+Now open a new account or trigger a password reset, and you'll see an email
+from your wallet. If it doesn't show up, try checking your spam folder or
+asking [Mailgun support](https://help.mailgun.com/hc/en-us).
+
+## Github setup
+
+### Set up OAuth application
+
+Configuring Github login with your ILP Kit makes it easier for users to register and log into your
+domain. Assuming you already have a Github account, log in and go to your settings page. Go to the
+"OAuth Applications" page under "Developer Settings." Click the "Register a new application" button.
+Here are the settings I put:
+
+- **Application Name** - "ILP Kit - Niles"
+- **Homepage URL** - Use the root of your ILP Kit site, eg. `https://niles.sharafian.com/`
+- **Application Description** is up to you.
+- **Authorization callback URL** - Use this path on your domain: `https://niles.sharafian.com/api/auth/github/callback`
+
+You'll be redirected to a new page with some information about your app. You can customize some of these options later.
+For now, copy down your "Client ID" and "Client Secret" under the "0 users" header.
+
+### Edit `env.list`
+
+Because you didn't configure Github before, you'll have to edit your `env.list` file
+(in your `ilp-kit` directory). Open the file in your [editor of choice](http://www.vim.org/).
+You'll see two lines that read:
+
+```sh
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+```
+
+Set these two fields to the "Client ID" and "Client Secret" that you copied down:
+
+```sh
+GITHUB_CLIENT_ID=a442XXXXXXXXXXXXXXXX
+GITHUB_CLIENT_SECRET=dd96XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+```
+
+Restart your ILP Kit for the changes to take effect.
+
+Try registering a new account by logging in through Github. The username of the
+account will match the Github username, so make sure it isn't already taken. If
+you aren't able to log in, try checking [Github help](https://help.github.com/).
+

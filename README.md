@@ -79,11 +79,6 @@ Name | Default |
 `LEDGER_CURRENCY_SYMBOL` | `$`
 `LEDGER_PUBLIC_HTTPS` | `API_PUBLIC_HTTPS`
 
-## Mail setup
-You will need to configure the email service if you want the password recovery and changing email to work (It also sends a welcome email once a user signs up). ILP kit uses [Mailgun](http://mailgun.com/) email service, so you need to create an account with them and attach/verify your domain. Set the `API_MAILGUN_API_KEY`, `API_MAILGUN_DOMAIN`, `API_EMAIL_SENDER_NAME`, `API_EMAIL_SENDER_ADDRESS` environment variables after setting up the Mailgun.
-
-Additionally you can setup a mail forwarder if you want to be able to receive replies to your automated emails. Mailgun uses [Routes](https://mailgun.com/app/routes) for forwarding. Just create a `catch_all` route forwarding incoming mails to your email address of choice.
-
 ## Architecture
 ILP kit consists of a [Node.js](https://github.com/nodejs/node) (developed on v6.9.1) backend (REST API) and a client built using [React](https://github.com/facebook/react).
 
