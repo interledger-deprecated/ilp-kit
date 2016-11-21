@@ -40,10 +40,6 @@ export default class Home extends Component {
     changePassword: PropTypes.func
   }
 
-  static contextTypes = {
-    config: PropTypes.object
-  }
-
   componentWillMount() {
     this.setCurrentView()
   }
@@ -67,7 +63,6 @@ export default class Home extends Component {
   render() {
     const {authFail, login, register, forgot, changePassword, verified, params} = this.props
     const {currentView} = this.state
-    const {config} = this.context
 
     return (
       <div className="row">

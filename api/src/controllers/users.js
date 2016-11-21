@@ -113,7 +113,7 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
       const userObj = this.body
 
       // check if registration is enabled
-      if (!config.registration && !userObj.inviteCode) {
+      if (!config.data.get('registration') && !userObj.inviteCode) {
         throw new InvalidBodyError('Registration is disabled without an invite code')
       }
 
@@ -125,7 +125,7 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
 
         if (invite) {
           userObj.balance = invite.amount
-        } else if (!config.registration) {
+        } else if (!config.data.get('registration')) {
           throw new InvalidBodyError('The invite code is wrong')
         }
       }
