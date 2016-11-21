@@ -6,8 +6,6 @@ import Waypoint from 'react-waypoint'
 import Navbar from 'react-bootstrap/lib/Navbar'
 import Nav from 'react-bootstrap/lib/Nav'
 import NavItem from 'react-bootstrap/lib/NavItem'
-import NavDropdown from 'react-bootstrap/lib/NavDropdown'
-import MenuItem from 'react-bootstrap/lib/MenuItem'
 
 import { isLoaded as isAuthLoaded, load as loadAuth, loadConfig, logout, updateBalance, verify } from 'redux/actions/auth'
 import { routeActions } from 'react-router-redux'
@@ -27,11 +25,6 @@ const cx = classNames.bind(styles)
       promises.push(dispatch(loadAuth()))
     }
 
-    // Server config
-    if (!getState().auth.config.ledgerUri) {
-      promises.push(dispatch(loadConfig()))
-    }
-
     return Promise.all(promises)
   }
 }])
@@ -41,7 +34,7 @@ const cx = classNames.bind(styles)
     config: state.auth.config,
     loading: state.auth.loading
   }),
-  {logout, pushState: routeActions.push, historyAddPayment, updateBalance, verify})
+  {logout, pushState: routeActions.push, historyAddPayment, updateBalance, verify, loadConfig})
 export default class App extends Component {
   static propTypes = {
     children: PropTypes.object.isRequired,
@@ -56,7 +49,8 @@ export default class App extends Component {
     // TODO:UI add loading screen
     loading: PropTypes.bool,
 
-    verify: PropTypes.func
+    verify: PropTypes.func,
+    loadConfig: PropTypes.func
   }
 
   static contextTypes = {
@@ -74,6 +68,12 @@ export default class App extends Component {
   getChildContext() {
     return {
       config: this.props.config
+    }
+  }
+
+  componentWillMount() {
+    if (!this.props.config.ledgerUri) {
+      this.props.loadConfig()
     }
   }
 
