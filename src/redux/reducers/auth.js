@@ -148,6 +148,11 @@ export default function reducer(state = initialState, action = {}) {
         ...state,
         loading: false
       }
+    case types.SET_ADVANCED_MODE:
+      return {
+        ...state,
+        advancedMode: action.result
+      }
     default:
       return state
   }

@@ -8,8 +8,6 @@ var assetsPath = path.resolve(__dirname, '../static/dist');
 var host = (process.env.CLIENT_HOST || 'localhost');
 var port = +process.env.CLIENT_PORT + 1;
 
-var LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
-
 // https://github.com/halt-hammerzeit/webpack-isomorphic-tools
 var WebpackIsomorphicToolsPlugin = require('webpack-isomorphic-tools/plugin');
 var webpackIsomorphicToolsPlugin = new WebpackIsomorphicToolsPlugin(require('./webpack-isomorphic-tools'));
@@ -108,7 +106,6 @@ module.exports = {
     includePaths: [path.resolve(__dirname, "../src/theme")]
   },
   plugins: [
-    new LodashModuleReplacementPlugin(),
     new webpack.DllReferencePlugin({
       context: path.join( __dirname, '../' ),
       manifest: require(path.join(assetsPath, 'vendor-manifest.json')),

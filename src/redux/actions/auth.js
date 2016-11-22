@@ -126,3 +126,8 @@ export const verify = (username, code) => ({
 export const locationUpdate = () => ({
   type: types.UPDATE_LOCATION_COMPLETE
 })
+
+export const advancedModeToggle = () => (dispatch, getState) => dispatch({
+  type: types.SET_ADVANCED_MODE,
+  result: !getState().auth.advancedMode
+})

@@ -45,3 +45,8 @@ a {
 .navbar-toggle {
   border: 0;
 }
+
+// for hotkey containers
+div[tabindex="-1"]:focus {
+  outline: 0;
+}

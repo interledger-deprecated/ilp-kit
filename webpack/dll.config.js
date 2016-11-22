@@ -8,8 +8,6 @@ var assetsPath = path.resolve(__dirname, '../static/dist');
 var host = (process.env.CLIENT_HOST || 'localhost');
 var port = +process.env.CLIENT_PORT + 1;
 
-var LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
-
 // https://github.com/halt-hammerzeit/webpack-isomorphic-tools
 var WebpackIsomorphicToolsPlugin = require('webpack-isomorphic-tools/plugin');
 var webpackIsomorphicToolsPlugin = new WebpackIsomorphicToolsPlugin(require('./webpack-isomorphic-tools'));
@@ -121,8 +119,8 @@ module.exports = {
       'socket.io-client',
       'superagent',
       'uuid4',
+      'react-hotkeys',
 
-      // Dev deps
       'redux-devtools',
       'redux-devtools-log-monitor',
       'redux-devtools-dock-monitor'
@@ -160,7 +158,6 @@ module.exports = {
     includePaths: [path.resolve(__dirname, "../src/theme")]
   },
   plugins: [
-    new LodashModuleReplacementPlugin(),
     new webpack.DllPlugin({
       name: '[name]',
       path: path.join( assetsPath, '[name]-manifest.json' ),

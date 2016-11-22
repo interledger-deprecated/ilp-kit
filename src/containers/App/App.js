@@ -7,6 +7,8 @@ import Navbar from 'react-bootstrap/lib/Navbar'
 import Nav from 'react-bootstrap/lib/Nav'
 import NavItem from 'react-bootstrap/lib/NavItem'
 
+import hotkeys from 'decorators/hotkeys'
+
 import { isLoaded as isAuthLoaded, load as loadAuth, loadConfig, logout, updateBalance, verify } from 'redux/actions/auth'
 import { routeActions } from 'react-router-redux'
 import { addPayment as historyAddPayment } from 'redux/actions/history'
@@ -35,6 +37,7 @@ const cx = classNames.bind(styles)
     loading: state.auth.loading
   }),
   {logout, pushState: routeActions.push, historyAddPayment, updateBalance, verify, loadConfig})
+@hotkeys()
 export default class App extends Component {
   static propTypes = {
     children: PropTypes.object.isRequired,
