@@ -173,9 +173,13 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
           console.log('users:172', err)
         }
 
-        if (response.body && response.body.risklevel && response.body.risklevel > maxRisk) {
-          // TODO something more meaningful
-          throw new ServerError()
+        if (response.body && response.body.risklevel) {
+          log.debug('Signup try: risk level is', response.body.risklevel)
+
+          if (response.body.risklevel > maxRisk) {
+            // TODO something more meaningful
+            throw new ServerError()
+          }
         }
       }
 

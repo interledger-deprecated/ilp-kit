@@ -55,7 +55,7 @@ Name | Example | Description |
 `API_MAILGUN_API_KEY` | | Mailgun api key (for sending emails).
 `API_MAILGUN_DOMAIN` | `wallet.com` | One of the domains attached to the Mailgun account.
 `API_ANTIFRAUD_SERVICE_URL` | `antifraud.wallet.com` | Anti fraud service url. This will enable an additional step in registration that asks for personal details
-`API_ANTIFRAUD_MAX_RISK` | 50 | Maximum tolerable risk level for the registration
+`API_ANTIFRAUD_MAX_RISK` | `20` | Maximum tolerable risk level for the registration
 `API_EMAIL_SENDER_NAME` | `info` | Email sender name
 `API_EMAIL_SENDER_ADDRESS` | `contact@wallet.com` | Email sender address
 `API_REGISTRATION` | `true` | Enable/Disable registration
