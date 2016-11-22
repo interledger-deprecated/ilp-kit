@@ -85,6 +85,8 @@ module.exports = class App {
 
   * _start () {
     yield this.db.sync()
+    yield this.db.migrate()
+
 
     // Ensure admin account exists
     yield this.user.ensureAdminExists()

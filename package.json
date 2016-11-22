@@ -207,6 +207,7 @@
     "superagent": "^1.8.0",
     "superagent-promise": "^1.1.0",
     "supertest-as-promised": "^4.0.1",
+    "umzug": "^1.11.0",
     "url-loader": "^0.5.6",
     "uuid4": "^1.0.0",
     "webfinger.js": "^2.3.2",
