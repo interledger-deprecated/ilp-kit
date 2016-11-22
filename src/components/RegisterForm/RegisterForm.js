@@ -131,14 +131,38 @@ export default class RegisterForm extends Component {
 
           {config.antiFraud &&
           <div>
-            <Input object={name} label="Name" size="lg" focus />
-            <Input object={phone} label="Phone" size="lg" />
-            <Input object={address1} label="Address 1" size="lg" />
-            <Input object={address2} label="Address 2" size="lg" />
-            <Input object={city} label="City" size="lg" />
-            <Input object={region} label="Region" size="lg" />
-            <Input object={country} label="Country" size="lg" />
-            <Input object={zip_code} label="Zip Code" size="lg" />
+            <div className="row">
+              <div className="col-sm-6">
+                <Input object={name} label="Full Name" size="lg" />
+              </div>
+              <div className="col-sm-6">
+                <Input object={phone} label="Phone" size="lg" />
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-sm-6">
+                <Input object={address1} label="Address 1" size="lg" />
+              </div>
+              <div className="col-sm-6">
+                <Input object={address2} label="Address 2" size="lg" />
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-sm-6">
+                <Input object={city} label="City" size="lg" />
+              </div>
+              <div className="col-sm-6">
+                <Input object={region} label="Region" size="lg" />
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-sm-6">
+                <Input object={country} label="Country" size="lg" />
+              </div>
+              <div className="col-sm-6">
+                <Input object={zip_code} label="Zip Code" size="lg" />
+              </div>
+            </div>
           </div>}
 
           {/* Invite code: Step 1 */}

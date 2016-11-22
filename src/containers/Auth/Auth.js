@@ -68,7 +68,7 @@ export default class Home extends Component {
 
     return (
       <div className="row">
-        <div className="col-xs-12 col-sm-offset-4 col-sm-4">
+        <div className="col-xs-12 col-sm-offset-3 col-sm-6">
           <div className={cx('panel', 'panel-transparent', 'panel-auth')}>
             <ul className="nav nav-tabs nav-tabs-linetriangle" role="tablist" data-init-reponsive-tabs="collapse">
               <li className={currentView === 'login' ? 'active' : ''}>
