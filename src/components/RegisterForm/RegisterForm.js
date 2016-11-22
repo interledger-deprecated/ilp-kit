@@ -8,23 +8,27 @@ import Input from 'components/Input/Input'
 
 import { loadCode } from 'redux/actions/invite'
 
-import classNames from 'classnames/bind';
-import styles from './RegisterForm.scss';
-const cx = classNames.bind(styles);
+import classNames from 'classnames/bind'
+import styles from './RegisterForm.scss'
+const cx = classNames.bind(styles)
 
 // TODO async validation on username
 @reduxForm({
   form: 'register',
-  fields: ['username', 'email', 'password', 'inviteCode'],
+  fields: ['username', 'email', 'password', 'inviteCode',
+    'name', 'phone', 'address1', 'address2', 'city',
+    'region', 'country', 'zip_code'],
   validate: registerValidation
 }, state => ({
-  invite: state.invite.invite
+  invite: state.invite.invite,
+  config: state.auth.config
 }), {loadCode})
 export default class RegisterForm extends Component {
   static propTypes = {
     invite: PropTypes.object,
     loadCode: PropTypes.func,
     params: PropTypes.object,
+    config: PropTypes.object,
 
     // Form
     fields: PropTypes.object.isRequired,
@@ -93,8 +97,9 @@ export default class RegisterForm extends Component {
 
   render() {
     const { invite, handleSubmit, register, fail,
-      fields: { username, email, password, inviteCode },
-      pristine, invalid, submitting } = this.props
+      fields: { username, email, password, inviteCode, name, phone,
+        address1, address2, city, region, country, zip_code },
+      pristine, invalid, submitting, config } = this.props
     const hideFakes = this.state && this.state.hideFakes
     const { showInviteInput } = this.state
 
@@ -108,6 +113,8 @@ export default class RegisterForm extends Component {
           <div>Email is already taken</div>}
           {fail.id === 'InvalidBodyError' &&
           <div>Registration is disabled without an invite code</div>}
+          {fail.id === 'ServerError' &&
+          <div>Something went wrong</div>}
         </Alert>}
 
         <div>
@@ -122,14 +129,26 @@ export default class RegisterForm extends Component {
           <Input object={email} label="Email" size="lg" autoCapitalize="off" />
           <Input object={password} label="Password" size="lg" type="password" />
 
+          {config.antiFraud &&
+          <div>
+            <Input object={name} label="Name" size="lg" focus />
+            <Input object={phone} label="Phone" size="lg" />
+            <Input object={address1} label="Address 1" size="lg" />
+            <Input object={address2} label="Address 2" size="lg" />
+            <Input object={city} label="City" size="lg" />
+            <Input object={region} label="Region" size="lg" />
+            <Input object={country} label="Country" size="lg" />
+            <Input object={zip_code} label="Zip Code" size="lg" />
+          </div>}
+
           {/* Invite code: Step 1 */}
           {!showInviteInput && !invite.code &&
           <a href="" className={cx('inviteLink')} onClick={this.handleAddInviteCodeClick}>Have an invite code?</a>}
 
           {/* Invite code: Step 2 */}
           {showInviteInput &&
-            <Input object={inviteCode} label="Invite Code" size="lg" focus
-                   onChange={this.handleAddInviteCode} />}
+          <Input object={inviteCode} label="Invite Code" size="lg" focus
+                 onChange={this.handleAddInviteCode} />}
 
           {/* Invite code: Step 3 */}
           {invite.code && !invite.claimed && !showInviteInput &&

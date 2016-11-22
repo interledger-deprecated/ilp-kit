@@ -18,7 +18,8 @@ const cx = classNames.bind(styles)
   state => ({
     user: state.auth.user,
     authFail: state.auth.fail,
-    verified: state.auth.verified
+    verified: state.auth.verified,
+    config: state.auth.config
   }),
   authActions)
 export default class Home extends Component {
@@ -31,6 +32,7 @@ export default class Home extends Component {
     reload: PropTypes.func,
     changeTab: PropTypes.func,
     route: PropTypes.object,
+    config: PropTypes.object,
 
     // User verification
     params: PropTypes.object,
@@ -61,7 +63,7 @@ export default class Home extends Component {
   }
 
   render() {
-    const {authFail, login, register, forgot, changePassword, verified, params} = this.props
+    const {authFail, login, register, forgot, changePassword, verified, params, config} = this.props
     const {currentView} = this.state
 
     return (

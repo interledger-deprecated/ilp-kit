@@ -167,6 +167,7 @@ function UserFactory (sequelize, validator, ledger, config) {
 
   User.validateExternal = validator.create('User')
 
+  // TODO:BEFORE_DEPLOY implement db migration
   PersistentModelMixin(User, sequelize, {
     id: {
       type: Sequelize.INTEGER,
@@ -181,9 +182,6 @@ function UserFactory (sequelize, validator, ledger, config) {
       type: Sequelize.STRING,
       unique: true
     },
-    name: {
-      type: Sequelize.STRING
-    },
     email: {
       type: Sequelize.STRING,
       unique: true
@@ -195,7 +193,17 @@ function UserFactory (sequelize, validator, ledger, config) {
       type: Sequelize.INTEGER,
       unique: true
     },
-    profile_picture: Sequelize.STRING
+    profile_picture: Sequelize.STRING,
+    name: {
+      type: Sequelize.STRING
+    },
+    phone: Sequelize.STRING,
+    address1: Sequelize.STRING,
+    address2: Sequelize.STRING,
+    city: Sequelize.STRING,
+    region: Sequelize.STRING,
+    country: Sequelize.STRING,
+    zip_code: Sequelize.STRING
   })
 
   return User

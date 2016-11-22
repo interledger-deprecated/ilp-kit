@@ -81,6 +81,7 @@ function MiscControllerFactory (Auth, log, config, ledger, utils) {
         currencyCode: ledgerInfo.currency_code,
         currencySymbol: ledgerInfo.currency_symbol,
         registration: config.data.get('registration'),
+        antiFraud: !!config.data.getIn(['antifraud', 'service_url']),
         title: config.data.get('client_title'),
         track: {
           ga: config.data.getIn(['track', 'ga']),

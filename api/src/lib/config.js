@@ -47,6 +47,12 @@ module.exports = class WalletConfig {
       domain: Config.getEnv(envPrefix, 'MAILGUN_DOMAIN')
     }
 
+    // Anti fraud
+    localConfig.antifraud = {
+      service_url: Config.getEnv(envPrefix, 'ANTIFRAUD_SERVICE_URL'),
+      max_risk: Config.getEnv(envPrefix, 'ANTIFRAUD_MAX_RISK')
+    }
+
     localConfig.email = {
       sender_name: Config.getEnv(envPrefix, 'EMAIL_SENDER_NAME') || 'info',
       sender_address: Config.getEnv(envPrefix, 'EMAIL_SENDER_ADDRESS') || 'contact@' + localConfig.mailgun.domain

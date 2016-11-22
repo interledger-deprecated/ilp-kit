@@ -3,6 +3,7 @@
 module.exports = UsersControllerFactory
 
 const fs = require('fs')
+const superagent = require('superagent-promise')(require('superagent'), Promise)
 const request = require('five-bells-shared/utils/request')
 const Auth = require('../lib/auth')
 const Log = require('../lib/log')
@@ -146,6 +147,36 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
 
         // Email is already taken
         throw new EmailTakenError('Email is already taken')
+      }
+
+      // Check for fraud
+      const serviceUrl = config.data.getIn(['antifraud', 'service_url'])
+
+      if (serviceUrl) {
+        const maxRisk = config.data.getIn(['antifraud', 'max_risk'])
+        let response
+
+        try {
+          response = yield superagent.post(serviceUrl, {
+            email: userObj.email || '',
+            username: userObj.username || '',
+            name: userObj.name || '',
+            phone: userObj.phone || '',
+            address1: userObj.address1 || '',
+            address2: userObj.address2 || '',
+            city: userObj.city || '',
+            region: userObj.region || '',
+            country: userObj.country || '',
+            zip_code: userObj.zip_code || ''
+          })
+        } catch (err) {
+          console.log('users:172', err)
+        }
+
+        if (response.body && response.body.risklevel && response.body.risklevel > maxRisk) {
+          // TODO something more meaningful
+          throw new ServerError()
+        }
       }
 
       userObj.username = username
