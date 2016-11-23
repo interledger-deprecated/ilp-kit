@@ -114,16 +114,15 @@ export default class HistoryItem extends Component {
                 {config.currencySymbol}{type === 'outgoing' ? amount(item.source_amount) : amount(item.destination_amount)}
               </div>
 
-              {item.transfers_count > 1 &&
               <div className={cx('transfersCount')}>
                 {!item.transfersLoading &&
                 <a href="" onClick={this.toggleTransfers}>
-                  {item.transfers_count} transfers
+                  {item.transfers_count} {item.transfers_count > 1 ? 'transfers' : 'transfer'}
                 </a>}
 
                 {item.transfersLoading &&
                 <span>Loading...</span>}
-              </div>}
+              </div>
             </div>
           </div>
         {/* </a> */}
