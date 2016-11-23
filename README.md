@@ -8,7 +8,6 @@
 - [Setup](https://github.com/interledgerjs/ilp-kit/blob/master/docs/SETUP.md)
 - [Development](https://github.com/interledgerjs/ilp-kit/blob/master/docs/DEV.md)
 - [Environment variables](#environment-variables)
-- [Mail Setup](#mail-setup)
 - [Advanced Mode](#advanced-mode)
 - [Architecture](#architecture)
   - [Backend (REST API)](#backend-rest-api)

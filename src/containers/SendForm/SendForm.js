@@ -23,7 +23,8 @@ import Input from 'components/Input/Input'
   destinationInfo: state.send.destinationInfo,
   send: state.send,
   quote: state.send.quote,
-  quoting: state.send.quoting
+  quoting: state.send.quoting,
+  advancedMode: state.auth.advancedMode
 }),
 {...sendActions, resetData: sendActions.reset})
 @successable()
@@ -39,6 +40,7 @@ export default class SendForm extends Component {
     quoting: PropTypes.bool,
     resetData: PropTypes.func,
     data: PropTypes.object,
+    advancedMode: PropTypes.bool,
 
     // Form
     fields: PropTypes.object.isRequired,
@@ -216,7 +218,8 @@ export default class SendForm extends Component {
     if (!this.props.user) return null
 
     const { pristine, invalid, handleSubmit, submitting, success, destinationInfo,
-      quoting, fail, data, fields: {destination, sourceAmount, destinationAmount, message, repeats, interval} } = this.props
+      advancedMode, quoting, fail, data, fields: { destination, sourceAmount,
+      destinationAmount, message, repeats, interval } } = this.props
     const { config } = this.context
     const { showAdvanced } = this.state
 
@@ -299,7 +302,7 @@ export default class SendForm extends Component {
               </div>
             </div>
 
-            {showAdvanced &&
+            {showAdvanced && advancedMode &&
             <div className={cx('advanced')}>
               <div className={cx('row', 'description')}>
                 These fields are for streaming payments. The wallet will submit the same payment <i>"repeat"</i> times every <i>"interval"</i> milliseconds.
@@ -325,7 +328,7 @@ export default class SendForm extends Component {
               </div>
 
               <div className={cx('col-sm-7', 'advancedLink')}>
-                {!submitting &&
+                {!submitting && advancedMode &&
                 <a href="" onClick={this.toggleAdvanced}>{showAdvanced ? 'Hide' : 'Show'} Advanced Options</a>}
 
                 {showAdvanced && submitting && this.interval &&
