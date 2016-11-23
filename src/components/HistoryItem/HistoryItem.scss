@@ -102,14 +102,21 @@
     max-height: 300px;
     margin-top: 15px;
     overflow: auto;
+
+    &:first-child {
+      padding-left: 83px;
+    }
   }
 
   .date {
-    padding-left: 83px;
     font-size: 15px;
     line-height: 25px;
   }
   .amount {
+    font-size: 15px;
+    line-height: 25px;
+  }
+  .hash {
     font-size: 15px;
     line-height: 25px;
   }

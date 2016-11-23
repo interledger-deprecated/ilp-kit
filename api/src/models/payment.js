@@ -124,7 +124,7 @@ function PaymentFactory (sequelize, validator, container, User) {
 
     static getTransfers(params) {
       return sequelize.query(
-        'SELECT source_amount, destination_amount, created_at'
+        'SELECT source_amount, destination_amount, created_at, transfer'
       + ' FROM "Payments"'
       + ' WHERE state = \'success\' '
         + " AND source_account = '" + params.sourceAccount + "'"

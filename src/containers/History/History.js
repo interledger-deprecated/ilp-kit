@@ -66,7 +66,8 @@ export default class Home extends Component {
             {history && history.map(item => {
               return (
                 <li key={item.time_slot + item.source_account + item.destination_account + item.message}>
-                  <HistoryItem item={item} user={user} toggleJson={toggleJson} loadTransfers={loadTransfers} />
+                  <HistoryItem item={item} user={user} toggleJson={toggleJson}
+                               loadTransfers={loadTransfers} />
                 </li>
               )
             })}

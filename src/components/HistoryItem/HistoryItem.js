@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
+import {connect} from 'react-redux'
 import moment from 'moment'
 import TimeAgo from 'react-timeago'
 
@@ -11,16 +12,19 @@ import classNames from 'classnames/bind'
 import styles from './HistoryItem.scss'
 const cx = classNames.bind(styles)
 
+@connect(
+  state => ({
+    config: state.auth.config,
+    advancedMode: state.auth.advancedMode
+  }))
 export default class HistoryItem extends Component {
   static propTypes = {
     item: PropTypes.object,
     user: PropTypes.object,
     toggleJson: PropTypes.func,
-    loadTransfers: PropTypes.func
-  }
-
-  static contextTypes = {
-    config: PropTypes.object
+    loadTransfers: PropTypes.func,
+    config: PropTypes.object,
+    advancedMode: PropTypes.bool
   }
 
   state = {
@@ -64,8 +68,9 @@ export default class HistoryItem extends Component {
 
   render() {
     const item = contextualizePayment(this.props.item, this.props.user)
-    const config = this.context.config || {}
+    const config = this.props.config
     const { showTransfers } = this.state
+    const advancedMode = this.props.advancedMode
 
     const type = item.counterpartyAccount === item.destination_account ? 'outgoing' : 'incoming'
 
@@ -119,7 +124,6 @@ export default class HistoryItem extends Component {
           </div>
         {/* </a> */}
 
-
         <ReactCSSTransitionGroup
           transitionName={{
             enter: cx('enter'),
@@ -139,13 +143,17 @@ export default class HistoryItem extends Component {
           <div className={cx('col-sm-12')} key={item.time_slot + 'transfers'}>
             {item.transfers && item.transfers.map((transfer) => {
               return (
-                <div className="row" key={transfer.source_account + transfer.created_at}>
-                  <span className={cx('col-xs-8', 'date')}>
+                <div className={cx('row', 'transfer')} key={transfer.source_account + transfer.created_at}>
+                  {advancedMode &&
+                  <div className="col-xs-2">
+                    <a href={config.ledgerUri + '/transfers/' + transfer.transfer} className={cx('hash')}>{transfer.transfer.split('-')[0]}</a>
+                  </div>}
+                  <div className={cx(advancedMode ? 'col-xs-6' : 'col-xs-8', 'date')}>
                     {moment(transfer.created_at).format('MMM D, YYYY LTS')}
-                  </span>
-                  <span className={cx('col-xs-4', 'amount')}>
+                  </div>
+                  <div className={cx('col-xs-4', 'amount')}>
                     {config.currencySymbol}{type === 'outgoing' ? amount(transfer.source_amount) : amount(transfer.destination_amount)}
-                  </span>
+                  </div>
                 </div>
               )
             })}
