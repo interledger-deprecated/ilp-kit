@@ -2,6 +2,7 @@
 @import 'variables';
 @import '../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss';
 @import 'pages/scss/var';
+@import 'mixins';
 
 .item {
   border-top: 1px solid $history-payment-separator-color;
@@ -32,6 +33,13 @@
   .counterparty {
     font-weight: bold;
   }
+}
+.counterpartyAccount {
+  display: block;
+  margin-top: -5px;
+  font-size: 10px;
+
+  @include singleLinkColor($history-date-text-color);
 }
 .message {
   font-size: 15px;

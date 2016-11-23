@@ -99,11 +99,16 @@ export default class HistoryItem extends Component {
                     {item.counterpartyName || getAccountName(item.counterpartyAccount)}
                   </span> paid you</span>}
                 </div>
+                {advancedMode &&
+                <a href={item.counterpartyAccount} className={cx('counterpartyAccount')}>
+                  {item.counterpartyAccount}
+                </a>}
                 {item.message &&
                 <div className={cx('message')}>
                   {item.message}
                 </div>}
                 <div className={cx('date')} title={moment(item.recent_date).format('LLL')}>
+                  {advancedMode && <span>{moment(item.recent_date || item.created_at).format('MMM D, YYYY LTS')} - </span>}
                   <TimeAgo date={item.recent_date || item.created_at} formatter={this.timeAgoFormatter} />
                 </div>
               </div>

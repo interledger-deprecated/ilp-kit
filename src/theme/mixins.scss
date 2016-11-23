@@ -1,7 +1,7 @@
 @mixin singleLinkColor($color) {
   color: $color;
 
-  &:hover, &:active, &:visited {
+  &:link, &:hover, &:active, &:visited {
     color: $color;
   }
 }
