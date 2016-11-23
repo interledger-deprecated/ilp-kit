@@ -21,7 +21,6 @@ describe('(component) HistoryItem', () => {
   const historyItemViewMock = mockStore.history.historyView[0]
   const userMock = mockStore.auth.user
 
-  // TODO Context is not available in HistoryItem
   store = createStore(browserHistory, client, mockStore)
   rendered = TestUtils.renderIntoDocument(
     <Provider store={store} key='provider'>

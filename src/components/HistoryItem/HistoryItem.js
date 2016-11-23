@@ -27,6 +27,10 @@ export default class HistoryItem extends Component {
     advancedMode: PropTypes.bool
   }
 
+  static defaultProps = {
+    config: {}
+  }
+
   state = {
     showTransfers: false
   }

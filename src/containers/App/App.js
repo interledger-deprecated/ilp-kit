@@ -6,6 +6,7 @@ import Waypoint from 'react-waypoint'
 import Navbar from 'react-bootstrap/lib/Navbar'
 import Nav from 'react-bootstrap/lib/Nav'
 import NavItem from 'react-bootstrap/lib/NavItem'
+import Label from 'react-bootstrap/lib/Label'
 
 import hotkeys from 'decorators/hotkeys'
 
@@ -34,7 +35,8 @@ const cx = classNames.bind(styles)
   state => ({
     user: state.auth.user,
     config: state.auth.config,
-    loading: state.auth.loading
+    loading: state.auth.loading,
+    advancedMode: state.auth.advancedMode
   }),
   {logout, pushState: routeActions.push, historyAddPayment, updateBalance, verify, loadConfig})
 @hotkeys()
@@ -51,6 +53,7 @@ export default class App extends Component {
     store: PropTypes.object,
     // TODO:UI add loading screen
     loading: PropTypes.bool,
+    advancedMode: PropTypes.bool,
 
     verify: PropTypes.func,
     loadConfig: PropTypes.func
@@ -146,7 +149,7 @@ export default class App extends Component {
   }
 
   render() {
-    const { user } = this.props
+    const { user, advancedMode } = this.props
     const appConfig = this.props.config
 
     const meta = {
@@ -166,7 +169,7 @@ export default class App extends Component {
         <Navbar fixedTop className={this.navBar} expanded={ this.state.navExpanded } onToggle={ this.onNavbarToggle }>
           <Navbar.Header>
             <Navbar.Brand>
-              {appConfig.title}
+              {appConfig.title} {advancedMode && <Label bsStyle="warning">Advanced Mode</Label>}
             </Navbar.Brand>
             <Navbar.Toggle />
           </Navbar.Header>

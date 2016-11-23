@@ -9,6 +9,7 @@
 - [Development](https://github.com/interledgerjs/ilp-kit/blob/master/docs/DEV.md)
 - [Environment variables](#environment-variables)
 - [Mail Setup](#mail-setup)
+- [Advanced Mode](#advanced-mode)
 - [Architecture](#architecture)
   - [Backend (REST API)](#backend-rest-api)
     - [API docs](#api-docs)
@@ -80,6 +81,9 @@ Name | Default |
 `LEDGER_CURRENCY_CODE` | `USD`
 `LEDGER_CURRENCY_SYMBOL` | `$`
 `LEDGER_PUBLIC_HTTPS` | `API_PUBLIC_HTTPS`
+
+## Advanced Mode
+ILP kit UI comes with an "advanced mode" for developers and advanced users. You can activate it with a hot-key: `option+d` on Mac or `alt+d` on Windows. 
 
 ## Architecture
 ILP kit consists of a [Node.js](https://github.com/nodejs/node) (developed on v6.9.1) backend (REST API) and a client built using [React](https://github.com/facebook/react).

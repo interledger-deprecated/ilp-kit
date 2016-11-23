@@ -17,6 +17,8 @@ export default function hotkeys() {
       }
 
       overrideMousetrap = (hotkeys) => {
+        if (!hotkeys) return
+
         // define previous stopCallback handler for mousetrap
         hotkeys.__mousetrap__.stopCallback = (e, element) => {
           // if the element has the class "mousetrap" then no need to stop
