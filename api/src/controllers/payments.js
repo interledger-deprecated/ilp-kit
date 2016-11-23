@@ -104,6 +104,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
       const timeSlot = this.params.timeSlot
       const sourceAccount = this.query.sourceAccount
       const destinationAccount = this.query.destinationAccount
+      const message = this.query.message
 
       if (sourceAccount !== this.req.user.account && destinationAccount !== this.req.user.account) {
         // TODO throw an exception
@@ -111,7 +112,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
       }
 
       this.body = yield Payment.getTransfers({
-        sourceAccount, destinationAccount, timeSlot
+        sourceAccount, destinationAccount, timeSlot, message
       })
     }
 

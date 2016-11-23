@@ -54,11 +54,13 @@ export const addPayment = (data) => (dispatch) => {
 export const loadTransfers = (payment) => {
   return {
     timeSlot: payment.time_slot,
+    message: payment.message,
     types: [types.LOAD_TRANSFERS, types.LOAD_TRANSFERS_SUCCESS, types.LOAD_TRANSFERS_FAIL],
     promise: (client) => client.get('/payments/transfers/' + payment.time_slot, {
       params: {
         sourceAccount: payment.source_account,
-        destinationAccount: payment.destination_account
+        destinationAccount: payment.destination_account,
+        message: payment.message,
       }
     })
   }

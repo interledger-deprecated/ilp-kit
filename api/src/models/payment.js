@@ -130,6 +130,7 @@ function PaymentFactory (sequelize, validator, container, User) {
         + " AND source_account = '" + params.sourceAccount + "'"
         + " AND destination_account = '" + params.destinationAccount + "'"
         + " AND date_trunc('hour', created_at) = '" + params.timeSlot + "'"
+        + (params.message ? " AND message = '" + params.message + "'" : '')
       + ' ORDER BY created_at DESC',
         {model: Payment.DbModel}
       )

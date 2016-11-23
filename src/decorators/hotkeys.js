@@ -37,7 +37,7 @@ export default function hotkeys() {
       render() {
         return (
           <HotKeys keyMap={map} handlers={this.handlers} ref={this.overrideMousetrap}
-                   focused={true} attach={window}>
+                   focused={true}>
             <DecoratedComponent {...this.props} />
           </HotKeys>
         )

@@ -4,11 +4,11 @@ import moment from 'moment-timezone'
 import paginate from 'redux-pagination'
 
 function reducer(state = {}, action = {}) {
-  function updateInHistory(timeSlot, update) {
+  function updateInHistory(timeSlot, message, update) {
     return {
       ...state,
       list: state.list.map(payment => {
-        if (payment.time_slot === timeSlot) {
+        if (payment.time_slot === timeSlot && payment.message === message) {
           return {
             ...payment,
             ...update
@@ -98,16 +98,16 @@ function reducer(state = {}, action = {}) {
     case types.LOGOUT_SUCCESS:
       return {}
     case types.LOAD_TRANSFERS:
-      return updateInHistory(action.timeSlot, {
+      return updateInHistory(action.timeSlot, action.message, {
         transfersLoading: true
       })
     case types.LOAD_TRANSFERS_SUCCESS:
-      return updateInHistory(action.timeSlot, {
+      return updateInHistory(action.timeSlot, action.message, {
         transfers: action.result,
         transfersLoading: false
       })
     case types.LOAD_TRANSFERS_FAIL:
-      return updateInHistory(action.timeSlot, {
+      return updateInHistory(action.timeSlot, action.message, {
         transfersLoading: false
       })
     default:
