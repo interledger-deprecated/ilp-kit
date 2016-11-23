@@ -19,22 +19,20 @@ const cx = classNames.bind(styles)
     verificationEmailSent: state.auth.verificationEmailSent,
     activeTab: state.auth.activeTab,
     verified: state.auth.verified,
+    config: state.auth.config
   }),
   authActions)
 export default class Home extends Component {
   static propTypes = {
     user: PropTypes.object,
     reload: PropTypes.func,
+    config: PropTypes.object,
 
     // User verification
     params: PropTypes.object,
     resendVerificationEmail: PropTypes.func,
     verificationEmailSent: PropTypes.bool,
     verified: PropTypes.bool
-  }
-
-  static contextTypes = {
-    config: PropTypes.object
   }
 
   state = {}
@@ -65,8 +63,7 @@ export default class Home extends Component {
   }
 
   render() {
-    const { user, verified, verificationEmailSent } = this.props
-    const { config } = this.context
+    const { user, verified, verificationEmailSent, config } = this.props
     const { showStats } = this.state
 
     // For some reason dynamic routers have problems with that state

@@ -24,7 +24,8 @@ import Input from 'components/Input/Input'
   send: state.send,
   quote: state.send.quote,
   quoting: state.send.quoting,
-  advancedMode: state.auth.advancedMode
+  advancedMode: state.auth.advancedMode,
+  config: state.auth.config,
 }),
 {...sendActions, resetData: sendActions.reset})
 @successable()
@@ -41,6 +42,7 @@ export default class SendForm extends Component {
     resetData: PropTypes.func,
     data: PropTypes.object,
     advancedMode: PropTypes.bool,
+    config: PropTypes.object,
 
     // Form
     fields: PropTypes.object.isRequired,
@@ -59,10 +61,6 @@ export default class SendForm extends Component {
     tempFail: PropTypes.func,
     fail: PropTypes.any,
     reset: PropTypes.func
-  }
-
-  static contextTypes = {
-    config: PropTypes.object
   }
 
   state = {}
@@ -218,9 +216,8 @@ export default class SendForm extends Component {
     if (!this.props.user) return null
 
     const { pristine, invalid, handleSubmit, submitting, success, destinationInfo,
-      advancedMode, quoting, fail, data, fields: { destination, sourceAmount,
+      advancedMode, quoting, fail, data, config, fields: { destination, sourceAmount,
       destinationAmount, message, repeats, interval } } = this.props
-    const { config } = this.context
     const { showAdvanced } = this.state
 
     const isSendingAmountFieldDisabled = !destination.value

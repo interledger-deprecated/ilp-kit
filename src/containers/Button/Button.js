@@ -7,6 +7,7 @@ import styles from './Button.scss';
 const cx = classNames.bind(styles);
 
 export default class Button extends Component {
+  // TODO config is not in the context anymore
   static contextTypes = {
     config: PropTypes.object
   };

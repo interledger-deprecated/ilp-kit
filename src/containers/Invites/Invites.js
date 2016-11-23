@@ -11,13 +11,15 @@ const cx = classNames.bind(styles)
 
 @connect(
   state => ({
-    codes: state.invite.codes
+    codes: state.invite.codes,
+    config: state.auth.config
   }),
   { loadCodes, remove })
 export default class Invites extends Component {
   static propTypes = {
     codes: PropTypes.array,
-    loadCodes: PropTypes.func
+    loadCodes: PropTypes.func,
+    config: PropTypes.object
   }
 
   componentWillMount() {
@@ -36,6 +38,8 @@ export default class Invites extends Component {
   }
 
   renderCode = (invite) => {
+    const config = this.props.config
+
     return (
       <div className={cx('panel', 'panel-default', 'invite')} key={invite.code}>
         <div className="panel-body">

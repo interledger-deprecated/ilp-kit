@@ -63,18 +63,8 @@ export default class App extends Component {
     store: PropTypes.object.isRequired
   }
 
-  static childContextTypes = {
-    config: PropTypes.object
-  }
-
   state = {
     navExpanded: false
-  }
-
-  getChildContext() {
-    return {
-      config: this.props.config
-    }
   }
 
   componentWillMount() {
