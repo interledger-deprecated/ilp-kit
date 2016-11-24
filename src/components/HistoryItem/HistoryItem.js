@@ -122,7 +122,7 @@ export default class HistoryItem extends Component {
               <div className={cx('transfersCount')}>
                 {!item.transfersLoading &&
                 <a href="" onClick={this.toggleTransfers}>
-                  {item.transfers_count} {item.transfers_count > 1 ? 'transfers' : 'transfer'}
+                  {item.transfers_count > 1 ? item.transfers_count + ' transfers' : '1 transfer'}
                 </a>}
 
                 {item.transfersLoading &&

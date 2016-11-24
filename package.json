@@ -38,7 +38,7 @@
     "test": "cp -n src/theme/variables.scss.example src/theme/variables.scss ; karma start",
     "test-api": "better-npm-run test-api",
     "apidoc": "apidoc -i api/src/controllers/ -o apidoc-out",
-    "configure": "./node_modules/ilp-kit-cli/bin/configure.js -o env.list"
+    "configure": "./node_modules/ilp-kit-cli/bin/configure.js configure"
   },
   "betterScripts": {
     "start-prod": {
@@ -145,9 +145,10 @@
     "hoist-non-react-statics": "^1.0.3",
     "http-proxy": "^1.12.0",
     "ilp": "^7.1.0",
-    "ilp-connector": "^12.2.0",
-    "ilp-kit-cli": "^5.0.0",
-    "ilp-plugin-bells": "^8.2.0",
+    "ilp-connector": "^12.3.0",
+    "ilp-kit-cli": "^6.0.0",
+    "ilp-plugin-bells": "^9.1.0",
+    "ilp-plugin-virtual": "^7.0.0",
     "istanbul": "^0.4.5",
     "kcors": "^1.0.1",
     "koa": "^1.1.2",
