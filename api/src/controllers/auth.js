@@ -4,7 +4,7 @@ module.exports = AuthControllerFactory
 
 const path = require('path')
 const passport = require('koa-passport')
-const sharp = require('sharp')
+const lwip = require('lwip')
 const Auth = require('../lib/auth')
 const Log = require('../lib/log')
 const Ledger = require('../lib/ledger')
@@ -187,10 +187,15 @@ function AuthControllerFactory(User, log, ledger, Users, mailer) {
       const newFilePath = files.file.path.replace(/(\.[\w\d_-]+)$/i, '_square$1')
 
       // Resize
-      sharp(files.file.path)
-        .resize(200, 200)
-        .crop(sharp.strategy.center)
-        .toFile(newFilePath)
+      lwip.open(files.file.path, (err, image) => {
+        image.batch()
+          .cover(200, 200)
+          .writeFile(newFilePath, err => {
+            if (err) {
+              console.log('auth:197', err)
+            }
+          })
+      })
 
       user.profile_picture = path.basename(newFilePath)
 
