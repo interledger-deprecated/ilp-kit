@@ -195,18 +195,67 @@ Run `npm run configure`. It provides example values, and I'll also put the confi
 - Country code: `US`
 - Configure GitHub: `n` (we don't need that just yet; you can always go back and change it)
 - Configure Mailgun: `n` (same deal)
-- ILP Peers: `us.usd.nexus.stefan` (this means I send my routes to `stefan@nexus.justmoon.com`. If you want to peer with somebody, ask them for their connector's ILP address. You have to have an account on their ledger in order to peer).
 - Username: `niles`
 - Password: (use the randomly generated default)
 
-Now this will prompt for Plugins. A plugin connects to a ledger, using your credentials. The configuration tool will
-automatically make to connect to my own ledger. I'm also going to create a plugin for our account on Nexus, though.
+That's all you need for a functioning ILP Kit! Of course, it's not
+very useful to have a ledger that's not connected to any others. That's why
+we're going to create a peering relationship with another ILP Kit.
 
-- Webfinger identifier: `niles@nexus.justmoon.com` (this is the same identifier from earlier)
-- Currency code: `USD`
-- Country code: `us`
-- Password: `PASSWORD`
-- Enter another plugin: `n` (we only made one account to connect to)
+## Get a peer
+
+In order to peer with somebody, you're going to have to know someone else who's running an ILP
+kit. The process of peering involves creating a trust-line.
+
+### What is a trust-line?
+
+A trust-line is just a balance that tracks debt between you and another person.
+It is stored and adjusted by `ilp-plugin-virtual`, which allows this balance to
+function as though it were a ledger. In this way, two connectors with a
+trust-line can forward payments through one another without ever holding
+balance on the same ledger.
+
+For example, if I want to send $10 to your ledger, my connector will increase
+their debt to you by $10, and you will forward the payment on your own ledger
+or on another trust-line. Because this balance is kept between peers rather
+than a ledger, one party could simply refuse to pay off their debt.
+
+In order to stop this from getting out of hand, each party sets a maximum
+balance.  If I have a trust-line balance of $10, then the other party on the
+trust-line owes me $10. Because the balance is capped, the other party cannot
+borrow as much as they want, never to repay it.
+
+### Make a trust-line
+
+First things first, agree on an MQTT server with your peer.
+[HiveMQ](http://www.hivemq.com/try-out/) and
+[Mosquitto](http://test.mosquitto.org/) both offer test MQTT servers which can
+be used for testing purposes. One party could also [run a broker](https://mosquitto.org/) on
+their own server. On an insecure MQTT server, someone can pretend to be your
+peer, and they can see all of your transactions.
+
+Next, you'll need your public key. This public key, combined with an MQTT broker,
+is how your peer is going to connect to you. To get a public key, run `npm run key`:
+
+- [Base-64-URL](https://en.wikipedia.org/wiki/Base64#URL_applications) encoded secret:
+  Enter a strong secret here, and copy it down. If you lose the secret, you'll
+  need to make a new public key and give it to all of your peers.
+
+Copy down your public key, and give it to the person you want to peer with. Make sure that you
+get their public key too. Once you have their public key, run `npm run peer`:
+
+- Name: Use the name of your peer, e.g. `Bob`, so that you can find this trust-line later.
+- MQTT Broker: Use the one that you and your peer agreed on. Make sure to include the port in the `mqtt://` URL.
+- Secret: Use the same secret that you used to generate your public key. If it doesn't match, then this will connect to the wrong channel.
+- Public Key: This should be provided to you by your peer. It'll look like `d4TOtjlltxPH_4gZXw_R0HBjY6tbh3X-tk2N2df2zAk`.
+- Currency Code: Should be agreed upon by you and your peer, so that you're assigning the same value to the balance. It doesn't have to match
+  either of your ILP Kit's native currencies, but it should be something your connector knows the exchange rate for. Default is `USD`.
+- Max Amount: The most that your peer can steal by defaulting on their debt to you. About $10 is a reasonable amount to start with; it can be
+  adjusted later by manually editing your configuration file. It's safer to err on the low side, and then increase later.
+
+Now your `env.list` will be modified to include this peering relationship. The trust-line is stored in the
+`CONNECTOR_LEDGERS` field, where it can be modified or removed later. If you want to see all of your trust-lines, then
+run `npm run list-peers`. If you want to remove one of your trust-lines, then run `npm run depeer`.
 
 ## Launch ILP Kit
 
@@ -220,7 +269,7 @@ $ tail -f nohup.out -n 1000
 
 Your connector will fail to launch, because this its account doesn't exist yet. Just go to your site 
 (eg. `https://niles.sharafian.com`), and register a new user with the exact same username/password you
-entered for your ledger during `npm run configure`, (eg. user: `niles` pass: `PASSWORD`).
+entered for your connector during `npm run configure`, (eg. user: `niles` pass: `PASSWORD`).
 
 Run `killall -9 node`, and then launch the ilp kit again with:
 
