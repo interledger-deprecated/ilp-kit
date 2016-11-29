@@ -53,7 +53,7 @@ if (!getVar('API_LEDGER_URI')) {
   envVars.LEDGER_PUBLIC_HTTPS = getVar('LEDGER_PUBLIC_HTTPS') || getVar('API_PUBLIC_HTTPS')
   envVars.API_LEDGER_ADMIN_USER = getVar('LEDGER_ADMIN_USER') || getVar('LEDGER_ADMIN_USER', 'admin')
   envVars.API_LEDGER_ADMIN_PASS = getVar('LEDGER_ADMIN_PASS') || getVar('LEDGER_ADMIN_PASS', 'admin')
-  envVars.LEDGER_ED25519_SECRET_KEY = generateSecret(secret, 'LEDGER_ED25519')
+  envVars.LEDGER_SECRET = generateSecret(secret, 'LEDGER_SECRET')
   envVars.LEDGER_ENABLE = true
 
   const protocol = getVar('API_PUBLIC_HTTPS') ? 'https:' : 'http:'
