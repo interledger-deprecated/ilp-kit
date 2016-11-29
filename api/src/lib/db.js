@@ -22,13 +22,13 @@ module.exports = class Database extends AbstractDatabase {
         sequelize: this
       },
       migrations: {
-        params: [this.getQueryInterface(), this.constructor],
+        params: [this],
         path: path.resolve(__dirname, '..', 'migrations')
       }
     })
   }
 
-  * migrate() {
+  migrate() {
     return this.umzug.up()
   }
 }
