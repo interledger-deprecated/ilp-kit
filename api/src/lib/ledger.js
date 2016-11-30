@@ -67,6 +67,27 @@ module.exports = class Ledger extends EventEmitter {
     return response.body
   }
 
+  * getAccounts() {
+    let response
+
+    try {
+      response = yield superagent
+        .get(this.ledgerUri + '/accounts')
+        .auth(this.config.getIn(['ledger', 'admin', 'user']), this.config.getIn(['ledger', 'admin', 'pass']))
+        .end()
+    } catch (e) {
+      if (e.response && e.response.body &&
+        (e.response.body.id === 'NotFoundError' ||
+        e.response.body.id === 'UnauthorizedError')) {
+        throw new NotFoundError(e.response.body.message)
+      } else {
+        throw e
+      }
+    }
+
+    return response.body
+  }
+
   * putAccount(auth, data) {
     let response
 

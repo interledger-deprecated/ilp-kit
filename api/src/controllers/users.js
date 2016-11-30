@@ -38,6 +38,23 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
       router.post('/users/:username/resend-verification', this.resendVerification)
 
       router.get('/receivers/:username', this.getReceiver)
+
+      // Admin
+      router.get('/users', this.checkAdmin, this.getAll)
+    }
+
+    // TODO move to auth
+    static * checkAdmin(next) {
+      if (this.req.user.username === config.data.getIn(['ledger', 'admin', 'user'])) {
+        return yield next
+      }
+
+      // TODO throw exception
+      this.status = 404
+    }
+
+    static * getAll() {
+      this.body = yield ledger.getAccounts()
     }
 
     /**

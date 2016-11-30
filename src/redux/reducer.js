@@ -8,6 +8,7 @@ import send from './reducers/send'
 import history from './reducers/history'
 import stats from './reducers/stats'
 import invite from './reducers/invite'
+import user from './reducers/user'
 
 export default combineReducers({
   routing: routeReducer,
@@ -17,5 +18,6 @@ export default combineReducers({
   history,
   stats,
   invite,
+  user,
   form
 })

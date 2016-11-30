@@ -34,7 +34,7 @@ module.exports = class Utils {
     try {
       response = yield superagent.get(accountUri).end()
     } catch (e) {
-      console.error(e)
+      console.error('utils:39', e)
       throw new NotFoundError("Unknown account")
     }
 

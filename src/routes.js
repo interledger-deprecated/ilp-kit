@@ -32,6 +32,13 @@ export default (store) => {
     })
   }
 
+  const requireAdmin = (nextState, replace, cb) => {
+    loadAuth(() => {
+      if (!isAuth() || !isAuth().isAdmin) replace('/')
+      cb()
+    })
+  }
+
   const getHome = (nextState, cb) => {
     require.ensure(['./containers/Home/Home'], (require) => {
       cb(null, require('./containers/Home/Home'))
@@ -76,6 +83,14 @@ export default (store) => {
     }, 'invites')
   }
 
+  const getUsers = (nextState, cb) => {
+    require.ensure(['./containers/Users/Users'], (require) => {
+      cb(null, require('./containers/Users/Users'))
+
+      store.dispatch(locationUpdate())
+    }, 'invites')
+  }
+
   /**
    * Please keep routes in alphabetical order
    */
@@ -98,7 +113,12 @@ export default (store) => {
         <Route onEnter={requireAuth}>
           <Route path="button" getComponent={getButton}/>
           <Route path="settings" getComponent={getSettings}/>
+        </Route>
+
+        { /* Admin pages */ }
+        <Route onEnter={requireAdmin}>
           <Route path="invites" getComponent={getInvites}/>
+          <Route path="users" getComponent={getUsers}/>
         </Route>
 
         { /* Routes available to all */ }
