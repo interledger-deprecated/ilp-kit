@@ -202,6 +202,7 @@
     "redux-async-connect": "^1.0.0-rc4",
     "redux-form": "^5.3.1",
     "redux-pagination": "0.0.1",
+    "request-ip": "^1.2.3",
     "resolve-url-loader": "^1.6.0",
     "sequelize": "^3.17.1",
     "serialize-javascript": "^1.1.2",

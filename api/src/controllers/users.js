@@ -4,6 +4,7 @@ module.exports = UsersControllerFactory
 
 const fs = require('fs')
 const superagent = require('superagent-promise')(require('superagent'), Promise)
+const requestIp = require('request-ip')
 const request = require('five-bells-shared/utils/request')
 const Auth = require('../lib/auth')
 const Log = require('../lib/log')
@@ -184,7 +185,8 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
             city: userObj.city || '',
             region: userObj.region || '',
             country: userObj.country || '',
-            zip_code: userObj.zip_code || ''
+            zip_code: userObj.zip_code || '',
+            ip_address: requestIp.getClientIp(this.req)
           })
         } catch (err) {
           console.log('users:172', err)
