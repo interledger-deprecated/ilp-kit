@@ -80,6 +80,7 @@ function MiscControllerFactory (Auth, log, config, ledger, utils) {
         ledgerUri: config.data.getIn(['ledger', 'public_uri']),
         currencyCode: ledgerInfo.currency_code,
         currencySymbol: ledgerInfo.currency_symbol,
+        amountScale: ledgerInfo.scale,
         registration: config.data.get('registration'),
         antiFraud: !!config.data.getIn(['antifraud', 'service_url']),
         title: config.data.get('client_title'),
