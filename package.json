@@ -148,7 +148,7 @@
     "ilp-connector": "^12.3.0",
     "ilp-kit-cli": "^6.0.0",
     "ilp-plugin-bells": "^9.1.0",
-    "ilp-plugin-virtual": "^7.0.0",
+    "ilp-plugin-virtual": "^8.0.0",
     "istanbul": "^0.4.5",
     "kcors": "^1.0.1",
     "koa": "^1.1.2",
