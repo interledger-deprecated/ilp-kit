@@ -62,6 +62,7 @@ export default class RegisterForm extends Component {
 
     if (!inviteCode) return
 
+    this.props.fields.inviteCode.onChange(inviteCode)
     this.handleAddInviteCode(inviteCode)
   }
 

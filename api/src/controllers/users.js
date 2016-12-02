@@ -12,6 +12,8 @@ const Ledger = require('../lib/ledger')
 const Socket = require('../lib/socket')
 const Config = require('../lib/config')
 const Mailer = require('../lib/mailer')
+const Pay = require('../lib/pay')
+const Utils = require('../lib/utils')
 const UserFactory = require('../models/user')
 const InviteFactory = require('../models/invite')
 
@@ -22,8 +24,8 @@ const InvalidVerification = require('../errors/invalid-verification-error')
 const ServerError = require('../errors/server-error')
 const InvalidBodyError = require('../errors/invalid-body-error')
 
-UsersControllerFactory.constitute = [Auth, UserFactory, InviteFactory, Log, Ledger, Socket, Config, Mailer]
-function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config, mailer) {
+UsersControllerFactory.constitute = [Auth, UserFactory, InviteFactory, Log, Ledger, Socket, Config, Mailer, Pay, Utils]
+function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config, mailer, pay, utils) {
   log = log('users')
 
   return class UsersController {
@@ -142,9 +144,7 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
       if (userObj.inviteCode) {
         invite = yield Invite.findOne({where: {code: userObj.inviteCode, claimed: false}})
 
-        if (invite) {
-          userObj.balance = invite.amount
-        } else if (!config.data.get('registration')) {
+        if (!invite && !config.data.get('registration')) {
           throw new InvalidBodyError('The invite code is wrong')
         }
       }
@@ -224,13 +224,33 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
 
         // Invite codes can only be used once
         if (invite) {
+          const destination = yield utils.parseDestination({
+            destination: dbUser.username
+          })
+
+          // Admin account funding the new account
+          const source = yield User.findOne({
+            where: {
+              username: config.data.getIn(['ledger', 'admin', 'user'])
+            }
+          })
+
+          // Send the invite money
+          yield pay.pay({
+            source: source.getDataExternal(),
+            destination: destination,
+            sourceAmount: invite.amount,
+            destinationAmount: invite.amount,
+            message: 'Claimed invite code: ' + invite.code
+          })
+
           invite.user_id = dbUser.id
           invite.claimed = true
 
           yield invite.save()
         }
 
-	// TODO:SECURITY account should be funded at this point
+      // TODO:SECURITY account should be funded at this point
       } catch (e) {
         throw new ServerError()
       }
