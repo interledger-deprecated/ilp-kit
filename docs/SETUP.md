@@ -235,18 +235,14 @@ their own server. On an insecure MQTT server, someone can pretend to be your
 peer, and they can see all of your transactions.
 
 Next, you'll need your public key. This public key, combined with an MQTT broker,
-is how your peer is going to connect to you. To get a public key, run `npm run key`:
-
-- [Base-64-URL](https://en.wikipedia.org/wiki/Base64#URL_applications) encoded secret:
-  Enter a strong secret here, and copy it down. If you lose the secret, you'll
-  need to make a new public key and give it to all of your peers.
+is how your peer is going to connect to you. To get a public key, run `npm run key`.
+It will generate the public key corresponding to the `API_SECRET` in `env.list`.
 
 Copy down your public key, and give it to the person you want to peer with. Make sure that you
 get their public key too. Once you have their public key, run `npm run peer`:
 
-- Name: Use the name of your peer, e.g. `Bob`, so that you can find this trust-line later.
+- Name: Use the name of your peer, e.g. `Bob`, so that you can find this trust-line later
 - MQTT Broker: Use the one that you and your peer agreed on. Make sure to include the port in the `mqtt://` URL.
-- Secret: Use the same secret that you used to generate your public key. If it doesn't match, then this will connect to the wrong channel.
 - Public Key: This should be provided to you by your peer. It'll look like `d4TOtjlltxPH_4gZXw_R0HBjY6tbh3X-tk2N2df2zAk`.
 - Currency Code: Should be agreed upon by you and your peer, so that you're assigning the same value to the balance. It doesn't have to match
   either of your ILP Kit's native currencies, but it should be something your connector knows the exchange rate for. Default is `USD`.
