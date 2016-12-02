@@ -10,14 +10,15 @@ const Ledger = require('../lib/ledger')
 const SPSP = require('../lib/spsp')
 const Config = require('../lib/config')
 const Socket = require('../lib/socket')
+const Pay = require('../lib/pay')
 const Utils = require('../lib/utils')
 const UserFactory = require('../models/user')
 const PaymentFactory = require('../models/payment')
 const InsufficientFundsError = require('../errors/ledger-insufficient-funds-error')
 const NoQuote = require('../errors/no-quote-error')
 
-PaymentsControllerFactory.constitute = [Auth, PaymentFactory, Log, Ledger, Config, Utils, SPSP, Socket, UserFactory]
-function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, spsp, socket, User) {
+PaymentsControllerFactory.constitute = [Auth, PaymentFactory, Log, Ledger, Config, Utils, SPSP, Socket, UserFactory, Pay]
+function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, spsp, socket, User, pay) {
   log = log('payments')
 
   return class PaymentsController {
@@ -166,53 +167,13 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
         destination: payment.destination
       })
 
-      // Interledger payment
-      let transfer
-
-      try {
-        transfer = yield spsp.pay({
-          source: this.req.user.getDataExternal(),
-          destination: destination,
-          sourceAmount: payment.sourceAmount,
-          destinationAmount: payment.destinationAmount,
-          memo: payment.message
-        })
-      } catch (e) {
-        if (e.response && e.response.body && e.response.body.id && e.response.body.id === 'InsufficientFundsError') {
-          throw new InsufficientFundsError()
-        }
-
-        throw e
-      }
-
-      // If the payment is local the receiver already created it in the db
-      let dbPayment = yield Payment.findOne({
-        where: {execution_condition: transfer.executionCondition}
+      yield pay.pay({
+        source: this.req.user.getDataExternal(),
+        destination: destination,
+        sourceAmount: payment.sourceAmount,
+        destinationAmount: payment.destinationAmount,
+        message: payment.message
       })
-
-      if (!dbPayment) {
-        dbPayment = new Payment()
-      }
-
-      dbPayment.setDataExternal({
-        source_user: this.req.user.id,
-        source_account: this.req.user.account,
-        source_amount: parseFloat(payment.sourceAmount),
-        destination_account: destination.accountUri,
-        destination_amount: parseFloat(payment.destinationAmount),
-        destination_name: destination.name,
-        destination_image_url: destination.imageUrl,
-        transfer: transfer.uuid,
-        message: payment.message || null,
-        execution_condition: transfer.executionCondition,
-        state: 'success'
-      })
-      dbPayment = yield dbPayment.save()
-
-      // Notify the clients
-      socket.payment(this.req.user.username, Payment.fromDatabaseModel(dbPayment).getDataExternal())
-
-      log.debug('Ledger transfer payment ID ' + id)
 
       // TODO should be something more meaningful
       this.status = 200
