@@ -344,35 +344,35 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
       this.body = user.getDataExternal()
     }
 
-    static * reload () {
+    static * reload() {
       if (!config.data.get('reload')) {
         return this.status = 404
       }
 
-      let user = this.req.user
-
-      let username = this.params.username
+      const user = this.req.user
+      const username = this.params.username.toLowerCase()
       request.validateUriParameter('username', username, 'Identifier')
-      username = username.toLowerCase()
 
-      // Load the ledger account
-      let ledgerUser = yield ledger.getAccount(user)
+      const destination = yield utils.parseDestination({
+        destination: user.username
+      })
 
-      user.balance = parseInt(ledgerUser.balance) + 1000
+      // Admin account funding the new account
+      const source = yield User.findOne({
+        where: {
+          username: config.data.getIn(['ledger', 'admin', 'user'])
+        }
+      })
 
-      // Reload the ledger account
-      ledgerUser = yield ledger.updateAccount({
-        username: user.username,
-        balance: ''+user.balance
-      }, true)
+      // Send the invite money
+      yield pay.pay({
+        source: source.getDataExternal(),
+        destination: destination,
+        sourceAmount: 1000,
+        destinationAmount: 1000,
+        message: 'Free money'
+      })
 
-      user.balance = ledgerUser.balance
-
-      // Inform the client
-      socket.updateBalance(ledgerUser.name, ledgerUser.balance)
-
-      // do we need this?
-      this.body = user.getDataExternal()
       this.status = 200
     }
 
