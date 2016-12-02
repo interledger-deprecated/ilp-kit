@@ -20,8 +20,8 @@ const User = require('../models/user')
 const Socket = require('./socket')
 
 module.exports = class App {
-  static constitute () { return [ Config, Auth, Router, Validator, Ledger, SPSP, DB, Log, Socket, User ] }
-  constructor (config, auth, router, validator, ledger, spsp, db, log, socket, user) {
+  static constitute() { return [ Config, Auth, Router, Validator, Ledger, SPSP, DB, Log, Socket, User ] }
+  constructor(config, auth, router, validator, ledger, spsp, db, log, socket, user) {
     this.config = config.data
     this.auth = auth
     this.router = router
@@ -77,22 +77,22 @@ module.exports = class App {
     router.attach(app)
   }
 
-  start () {
+  start() {
     co(this._start.bind(this)).catch((err) => {
       this.log.critical(err)
     })
   }
 
-  * _start () {
+  * _start() {
     yield this.db.migrate()
 
     // Ensure admin account exists
-    yield this.user.ensureAdminExists()
+    yield this.user.setupAdminAccount()
 
     this.listen()
   }
 
-  listen () {
+  listen() {
     this.app.listen(this.config.getIn(['server', 'port']))
     this.log.info('wallet listening on ' + this.config.getIn(['server', 'bind_ip']) +
       ':' + this.config.getIn(['server', 'port']))

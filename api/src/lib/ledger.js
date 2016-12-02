@@ -89,12 +89,36 @@ module.exports = class Ledger extends EventEmitter {
   }
 
   * putAccount(auth, data) {
-    let response
-
-    response = yield superagent
+    const response = yield superagent
       .put(this.ledgerUri + '/accounts/' + data.name)
       .send(data)
       .auth(auth.username, auth.password)
+
+    return response.body
+  }
+
+  // Make sure admin minimum allowed balance is negative infinity
+  * setupAdminAccount() {
+    const adminUser = this.config.getIn(['ledger', 'admin', 'user'])
+    const adminPass = this.config.getIn(['ledger', 'admin', 'pass'])
+
+    // Get the account
+    const adminAccount = yield this.getAccount({
+      username: adminUser,
+      password: adminPass
+    })
+
+    delete adminAccount.id
+    delete adminAccount.ledger
+    delete adminAccount.balance
+
+    adminAccount.minimum_allowed_balance = '-infinity'
+
+    // Update the account
+    const response = yield superagent
+      .put(this.ledgerUri + '/accounts/' + adminUser)
+      .send(adminAccount)
+      .auth(adminUser, adminPass)
 
     return response.body
   }
