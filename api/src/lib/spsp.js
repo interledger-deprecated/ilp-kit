@@ -136,9 +136,11 @@ module.exports = class SPSP {
     paymentParams.uuid = uuid()
 
     // TODO any rounding stuff here?
-    // Make sure the deliverable amount is what the user agreed with
-    if (parseFloat(paymentParams.destinationAmount) !== parseFloat(params.destinationAmount)) {
-      // TODO handle
+    // Make sure the deliverable amount is what the user agreed with (1% slippage is allowed)
+    const difference = parseFloat(paymentParams.destinationAmount) / parseFloat(params.destinationAmount)
+
+    if (difference > 1.01 || difference < 0.99) {
+      // TODO throw exception
       return
     }
 
