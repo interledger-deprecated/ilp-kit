@@ -278,19 +278,20 @@ You'll see your connector connect successfully.
 
 ## Issue some money
 
-So you've got a ledger all set up, with a UI and a connector to another ILP kit. But nobody on your ledger
-has any money. To remedy this, you can make an issuer account.
+So you've got a ledger all set up, with a UI and a connector to another ILP
+kit. But nobody on your ledger has any money. Fortunately, some accounts can
+hold negative balances. Your `admin` account has a balance that can go to
+`-infinity`, in fact.
 
-Just go to your site and register a new account called `issuer` (that name is just a convention, it can be
-whatever you want). Now open `~/ilp-kit/env.list` on your remote machine, and note down the admin username
-and password. Use `httpie` on any machine to run:
+Open `~/ilp-kit/env.list` on your remote machine, and note down the admin
+username and password. Now use these credentials to log into your ILP Kit UI.
+Just send a payment to the account that your connector is using, and you'll
+have some cash to spend.
 
-```sh
-curl -H 'Content-Type: application/json' -X PUT https://niles.sharafian.com/ledger/accounts/issuer --user admin:PASSWORD -d '{"minimum_allowed_balance":"-infinity","balance":"0","is_disabled":false, "id":"https://niles.sharafian.com/ledger/accounts/issuer","name":"issuer"}'
-```
-
-Replace `niles.sharafian.com` with your domain, and replace `PASSWORD` with your own admin password. Now if you log in
-as `issuer`, you can send money to your primary account to have some cash.
+It's inadvisable to use your admin account for anything other than issuing
+funds in this way. You don't want to owe more to other accounts than you can
+pay back, nor do you want people to be able to send massive payments through
+your connector.
 
 # Enjoy
 
