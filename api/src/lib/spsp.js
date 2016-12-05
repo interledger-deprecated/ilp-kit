@@ -3,6 +3,7 @@
 const co = require('co')
 const uuid = require('uuid4')
 const superagent = require('superagent-promise')(require('superagent'), Promise)
+const BigNumber = require('bignumber.js')
 const debug = require('debug')('ilp-kit:spsp')
 
 const ILP = require('ilp')
@@ -11,14 +12,16 @@ const PluginBellsFactory = require('ilp-plugin-bells').Factory
 const PaymentFactory = require('../models/payment')
 const Config = require('./config')
 const Socket = require('./socket')
+const Ledger = require('./ledger')
 
 // TODO exception handling
 module.exports = class SPSP {
-  static constitute() { return [Config, PaymentFactory, Socket] }
-  constructor(config, Payment, socket) {
+  static constitute() { return [Config, PaymentFactory, Socket, Ledger] }
+  constructor(config, Payment, socket, ledger) {
     this.Payment = Payment
     this.socket = socket
     this.config = config
+    this.ledger = ledger
 
     this.senders = {}
     this.receivers = {}
@@ -213,13 +216,22 @@ module.exports = class SPSP {
   }
 
   * createRequest(destinationUser, destinationAmount) {
-    const self = this
+    const precisionAndScale = yield this.ledger.getInfo()
+    const bnAmount = new BigNumber(destinationAmount)
+    const requiredPrecisionRounding = bnAmount.precision() - precisionAndScale.precision
+    const requiredScaleRounding = bnAmount.decimalPlaces() - precisionAndScale.scale
+
+    const roundedAmount =
+      (requiredPrecisionRounding > requiredScaleRounding)
+        ? bnAmount.toPrecision(precisionAndScale.precision, BigNumber.ROUND_UP)
+        : bnAmount.toFixed(precisionAndScale.scale, BigNumber.ROUND_UP)
+
     const username = destinationUser.username
 
-    const receiver = yield self.getReceiver(username)
+    const receiver = yield this.getReceiver(username)
 
     const request = receiver.createRequest({
-      amount: destinationAmount
+      amount: roundedAmount
     })
 
     return request
