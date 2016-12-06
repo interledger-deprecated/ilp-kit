@@ -12,9 +12,9 @@
   display: block;
 }
 .code {
-  border-bottom: 1px dotted #626262;
+  border-bottom: 1px dotted $text-color;
 
-  @include singleLinkColor(#626262);
+  @include singleLinkColor($text-color);
 }
 .amountColumn {
   text-align: center;
@@ -26,17 +26,17 @@
   color: $brand-color;
 }
 .claimed {
-  color: #d9d9d9;
+  color: $muted-text-color;
 }
 .deleteButton {
   position: absolute;
   top: 0;
   right: 4px;
   padding: 5px;
-  color: #626262;
+  color: $text-color;
   opacity: 0;
 
   &:hover {
-    color: #f55753;
+    color: $danger;
   }
 }

@@ -64,6 +64,7 @@ export default class Invites extends Component {
         </div>
 
         {/* TODO:UX ask for confirmation */}
+        {/* TODO:UX shouldn't be able to delete already claimed ones */}
         <a href="" className={cx('deleteButton')} onClick={this.handleRemove.bind(null, invite.code)}>
           <i className="fa fa-times" />
         </a>

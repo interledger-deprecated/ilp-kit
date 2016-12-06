@@ -8,7 +8,7 @@ dist/
 webpack-stats.json
 webpack-assets.json
 npm-debug.log
-src/theme/variables.scss
+src/theme/variables-custom.scss
 uploads/
 env.list
 keys/

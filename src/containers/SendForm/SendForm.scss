@@ -6,10 +6,10 @@
 }
 .destinationPreview {
   display: flex;
-  border: 1px dashed #d9d9d9;
+  border: 1px dashed $box-border-color;
   margin: 0 0 10px;
   padding: 5px;
-  background: #fafafa;
+  background: $box-alternate-background-color;
   border-radius: 2px;
 
   img {
@@ -27,7 +27,7 @@
     }
     .currency {
       font-size: 12px;
-      color: #919191;
+      color: $text-color;
     }
   }
 }
@@ -44,7 +44,7 @@
   line-height: 35px;
 
   a {
-    color: #b9b9b9;
-    border-bottom: 1px dashed #d9d9d9;
+    color: $muted-text-color;
+    border-bottom: 1px dashed lighten($muted-text-color, 15%);
   }
 }

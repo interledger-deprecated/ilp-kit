@@ -1,3 +1,5 @@
+@import 'variables';
+
 .widget {
   .fields {
     .label {
@@ -9,7 +11,6 @@
   position: absolute;
   overflow: hidden;
   left: -10000px;
-  background: #000;
 }
 .inviteLink {
   display: block;
@@ -24,12 +25,12 @@
   .balance {
     display: block;
     height: 50px;
-    text-align: center;
+    text-align: right;
 
     .number {
       display: block;
       margin: 5px 0;
-      color: #1DE9B6;
+      color: $brand-color;
       font-size: 30px;
     }
   }

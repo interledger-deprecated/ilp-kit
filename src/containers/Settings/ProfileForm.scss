@@ -1,14 +1,14 @@
 @import 'variables';
 
 .dropzone {
-  border: 1px dashed #d9d9d9;
+  border: 1px dashed $box-border-color;
   padding: 26px 10px;
   margin: 0 0 10px;
   cursor: pointer;
   text-align: center;
 
   &:hover {
-    background-color: #f9f9f9;
+    background-color: $box-alternate-background-color;
   }
 }
 .profilePic {

@@ -178,9 +178,9 @@ export default class RegisterForm extends Component {
           {/* Invite code: Step 3 */}
           {invite.code && !invite.claimed && !showInviteInput &&
           <div className={cx('inviteCode', 'row')}>
-            <span className={cx('text', 'col-sm-7')}>Invite code has been added!</span>
+            <span className={cx('text', 'col-sm-9')}>Invite code has been added!</span>
             {/* TODO:REFACTOR shouldn't use the global config */}
-            <span className={cx('balance', 'col-sm-5')}>
+            <span className={cx('balance', 'col-sm-3')}>
               <span className={cx('label')}>Balance </span>
               <span className={cx('number')}>
                 {config.currencySymbol}{invite.amount}

@@ -6,6 +6,9 @@ $brand-color: #48b0f7;
 
 $container-background-color: #f1f4f5;
 
+// State colors
+$danger: #f55753;
+
 // Header
 $header-background-color: $blue;
 $header-text-color: #fff;
@@ -26,9 +29,12 @@ $box-background-color: #fff;
 $box-shadow-color: #EEF0F7;
 $box-title-background-color: $dark;
 $box-title-text-color: #fff;
+$box-border-color: #d9d9d9;
+$box-alternate-background-color: #fafafa;
 
 // Content
-$text-color: #000;
+$text-color: #626262;
+$muted-text-color: #bababa;
 $faded-text-color: #b0b0b0;
 
 $success-background: #DFF0D8;
