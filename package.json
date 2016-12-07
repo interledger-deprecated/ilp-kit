@@ -213,6 +213,7 @@
     "serialize-javascript": "^1.1.2",
     "serve-favicon": "^2.3.0",
     "socket.io-client": "^1.5.0",
+    "sodium-prebuilt": "^1.0.22",
     "superagent": "^1.8.0",
     "superagent-promise": "^1.1.0",
     "supertest-as-promised": "^4.0.1",

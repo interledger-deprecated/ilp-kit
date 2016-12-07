@@ -3,6 +3,7 @@
 const Config = require('five-bells-shared').Config
 const envPrefix = 'api'
 const crypto = require('crypto')
+const sodium = require('sodium-prebuilt').api
 
 module.exports = class WalletConfig {
   constructor() {
@@ -57,6 +58,13 @@ module.exports = class WalletConfig {
       sender_name: Config.getEnv(envPrefix, 'EMAIL_SENDER_NAME') || 'info',
       sender_address: Config.getEnv(envPrefix, 'EMAIL_SENDER_ADDRESS') || 'contact@' + localConfig.mailgun.domain
     }
+
+    localConfig.connector = {
+      ed25519_secret_key: Config.getEnv('CONNECTOR_ED25519_SECRET_KEY')
+    }
+
+    const secret = Buffer.from(localConfig.connector.ed25519_secret_key, 'base64')
+    localConfig.connector.public_key = sodium.crypto_sign_seed_keypair(secret).publicKey.toString('base64')
 
     localConfig.reload = Config.getEnv(envPrefix, 'RELOAD')
 

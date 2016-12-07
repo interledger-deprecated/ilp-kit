@@ -1,5 +1,6 @@
 const fs = require('fs')
 const crypto = require('crypto')
+const sodium = require('sodium-prebuilt')
 const _ = require('lodash')
 
 const envVars = {}
@@ -39,6 +40,7 @@ try {
 // Secrets
 const secret = getVar('API_SECRET', 'secret') // 'secret' for tests
 envVars.API_ED25519_SECRET_KEY = generateSecret(secret, 'API_ED25519')
+envVars.CONNECTOR_ED25519_SECRET_KEY = generateSecret(secret, 'CONNECTOR_ED25519')
 
 // Add ledger env vars
 if (!getVar('API_LEDGER_URI')) {

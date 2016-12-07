@@ -6,7 +6,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 module.exports = WebfingerControllerFactory
 
-const url = require("url")
+const url = require('url')
 const request = require('five-bells-shared/utils/request')
 const Log = require('../lib/log')
 const Config = require('../lib/config')
@@ -15,11 +15,11 @@ const Ledger = require('../lib/ledger')
 const NotFoundError = require('../errors/not-found-error')
 
 WebfingerControllerFactory.constitute = [Log, Config, Ledger]
-function WebfingerControllerFactory (log, config, ledger) {
+function WebfingerControllerFactory(log, config, ledger) {
   log = log('auth')
 
   return class WebfingerController {
-    static init (router) {
+    static init(router) {
       router.get('/webfinger', this.load)
     }
 
@@ -67,7 +67,7 @@ function WebfingerControllerFactory (log, config, ledger) {
      *      ]
      *    }
      */
-    static * load () {
+    static * load() {
       if (!this.query || !this.query.resource) {
         // TODO throw exception
         return this.status = 400
@@ -95,43 +95,58 @@ function WebfingerControllerFactory (log, config, ledger) {
         throw new NotFoundError('Unknown account')
       }
 
-      // Validate the ledger account
-      const ledgerUser = yield ledger.getAccount({username: username}, true)
+      // Account lookup
+      if (username) {
+        // Validate the ledger account
+        const ledgerUser = yield ledger.getAccount({ username: username }, true)
 
+        return this.body = {
+          'subject': 'acct:' + ledgerUser.name + '@' + parsed.hostname,
+          'links': [
+            {
+              // TODO decide on rel names
+              'rel': 'https://interledger.org/rel/ledgerUri',
+              'href': config.data.getIn(['ledger', 'public_uri'])
+            },
+            {
+              // TODO an actual rel to the docs
+              'rel': 'https://interledger.org/rel/socketIOUri',
+              'href': config.data.getIn(['server', 'base_uri']) + '/socket.io'
+            },
+            {
+              'rel': 'https://interledger.org/rel/ilpAddress',
+              'href': config.data.getIn(['ledger', 'prefix']) + ledgerUser.name
+            },
+            {
+              'rel': 'https://interledger.org/rel/ledgerAccount',
+              'href': config.data.getIn(['ledger', 'public_uri']) + '/accounts/' + ledgerUser.name
+            },
+            {
+              'rel': 'https://interledger.org/rel/sender/payment',
+              'href': config.data.getIn(['server', 'base_uri']) + '/payments'
+            },
+            {
+              'rel': 'https://interledger.org/rel/sender/quote',
+              'href': config.data.getIn(['server', 'base_uri']) + '/payments/quote'
+            },
+            {
+              'rel': 'https://interledger.org/rel/receiver',
+              'href': config.data.getIn(['server', 'base_uri']) + '/receivers/' + ledgerUser.name
+            }
+          ]
+        }
+      }
+
+      // Host lookup
       this.body = {
-        "subject": "acct:" + ledgerUser.name + "@" + parsed.hostname,
-        "links": [
-          {
-            // TODO decide on rel names
-            "rel" : "https://interledger.org/rel/ledgerUri",
-            "href" : config.data.getIn(['ledger', 'public_uri'])
-          },
-          {
-            // TODO an actual rel to the docs
-            "rel" : "https://interledger.org/rel/socketIOUri",
-            "href" : config.data.getIn(['server', 'base_uri']) + '/socket.io'
-          },
-          {
-            "rel" : "https://interledger.org/rel/ilpAddress",
-            "href" : config.data.getIn(['ledger', 'prefix']) + ledgerUser.name
-          },
-          {
-            "rel" : "https://interledger.org/rel/ledgerAccount",
-            "href" : config.data.getIn(['ledger', 'public_uri']) + '/accounts/' + ledgerUser.name
-          },
-          {
-            "rel" : "https://interledger.org/rel/sender/payment",
-            "href" : config.data.getIn(['server', 'base_uri']) + '/payments'
-          },
-          {
-            "rel" : "https://interledger.org/rel/sender/quote",
-            "href" : config.data.getIn(['server', 'base_uri']) + '/payments/quote'
-          },
-          {
-            "rel" : "https://interledger.org/rel/receiver",
-            "href" : config.data.getIn(['server', 'base_uri']) + '/receivers/' + ledgerUser.name
-          }
-        ]
+        'subject': config.data.get('client_host'),
+        'properties': {
+          'https://interledger.org/rel/publicKey': config.data.getIn(['connector', 'public_key'])
+        },
+        'links': {
+          'rel': 'https://interledger.org/rel/ledgerUri',
+          'href': config.data.getIn(['ledger', 'public_uri'])
+        }
       }
     }
   }
