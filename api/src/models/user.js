@@ -78,15 +78,15 @@ function UserFactory (sequelize, validator, ledger, config) {
 
       let admin = yield this.findOne({ where: { username } })
 
-      if (admin) return admin
+      if (!admin) {
+        // Create the admin account
+        admin = new this()
 
-      // Create the admin account
-      admin = new this()
+        admin.username = username
+        admin.account = config.data.get(['ledger', 'public_uri']) + '/accounts/' + username
 
-      admin.username = username
-      admin.account = config.data.get(['ledger', 'public_uri']) + '/accounts/' + username
-
-      yield admin.save()
+        yield admin.save()
+      }
 
       // Setup ledger admin account
       yield ledger.setupAdminAccount()
