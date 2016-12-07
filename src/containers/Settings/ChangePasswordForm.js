@@ -73,7 +73,6 @@ export default class ChangePasswordForm extends Component {
 
           {error && error.id &&
           <Alert bsStyle="danger">
-            <strong>Woops! </strong>
             {(() => {
               switch (error.id) {
                 case 'PasswordsDontMatch': return 'Passwords don\'t match'

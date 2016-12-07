@@ -207,16 +207,6 @@ export default class App extends Component {
         <div className={cx('appContent')}>
           {this.props.children}
         </div>
-
-        {user &&
-          <div className="footer">
-            <div className="copyright">
-              <span className="hint-text">© 2016 </span>
-              <a href="https://interledger.org">
-                 Interledger
-              </a>.
-            </div>
-          </div>}
       </div>
     )
   }

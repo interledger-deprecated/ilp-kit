@@ -238,7 +238,6 @@ export default class SendForm extends Component {
 
           {fail && fail.id &&
           <Alert bsStyle="danger">
-            <strong>Woops! </strong>
             {(() => {
               switch (fail.id) {
                 case 'LedgerInsufficientFundsError': return 'You have insufficient funds to make the payment'

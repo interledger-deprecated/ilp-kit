@@ -4,6 +4,7 @@ import registerValidation from './RegisterValidation'
 
 import Alert from 'react-bootstrap/lib/Alert'
 
+import { successable } from 'decorators'
 import Input from 'components/Input/Input'
 
 import { loadCode } from 'redux/actions/invite'
@@ -23,6 +24,7 @@ const cx = classNames.bind(styles)
   invite: state.invite.invite,
   config: state.auth.config
 }), {loadCode})
+@successable()
 export default class RegisterForm extends Component {
   static propTypes = {
     invite: PropTypes.object,
@@ -37,7 +39,12 @@ export default class RegisterForm extends Component {
     submitting: PropTypes.bool.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     register: PropTypes.func.isRequired,
-    fail: PropTypes.object
+
+    // Successable
+    permSuccess: PropTypes.func,
+    success: PropTypes.bool,
+    permFail: PropTypes.func,
+    fail: PropTypes.any
   }
 
   state = {}
@@ -115,8 +122,14 @@ export default class RegisterForm extends Component {
     }, 50)
   }
 
+  register = (data) => {
+    return this.props.register(data)
+      .then(this.props.permSuccess)
+      .catch(this.props.permFail)
+  }
+
   render() {
-    const { invite, handleSubmit, register, fail,
+    const { invite, handleSubmit, fail,
       fields: { username, email, password, inviteCode, name, phone,
         address1, address2, city, region, country, zip_code },
       pristine, invalid, submitting, config } = this.props
@@ -124,7 +137,7 @@ export default class RegisterForm extends Component {
     const { showInviteInput } = this.state
 
     return (
-      <form onSubmit={handleSubmit(register)} autoComplete="off">
+      <form onSubmit={handleSubmit(this.register)} autoComplete="off">
         {fail && fail.id &&
         <Alert bsStyle="danger">
           {fail.id === 'UsernameTakenError' &&

@@ -54,7 +54,6 @@ export default class ForgotPasswordForm extends Component {
 
         {error && error.id &&
         <Alert bsStyle="danger">
-          <strong>Woops! </strong>
           {(() => {
             switch (error.id) {
               case 'NotFoundError': return 'Couldn\'t find the user with provided username or email'

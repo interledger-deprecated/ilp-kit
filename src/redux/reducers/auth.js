@@ -16,7 +16,6 @@ const extendUser = (user) => {
 
 export const initialState = {
   loaded: false,
-  fail: {},
   config: {},
   verified: false,
   loading: false
@@ -91,8 +90,7 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         loggingIn: false,
-        user: null,
-        fail: action.error
+        user: null
       }
     case types.REGISTER:
       return {
@@ -109,8 +107,7 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         registering: false,
-        user: null,
-        fail: action.error
+        user: null
       }
     case types.LOGOUT:
       return {

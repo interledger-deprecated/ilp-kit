@@ -5,6 +5,8 @@ import loginValidation from './LoginValidation'
 
 import Alert from 'react-bootstrap/lib/Alert'
 
+import { successable } from 'decorators'
+
 import Input from 'components/Input/Input'
 
 import classNames from 'classnames/bind';
@@ -16,7 +18,7 @@ const cx = classNames.bind(styles);
   fields: ['username', 'password'],
   validate: loginValidation
 })
-
+@successable()
 export default class LoginForm extends Component {
   static propTypes = {
     fields: PropTypes.object.isRequired,
@@ -25,17 +27,28 @@ export default class LoginForm extends Component {
     submitting: PropTypes.bool.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     login: PropTypes.func.isRequired,
-    fail: PropTypes.object
+
+    // Successable
+    permSuccess: PropTypes.func,
+    success: PropTypes.bool,
+    permFail: PropTypes.func,
+    fail: PropTypes.any
+  }
+
+  login = (data) => {
+    return this.props.login(data)
+      .then(this.props.permSuccess)
+      .catch(this.props.permFail)
   }
 
   render() {
-    const { handleSubmit, login, fail, fields: {username, password}, pristine, invalid, submitting } = this.props
+    const { handleSubmit, fail, fields: {username, password}, pristine, invalid, submitting } = this.props
 
     return (
-      <form onSubmit={handleSubmit(login)}>
+      <form onSubmit={handleSubmit(this.login)}>
         {fail && fail.id === 'UnauthorizedError' &&
         <Alert bsStyle="danger">
-          <strong>Woops!</strong> Invalid username/password
+          Invalid username/password
         </Alert>}
 
         <div>

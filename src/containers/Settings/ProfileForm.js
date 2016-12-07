@@ -114,7 +114,6 @@ export default class ProfileForm extends Component {
 
           {error && error.id &&
           <Alert bsStyle="danger">
-            <strong>Woops! </strong>
             {(() => {
               switch (error.id) {
                 case 'EmailTakenError': return 'Email is already taken'
