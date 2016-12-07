@@ -186,7 +186,8 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
             region: userObj.region || '',
             country: userObj.country || '',
             zip_code: userObj.zip_code || '',
-            ip_address: requestIp.getClientIp(this.req)
+            ip_address: requestIp.getClientIp(this.req),
+            augurio_unique_id: userObj.fingerprint
           })
         } catch (err) {
           console.log('users:172', err)

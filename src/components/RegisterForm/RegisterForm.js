@@ -17,7 +17,7 @@ const cx = classNames.bind(styles)
   form: 'register',
   fields: ['username', 'email', 'password', 'inviteCode',
     'name', 'phone', 'address1', 'address2', 'city',
-    'region', 'country', 'zip_code'],
+    'region', 'country', 'zip_code', 'fingerprint'],
   validate: registerValidation
 }, state => ({
   invite: state.invite.invite,
@@ -47,6 +47,25 @@ export default class RegisterForm extends Component {
     setTimeout(() => {
       this.setState({hideFakes: true})
     }, 1)
+
+    // Device fingerprint
+    if (this.props.config.antiFraud) {
+      let fingerprint = ""
+
+      fingerprint += navigator.plugins.length + ","
+      fingerprint += window.screen.availHeight + ","
+      fingerprint += window.screen.availWidth + ","
+
+      for(let i=0;i<navigator.plugins.length;i++) {
+        fingerprint += navigator.plugins[i].name + ","
+      }
+
+      fingerprint += navigator.language + "," + navigator.userLanguage + ","
+      fingerprint += new Date().getTimezoneOffset() + ","
+      fingerprint += navigator.userAgent
+
+      this.props.fields.fingerprint.onChange(fingerprint)
+    }
 
     this.handleUrlInviteCode()
   }
