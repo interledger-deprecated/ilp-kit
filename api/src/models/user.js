@@ -128,11 +128,12 @@ function UserFactory (sequelize, validator, ledger, config) {
       return this
     }
 
-    * appendLedgerAccount (ledgerUser) {
+    * appendLedgerAccount(ledgerUser) {
       if (!ledgerUser) {
         ledgerUser = yield ledger.getAccount(this, true)
       }
       this.balance = Math.round(ledgerUser.balance * 100) / 100
+      this.minimum_allowed_balance = ledgerUser.minimum_allowed_balance
 
       return this
     }

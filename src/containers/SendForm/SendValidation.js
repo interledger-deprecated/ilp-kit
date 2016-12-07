@@ -14,7 +14,8 @@ const sendValidation = (values, props) => {
 
   const sourceAmountValidators = [required, number, minValue(minAmount)]
 
-  if (!props.user.isAdmin) {
+  // TODO what if it's not -infinity but some other number
+  if (props.user.minimum_allowed_balance !== '-infinity') {
     sourceAmountValidators.push(lessThanBalance(props.user.balance))
   }
 

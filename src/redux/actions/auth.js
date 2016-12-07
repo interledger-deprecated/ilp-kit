@@ -42,7 +42,7 @@ export const updateBalance = balance => ({
 export const load = () => dispatch => dispatch({
   types: [types.AUTH_LOAD, types.AUTH_LOAD_SUCCESS, types.AUTH_LOAD_FAIL],
   promise: (client) => client.get('/auth/load')
-    .then((user) => {
+    .then(user => {
       if (!__SERVER__) {
         if (socket) {
           socket.connect()
