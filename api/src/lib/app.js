@@ -86,8 +86,9 @@ module.exports = class App {
   * _start() {
     yield this.db.migrate()
 
-    // Ensure admin account exists
+    // Ensure admin and connector accounts exists
     yield this.user.setupAdminAccount()
+    yield this.user.setupConnectorAccount()
 
     this.listen()
   }

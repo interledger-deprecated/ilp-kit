@@ -99,28 +99,42 @@ module.exports = class Ledger extends EventEmitter {
 
   // Make sure admin minimum allowed balance is negative infinity
   * setupAdminAccount() {
-    const adminUser = this.config.getIn(['ledger', 'admin', 'user'])
-    const adminPass = this.config.getIn(['ledger', 'admin', 'pass'])
+    const username = this.config.getIn(['ledger', 'admin', 'user'])
+    const password = this.config.getIn(['ledger', 'admin', 'pass'])
 
     // Get the account
-    const adminAccount = yield this.getAccount({
-      username: adminUser,
-      password: adminPass
-    })
+    const account = yield this.getAccount({ username, password })
 
-    delete adminAccount.id
-    delete adminAccount.ledger
-    delete adminAccount.balance
+    delete account.id
+    delete account.ledger
+    delete account.balance
 
-    adminAccount.minimum_allowed_balance = '-infinity'
+    account.minimum_allowed_balance = '-infinity'
 
     // Update the account
     const response = yield superagent
-      .put(this.ledgerUri + '/accounts/' + adminUser)
-      .send(adminAccount)
-      .auth(adminUser, adminPass)
+      .put(this.ledgerUri + '/accounts/' + username)
+      .send(account)
+      .auth(username, password)
 
     return response.body
+  }
+
+  // Create the connector account if it doesn't exist already
+  * setupConnectorAccount() {
+    const ledgers = JSON.parse(this.config.getIn(['connector', 'ledgers']))
+    const prefix = this.config.getIn(['ledger', 'prefix'])
+
+    const username = ledgers[prefix].options.username
+    const password = ledgers[prefix].options.password
+
+    try {
+      // Does the account already exist?
+      return yield this.getAccount({ username, password })
+    } catch (err) {
+      // Create the account
+      return yield this.createAccount({ username, password })
+    }
   }
 
   updateAccount(user, admin) {
@@ -146,11 +160,12 @@ module.exports = class Ledger extends EventEmitter {
     return this.putAccount(user, data)
   }
 
-  createAccount(user) {
+  * createAccount(user) {
     const reload = this.config.get('reload')
 
     const data = {
       name: user.username,
+      // TODO send from admin instead of creating money
       balance: reload ? '1000' : '' + (user.balance || 0)
     }
 
@@ -158,7 +173,7 @@ module.exports = class Ledger extends EventEmitter {
       data.password = user.password
     }
 
-    return this.putAccount({
+    return yield this.putAccount({
       username: this.config.getIn(['ledger', 'admin', 'user']),
       password: this.config.getIn(['ledger', 'admin', 'pass'])
     }, data)

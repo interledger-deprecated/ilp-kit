@@ -94,6 +94,32 @@ function UserFactory (sequelize, validator, ledger, config) {
       return admin
     }
 
+    static * setupConnectorAccount() {
+      const ledgers = JSON.parse(config.data.getIn(['connector', 'ledgers']))
+      const prefix = config.data.getIn(['ledger', 'prefix'])
+
+      if (!ledgers || !ledgers[prefix]) return
+
+      const username = ledgers[prefix].options.username
+
+      let connector = yield this.findOne({ where: { username } })
+
+      if (!connector) {
+        // Create the connector account
+        connector = new this()
+
+        connector.username = username
+        connector.account = config.data.get(['ledger', 'public_uri']) + '/accounts/' + username
+
+        yield connector.save()
+      }
+
+      // Setup ledger connector account
+      yield ledger.setupConnectorAccount()
+
+      return connector
+    }
+
     * changeEmail (email, verified) {
       if (this.email === email) return this
 

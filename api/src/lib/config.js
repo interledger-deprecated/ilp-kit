@@ -60,7 +60,8 @@ module.exports = class WalletConfig {
     }
 
     localConfig.connector = {
-      ed25519_secret_key: Config.getEnv('CONNECTOR_ED25519_SECRET_KEY')
+      ed25519_secret_key: Config.getEnv('CONNECTOR_ED25519_SECRET_KEY'),
+      ledgers: Config.getEnv('CONNECTOR_LEDGERS')
     }
 
     const secret = Buffer.from(localConfig.connector.ed25519_secret_key, 'base64')
