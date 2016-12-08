@@ -35,15 +35,19 @@ module.exports = class SPSP {
       adminAccount: this.config.data.getIn(['ledger', 'public_uri']) + '/accounts/' + adminUsername
     })
 
-    // TODO figure out a better solution
-    // Waiting for the ledger to start
-    setTimeout(() => {
-      this.factory.connect()
-        .catch((err) => {
-          console.log('spsp:34', err)
-        })
-    }, 10000)
+    this.connect()
+  }
 
+  connect() {
+    if (!this.connection) {
+      this.connection = new Promise((resolve, reject) => {
+        // Waiting for the ledger to start
+        // TODO figure out a better solution
+        setTimeout(() => this.factory.connect().then(resolve).catch(reject), 10000)
+      })
+    }
+
+    return this.connection
   }
 
   /**
@@ -52,6 +56,8 @@ module.exports = class SPSP {
 
   // Get or create a sender instance
   * getSender(username) {
+    yield this.connect()
+
     if (!this.senders[username]) {
       this.senders[username] = {
         instance: ILP.createSender(yield this.factory.create({ username }))
@@ -155,6 +161,8 @@ module.exports = class SPSP {
   // Get a receiver instance
   * getReceiver(username) {
     const self = this
+
+    yield self.connect()
 
     if (!this.receivers[username]) {
       const instance = ILP.createReceiver(yield this.factory.create({ username }))
