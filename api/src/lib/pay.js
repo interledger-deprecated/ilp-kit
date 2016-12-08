@@ -2,20 +2,30 @@
 
 const Socket = require('../lib/socket')
 const SPSP = require('../lib/spsp')
+const Utils = require('../lib/utils')
 const PaymentFactory = require('../models/payment')
 
 const InsufficientFundsError = require('../errors/ledger-insufficient-funds-error')
 
 module.exports = class Pay {
-  static constitute() { return [Socket, SPSP, PaymentFactory] }
-  constructor(socket, spsp, Payment) {
+  static constitute() { return [Socket, SPSP, PaymentFactory, Utils] }
+  constructor(socket, spsp, Payment, utils) {
     this.socket = socket
     this.spsp = spsp
+    this.utils = utils
     this.Payment = Payment
   }
 
   * pay(opts) {
     let transfer
+
+    let destination = opts.destination
+
+    if (!destination.paymentUri) {
+      destination = yield this.utils.parseDestination({
+        destination: opts.destination.username
+      })
+    }
 
     /**
      * Ledger payment
@@ -24,7 +34,7 @@ module.exports = class Pay {
     try {
       transfer = yield this.spsp.pay({
         source: opts.source,
-        destination: opts.destination,
+        destination: destination,
         sourceAmount: opts.sourceAmount,
         destinationAmount: opts.destinationAmount,
         memo: opts.message

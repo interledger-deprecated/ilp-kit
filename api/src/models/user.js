@@ -85,13 +85,15 @@ function UserFactory (sequelize, validator, ledger, config) {
         admin.username = username
         admin.account = config.data.get(['ledger', 'public_uri']) + '/accounts/' + username
 
-        yield admin.save()
+        admin = this.fromDatabaseModel(yield admin.save())
+
+        admin.new = true
       }
 
       // Setup ledger admin account
-      yield ledger.setupAdminAccount()
+      const ledgerAccount = yield ledger.setupAdminAccount()
 
-      return admin
+      return yield admin.appendLedgerAccount(ledgerAccount)
     }
 
     static * setupConnectorAccount() {
@@ -111,13 +113,16 @@ function UserFactory (sequelize, validator, ledger, config) {
         connector.username = username
         connector.account = config.data.get(['ledger', 'public_uri']) + '/accounts/' + username
 
-        yield connector.save()
+        connector = this.fromDatabaseModel(yield connector.save())
+
+        // Used in app.js for the initial funding
+        connector.new = true
       }
 
       // Setup ledger connector account
-      yield ledger.setupConnectorAccount()
+      const ledgerAccount = yield ledger.setupConnectorAccount()
 
-      return connector
+      return yield connector.appendLedgerAccount(ledgerAccount)
     }
 
     * changeEmail (email, verified) {

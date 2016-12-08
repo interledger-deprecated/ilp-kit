@@ -120,7 +120,7 @@ module.exports = class Ledger extends EventEmitter {
     return response.body
   }
 
-  // Create the connector account if it doesn't exist already
+  // Create the connector account if it doesn't already exist
   * setupConnectorAccount() {
     const ledgers = JSON.parse(this.config.getIn(['connector', 'ledgers']))
     const prefix = this.config.getIn(['ledger', 'prefix'])
@@ -132,6 +132,8 @@ module.exports = class Ledger extends EventEmitter {
       // Does the account already exist?
       return yield this.getAccount({ username, password })
     } catch (err) {
+      // TODO does account not exist or is this a different exception?
+
       // Create the account
       return yield this.createAccount({ username, password })
     }

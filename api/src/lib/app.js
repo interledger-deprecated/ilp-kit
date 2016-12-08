@@ -18,10 +18,11 @@ const Ledger = require('./ledger')
 const SPSP = require('./spsp')
 const User = require('../models/user')
 const Socket = require('./socket')
+const Pay = require('./pay')
 
 module.exports = class App {
-  static constitute() { return [ Config, Auth, Router, Validator, Ledger, SPSP, DB, Log, Socket, User ] }
-  constructor(config, auth, router, validator, ledger, spsp, db, log, socket, user) {
+  static constitute() { return [ Config, Auth, Router, Validator, Ledger, SPSP, DB, Log, Socket, User, Pay ] }
+  constructor(config, auth, router, validator, ledger, spsp, db, log, socket, user, pay) {
     this.config = config.data
     this.auth = auth
     this.router = router
@@ -31,6 +32,7 @@ module.exports = class App {
     this.spsp = spsp
     this.user = user
     this.db = db
+    this.pay = pay
     this.log = log('app')
 
     validator.loadSchemasFromDirectory(__dirname + '/../../schemas')
@@ -78,7 +80,7 @@ module.exports = class App {
   }
 
   start() {
-    co(this._start.bind(this)).catch((err) => {
+    co(this._start.bind(this)).catch(err => {
       this.log.critical(err)
     })
   }
@@ -87,10 +89,21 @@ module.exports = class App {
     yield this.db.migrate()
 
     // Ensure admin and connector accounts exists
-    yield this.user.setupAdminAccount()
-    yield this.user.setupConnectorAccount()
+    const adminAccount = yield this.user.setupAdminAccount()
+    const connectorAccount = yield this.user.setupConnectorAccount()
 
     this.listen()
+
+    // Initial connector funding
+    if (connectorAccount && connectorAccount.new) {
+      yield this.pay.pay({
+        source: adminAccount,
+        destination: connectorAccount,
+        sourceAmount: 1000,
+        destinationAmount: 1000,
+        message: 'Initial connector funding'
+      })
+    }
   }
 
   listen() {
