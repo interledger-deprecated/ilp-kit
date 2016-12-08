@@ -19,13 +19,9 @@ module.exports = class Pay {
   * pay(opts) {
     let transfer
 
-    let destination = opts.destination
-
-    if (!destination.paymentUri) {
-      destination = yield this.utils.parseDestination({
-        destination: opts.destination.username
-      })
-    }
+    const destination = yield this.utils.parseDestination({
+      destination: opts.destination
+    })
 
     /**
      * Ledger payment

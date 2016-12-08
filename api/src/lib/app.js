@@ -98,7 +98,7 @@ module.exports = class App {
     if (connectorAccount && connectorAccount.new) {
       yield this.pay.pay({
         source: adminAccount,
-        destination: connectorAccount,
+        destination: connectorAccount.username,
         sourceAmount: 1000,
         destinationAmount: 1000,
         message: 'Initial connector funding'

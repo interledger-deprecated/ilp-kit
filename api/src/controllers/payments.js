@@ -163,13 +163,9 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
 
       payment.id = id
 
-      const destination = yield utils.parseDestination({
-        destination: payment.destination
-      })
-
       yield pay.pay({
         source: this.req.user.getDataExternal(),
-        destination: destination,
+        destination: payment.destination,
         sourceAmount: payment.sourceAmount,
         destinationAmount: payment.destinationAmount,
         message: payment.message

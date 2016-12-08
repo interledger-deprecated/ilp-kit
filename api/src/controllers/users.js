@@ -225,10 +225,6 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
 
         // Invite codes can only be used once
         if (invite) {
-          const destination = yield utils.parseDestination({
-            destination: dbUser.username
-          })
-
           // Admin account funding the new account
           const source = yield User.findOne({
             where: {
@@ -239,7 +235,7 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
           // Send the invite money
           yield pay.pay({
             source: source.getDataExternal(),
-            destination: destination,
+            destination: dbUser.username,
             sourceAmount: invite.amount,
             destinationAmount: invite.amount,
             message: 'Claimed invite code: ' + invite.code
@@ -354,10 +350,6 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
       const username = this.params.username.toLowerCase()
       request.validateUriParameter('username', username, 'Identifier')
 
-      const destination = yield utils.parseDestination({
-        destination: user.username
-      })
-
       // Admin account funding the new account
       const source = yield User.findOne({
         where: {
@@ -368,7 +360,7 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
       // Send the invite money
       yield pay.pay({
         source: source.getDataExternal(),
-        destination: destination,
+        destination: user.username,
         sourceAmount: 1000,
         destinationAmount: 1000,
         message: 'Free money'
