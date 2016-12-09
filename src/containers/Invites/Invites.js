@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import ReactTooltip from 'react-tooltip'
+import Helmet from 'react-helmet'
 
 import { loadCodes, remove } from 'redux/actions/invite'
 import InviteCreateForm from 'containers/InviteCreateForm/InviteCreateForm'
@@ -77,6 +78,8 @@ export default class Invites extends Component {
 
     return (
       <div className={cx('Invites')}>
+        <Helmet title={'Invites'} />
+
         <div className={cx('row')}>
           {/* List */}
           <div className={cx('col-sm-8')}>

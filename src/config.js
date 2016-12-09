@@ -14,10 +14,5 @@ module.exports = Object.assign({
   port: process.env.CLIENT_PORT,
   apiHost: process.env.API_PRIVATE_HOSTNAME || 'localhost',
   apiPort: process.env.API_PORT || '3000',
-  ledgerUri: process.env.API_LEDGER_URI,
-  app: {
-    meta: {
-      charSet: 'utf-8'
-    }
-  }
+  ledgerUri: process.env.API_LEDGER_URI
 }, environment)

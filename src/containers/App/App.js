@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap'
 import Waypoint from 'react-waypoint'
+import Helmet from 'react-helmet'
 
 import Navbar from 'react-bootstrap/lib/Navbar'
 import Nav from 'react-bootstrap/lib/Nav'
@@ -13,7 +14,6 @@ import hotkeys from 'decorators/hotkeys'
 import { isLoaded as isAuthLoaded, load as loadAuth, loadConfig, logout, updateBalance, verify } from 'redux/actions/auth'
 import { routeActions } from 'react-router-redux'
 import { addPayment as historyAddPayment } from 'redux/actions/history'
-import config from '../../config'
 import { asyncConnect } from 'redux-async-connect'
 
 import classNames from 'classnames/bind'
@@ -140,15 +140,26 @@ export default class App extends Component {
 
   render() {
     const { user, advancedMode } = this.props
-    const appConfig = this.props.config
-
-    const meta = {
-      ...config.app,
-      title: appConfig.title
-    }
+    const appConfig = this.props.config || {}
 
     return (
       <div className={cx('container')}>
+        <Helmet
+          defaultTitle={appConfig.title}
+          titleTemplate={'%s - ' + appConfig.title}
+          meta={[
+            {'name': 'viewport', 'content': 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'},
+
+            {'property': 'og:type', 'content': 'website'},
+            {'property': 'og:title', 'content': appConfig.title},
+
+            {'name': 'twitter:title', 'content': appConfig.title},
+            {'name': 'twitter:card', 'content': 'summary'},
+
+            {'itemprop': 'name', 'content': appConfig.title}
+          ]}
+        />
+
         {/* <script src="https://web-payments.net/polyfill.js"></script> */}
 
         <div className={cx('waypoint')}>

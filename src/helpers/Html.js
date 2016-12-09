@@ -1,6 +1,7 @@
-import React, {Component, PropTypes} from 'react';
-import ReactDOM from 'react-dom/server';
-import serialize from 'serialize-javascript';
+import React, {Component, PropTypes} from 'react'
+import ReactDOM from 'react-dom/server'
+import serialize from 'serialize-javascript'
+import Helmet from 'react-helmet'
 
 /**
  * Wrapper component containing HTML metadata and boilerplate tags.
@@ -19,12 +20,19 @@ export default class Html extends Component {
   }
 
   render() {
-    const {assets, component, store} = this.props;
-    const content = component ? ReactDOM.renderToString(component) : '';
+    const {assets, component, store} = this.props
+    const content = component ? ReactDOM.renderToString(component) : ''
+    const head = Helmet.rewind()
 
     return (
       <html lang="en-us">
         <head>
+          {head.base.toComponent()}
+          {head.title.toComponent()}
+          {head.meta.toComponent()}
+          {head.link.toComponent()}
+          {head.script.toComponent()}
+
           <link rel="shortcut icon" href="/favicon.png" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           {/* styles (will be present only in production with webpack extract text plugin) */}
@@ -41,7 +49,7 @@ export default class Html extends Component {
         </head>
         <body>
           <div id="content" dangerouslySetInnerHTML={{__html: content}}/>
-          <script dangerouslySetInnerHTML={{__html: `window.__data=${serialize(store.getState())};`}} charSet="UTF-8"/>
+          <script dangerouslySetInnerHTML={{__html: `window.__data=${serialize(store.getState())}`}} charSet="UTF-8"/>
           {__DEVELOPMENT__ && <script src={assets.javascript.vendor} charSet="UTF-8"/>}
           {/* TODO remove hardcode */}
           {__DEVELOPMENT__ && <script src="http://localhost:3011/dist/app.js" charSet="UTF-8"/>}
@@ -51,6 +59,6 @@ export default class Html extends Component {
           {!__DEVELOPMENT__ && <script src={assets.javascript.main} charSet="UTF-8"/>}
         </body>
       </html>
-    );
+    )
   }
 }

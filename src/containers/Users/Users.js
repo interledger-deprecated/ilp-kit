@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table'
+import Helmet from 'react-helmet'
 
 import { loadUsers } from 'redux/actions/user'
 
@@ -28,6 +29,8 @@ export default class Invites extends Component {
 
     return (
       <div className={cx('Users')}>
+        <Helmet title={'Users'} />
+
         <BootstrapTable data={users} striped hover>
           <TableHeaderColumn dataField="name" isKey dataSort>Name</TableHeaderColumn>
           <TableHeaderColumn dataField="balance" dataSort>Balance</TableHeaderColumn>
