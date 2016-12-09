@@ -1,9 +1,9 @@
 import React, {Component, PropTypes} from 'react'
 import { reduxForm } from 'redux-form'
 
-import { create } from 'redux/actions/invite'
+import { add } from 'redux/actions/peer'
 
-import inviteValidation from './InviteValidation'
+import peerValidation from './PeerValidation'
 
 import { successable } from 'decorators'
 import { resetFormOnSuccess } from 'decorators'
@@ -11,21 +11,21 @@ import { resetFormOnSuccess } from 'decorators'
 import Alert from 'react-bootstrap/lib/Alert'
 
 import classNames from 'classnames/bind'
-import styles from './InviteCreateForm.scss'
+import styles from './PeerAddForm.scss'
 const cx = classNames.bind(styles)
 
 import Input from 'components/Input/Input'
 
 @reduxForm({
-  form: 'inviteCreate',
-  fields: ['amount'],
-  validate: inviteValidation
-}, null, {create})
+  form: 'peerAdd',
+  fields: ['hostname', 'limit', 'currency', 'broker'],
+  validate: peerValidation
+}, null, { add })
 @successable()
-@resetFormOnSuccess('inviteCreate')
-export default class InviteCreateForm extends Component {
+@resetFormOnSuccess('peerAdd')
+export default class PeerAddForm extends Component {
   static propTypes = {
-    create: PropTypes.func,
+    add: PropTypes.func,
 
     // Form
     fields: PropTypes.object.isRequired,
@@ -48,20 +48,20 @@ export default class InviteCreateForm extends Component {
   }
 
   handleSubmit = (data) => {
-    return this.props.create(data).then(() => {
+    return this.props.add(data).then(() => {
       this.props.tempSuccess()
       this.props.resetData()
     })
   }
 
   render() {
-    const { invalid, handleSubmit, submitting, success, fail, fields: { amount } } = this.props
+    const { invalid, handleSubmit, submitting, success, fail, fields: { hostname, limit, currency, broker } } = this.props
 
     return (
       <div>
         {success &&
         <Alert bsStyle="success">
-          Invite code has been created!
+          Peer has been added!
         </Alert>}
 
         {fail && fail.id &&
@@ -71,14 +71,17 @@ export default class InviteCreateForm extends Component {
 
         <form onSubmit={handleSubmit(this.handleSubmit)}>
           <div className="form-group">
-            <Input object={amount} label="Amount" size="lg" focus />
+            <Input object={hostname} label="Hostname" size="lg" focus />
+            <Input object={limit} label="Limit" size="lg" focus />
+            <Input object={currency} label="Currency" size="lg" focus />
+            <Input object={broker} label="Broker" size="lg" focus />
           </div>
 
           <div className="row">
             <div className="col-sm-5">
               <button type="submit" className="btn btn-complete btn-block"
                       disabled={invalid || submitting}>
-                {submitting ? 'Generating...' : 'Generate'}
+                {submitting ? 'Adding...' : 'Add'}
               </button>
             </div>
           </div>

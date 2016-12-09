@@ -1,0 +1,25 @@
+@import 'variables';
+@import 'mixins';
+
+.peer {
+  position: relative;
+
+  &:hover .deleteButton {
+    opacity: 1;
+  }
+}
+.lbl {
+  display: block;
+}
+.deleteButton {
+  position: absolute;
+  top: 0;
+  right: 4px;
+  padding: 5px;
+  color: $text-color;
+  opacity: 0;
+
+  &:hover {
+    color: $danger;
+  }
+}

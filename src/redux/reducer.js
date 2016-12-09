@@ -8,6 +8,7 @@ import send from './reducers/send'
 import history from './reducers/history'
 import stats from './reducers/stats'
 import invite from './reducers/invite'
+import peer from './reducers/peer'
 import user from './reducers/user'
 
 export default combineReducers({
@@ -18,6 +19,7 @@ export default combineReducers({
   history,
   stats,
   invite,
+  peer,
   user,
   form
 })

@@ -180,12 +180,16 @@ export default class App extends Component {
                 <NavItem onClick={this.onNavItemClick}>Home</NavItem>
               </IndexLinkContainer>
               {user.isAdmin &&
+              <LinkContainer to="/users">
+                <NavItem onClick={this.onNavItemClick}>Users</NavItem>
+              </LinkContainer>}
+              {user.isAdmin &&
               <LinkContainer to="/invites">
                 <NavItem onClick={this.onNavItemClick}>Invites</NavItem>
               </LinkContainer>}
               {user.isAdmin &&
-              <LinkContainer to="/users">
-                <NavItem onClick={this.onNavItemClick}>Users</NavItem>
+              <LinkContainer to="/peers">
+                <NavItem onClick={this.onNavItemClick}>Peers</NavItem>
               </LinkContainer>}
               {!user.github_id &&
               <LinkContainer to="/settings">

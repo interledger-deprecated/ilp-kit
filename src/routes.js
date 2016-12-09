@@ -91,6 +91,14 @@ export default (store) => {
     }, 'invites')
   }
 
+  const getPeers = (nextState, cb) => {
+    require.ensure(['./containers/Peers/Peers'], (require) => {
+      cb(null, require('./containers/Peers/Peers'))
+
+      store.dispatch(locationUpdate())
+    }, 'invites')
+  }
+
   /**
    * Please keep routes in alphabetical order
    */
@@ -119,6 +127,7 @@ export default (store) => {
         <Route onEnter={requireAdmin}>
           <Route path="invites" getComponent={getInvites}/>
           <Route path="users" getComponent={getUsers}/>
+          <Route path="peers" getComponent={getPeers}/>
         </Route>
 
         { /* Routes available to all */ }
