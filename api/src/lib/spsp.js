@@ -128,7 +128,7 @@ module.exports = class SPSP {
     const quote = yield this.setup({
       paymentUri: params.destination.paymentUri,
       amount: params.destinationAmount,
-      sender_identifier: params.source.username,
+      sender_identifier: params.source.account,
       sender_name: params.source.name,
       sender_image_url: params.source.profile_picture,
       memo: params.memo
