@@ -1,4 +1,16 @@
-# ILP kit [![circle][circle-image]][circle-url]
+<h1 align="center">
+  <a href="https://interledger.org"><img src="https://interledger.org/assets/ilp_logo.svg" width="150"></a>
+  <br>
+  ILP Kit
+</h1>
+
+<h4 align="center">
+ILP wallet with hosted ledger and connector instances
+</h4>
+
+<br>
+
+[![circle][circle-image]][circle-url]
 
 [circle-image]: https://circleci.com/gh/interledgerjs/ilp-kit.svg?style=shield&circle-token=65d802e1ea641aabcc95f8d28f2c6ade577716a9
 [circle-url]: https://circleci.com/gh/interledgerjs/ilp-kit
