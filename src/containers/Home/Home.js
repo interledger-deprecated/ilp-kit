@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
+import ReactTooltip from 'react-tooltip'
 import * as authActions from 'redux/actions/auth'
 import { amount } from '../../utils/amount'
 
@@ -138,10 +139,12 @@ export default class Home extends Component {
                 </div>
                 {config.reload &&
                 <div>
-                  <button className="btn btn-complete btn-lg" onClick={this.reload}>
+                  <a className="btn btn-complete btn-lg"
+                     onClick={!user.isAdmin && this.reload} disabled={user.isAdmin}
+                     data-tip={user.isAdmin && 'You are the admin, you have enough'}>
                     {!reloading && 'Get More'}
                     {reloading && 'Getting...'}
-                  </button>
+                  </a>
                   <div className={cx('balanceFake')}>* Don't get too excited, this is fake money</div>
                 </div>}
               </div>
@@ -163,6 +166,8 @@ export default class Home extends Component {
             {verificationEmailSent && <strong>Verification email sent!</strong>}
           </Alert>}
         </div>
+
+        <ReactTooltip />
       </div>
     )
   }
