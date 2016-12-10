@@ -38,7 +38,24 @@ export default class Home extends Component {
   state = {}
 
   reload = () => {
-    this.props.reload({username: this.props.user.username})
+    this.setState({
+      ...this.state,
+      reloading: true
+    })
+
+    this.props.reload({ username: this.props.user.username })
+      .then(() => {
+        this.setState({
+          ...this.state,
+          reloading: false
+        })
+      })
+      .catch(() => {
+        this.setState({
+          ...this.state,
+          reloading: false
+        })
+      })
   }
 
   handleDefaultPayment = () => {
@@ -64,7 +81,7 @@ export default class Home extends Component {
 
   render() {
     const { user, verified, verificationEmailSent, config } = this.props
-    const { showStats } = this.state
+    const { showStats, reloading } = this.state
 
     // For some reason dynamic routers have problems with that state
     if (!user) return null
@@ -121,7 +138,10 @@ export default class Home extends Component {
                 </div>
                 {config.reload &&
                 <div>
-                  <button className="btn btn-complete btn-lg" onClick={this.reload}>Get More</button>
+                  <button className="btn btn-complete btn-lg" onClick={this.reload}>
+                    {!reloading && 'Get More'}
+                    {reloading && 'Getting...'}
+                  </button>
                   <div className={cx('balanceFake')}>* Don't get too excited, this is fake money</div>
                 </div>}
               </div>

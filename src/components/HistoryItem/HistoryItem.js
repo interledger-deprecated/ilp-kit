@@ -154,7 +154,7 @@ export default class HistoryItem extends Component {
                 <div className={cx('row', 'transfer')} key={transfer.source_account + transfer.created_at}>
                   {advancedMode &&
                   <div className="col-xs-2">
-                    <a href={config.ledgerUri + '/transfers/' + transfer.transfer} className={cx('hash')}>{transfer.transfer.split('-')[0]}</a>
+                    <a href={config.ledgerUri + '/transfers/' + transfer.transfer} className={cx('hash')}>{transfer.transfer && transfer.transfer.split('-')[0]}</a>
                   </div>}
                   <div className={cx(advancedMode ? 'col-xs-6' : 'col-xs-8', 'date')}>
                     {moment(transfer.created_at).format('MMM D, YYYY LTS')}
