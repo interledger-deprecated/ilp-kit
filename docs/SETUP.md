@@ -25,6 +25,8 @@
 - [Appendix: Advanced Options](#appendix-advanced-options)
   - [Mailgun setup](#mailgun-setup)
   - [Github setup](#github-setup)
+  - [Issuing Money](#issuing-money)
+  - [systemd setup](#systemd-setup)
 
 # ILP Kit installation
 
@@ -284,7 +286,7 @@ you can run `npm run list-peers`. If you want to remove one of your trust-lines,
 
 ## Launch ILP Kit
 
-You can create a `systemd` config for ILP Kit, but I'm just going to use [`nohup`](https://en.wikipedia.org/wiki/Nohup) to
+You can [create a systemd](#systemd-setup) config for ILP Kit, but I'm just going to use [`nohup`](https://en.wikipedia.org/wiki/Nohup) to
 run ILP Kit independent of our SSH session.
 
 Create a file called `start.sh`, and put the following lines into it:
@@ -396,14 +398,14 @@ Try registering a new account by logging in through Github. The username of the
 account will match the Github username, so make sure it isn't already taken. If
 you aren't able to log in, try checking [Github help](https://help.github.com/).
 
-### Issuing Money
+## Issuing Money
 
 Your connector account starts with $1000, but what if you want more than that?
 No money can be created on your ledger, but the `admin` account has a balance that can go to
 `-infinity`.
 
 Open `~/ilp-kit/env.list` on your remote machine, and note down the admin
-username and password (stored in `LEDGER_ADMIN_NAME` and `LEDGER_ADMIN_PASS`).
+username and password (stored in `LEDGER_ADMIN_USER` and `LEDGER_ADMIN_PASS`).
 Now use these credentials to log into your ILP Kit UI. Right now, it should be
 at `-1000`. Just send a payment to the account that your connector is using,
 and you'll have some cash to spend.
@@ -413,3 +415,46 @@ funds in this way. You don't want to owe more to other accounts than you can
 pay back, nor do you want people to be able to send massive payments through
 your connector.
 
+## systemd setup
+
+Create the service file
+```
+sudo vi /etc/systemd/system/ilp-kit.service
+```
+
+with the contents
+```
+[Service]
+ExecStart=/usr/bin/npm start
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=ilp-kit
+User=root
+Group=root
+WorkingDirectory=/var/ilp-kit
+
+[Install]
+WantedBy=multi-user.target
+```
+where `WorkingDirectory` is the path to your `ilp-kit` folder.
+
+Restart the daemon
+```
+sudo systemctl daemon-reload
+```
+
+Start the service
+```
+sudo systemctl start ilp-kit
+```
+
+Make it start on reboot
+```
+sudo systemctl enable ilp-kit
+```
+
+You can check the logs with this command
+```
+journalctl -u ilp-kit -f -n 500
+```
