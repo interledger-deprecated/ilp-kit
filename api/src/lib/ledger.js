@@ -144,12 +144,9 @@ module.exports = class Ledger extends EventEmitter {
   }
 
   * createAccount(user) {
-    const reload = this.config.get('reload')
-
     const data = {
       name: user.username,
-      // TODO send from admin instead of creating money
-      balance: reload ? '1000' : '' + (user.balance || 0)
+      balance: '0'
     }
 
     if (user.password) {

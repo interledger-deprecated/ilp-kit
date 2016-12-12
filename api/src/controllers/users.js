@@ -13,7 +13,6 @@ const Socket = require('../lib/socket')
 const Config = require('../lib/config')
 const Mailer = require('../lib/mailer')
 const Pay = require('../lib/pay')
-const Utils = require('../lib/utils')
 const UserFactory = require('../models/user')
 const InviteFactory = require('../models/invite')
 
@@ -24,8 +23,8 @@ const InvalidVerification = require('../errors/invalid-verification-error')
 const ServerError = require('../errors/server-error')
 const InvalidBodyError = require('../errors/invalid-body-error')
 
-UsersControllerFactory.constitute = [Auth, UserFactory, InviteFactory, Log, Ledger, Socket, Config, Mailer, Pay, Utils]
-function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config, mailer, pay, utils) {
+UsersControllerFactory.constitute = [Auth, UserFactory, InviteFactory, Log, Ledger, Socket, Config, Mailer, Pay]
+function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config, mailer, pay) {
   log = log('users')
 
   return class UsersController {
@@ -205,7 +204,7 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
 
       userObj.username = username
 
-      // Create a ledger account
+      // Create the ledger account
       let ledgerUser
       try {
         ledgerUser = yield ledger.createAccount(userObj)
@@ -252,13 +251,17 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
         throw new ServerError()
       }
 
+      // Fund the newly created account
+      yield UsersController.reload(dbUser)
+
+      // Send a welcome email
       yield mailer.sendWelcome({
         name: dbUser.username,
         to: dbUser.email,
         link: User.getVerificationLink(dbUser.username, dbUser.email)
       })
 
-      const user = yield dbUser.appendLedgerAccount(ledgerUser)
+      const user = yield dbUser.appendLedgerAccount()
 
       // TODO callbacks?
       this.req.logIn(user, err => {})
@@ -341,14 +344,15 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
       this.body = user.getDataExternal()
     }
 
-    static * reload() {
+    // This will only reload if the "reload" env var is true
+    static * reload(user) {
       if (!config.data.get('reload')) {
         return this.status = 404
       }
 
-      const user = this.req.user
-      const username = this.params.username.toLowerCase()
-      request.validateUriParameter('username', username, 'Identifier')
+      if (!user.username) {
+        user = this.req.user
+      }
 
       // Admin account funding the new account
       const source = yield User.findOne({
