@@ -29,12 +29,22 @@ try {
   })
 } catch (err) {
   // Both env.list and environment variables are missing
-  if (!process.env.API_DB_URI) {
-    console.log('API_DB_URI is not set. Did you configure ilp-kit? \n'
+  if (!process.env.API_DB_URI && !process.env.DB_URI) {
+    console.log('DB_URI is not set. Did you configure ilp-kit? \n'
       + 'To configure ilp-kit, run: npm run configure')
 
     process.exit()
   }
+}
+
+// backwards compatibility
+if (!envVars.DB_URI) {
+  envVars.DB_URI = envVars.API_DB_URI
+}
+
+// Add API env vars
+if (!envVars.API_DB_URI) {
+  envVars.API_DB_URI = getVar('DB_URI')
 }
 
 // Secrets
@@ -47,7 +57,7 @@ if (!getVar('API_LEDGER_URI')) {
   const clientPublicPort = getVar('CLIENT_PUBLIC_PORT') || getVar('CLIENT_PORT', '80')
   const ledgerPublicPort = (clientPublicPort !== '80' && clientPublicPort !== '443') ? ':' + clientPublicPort : ''
 
-  envVars.LEDGER_DB_URI = getVar('LEDGER_DB_URI') || getVar('API_DB_URI')
+  envVars.LEDGER_DB_URI = getVar('LEDGER_DB_URI') || getVar('DB_URI')
   envVars.LEDGER_HOSTNAME = getVar('LEDGER_HOSTNAME') || getVar('API_HOSTNAME', 'localhost')
   envVars.LEDGER_PORT = getVar('LEDGER_PORT') || Number(getVar('API_PORT')) + 1
   envVars.LEDGER_PUBLIC_PORT = getVar('LEDGER_PUBLIC_PORT', clientPublicPort)
