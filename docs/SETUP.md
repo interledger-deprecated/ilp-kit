@@ -18,7 +18,6 @@
   - [Set up SSL](#set-up-ssl)
   - [Set up proxy for ILP Kit](#set-up-proxy-for-ilp-kit)
 - [ILP Kit configuration](#ilp-kit-configuration)
-  - [Register account](#register-account)
   - [Configure environment](#configure-environment)
   - [Launch ILP Kit](#launch-ilp-kit)
   - [Issue some money](#issue-some-money)
@@ -138,7 +137,7 @@ Because we're on Ubuntu, letsencrypt provides a package that does most of the se
 $ sudo apt-get install nginx letsencrypt
 ```
 
-Now follow DigitalOcean's letsencrypt instructions, 
+Now follow DigitalOcean's letsencrypt instructions,
 [here](https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-16-04)
 in order to get SSL set up.
 
@@ -150,43 +149,50 @@ nginx example page over an `https` connection.
 In your `/etc/nginx/sites-enabled/default`, remove the `location /` block, and add these two blocks in its place:
 
 ``` nginx
-# point the root to the ILP Kit UI
-location / {
-    proxy_pass http://localhost:3010;
+	# point the root to the ILP Kit UI
+	location / {
+		proxy_pass http://localhost:3010;
 
-    proxy_http_version 1.1;
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection "upgrade";
-}
+		proxy_http_version 1.1;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Connection "upgrade";
+	}
 
-# allow webfinger and letsencrypt to coexist
-location ~ /.well-known/webfinger {
-    proxy_pass http://localhost:3010;
+	# allow webfinger and letsencrypt to coexist
+	location ~ /.well-known/webfinger {
+		proxy_pass http://localhost:3010;
 
-    proxy_http_version 1.1;
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection "upgrade";
-}
+		proxy_http_version 1.1;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Connection "upgrade";
+	}
 ```
 
-- Now run `sudo nginx -t` to make sure you didn't mess anything up.
-- If that ran OK, run `sudo systemctl restart nginx`.
+In order to make sure you didn't mess anything up, run:
 
-This is all the domain setup that you have to do. Nothing will appear on the site until you're running your ILP Kit.
+```sh
+$ sudo nginx -t
+```
+
+If that ran OK, then restart your nginx daemon with:
+
+```sh
+$ sudo systemctl restart nginx`
+```
+
+This is all the domain setup that you have to do. Note that nothing will appear on the site until you're running your ILP Kit.
 
 # ILP Kit configuration
 
-## Register account
-
-Before you do anything on your own ILP Kit, you're going to want to register an account on
-someone else's. Go to the ILP Kit of a friend, and create an account with them. For example, I'll create the
-account `niles` on `nexus.justmoon.com`. I'll refer to my password as `PASSWORD`.
-
-This means that my identifier for my account on Nexus is `niles@nexus.justmoon.com`. We'll use that identifier later.
-
 ## Configure environment
 
-Run `npm run configure`. It provides example values, and I'll also put the configuration I'm using.
+Start the configuration tool by running:
+
+```sh
+npm run configure
+```
+
+The CLI provides example values, but I'll also put the configuration I'm using.
 
 - Posgres DB URI: `postgres://sharafian:PASSWORD@localhost/ilpkit`
 - Hostname: `niles.sharafian.com`
@@ -196,13 +202,24 @@ Run `npm run configure`. It provides example values, and I'll also put the confi
 - Configure GitHub: `n` (we don't need that just yet; you can always go back and change it)
 - Configure Mailgun: `n` (same deal)
 - Username: `niles`
-- Password: (use the randomly generated default)
+- Password: (use the randomly generated default, and note it down)
 
-That's all you need for a functioning ILP Kit! Of course, it's not
+**That's all you need for a functioning ILP Kit!** To start your ILP Kit, run:
+
+```sh
+$ npm start
+```
+
+Your connector's account will be automatically created and given $1000, so you can
+open up your domain and log into it.
+
+## Connecting your ledger
+
+Of course, it's not
 very useful to have a ledger that's not connected to any others. That's why
 we're going to create a peering relationship with another ILP Kit.
 
-## Get a peer
+### Find a peer
 
 In order to peer with somebody, you're going to have to know someone else who's running an ILP
 kit. The process of peering involves creating a trust-line.
@@ -210,10 +227,11 @@ kit. The process of peering involves creating a trust-line.
 ### What is a trust-line?
 
 A trust-line is just a balance that tracks debt between you and another person.
-It is stored and adjusted by `ilp-plugin-virtual`, which allows this balance to
-function as though it were a ledger. In this way, two connectors with a
-trust-line can forward payments through one another without ever holding
-balance on the same ledger.
+It is stored and adjusted by
+[`ilp-plugin-virtual`](https://github.com/interledgerjs/ilp-plugin-virtual),
+which allows this balance to function as though it were a ledger. In this way,
+two connectors with a trust-line can forward payments through one another
+without ever holding balance on the same ledger.
 
 For example, if I want to send $10 to your ledger, my connector will increase
 their debt to you by $10, and you will forward the payment on your own ledger
@@ -235,11 +253,22 @@ their own server. On an insecure MQTT server, someone can pretend to be your
 peer, and they can see all of your transactions.
 
 Next, you'll need your public key. This public key, combined with an MQTT broker,
-is how your peer is going to connect to you. To get a public key, run `npm run key`.
+is how your peer is going to connect to you. To get a public key, run:
+
+```sh
+$ npm run key
+```
+
 It will generate the public key corresponding to the `API_SECRET` in `env.list`.
 
 Copy down your public key, and give it to the person you want to peer with. Make sure that you
-get their public key too. Once you have their public key, run `npm run peer`:
+get their public key too. Once you have their public key, run:
+
+```sh
+$ npm run peer
+```
+
+This starts another CLI which provides suggested values. Here's what you should put:
 
 - Name: Use the name of your peer, e.g. `Bob`, so that you can find this trust-line later
 - MQTT Broker: Use the one that you and your peer agreed on. Make sure to include the port in the `mqtt://` URL.
@@ -251,47 +280,37 @@ get their public key too. Once you have their public key, run `npm run peer`:
 
 Now your `env.list` will be modified to include this peering relationship. The trust-line is stored in the
 `CONNECTOR_LEDGERS` field, where it can be modified or removed later. If you want to see all of your trust-lines, then
-run `npm run list-peers`. If you want to remove one of your trust-lines, then run `npm run depeer`.
+you can run `npm run list-peers`. If you want to remove one of your trust-lines, then run `npm run depeer`.
 
 ## Launch ILP Kit
 
 You can create a `systemd` config for ILP Kit, but I'm just going to use [`nohup`](https://en.wikipedia.org/wiki/Nohup) to
 run ILP Kit independent of our SSH session.
 
-```
-$ nohup npm start &
-$ tail -f nohup.out -n 1000
+Create a file called `start.sh`, and put the following lines into it:
+
+```sh
+#!/bin/bash
+
+killall -9 node
+nohup npm start &
+tail -f nohup.out
 ```
 
-Your connector will fail to launch, because this its account doesn't exist yet. Just go to your site 
-(eg. `https://niles.sharafian.com`), and register a new user with the exact same username/password you
-entered for your connector during `npm run configure`, (eg. user: `niles` pass: `PASSWORD`).
+To make this script executable, run:
 
-Run `killall -9 node`, and then launch the ilp kit again with:
+```sh
+$ chmod +x ./start.sh
+```
+
+Now when you want to modify or restart your ILP Kit, you can just run:
 
 ```
-$ nohup npm start &
-$ tail -f nohup.out -n 1000
+$ ./start.sh
+# ... ILP Kit Logs
 ```
 
 You'll see your connector connect successfully.
-
-## Issue some money
-
-So you've got a ledger all set up, with a UI and a connector to another ILP
-kit. But nobody on your ledger has any money. Fortunately, some accounts can
-hold negative balances. Your `admin` account has a balance that can go to
-`-infinity`, in fact.
-
-Open `~/ilp-kit/env.list` on your remote machine, and note down the admin
-username and password. Now use these credentials to log into your ILP Kit UI.
-Just send a payment to the account that your connector is using, and you'll
-have some cash to spend.
-
-It's inadvisable to use your admin account for anything other than issuing
-funds in this way. You don't want to owe more to other accounts than you can
-pay back, nor do you want people to be able to send massive payments through
-your connector.
 
 # Enjoy
 
@@ -376,4 +395,21 @@ Restart your ILP Kit for the changes to take effect.
 Try registering a new account by logging in through Github. The username of the
 account will match the Github username, so make sure it isn't already taken. If
 you aren't able to log in, try checking [Github help](https://help.github.com/).
+
+### Issuing Money
+
+Your connector account starts with $1000, but what if you want more than that?
+No money can be created on your ledger, but the `admin` account has a balance that can go to
+`-infinity`.
+
+Open `~/ilp-kit/env.list` on your remote machine, and note down the admin
+username and password (stored in `LEDGER_ADMIN_NAME` and `LEDGER_ADMIN_PASS`).
+Now use these credentials to log into your ILP Kit UI. Right now, it should be
+at `-1000`. Just send a payment to the account that your connector is using,
+and you'll have some cash to spend.
+
+It's inadvisable to use your admin account for anything other than issuing
+funds in this way. You don't want to owe more to other accounts than you can
+pay back, nor do you want people to be able to send massive payments through
+your connector.
 
