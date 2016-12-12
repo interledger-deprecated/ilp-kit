@@ -2,6 +2,7 @@
 
 const fs = require('fs')
 const co = require('co')
+const wait = require('co-wait')
 const Koa = require('koa.io')
 const bodyParser = require('koa-body')
 const logger = require('koa-mag')
@@ -93,6 +94,9 @@ module.exports = class App {
     const connectorAccount = yield this.user.setupConnectorAccount()
 
     this.listen()
+
+    // Wait for the server to start before funding the connector
+    yield wait(5000)
 
     // Initial connector funding
     if (connectorAccount && connectorAccount.new) {

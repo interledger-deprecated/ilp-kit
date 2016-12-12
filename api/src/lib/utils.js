@@ -120,7 +120,6 @@ module.exports = class Utils {
 
     // Local account
     else {
-      console.log('normal account')
       accountUri = self.isAccountUri(destination) ? destination : self.ledgerUriPublic + '/accounts/' + destination
       ledgerUri = self.ledgerUriPublic
       paymentUri = self.localUri + '/receivers/' + destination

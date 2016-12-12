@@ -102,27 +102,43 @@ function UserFactory (sequelize, validator, ledger, config) {
 
       if (!ledgers || !ledgers[prefix]) return
 
-      const username = ledgers[prefix].options.username
+      const options = ledgers[prefix].options
 
-      let connector = yield this.findOne({ where: { username } })
+      // backwards compatibility (dec, 2016)
+      const derivedUsername = options.account.split('accounts/')[1]
 
-      if (!connector) {
-        // Create the connector account
-        connector = new this()
+      const username = options.username || derivedUsername
+      const password = options.password
 
-        connector.username = username
-        connector.account = config.data.get(['ledger', 'public_uri']) + '/accounts/' + username
+      let dbAccount = yield this.findOne({ where: { username } })
 
-        connector = this.fromDatabaseModel(yield connector.save())
+      // Create the db connector account
+      if (!dbAccount) {
+        dbAccount = new this()
+
+        dbAccount.username = username
+        dbAccount.account = config.data.get(['ledger', 'public_uri']) + '/accounts/' + username
+
+        dbAccount = this.fromDatabaseModel(yield dbAccount.save())
 
         // Used in app.js for the initial funding
-        connector.new = true
+        dbAccount.new = true
       }
 
-      // Setup ledger connector account
-      const ledgerAccount = yield ledger.setupConnectorAccount()
+      let ledgerAccount
 
-      return yield connector.appendLedgerAccount(ledgerAccount)
+      // Create the ledger connector account
+      try {
+        // Does the account already exist?
+        ledgerAccount = yield ledger.getAccount({ username, password })
+      } catch (err) {
+        // TODO does account not exist or is this a different exception?
+
+        // Create the account
+        ledgerAccount = yield ledger.createAccount({ username, password })
+      }
+
+      return yield dbAccount.appendLedgerAccount(ledgerAccount)
     }
 
     * changeEmail (email, verified) {
