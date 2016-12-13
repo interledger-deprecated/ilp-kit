@@ -66,6 +66,8 @@ export default class ChangePasswordForm extends Component {
           {(() => {
             switch (error.id) {
               case 'NotFoundError': return 'Couldn\'t find the user with provided username'
+              // TODO:UX should see the invalidCode message even before trying to submit the form
+              case 'InvalidBodyError': return error.message
               default: return 'Something went wrong'
             }
           })()}

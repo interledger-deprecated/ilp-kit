@@ -1,4 +1,4 @@
-"use strict"
+'use strict'
 
 module.exports = UserFactory
 
@@ -16,13 +16,13 @@ const InvalidBodyError = require('../errors/invalid-body-error')
 const EmailTakenError = require('../errors/email-taken-error')
 
 UserFactory.constitute = [Database, Validator, Ledger, Config]
-function UserFactory (sequelize, validator, ledger, config) {
+function UserFactory(sequelize, validator, ledger, config) {
   class User extends Model {
-    static convertFromExternal (data) {
+    static convertFromExternal(data) {
       return data
     }
 
-    static convertToExternal (data) {
+    static convertToExternal(data) {
       delete data.password
       delete data.created_at
       delete data.updated_at
@@ -35,20 +35,20 @@ function UserFactory (sequelize, validator, ledger, config) {
       return data
     }
 
-    static convertFromPersistent (data) {
+    static convertFromPersistent(data) {
       data = _.omit(data, _.isNull)
       return data
     }
 
-    static convertToPersistent (data) {
+    static convertToPersistent(data) {
       return data
     }
 
-    static createBodyParser () {
+    static createBodyParser() {
       const Self = this
 
       return function * (next) {
-        let json = this.body
+        const json = this.body
         const validationResult = Self.validateExternal(json)
         if (validationResult.valid !== true) {
           const message = validationResult.schema
@@ -141,7 +141,7 @@ function UserFactory (sequelize, validator, ledger, config) {
       return yield dbAccount.appendLedgerAccount(ledgerAccount)
     }
 
-    * changeEmail (email, verified) {
+    * changeEmail(email, verified) {
       if (this.email === email) return this
 
       this.email = email
@@ -165,11 +165,11 @@ function UserFactory (sequelize, validator, ledger, config) {
       } catch (e) {
         // Email is already taken by someone else
         if (e.name === 'SequelizeUniqueConstraintError') {
-          throw new EmailTakenError("Email is already taken")
+          throw new EmailTakenError('Email is already taken')
         }
 
         // Something else went wrong
-        throw new ServerError("Failed to change the user email")
+        throw new ServerError('Failed to change the user email')
       }
 
       return this
@@ -196,13 +196,13 @@ function UserFactory (sequelize, validator, ledger, config) {
     }
 
     verifyForgotPasswordCode(code) {
-      if (!code) throw new InvalidBodyError("Missing code")
+      if (!code) throw new InvalidBodyError('Missing code')
 
       const parts = code.split('.')
       const date = parts[0]
       const hash = parts[1]
 
-      if (!date || !hash) throw new InvalidBodyError("Invalid code")
+      if (!date || !hash) throw new InvalidBodyError('Invalid code')
 
       const currentDate = Math.floor(Date.now() / 1000)
 
@@ -210,11 +210,11 @@ function UserFactory (sequelize, validator, ledger, config) {
       console.log('CURRENT:', currentDate, date)
       if (currentDate > date + 3600) {
         // TODO should this be an invalid body error?
-        throw new InvalidBodyError("The code has been expired")
+        throw new InvalidBodyError('The code has been expired')
       }
 
       if (code !== this.generateForgotPasswordCode(date)) {
-        throw new InvalidBodyError("Invalid code")
+        throw new InvalidBodyError('The code is invalid or has already been used')
       }
     }
   }

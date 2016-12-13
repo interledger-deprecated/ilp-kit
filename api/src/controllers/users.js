@@ -334,14 +334,14 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
 
       try {
         yield user.save()
+
+        this.req.logIn(user, err => {})
+        this.body = user.getDataExternal()
       } catch(e) {
-        // TODO handle
+        // TODO throw an exception
+        this.status = 500
         log.warn(e)
       }
-
-      this.req.logIn(user, err => {})
-
-      this.body = user.getDataExternal()
     }
 
     // This will only reload if the "reload" env var is true

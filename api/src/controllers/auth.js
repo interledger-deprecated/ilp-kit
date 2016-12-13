@@ -158,7 +158,7 @@ function AuthControllerFactory(User, log, ledger, Users, mailer) {
     }
 
     static * changePassword() {
-      const dbUser = yield User.findOne({where: { username: this.body.username }})
+      const dbUser = yield User.findOne({ where: { username: this.body.username } } )
 
       if (!dbUser) throw new NotFoundError('Wrong username')
 
@@ -172,6 +172,10 @@ function AuthControllerFactory(User, log, ledger, Users, mailer) {
         username: dbUser.username,
         newPassword: this.body.password
       }, true)
+
+      // This invalidates the ForgotPasswordCode so that it's only used once
+      dbUser.getDatabaseModel().changed('updated_at', true)
+      yield dbUser.save()
 
       this.body = dbUser.getDataExternal()
     }
