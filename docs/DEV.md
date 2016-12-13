@@ -43,6 +43,20 @@ In most cases it makes sense to expose the wallet through 443 (or 80) port, in w
 
 Here's an example of an Apache 2.4 virtual host with enabled port forwarding.
 
+Make sure the following modules are enabled for all of these examples:
+
+```
+LoadModule xml2enc_module libexec/apache2/mod_xml2enc.so
+LoadModule proxy_html_module libexec/apache2/mod_proxy_html.so
+LoadModule proxy_module libexec/apache2/mod_proxy.so
+LoadModule proxy_connect_module libexec/apache2/mod_proxy_connect.so
+LoadModule proxy_http_module libexec/apache2/mod_proxy_http.so
+LoadModule proxy_wstunnel_module libexec/apache2/mod_proxy_wstunnel.so
+LoadModule proxy_ajp_module libexec/apache2/mod_proxy_ajp.so
+LoadModule proxy_balancer_module libexec/apache2/mod_proxy_balancer.so
+LoadModule ssl_module libexec/apache2/mod_ssl.so
+```
+
 > NOTE: Current webfinger implementation will not work if the public port is not 443 or 80.
 
 > NOTE: At the moment you need to have a 443 virtual host in addition to 80 virtual host if you're use 80 as a public port. 443 virtual host is used for the webfinger lookups. This is a [reported issue](https://github.com/e14n/webfinger/issues/27) in the webfinger lib used by the ilp-kit.
@@ -54,6 +68,9 @@ Here's an example of an Apache 2.4 virtual host with enabled port forwarding.
   RewriteEngine On
   RewriteCond %{HTTP:Connection} Upgrade [NC]
   RewriteRule /(.*) ws://wallet.com:3000/$1 [P,L]
+  
+  ProxyRequests Off
+  ProxyPass /ledger/websocket ws://localhost:3101/websocket
 
   ProxyPass / http://wallet.com:3000/ retry=0
   ProxyPassReverse / http://wallet.com:3000/
@@ -75,6 +92,9 @@ Here's an example of an Apache 2.4 virtual host with enabled port forwarding.
   RewriteEngine On
   RewriteCond %{HTTP:Connection} Upgrade [NC]  
   RewriteRule /(.*) ws://wallet1.com:3010/$1 [P,L]
+  
+  ProxyRequests Off
+  ProxyPass /ledger/websocket ws://localhost:3101/websocket
 
   ProxyPass / http://wallet1.com:3010/ retry=0
   ProxyPassReverse / http://wallet1.com:3010/  
@@ -85,6 +105,9 @@ Here's an example of an Apache 2.4 virtual host with enabled port forwarding.
   ProxyPass / http://wallet1.com:3010/ retry=0
   ProxyPassReverse / http://wallet1.com:3010/
   RedirectMatch ^/$ https://wallet1.com
+    
+  ProxyRequests Off
+  ProxyPass /ledger/websocket ws://localhost:3101/websocket
   
   SSLEngine on
   SSLCertificateFile /etc/apache2/ssl/wallet1.com.crt
@@ -97,6 +120,9 @@ Here's an example of an Apache 2.4 virtual host with enabled port forwarding.
   RewriteEngine On
   RewriteCond %{HTTP:Connection} Upgrade [NC]
   RewriteRule /(.*) ws://wallet2.com:3020/$1 [P,L]
+    
+  ProxyRequests Off
+  ProxyPass /ledger/websocket ws://localhost:3101/websocket
 
   ProxyPass / http://wallet2.com:3020/ retry=0
   ProxyPassReverse / http://wallet2.com:3020/
@@ -107,6 +133,9 @@ Here's an example of an Apache 2.4 virtual host with enabled port forwarding.
   ProxyPass / http://wallet2.com:3020/ retry=0
   ProxyPassReverse / http://wallet2.com:3020/
   RedirectMatch ^/$ https://wallet2.com
+    
+  ProxyRequests Off
+  ProxyPass /ledger/websocket ws://localhost:3101/websocket
   
   SSLEngine on
   SSLCertificateFile /etc/apache2/ssl/wallet2.com.crt
