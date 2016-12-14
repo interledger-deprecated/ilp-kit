@@ -91,12 +91,12 @@ export default class HistoryItem extends Component {
                 <div className={cx('counterpartyContainer')}>
                   {type === 'outgoing' &&
                   <span>You paid <span className={cx('counterparty')} title={item.counterpartyAccount}>
-                    {item.counterpartyName || getAccountName(item.counterpartyAccount)}
+                    {item.counterpartyName || getAccountName(item.counterpartyAccount) || 'someone'}
                   </span></span>}
 
                   {type === 'incoming' &&
                   <span><span className={cx('counterparty')} title={item.counterpartyAccount}>
-                    {item.counterpartyName || getAccountName(item.counterpartyAccount)}
+                    {item.counterpartyName || getAccountName(item.counterpartyAccount) || 'someone'}
                   </span> paid you</span>}
                 </div>
                 {advancedMode &&
