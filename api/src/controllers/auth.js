@@ -4,7 +4,7 @@ module.exports = AuthControllerFactory
 
 const path = require('path')
 const passport = require('koa-passport')
-const lwip = require('lwip')
+const jimp = require('jimp')
 const Auth = require('../lib/auth')
 const Log = require('../lib/log')
 const Ledger = require('../lib/ledger')
@@ -191,10 +191,12 @@ function AuthControllerFactory(User, log, ledger, Users, mailer) {
       const newFilePath = files.file.path.replace(/(\.[\w\d_-]+)$/i, '_square$1')
 
       // Resize
-      lwip.open(files.file.path, (err, image) => {
-        image.batch()
-          .cover(200, 200)
-          .writeFile(newFilePath, err => {
+      jimp.read(files.file.path, (err, image) => {
+        if (err) {
+          throw err
+        }
+        image.cover(200, 200, Jimp.HORIZONTAL_ALIGN_CENTER, Jimp.VERTICAL_ALIGN_TOP)
+          .write(newFilePath, err => {
             if (err) {
               console.log('auth:197', err)
             }
