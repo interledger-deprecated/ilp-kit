@@ -195,16 +195,10 @@ export default class App extends Component {
               <LinkContainer to="/settings">
                 <NavItem onClick={this.onNavItemClick}>Settings</NavItem>
               </LinkContainer>}
-              {/* <NavDropdown title="Dev Tools" id="devtools">
-                <MenuItem href="https://interledger.org/ilp-kit/apidoc"
-                          target="_blank" onClick={this.onNavItemClick}>
-                  API docs
-                </MenuItem>
-                <MenuItem href="https://github.com/interledgerjs/ilp-kit-client"
-                          target="_blank" onClick={this.onNavItemClick}>
-                  ILP Kit Client
-                </MenuItem>
-              </NavDropdown> */}
+              <NavItem href="https://interledgerjs.github.io/ilp-kit/apidoc/"
+                             target="_blank" onClick={this.onNavItemClick}>
+                API docs
+              </NavItem>
               <LinkContainer to="/logout">
                 <NavItem className="logout-link" onClick={this.handleLogout}>
                   Logout
