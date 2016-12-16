@@ -21,9 +21,13 @@
     flex-direction: column;
     justify-content: center;
     margin: 0 0 0 10px;
+    width: calc(100% - 70px);
 
     .name {
+      display: block;
       font-size: 16px;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .currency {
       font-size: 12px;
