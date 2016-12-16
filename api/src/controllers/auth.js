@@ -195,7 +195,7 @@ function AuthControllerFactory(User, log, ledger, Users, mailer) {
         if (err) {
           throw err
         }
-        image.cover(200, 200, Jimp.HORIZONTAL_ALIGN_CENTER, Jimp.VERTICAL_ALIGN_TOP)
+        image.cover(200, 200, jimp.HORIZONTAL_ALIGN_CENTER, jimp.VERTICAL_ALIGN_TOP)
           .write(newFilePath, err => {
             if (err) {
               console.log('auth:197', err)
