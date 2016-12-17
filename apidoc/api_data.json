@@ -289,7 +289,7 @@
       "examples": [
         {
           "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"list\": [\n    {\n      \"id\": \"15a3cbb8-d0f3-410e-8a59-14e8dee14abd\",\n      \"source_user\": 1,\n      \"source_account\": \"https://wallet.example/ledger/accounts/alice\",\n      \"destination_user\": 2,\n      \"destination_account\": \"https://wallet.example/ledger/accounts/bob\",\n      \"transfer\": \"https://wallet.example/ledger/transfers/3d4c9c8e-204a-4213-9e91-88b64dad8604\",\n      \"state\": null,\n      \"source_amount\": \"12\",\n      \"destination_amount\": \"12\",\n      \"created_at\": \"2016-04-19T20:18:18.040Z\",\n      \"completed_at\": null,\n      \"updated_at\": \"2016-04-19T20:18:18.040Z\",\n      \"sourceUserUsername\": \"alice\",\n      \"destinationUserUsername\": \"bob\"\n    },\n    {\n      \"id\": \"e1d3c588-807c-4d4f-b25c-61842b5ead6d\",\n      \"source_user\": 1,\n      \"source_account\": \"https://wallet.example/ledger/accounts/alice\",\n      \"destination_user\": 2,\n      \"destination_account\": \"https://wallet.example/ledger/accounts/bob\",\n      \"transfer\": \"https://wallet.example/ledger/transfers/d1fa49d3-c955-4833-803a-df0c43eab044\",\n      \"state\": null,\n      \"source_amount\": \"1\",\n      \"destination_amount\": \"1\",\n      \"created_at\": \"2016-04-19T20:15:57.055Z\",\n      \"completed_at\": null,\n      \"updated_at\": \"2016-04-19T20:15:57.055Z\",\n      \"sourceUserUsername\": \"alice\",\n      \"destinationUserUsername\": \"bob\"\n    }\n  ],\n  \"totalPages\": 5\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"list\": [\n    {\n      \"id\": \"15a3cbb8-d0f3-410e-8a59-14e8dee14abd\",\n      \"source_user\": 1,\n      \"source_identifier\": \"alice@wallet.example\"\n      \"destination_user\": 2,\n      \"destination_identifier\": \"bob@wallet.example\",\n      \"transfer\": \"https://wallet.example/ledger/transfers/3d4c9c8e-204a-4213-9e91-88b64dad8604\",\n      \"state\": null,\n      \"source_amount\": \"12\",\n      \"destination_amount\": \"12\",\n      \"created_at\": \"2016-04-19T20:18:18.040Z\",\n      \"completed_at\": null,\n      \"updated_at\": \"2016-04-19T20:18:18.040Z\",\n      \"sourceUserUsername\": \"alice\",\n      \"destinationUserUsername\": \"bob\"\n    },\n    {\n      \"id\": \"e1d3c588-807c-4d4f-b25c-61842b5ead6d\",\n      \"source_user\": 1,\n      \"source_identifier\": \"alice@wallet.example\"\n      \"destination_user\": 2,\n      \"destination_identifier\": \"bob@wallet.example\",\n      \"transfer\": \"https://wallet.example/ledger/transfers/d1fa49d3-c955-4833-803a-df0c43eab044\",\n      \"state\": null,\n      \"source_amount\": \"1\",\n      \"destination_amount\": \"1\",\n      \"created_at\": \"2016-04-19T20:15:57.055Z\",\n      \"completed_at\": null,\n      \"updated_at\": \"2016-04-19T20:15:57.055Z\",\n      \"sourceUserUsername\": \"alice\",\n      \"destinationUserUsername\": \"bob\"\n    }\n  ],\n  \"totalPages\": 5\n}",
           "type": "json"
         }
       ]
@@ -480,7 +480,7 @@
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "sender_identifier",
+            "field": "source_identifier",
             "description": "<p>sender identifier</p>"
           },
           {
@@ -496,7 +496,7 @@
     "examples": [
       {
         "title": "Setup a payment",
-        "content": "curl -X POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"amount\": \"10\",\n    \"sender_identifier\": \"alice@wallet1.example\"\n    \"memo\": \"Some money for you!\"\n}'\nhttps://wallet2.example/payments/alice",
+        "content": "curl -X POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"amount\": \"10\",\n    \"source_identifier\": \"alice@wallet1.example\"\n    \"memo\": \"Some money for you!\"\n}'\nhttps://wallet2.example/payments/alice",
         "type": "shell"
       }
     ],
