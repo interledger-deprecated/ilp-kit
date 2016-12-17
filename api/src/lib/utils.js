@@ -139,7 +139,7 @@ module.exports = class Utils {
       ledgerUri: ledgerUri,
       paymentUri: paymentUri,
       ilpAddress: ilpAddress,
-      identifier: this.getWebfingerAddress(),
+      identifier: self.isWebfinger(destination) ? destination : this.getWebfingerAddress(destination),
       currencyCode: receiver.currency_code,
       currencySymbol: receiver.currency_symbol,
       name: receiver.name,

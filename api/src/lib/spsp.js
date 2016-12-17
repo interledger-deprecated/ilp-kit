@@ -185,7 +185,9 @@ module.exports = class SPSP {
         })
 
         // Update the db payment
+        dbPayment.transfer = transfer.id
         dbPayment.state = 'success'
+
         yield dbPayment.save()
 
         // Notify the clients

@@ -62,7 +62,7 @@ module.exports = class Pay {
       source_user: opts.source.id,
       source_identifier: this.utils.getWebfingerAddress(opts.source.username),
       source_amount: parseFloat(opts.sourceAmount),
-      destination_identifier: this.utils.getWebfingerAddress(opts.destination),
+      destination_identifier: destination.identifier,
       destination_amount: parseFloat(opts.destinationAmount),
       destination_name: opts.destination.name,
       destination_image_url: opts.destination.imageUrl,
