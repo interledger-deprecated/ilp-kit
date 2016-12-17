@@ -70,7 +70,7 @@ function PaymentFactory (sequelize, validator, container, User) {
       // TODO switch to a legit sequalize format
 
       const list = yield sequelize.query(
-        'SELECT source_account, destination_account,'
+        'SELECT source_identifier, destination_identifier,'
           + ' sum(source_amount) as source_amount,'
           + ' source_name,'
           + ' source_image_url,'
@@ -85,12 +85,12 @@ function PaymentFactory (sequelize, validator, container, User) {
         + ' WHERE state = \'success\' '
           + ' AND ('
             + ' source_user = ' + user.id
-            + " OR source_account = '" + user.account + "'"
+            + " OR source_identifier = '" + user.identifier + "'"
             + ' OR destination_user = ' + user.id
-            + " OR destination_account = '" + user.account + "'"
+            + " OR destination_identifier = '" + user.identifier + "'"
           + ' )'
-        + ' GROUP BY source_account, source_name, source_image_url, '
-          + 'destination_account, destination_name, destination_image_url,'
+        + ' GROUP BY source_identifier, source_name, source_image_url, '
+          + 'destination_identifier, destination_name, destination_image_url,'
           + ' message, time_slot'
         + ' ORDER BY recent_date DESC'
         + ' OFFSET ' + limit * (page - 1)
@@ -100,7 +100,7 @@ function PaymentFactory (sequelize, validator, container, User) {
 
       // TODO:PERFORMANCE this selects the rows
       const count = yield sequelize.query(
-        'SELECT count(source_amount), destination_account,'
+        'SELECT count(source_amount), destination_identifier,'
           + ' sum(source_amount) as source_amount,'
           + ' sum(destination_amount) as destination_amount,'
           + ' message,'
@@ -109,11 +109,11 @@ function PaymentFactory (sequelize, validator, container, User) {
         + ' WHERE state = \'success\' '
           + ' AND ('
             + ' source_user = ' + user.id
-            + " OR source_account = '" + user.account + "'"
+            + " OR source_identifier = '" + user.identifier + "'"
             + ' OR destination_user = ' + user.id
-            + " OR destination_account = '" + user.account + "'"
+            + " OR destination_identifier = '" + user.identifier + "'"
           + ' )'
-        + ' GROUP BY source_account, destination_account, message, time_slot'
+        + ' GROUP BY source_identifier, destination_identifier, message, time_slot'
       )
 
       return {
@@ -123,12 +123,13 @@ function PaymentFactory (sequelize, validator, container, User) {
     }
 
     static getTransfers(params) {
+      console.log('payment:126', params)
       return sequelize.query(
         'SELECT source_amount, destination_amount, created_at, transfer'
       + ' FROM "Payments"'
       + ' WHERE state = \'success\' '
-        + " AND source_account = '" + params.sourceAccount + "'"
-        + " AND destination_account = '" + params.destinationAccount + "'"
+        + " AND source_identifier = '" + params.sourceIdentifier + "'"
+        + " AND destination_identifier = '" + params.destinationIdentifier + "'"
         + " AND date_trunc('hour', created_at) = '" + params.timeSlot + "'"
         + (params.message ? " AND message = '" + params.message + "'" : '')
       + ' ORDER BY created_at DESC',
@@ -136,7 +137,7 @@ function PaymentFactory (sequelize, validator, container, User) {
       )
     }
 
-    static getPayment (transfer) {
+    static getPayment(transfer) {
       return Payment.findOne({
         attributes: {include: [
           [Sequelize.col('SourceUser.username'), 'sourceUserUsername']
@@ -152,7 +153,7 @@ function PaymentFactory (sequelize, validator, container, User) {
 
     static * getUserStats(user) {
       const result = yield sequelize.query(
-        'SELECT source_account, destination_account,'
+        'SELECT source_identifier, destination_identifier,'
           + ' sum(source_amount) as source_amount,'
           + ' source_name,'
           + ' source_image_url,'
@@ -165,12 +166,12 @@ function PaymentFactory (sequelize, validator, container, User) {
         + ' WHERE state = \'success\' '
         + ' AND ('
           + ' source_user = ' + user.id
-          + " OR source_account = '" + user.account + "'"
+          + " OR source_identifier = '" + user.identifier + "'"
           + ' OR destination_user = ' + user.id
-          + " OR destination_account = '" + user.account + "'"
+          + " OR destination_identifier = '" + user.identifier + "'"
         + ' )'
-        + ' GROUP BY source_account, source_name, source_image_url, '
-        + 'destination_account, destination_name, destination_image_url'
+        + ' GROUP BY source_identifier, source_name, source_image_url, '
+        + 'destination_identifier, destination_name, destination_image_url'
         + ' ORDER BY recent_date DESC'
       )
 
@@ -187,12 +188,12 @@ function PaymentFactory (sequelize, validator, container, User) {
       defaultValue: Sequelize.UUIDV4
     },
     source_user: Sequelize.INTEGER,
-    source_account: Sequelize.STRING(1024),
+    source_identifier: Sequelize.STRING(1024),
     source_amount: Sequelize.FLOAT,
     source_name: Sequelize.STRING,
     source_image_url: Sequelize.STRING,
     destination_user: Sequelize.INTEGER,
-    destination_account: Sequelize.STRING(1024),
+    destination_identifier: Sequelize.STRING(1024),
     destination_amount: Sequelize.FLOAT,
     destination_name: Sequelize.STRING,
     destination_image_url: Sequelize.STRING,

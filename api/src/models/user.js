@@ -9,14 +9,15 @@ const Database = require('../lib/db')
 const Validator = require('five-bells-shared/lib/validator')
 const Ledger = require('../lib/ledger')
 const Config = require('../lib/config')
+const Utils = require('../lib/utils')
 const Sequelize = require('sequelize')
 
 const ServerError = require('../errors/server-error')
 const InvalidBodyError = require('../errors/invalid-body-error')
 const EmailTakenError = require('../errors/email-taken-error')
 
-UserFactory.constitute = [Database, Validator, Ledger, Config]
-function UserFactory(sequelize, validator, ledger, config) {
+UserFactory.constitute = [Database, Validator, Ledger, Config, Utils]
+function UserFactory (sequelize, validator, ledger, config, utils) {
   class User extends Model {
     static convertFromExternal(data) {
       return data
@@ -37,6 +38,9 @@ function UserFactory(sequelize, validator, ledger, config) {
 
     static convertFromPersistent(data) {
       data = _.omit(data, _.isNull)
+
+      data.identifier = utils.getWebfingerAddress(data.username)
+
       return data
     }
 
@@ -76,24 +80,24 @@ function UserFactory(sequelize, validator, ledger, config) {
     static * setupAdminAccount() {
       const username = config.data.getIn(['ledger', 'admin', 'user'])
 
-      let admin = yield this.findOne({ where: { username } })
+      let dbUser = yield this.findOne({ where: { username } })
 
-      if (!admin) {
+      if (!dbUser) {
         // Create the admin account
-        admin = new this()
+        dbUser = new this()
 
-        admin.username = username
-        admin.account = config.data.get(['ledger', 'public_uri']) + '/accounts/' + username
+        dbUser.username = username
+        dbUser.account = config.data.get(['ledger', 'public_uri']) + '/accounts/' + username
 
-        admin = this.fromDatabaseModel(yield admin.save())
+        dbUser = this.fromDatabaseModel(yield dbUser.save())
 
-        admin.new = true
+        dbUser.new = true
       }
 
       // Setup ledger admin account
       const ledgerAccount = yield ledger.setupAdminAccount()
 
-      return yield admin.appendLedgerAccount(ledgerAccount)
+      return yield dbUser.appendLedgerAccount(ledgerAccount)
     }
 
     static * setupConnectorAccount() {
@@ -110,19 +114,19 @@ function UserFactory(sequelize, validator, ledger, config) {
       const username = options.username || derivedUsername
       const password = options.password
 
-      let dbAccount = yield this.findOne({ where: { username } })
+      let dbUser = yield this.findOne({ where: { username } })
 
       // Create the db connector account
-      if (!dbAccount) {
-        dbAccount = new this()
+      if (!dbUser) {
+        dbUser = new this()
 
-        dbAccount.username = username
-        dbAccount.account = config.data.get(['ledger', 'public_uri']) + '/accounts/' + username
+        dbUser.username = username
+        dbUser.account = config.data.get(['ledger', 'public_uri']) + '/accounts/' + username
 
-        dbAccount = this.fromDatabaseModel(yield dbAccount.save())
+        dbUser = this.fromDatabaseModel(yield dbUser.save())
 
         // Used in app.js for the initial funding
-        dbAccount.new = true
+        dbUser.new = true
       }
 
       let ledgerAccount
@@ -138,7 +142,7 @@ function UserFactory(sequelize, validator, ledger, config) {
         ledgerAccount = yield ledger.createAccount({ username, password })
       }
 
-      return yield dbAccount.appendLedgerAccount(ledgerAccount)
+      return yield dbUser.appendLedgerAccount(ledgerAccount)
     }
 
     * changeEmail(email, verified) {

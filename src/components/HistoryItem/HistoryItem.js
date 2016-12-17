@@ -76,7 +76,7 @@ export default class HistoryItem extends Component {
     const { showTransfers } = this.state
     const advancedMode = this.props.advancedMode
 
-    const type = item.counterpartyAccount === item.destination_account ? 'outgoing' : 'incoming'
+    const type = item.counterpartyIdentifier === item.destination_identifier ? 'outgoing' : 'incoming'
 
     const profilePic = (type === 'outgoing' ? item.destination_image_url : item.source_image_url) || require('./placeholder.png')
 
@@ -90,18 +90,18 @@ export default class HistoryItem extends Component {
               <div className={cx('description')}>
                 <div className={cx('counterpartyContainer')}>
                   {type === 'outgoing' &&
-                  <span>You paid <span className={cx('counterparty')} title={item.counterpartyAccount}>
-                    {item.counterpartyName || getAccountName(item.counterpartyAccount) || 'someone'}
+                  <span>You paid <span className={cx('counterparty')} title={item.counterpartyIdentifier}>
+                    {item.counterpartyName || getAccountName(item.counterpartyIdentifier) || 'someone'}
                   </span></span>}
 
                   {type === 'incoming' &&
-                  <span><span className={cx('counterparty')} title={item.counterpartyAccount}>
-                    {item.counterpartyName || getAccountName(item.counterpartyAccount) || 'someone'}
+                  <span><span className={cx('counterparty')} title={item.counterpartyIdentifier}>
+                    {item.counterpartyName || getAccountName(item.counterpartyIdentifier) || 'someone'}
                   </span> paid you</span>}
                 </div>
                 {advancedMode &&
-                <a href={item.counterpartyAccount} className={cx('counterpartyAccount')}>
-                  {item.counterpartyAccount}
+                <a href={item.counterpartyIdentifier} className={cx('counterpartyIdentifier')}>
+                  {item.counterpartyIdentifier}
                 </a>}
                 {item.message &&
                 <div className={cx('message')}>
@@ -151,7 +151,7 @@ export default class HistoryItem extends Component {
           <div className={cx('col-sm-12')} key={item.time_slot + 'transfers'}>
             {item.transfers && item.transfers.map((transfer) => {
               return (
-                <div className={cx('row', 'transfer')} key={transfer.source_account + transfer.created_at}>
+                <div className={cx('row', 'transfer')} key={transfer.source_identifier + transfer.created_at}>
                   {advancedMode &&
                   <div className="col-xs-2">
                     <a href={config.ledgerUri + '/transfers/' + transfer.transfer} className={cx('hash')}>{transfer.transfer && transfer.transfer.split('-')[0]}</a>

@@ -361,7 +361,7 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
         }
       })
 
-      // Send the invite money
+      // Send the money
       yield pay.pay({
         source: source.getDataExternal(),
         destination: user.username,

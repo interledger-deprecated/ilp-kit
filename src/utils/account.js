@@ -2,10 +2,7 @@
 export function getAccountName(account) {
   if (!account) return
 
-  if (account.indexOf('http://') > -1 || account.indexOf('https://') > -1) {
-    const match = account.match(/.*\/([-a-z0-9]*)/)
-    return match[1]
-  }
+  const match = account.match(/(.*)\@.*/)
 
-  return account
+  if (match) return match[1]
 }

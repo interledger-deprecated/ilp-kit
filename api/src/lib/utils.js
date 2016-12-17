@@ -12,42 +12,43 @@ const NotFoundError = require('../errors/not-found-error')
 
 // TODO implement caching
 module.exports = class Utils {
-  static constitute () { return [ Config, Ledger ] }
-  constructor (config, ledger) {
+  static constitute() { return [ Config, Ledger ] }
+  constructor(config, ledger) {
     this.ledger = ledger
     this.ledgerUriPublic = config.data.getIn(['ledger', 'public_uri'])
     this.ledgerPrefix = config.data.getIn(['ledger', 'prefix'])
     this.localUri = config.data.getIn(['server', 'base_uri'])
+    this.localHost = config.data.getIn(['server', 'base_host'])
   }
 
-  isAccountUri (destination) {
+  isAccountUri(destination) {
     return destination.indexOf('http://') > -1 || destination.indexOf('https://') > -1
   }
 
-  isForeignAccountUri (destination) {
+  isForeignAccountUri(destination) {
     return this.isAccountUri(destination) && destination.indexOf(this.ledgerUriPublic) === -1
   }
 
-  * getAccount (accountUri) {
+  * getAccount(accountUri) {
     let response
 
     try {
       response = yield superagent.get(accountUri).end()
     } catch (e) {
       console.error('utils:39', e)
-      throw new NotFoundError("Unknown account")
+      throw new NotFoundError('Unknown account')
     }
 
     return response.body
   }
 
-  isWebfinger (destination) {
+  isWebfinger(destination) {
     // TODO better email style checking
     return destination.search('@') > -1
   }
 
-  * getWebfingerAccount (address) {
-    let parsed = url.parse(address)
+  * getWebfingerAccount(address) {
+    const parsed = url.parse(address)
 
     // This dirty hack will stay here until there's a resolution to
     // https://github.com/silverbucket/webfinger.js/issues/18
@@ -66,9 +67,9 @@ module.exports = class Utils {
     let response
 
     try {
-      response = yield new Promise(function(resolve, reject){
+      response = yield new Promise(function(resolve, reject) {
         webfinger.lookup(address,
-          function(err, res){
+          function(err, res) {
             if (err) {
               return reject(err)
             }
@@ -79,7 +80,7 @@ module.exports = class Utils {
       })
     } catch(e) {
       console.error(e)
-      throw new NotFoundError("Unknown account")
+      throw new NotFoundError('Unknown account')
     }
 
     return {
@@ -132,18 +133,21 @@ module.exports = class Utils {
     // Get SPSP receiver info
     const receiver = yield self.getAccount(paymentUri)
 
-    const parsedDestination = {
+    return {
       type: this.isForeignAccountUri(accountUri) ? 'foreign' : 'local',
       accountUri: accountUri,
       ledgerUri: ledgerUri,
       paymentUri: paymentUri,
       ilpAddress: ilpAddress,
+      identifier: this.getWebfingerAddress(),
       currencyCode: receiver.currency_code,
       currencySymbol: receiver.currency_symbol,
       name: receiver.name,
       imageUrl: receiver.image_url
     }
+  }
 
-    return parsedDestination
+  getWebfingerAddress(username) {
+    return username + '@' + this.localHost
   }
 }

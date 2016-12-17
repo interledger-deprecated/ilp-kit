@@ -16,7 +16,6 @@ test:
   override:
 #   - npm run lint
     - npm test
-    - npm run test-api
   post:
     - docker build -t interledgerjs/ilp-kit:latest .
     - docker tag interledgerjs/ilp-kit:latest interledgerjs/ilp-kit:"$(git describe --tags)"

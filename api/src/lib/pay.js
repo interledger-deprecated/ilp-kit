@@ -60,12 +60,12 @@ module.exports = class Pay {
     // Save in the db
     dbPayment.setDataExternal({
       source_user: opts.source.id,
-      source_account: opts.source.account,
+      source_identifier: this.utils.getWebfingerAddress(opts.source.username),
       source_amount: parseFloat(opts.sourceAmount),
-      destination_account: destination.accountUri,
+      destination_identifier: this.utils.getWebfingerAddress(opts.destination),
       destination_amount: parseFloat(opts.destinationAmount),
-      destination_name: destination.name,
-      destination_image_url: destination.imageUrl,
+      destination_name: opts.destination.name,
+      destination_image_url: opts.destination.imageUrl,
       transfer: transfer.uuid,
       message: opts.message || null,
       execution_condition: transfer.executionCondition,

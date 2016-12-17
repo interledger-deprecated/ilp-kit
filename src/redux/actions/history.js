@@ -29,22 +29,6 @@ export const toggleJson = (id, transfer) => (dispatch, getState) => {
 
 // TODO separate module for WS stuff?
 export const addPayment = (data) => (dispatch) => {
-  // TODO There's no id anymore, but this might become an issue
-  /* const duplicate = getState().history.list.filter((item) => {
-    return item.id === data.id
-  })[0]
-
-  if (duplicate) return false */
-
-  /* const change = getState().auth.user.account === data.destination_account
-   ? Number(data.destination_amount)
-   : -Number(data.destination_amount)
-
-   dispatch({
-   type: types.UPDATE_BALANCE,
-   change: change
-   }) */
-
   return dispatch({
     type: types.WS_PAYMENT,
     result: data
@@ -58,8 +42,8 @@ export const loadTransfers = (payment) => {
     types: [types.LOAD_TRANSFERS, types.LOAD_TRANSFERS_SUCCESS, types.LOAD_TRANSFERS_FAIL],
     promise: (client) => client.get('/payments/transfers/' + payment.time_slot, {
       params: {
-        sourceAccount: payment.source_account,
-        destinationAccount: payment.destination_account,
+        sourceIdentifier: payment.source_identifier,
+        destinationIdentifier: payment.destination_identifier,
         message: payment.message,
       }
     })

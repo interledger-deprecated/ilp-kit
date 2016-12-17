@@ -55,9 +55,9 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
      *        {
      *          "id": "15a3cbb8-d0f3-410e-8a59-14e8dee14abd",
      *          "source_user": 1,
-     *          "source_account": "https://wallet.example/ledger/accounts/alice",
+		 *          "source_identifier": "alice@wallet.example"
      *          "destination_user": 2,
-     *          "destination_account": "https://wallet.example/ledger/accounts/bob",
+     *          "destination_identifier": "bob@wallet.example",
      *          "transfer": "https://wallet.example/ledger/transfers/3d4c9c8e-204a-4213-9e91-88b64dad8604",
      *          "state": null,
      *          "source_amount": "12",
@@ -71,9 +71,9 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
      *        {
      *          "id": "e1d3c588-807c-4d4f-b25c-61842b5ead6d",
      *          "source_user": 1,
-     *          "source_account": "https://wallet.example/ledger/accounts/alice",
+		 *          "source_identifier": "alice@wallet.example"
      *          "destination_user": 2,
-     *          "destination_account": "https://wallet.example/ledger/accounts/bob",
+     *          "destination_identifier": "bob@wallet.example",
      *          "transfer": "https://wallet.example/ledger/transfers/d1fa49d3-c955-4833-803a-df0c43eab044",
      *          "state": null,
      *          "source_amount": "1",
@@ -103,17 +103,17 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
     // TODO document this
     static * getTransfers() {
       const timeSlot = this.params.timeSlot
-      const sourceAccount = this.query.sourceAccount
-      const destinationAccount = this.query.destinationAccount
+      const sourceIdentifier = this.query.sourceIdentifier
+      const destinationIdentifier = this.query.destinationIdentifier
       const message = this.query.message
 
-      if (sourceAccount !== this.req.user.account && destinationAccount !== this.req.user.account) {
+      if (sourceIdentifier !== this.req.user.identifier && destinationIdentifier !== this.req.user.identifier) {
         // TODO throw an exception
         return this.status = 404
       }
 
       this.body = yield Payment.getTransfers({
-        sourceAccount, destinationAccount, timeSlot, message
+        sourceIdentifier, destinationIdentifier, timeSlot, message
       })
     }
 
@@ -231,14 +231,14 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
      * @apiDescription Setup a payment
      *
      * @apiParam {String} amount destination amount
-     * @apiParam {String} sender_identifier sender identifier
+     * @apiParam {String} source_identifier sender identifier
      * @apiParam {String} memo memo
      *
      * @apiExample {shell} Setup a payment
      *    curl -X POST -H "Authorization: Basic YWxpY2U6YWxpY2U=" -H "Content-Type: application/json" -d
      *    '{
      *        "amount": "10",
-     *        "sender_identifier": "alice@wallet1.example"
+     *        "source_identifier": "alice@wallet1.example"
      *        "memo": "Some money for you!"
      *    }'
      *    https://wallet2.example/payments/alice
@@ -253,7 +253,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
      *    }
      */
     static * setup() {
-      const sourceAccount = this.body.sender_identifier
+      const sourceIdentifier = this.body.source_identifier
       const name = this.body.sender_name
       const image_url = this.body.sender_image_url
       const memo = this.body.memo
@@ -274,11 +274,11 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
 
       const paymentObj = {
         state: 'pending',
-        source_account: sourceAccount,
         source_name: name,
         source_image_url: image_url,
+        source_identifier: sourceIdentifier,
         destination_user: destinationUser.id,
-        destination_account: destinationUser.account,
+        destination_identifier: utils.getWebfingerAddress(destinationUser.username),
         destination_amount: parseFloat(destinationAmount),
         message: memo || null,
         execution_condition: paymentParams.condition

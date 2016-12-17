@@ -13,15 +13,17 @@ const PaymentFactory = require('../models/payment')
 const Config = require('./config')
 const Socket = require('./socket')
 const Ledger = require('./ledger')
+const Utils = require('./utils')
 
 // TODO exception handling
 module.exports = class SPSP {
-  static constitute() { return [Config, PaymentFactory, Socket, Ledger] }
-  constructor(config, Payment, socket, ledger) {
+  static constitute() { return [Config, PaymentFactory, Socket, Ledger, Utils] }
+  constructor(config, Payment, socket, ledger, utils) {
     this.Payment = Payment
     this.socket = socket
     this.config = config
     this.ledger = ledger
+    this.utils = utils
 
     this.senders = {}
     this.receivers = {}
@@ -115,7 +117,7 @@ module.exports = class SPSP {
   * setup(options) {
     return (yield superagent.post(options.paymentUri, {
       amount: options.amount,
-      sender_identifier: options.sender_identifier,
+      source_identifier: options.source_identifier,
       sender_name: options.sender_name,
       sender_image_url: options.sender_image_url,
       memo: options.memo
@@ -128,7 +130,7 @@ module.exports = class SPSP {
     const quote = yield this.setup({
       paymentUri: params.destination.paymentUri,
       amount: params.destinationAmount,
-      sender_identifier: params.source.account,
+      source_identifier: this.utils.getWebfingerAddress(params.source.username),
       sender_name: params.source.name,
       sender_image_url: params.source.profile_picture,
       memo: params.memo

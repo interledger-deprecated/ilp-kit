@@ -108,11 +108,12 @@ module.exports = class Auth {
             return done(new UnauthorizedError('Unknown or invalid account / password'))
           }
 
-          const user = yield dbUser.appendLedgerAccount()
+          let user = User.fromDataPersistent(dbUser)
+          user = yield user.appendLedgerAccount()
           user.password = userObj.password
 
           // isAdmin
-          if (dbUser.username === self.config.data.getIn(['ledger', 'admin', 'user'])) {
+          if (user.username === self.config.data.getIn(['ledger', 'admin', 'user'])) {
             user.isAdmin = true
           }
 

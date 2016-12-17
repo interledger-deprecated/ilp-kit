@@ -48,9 +48,9 @@ function reducer(state = {}, action = {}) {
         // Is this group in the same time slot as the new payment?
         if (timeSlot !== item.time_slot) return item
 
-        // Are the source and destination accounts the same with the new payment?
-        if (action.result.source_account !== item.source_account
-          || action.result.destination_account !== item.destination_account) {
+        // Are the source and destination identifiers the same with the new payment?
+        if (action.result.source_identifier !== item.source_identifier
+          || action.result.destination_identifier !== item.destination_identifier) {
           return item
         }
 

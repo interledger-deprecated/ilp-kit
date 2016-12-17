@@ -36,6 +36,6 @@ describe('(component) HistoryItem', () => {
     const element = TestUtils.findRenderedDOMComponentWithClass(rendered, cx('counterparty'))
 
     expect(element).to.exist
-    expect(element.textContent).to.equal(historyItemViewMock.source_account)
+    expect(element.textContent).to.equal(historyItemViewMock.source_identifier)
   })
 })
