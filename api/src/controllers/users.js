@@ -300,7 +300,7 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
      */
     static * putResource() {
       const data = this.body
-      const user = this.req.user
+      const user = yield User.findOne({ where: {id: this.req.user.id} })
 
       // TODO:SECURITY sanity checking
 
