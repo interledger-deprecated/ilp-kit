@@ -17,39 +17,9 @@ ILP wallet with hosted ledger and connector instances
 
 # Quick Start
 
-### Install dependencies
+_Prerequisites: Git, Node v6.9.1, `build-essentials` (or XCode command-line tools on OSX)_
 
-#### OSX
-
-Requires XCode command line tools.
-
-```sh
-$ brew tap homebrew/services
-$ brew install postgres libpqxx postgresql
-$ brew services start postgresql
-```
-
-#### Linux
-
-```sh
-$ sudo apt-get update
-$ sudo apt-get install libssl-dev python build-essential libpq-dev postgresql postgresql-contrib
-```
-
-### Set up ILP Kit
-
-First, create a postgres database.
-
-```sh
-$ sudo -u postgres createuser -s myusername # assuming your user is 'myusername'
-$ psql
-postgres=> ALTER USER myusername WITH PASSWORD 'PASSWORD'; # use a better password
-# outputs: ALTER USER
-postgres=> \q
-$ createdb ilp-kit-quickstart
-```
-
-Now clone the ILP Kit and install the dependencies.
+Clone the ILP Kit and install the dependencies.
 
 ```sh
 $ git clone https://github.com/interledgerjs/ilp-kit
@@ -76,7 +46,7 @@ In another shell, in your `ilp-kit` folder, configure your ILP Kit:
 $ npm run configure
 ```
 
-- Postgres DB URI: `postgres://myusername:PASSWORD@localhost/ilp-kit-quickstart`
+- DB URI: `sqlite://ilp-kit.db`
 - Hostname: `quickstart.localtunnel.me`
 - Ledger name: `quickstart`
 - Currency code: `USD`
@@ -86,7 +56,7 @@ $ npm run configure
 - Username: `quickstart`
 - Password: (use the randomly generated suggestion, and write it down)
 
-### Start your ILP Kit
+The setup is complete, so run:
 
 ```sh
 npm start
