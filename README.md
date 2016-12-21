@@ -17,52 +17,22 @@ ILP wallet with hosted ledger and connector instances
 
 # Quick Start
 
-_Prerequisites: Git, Node v6.9.1, `build-essentials` (or XCode command-line tools on OSX)_
-
-Clone the ILP Kit and install the dependencies.
+_Prerequisites: [Git](https://git-scm.com/downloads), [Node v6.9.1](https://nodejs.org/en/download/), and dependencies for [`node-gyp`](https://github.com/nodejs/node-gyp#installation)_
 
 ```sh
 $ git clone https://github.com/interledgerjs/ilp-kit
 $ cd ilp-kit
 $ npm install
 $ npm run build
-```
-
-You'll want to use [Localtunnel](https://localtunnel.me) to expose the ILP Kit
-to the internet. **NOTE: Because a localtunnel domain can be squatted on, do
-not use this to host a permanent ILP Kit.** If you want a permanent solution,
-follow the [permanent setup
-instructions](https://github.com/interledgerjs/ilp-kit/blob/master/docs/SETUP.md).
-
-```sh
-$ sudo npm install -g localtunnel
-$ lt --subdomain quickstart --port 3010 # use a unique subdomain
-# leave this running and restart it if it dies
-```
-
-In another shell, in your `ilp-kit` folder, configure your ILP Kit:
-
-```sh
 $ npm run configure
 ```
 
-- DB URI: `sqlite://ilp-kit.db`
-- Hostname: `quickstart.localtunnel.me`
-- Ledger name: `quickstart`
-- Currency code: `USD`
-- Country code: `US`
-- Configure Github: `n`
-- Configure Mailgun: `n`
-- Username: `quickstart`
-- Password: (use the randomly generated suggestion, and write it down)
-
-The setup is complete, so run:
+Use the default option for every question in the `configure` command,
+and you're done! You now have a configured ILP Kit. Start it with:
 
 ```sh
 npm start
 ```
-
-That's all! You now have a functioning ILP Kit.
 
 # Connect your ILP Kit
 

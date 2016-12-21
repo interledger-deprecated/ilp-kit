@@ -20,10 +20,12 @@
     "finance"
   ],
   "scripts": {
-    "start": "DEBUG_COLORS=1 concurrently -p \"[{name}]\" -n \"ledger,api,wallet\" -c \"red,blue,cyan\" \"npm run start-prod-ledger\" \"npm run start-prod-api\" \"npm run start-prod\"",
+    "start": "DEBUG_COLORS=1 concurrently -p \"[{name}]\" -n \"ledger,api,wallet,localtunnel\" -c \"red,magenta,blue,cyan,green\" \"npm run start-prod-ledger\" \"npm run start-prod-api\" \"npm run start-prod\" \"npm run start-localtunnel\"",
     "start-prod": "better-npm-run start-prod",
     "start-prod-api": "better-npm-run start-prod-api",
     "start-prod-ledger": "better-npm-run start-prod-ledger",
+    "start-prod-connector": "better-npm-run start-prod-connector",
+    "start-localtunnel": "better-npm-run start-localtunnel",
     "build": "touch src/theme/variables-custom.scss ; better-npm-run build",
     "build-dlls": "touch src/theme/variables-custom.scss ; node ./bin/dlls.js",
     "postinstall": "npm rebuild node-sass; npm run build",
@@ -58,6 +60,18 @@
     },
     "start-prod-ledger": {
       "command": "node ./bin/ledger.js",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "start-prod-connector": {
+      "command": "node ./bin/connector.js",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    },
+    "start-localtunnel": {
+      "command": "node ./bin/localTunnel.js",
       "env": {
         "NODE_ENV": "production"
       }
@@ -167,6 +181,7 @@
     "koa.io": "0.0.3",
     "less": "^2.7.1",
     "less-loader": "^2.2.3",
+    "localtunnel": "^1.8.2",
     "lodash": "^4.16.4",
     "mag": "^0.9.1",
     "mag-hub": "^0.1.1",
