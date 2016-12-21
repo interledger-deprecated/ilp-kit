@@ -36,7 +36,7 @@ Edit your hosts file (`/private/etc/hosts` on OSX). Add these two lines
 
 ## Port forwarding
 
-> NOTE: This is an apache server config for developers. If you want to setup a production environment check out [this guide](https://github.com/interledgerjs/ilp-kit/blob/master/SETUP.md).
+> NOTE: This is an apache server config for developers. If you want to setup a production environment check out [this guide](https://github.com/interledgerjs/ilp-kit/blob/master/docs/SETUP.md).
 
 
 In most cases it makes sense to expose the wallet through 443 (or 80) port, in which case you need to setup a port forwarding that will forward `API_PORT` requests to `API_PUBLIC_PORT` (443 or 80). Note that the port forwarding should work for both http(s) and websocket connections.
@@ -55,6 +55,7 @@ LoadModule proxy_wstunnel_module libexec/apache2/mod_proxy_wstunnel.so
 LoadModule proxy_ajp_module libexec/apache2/mod_proxy_ajp.so
 LoadModule proxy_balancer_module libexec/apache2/mod_proxy_balancer.so
 LoadModule ssl_module libexec/apache2/mod_ssl.so
+LoadModule rewrite_module libexec/apache2/mod_rewrite.so
 ```
 
 > NOTE: Current webfinger implementation will not work if the public port is not 443 or 80.
