@@ -1,9 +1,10 @@
 > Guide to setting up your very own ILP Kit.
 > Estimated time: a couple of hours.
 
-> **NOTE**: These instructions use DigitalOcean's Node 6.9.1 image on Ubuntu in
-> order to be as simple as possible. You can run ILP Kit on any other OS and
-> hosting provider, but there might be a couple additional steps.
+> **NOTE**: These instructions support either a local machine (for testing
+> only) or DigitalOcean's Node 6.9.1 image on Ubuntu. This is in order to be as
+> simple as possible. You can run ILP Kit on any other OS and hosting provider,
+> but there might be a couple additional steps.
 
 > _Don't hesitate to open issues or ask for help._
 
@@ -14,6 +15,7 @@
   - [Postgresql setup](#postgresql-setup)
   - [ILP Kit setup](#ilp-kit-setup)
 - [Domain Setup](#domain-setup)
+  - [Localtunnel setup](#localtunnel-setup)
   - [Subdomain setup](#subdomain-setup)
   - [Set up SSL](#set-up-ssl)
   - [Set up proxy for ILP Kit](#set-up-proxy-for-ilp-kit)
@@ -29,6 +31,11 @@
   - [systemd setup](#systemd-setup)
 
 # ILP Kit installation
+
+If you want to set up an ILP Kit (for testing) without buying a remote server,
+just skip this section and go to [Server Setup](#server-setup). Use the
+[Localtunnel setup](#localtunnel-setup) instructions to expose your ILP Kit to
+the internet.
 
 ## Get a server instance
 
@@ -121,6 +128,56 @@ $ npm install
 ```
 
 # Domain setup
+
+## Localtunnel setup
+
+Don't have your own domain? That's no problem. You can follow this section and skip the rest of the
+domain setup. If you want to use your own domain (recommended for any permanent ILP Kit instance), then
+skip to [Subdomain setup](#subdomain-setup) and keep reading.
+
+**NOTE: Localtunnel is for TESTING PURPOSES ONLY.** (see below for the security risks)
+
+### What is Localtunnel?
+
+Localtunnel is a service that lets you forward a local port to a subdomain on `localtunnel.me`. You can
+request a specific subdomain (eg. `niles.localtunnel.me`), but **be careful**. If the subdomain is already
+taken, your localtunnel will fail. Furthermore, if your localtunnel closes and someone else starts a tunnel
+on the same subdomain, they can intercept traffic to that domain. Therefore, Localtunnel is suitable for
+a temporary ILP Kit instance, but **is NOT SECURE for a permanent ILP Kit**.
+
+### Start a Localtunnel
+
+```
+$ sudo npm install -g localtunnel
+```
+
+This will install Localtunnel on your system, accessible through the `lt` command. If I wanted to forward
+my ILP Kit to `niles.localtunnel.me`, I would run:
+
+```
+$ lt --subdomain niles --port 3010
+# outputs: your url is: https://niles.localtunnel.me
+```
+
+Sometimes this process will crash. Just restart it with the same arguments, and it should be fine. To
+do this automatically, you can wrap the command in a while loop:
+
+```
+$ while [ 1 ]; do lt --subdomain niles --port 3010; done
+```
+
+### Use your Localtunnel
+
+That's all there is to it! In future steps, treat everything as though your
+domain is `YOURSUBDOMAIN.localtunnel.me`. This domain is reachable over `https`.
+
+You don't need to do any SSL setup or nginx proxying. Just make sure your
+subdomain is unique enough that it won't collide with anyone else's. **This
+domain can be trivially squatted on** every time you restart `lt`, so be
+careful what you use it for.
+
+You can skip ahead to [ILP Kit configuration](#ilp-kit-configuration) now, and
+follow the guide from there.
 
 ## Subdomain setup
 
