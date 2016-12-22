@@ -36,7 +36,7 @@ export default class Input extends Component {
         clearTimeout(self.delay)
         self.delay = setTimeout(() => {
           this.props.onChange(target)
-        }, 250)
+        }, 400)
       } else {
         this.props.onChange(target)
       }

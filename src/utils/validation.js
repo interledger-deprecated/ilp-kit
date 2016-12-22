@@ -60,7 +60,7 @@ export function maxValue(max) {
 
 export function lessThanBalance(balance) {
   return value => {
-    if (value && value > balance) {
+    if (value && parseFloat(value) > balance) {
       return `Sending amount should be less than your balance`
     }
   }

@@ -2,20 +2,24 @@ import uuid4 from 'uuid4';
 import * as types from '../actionTypes';
 
 // TODO cache
-// TODO don't make a call for a local ledger destination
-export const destinationChange = (destination) => ({
+export const destinationChange = destination => ({
   types: [types.DESTINATION_CHANGE, types.DESTINATION_CHANGE_SUCCESS, types.DESTINATION_CHANGE_FAIL],
-  promise: (client) => client.get('/parse/destination', {
+  promise: client => client.get('/parse/destination', {
     params: {
       destination: destination
     }
   })
 })
 
-export const requestQuote = (values) => ({
+export const amountsChange = (sourceAmount, destinationAmount) => ({
+  type: types.AMOUNTS_CHANGE,
+  sourceAmount,
+  destinationAmount
+})
+
+export const requestQuote = values => ({
   types: [types.REQUEST_QUOTE, types.REQUEST_QUOTE_SUCCESS, types.REQUEST_QUOTE_FAIL],
-  promise: (client) => client.post('/payments/quote', {
-    // TODO source user set here or in api?
+  promise: client => client.post('/payments/quote', {
     data: {
       destination: values.destination,
       sourceAmount: values.sourceAmount,
@@ -25,9 +29,9 @@ export const requestQuote = (values) => ({
 })
 
 // TODO confirm findPath instead of using the sender.default
-export const transfer = (values) => (dispatch, getState) => dispatch({
+export const transfer = values => (dispatch, getState) => dispatch({
   types: [types.SEND, types.SEND_SUCCESS, types.SEND_FAIL],
-  promise: (client) => client.put('/payments/' + uuid4(), {
+  promise: client => client.put('/payments/' + uuid4(), {
     data: {
       ...getState().send.quote,
       destination: values.destination,
@@ -39,7 +43,6 @@ export const transfer = (values) => (dispatch, getState) => dispatch({
 export const reset = () => ({
   type: types.SEND_RESET
 })
-
 
 // TODO there's gotta be a way to automate this somehow (fallback to default state)
 export const unmount = () => ({

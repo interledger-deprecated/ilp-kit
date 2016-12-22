@@ -2,7 +2,7 @@ import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import ReactPaginate from 'react-paginate';
-import * as historyActions from 'redux/actions/history'
+import { getPage } from 'redux/actions/history'
 
 import { initActionCreators } from 'redux-pagination'
 
@@ -23,17 +23,13 @@ const paginationActionCreators = initActionCreators({
     history: state.history.list,
     totalPages: state.history.totalPages,
     loadingPage: state.history.loadingPage,
-    user: state.auth.user
   }),
-  {...historyActions, ...paginationActionCreators})
+  {getPage, ...paginationActionCreators})
 export default class Home extends Component {
   static propTypes = {
     history: PropTypes.array,
     totalPages: PropTypes.number,
-    user: PropTypes.object,
     loadingPage: PropTypes.bool,
-    toggleJson: PropTypes.func,
-    loadTransfers: PropTypes.func,
 
     getPage: PropTypes.func
   }
@@ -49,7 +45,7 @@ export default class Home extends Component {
   }
 
   render() {
-    const {history, totalPages, user, toggleJson, loadTransfers, loadingPage} = this.props
+    const {history, totalPages, loadingPage} = this.props
 
     return (
       <div className={cx('container')}>
@@ -66,8 +62,7 @@ export default class Home extends Component {
             {history && history.map(item => {
               return (
                 <li key={item.time_slot + item.source_identifier + item.destination_identifier + item.message}>
-                  <HistoryItem item={item} user={user} toggleJson={toggleJson}
-                               loadTransfers={loadTransfers} />
+                  <HistoryItem item={item} />
                 </li>
               )
             })}

@@ -1,12 +1,15 @@
 import React, {Component, PropTypes} from 'react'
 import {reduxForm} from 'redux-form'
-import sendValidation from './SendValidation'
+import { validate } from './SendValidation'
 import * as sendActions from 'redux/actions/send'
 
 import { successable } from 'decorators'
 import { resetFormOnSuccess } from 'decorators'
 
 import Alert from 'react-bootstrap/lib/Alert'
+
+import DestinationBox from './DestinationBox'
+import AmountsBox from './AmountsBox'
 
 import classNames from 'classnames/bind'
 import styles from './SendForm.scss'
@@ -17,12 +20,16 @@ import Input from 'components/Input/Input'
 @reduxForm({
   form: 'send',
   fields: ['destination', 'sourceAmount', 'destinationAmount', 'message', 'repeats', 'interval'],
-  validate: sendValidation
+  validate,
+  asyncBlurFields: ['destination'],
 }, state => ({
   user: state.auth.user,
   destinationInfo: state.send.destinationInfo,
+  sourceAmount: state.send.sourceAmount,
+  destinationAmount: state.send.destinationAmount,
   send: state.send,
   quote: state.send.quote,
+  err: state.send.err,
   quoting: state.send.quoting,
   advancedMode: state.auth.advancedMode,
   config: state.auth.config,
@@ -35,10 +42,13 @@ export default class SendForm extends Component {
     user: PropTypes.object,
     destinationChange: PropTypes.func.isRequired,
     destinationInfo: PropTypes.object,
+    amountsChange: PropTypes.func.isRequired,
+    sourceAmount: PropTypes.number,
+    destinationAmount: PropTypes.number,
     transfer: PropTypes.func.isRequired,
-    requestQuote: PropTypes.func.isRequired,
     quote: PropTypes.object,
     quoting: PropTypes.bool,
+    err: PropTypes.object,
     resetData: PropTypes.func,
     data: PropTypes.object,
     advancedMode: PropTypes.bool,
@@ -54,107 +64,19 @@ export default class SendForm extends Component {
     initializeForm: PropTypes.func,
 
     // Successable
-    permSuccess: PropTypes.func,
     tempSuccess: PropTypes.func,
     success: PropTypes.bool,
-    permFail: PropTypes.func,
-    tempFail: PropTypes.func,
-    fail: PropTypes.any,
     reset: PropTypes.func
   }
 
   state = {}
 
-  componentDidMount() {
-    const { data, initializeForm } = this.props
-    // TODO sourceAmount
-    if (data && data.destination && data.destinationAmount) {
-      initializeForm({
-        destination: data.destination,
-        destinationAmount: data.destinationAmount
-      })
-
-      // Request a quote
-      // TODO:UI feedback if quoting fails
-      this.props.requestQuote({
-        destination: data.destination,
-        destinationAmount: data.destinationAmount
-      })
-    }
-  }
-
-  // TODO doesn't handle the initial render
-  componentWillReceiveProps(nextProps) {
-    const thisQuote = this.props.quote
-    const nextQuote = nextProps.quote
-
-    // Quote source or destination has been changed
-    if (thisQuote.sourceAmount !== nextQuote.sourceAmount || thisQuote.destinationAmount !== nextQuote.destinationAmount) {
-      if (!nextProps.fields.sourceAmount.active) {
-        this.props.fields.sourceAmount.onChange(nextQuote.sourceAmount)
-      }
-
-      if (!nextProps.fields.destinationAmount.active) {
-        this.props.fields.destinationAmount.onChange(nextQuote.destinationAmount)
-      }
-    }
-  }
-
-  // TODO introduce a latency
-  handleDestinationChange = (target) => {
-    // TODO check for webfinger email too
-    if (target.value === this.props.user.username) {
-      return this.props.permFail({id: 'SendToSelfError'})
-    }
-
-    this.props.destinationChange(target.value)
-      .then(this.props.reset)
-      .catch(this.props.permFail)
-  }
-
-  handleSourceAmountChange = (target) => {
-    // It can only do a quote request when the destination is specified
-    if (!this.props.values.destination) return
-
-    // Clear the destination amount field
-    if (this.props.values.destinationAmount) {
-      this.props.fields.destinationAmount.onChange()
-    }
-
-    if (!this.props.fields.sourceAmount.valid) return
-
-    this.props.requestQuote({
-      destination: this.props.values.destination,
-      sourceAmount: target.value
-    }).catch(this.props.permFail)
-
-    this.lastQuotingField = 'source'
-  }
-
-  handleDestinationAmountChange = (target) => {
-    // It can only do a quote request when the destination is specified
-    if (!this.props.values.destination) return
-
-    // Clear the source amount field
-    if (this.props.values.sourceAmount) {
-      this.props.fields.sourceAmount.onChange()
-    }
-
-    if (!this.props.fields.destinationAmount.valid) return
-
-    this.props.requestQuote({
-      destination: this.props.values.destination,
-      destinationAmount: target.value
-    })
-
-    this.lastQuotingField = 'destination'
-  }
-
-  transfer = (data) => {
+  transfer = data => {
     return this.props.transfer(data)
-      .catch((err) => {
-        this.props.permFail(err)
+      .catch(err => {
         clearInterval(this.interval)
+
+        throw err
       })
   }
 
@@ -215,17 +137,12 @@ export default class SendForm extends Component {
   render() {
     if (!this.props.user) return null
 
-    const { pristine, invalid, handleSubmit, submitting, success, destinationInfo,
-      advancedMode, quoting, fail, data, config, fields: { destination, sourceAmount,
-      destinationAmount, message, repeats, interval } } = this.props
+    const { pristine, invalid, handleSubmit, submitting, success,
+      advancedMode, quoting, data, fields: { destination, sourceAmount,
+      destinationAmount, message, repeats, interval }, err } = this.props
     const { showAdvanced } = this.state
 
-    const isSendingAmountFieldDisabled = !destination.value
-      || fail.id === 'NotFoundError' || fail.id === 'SendToSelfError'
-      || (quoting && this.lastQuotingField === 'destination')
-    const isReceivingAmountFieldDisabled = !destination.value
-      || fail.id === 'NotFoundError' || fail.id === 'SendToSelfError'
-      || (quoting && this.lastQuotingField === 'source')
+    console.log('SendForm:145', err)
 
     // TODO initial render should show a currency
     return (
@@ -236,67 +153,24 @@ export default class SendForm extends Component {
             You've just sent some money!
           </Alert>}
 
-          {fail && fail.id &&
+          {err && err.id &&
           <Alert bsStyle="danger">
             {(() => {
-              switch (fail.id) {
+              switch (err.id) {
                 case 'LedgerInsufficientFundsError': return 'You have insufficient funds to make the payment'
                 case 'NotFoundError': return 'Account not found'
                 case 'NoQuoteError': return "Couldn't find a quote for the specified recipient or amount"
-                case 'SendToSelfError': return "There's no point in sending money to yourself"
                 default: return 'Something went wrong'
               }
             })()}
           </Alert>}
 
           <form onSubmit={handleSubmit(this.handleSubmit)}>
-            <div className="form-group">
-              <Input object={destination} label="Recipient" size="lg" focus onChange={this.handleDestinationChange} debounce />
-            </div>
-            {destinationInfo.currencyCode &&
-            <div className={cx('destinationPreview')}>
-              <img src={destinationInfo.imageUrl || require('../../components/HistoryItem/placeholder.png')} />
-              <div className={cx('info')}>
-                <div className={cx('name')}>{destinationInfo.name || destination.value}</div>
-                <div className={cx('currency')}>Accepts {destinationInfo.currencyCode}({destinationInfo.currencySymbol})</div>
-              </div>
-            </div>}
+            <DestinationBox destinationField={destination} />
             <div>
               <Input object={message} label="Message" size="lg" />
             </div>
-
-            <div className="row">
-              <div className="col-sm-6 form-group">
-                <label>You Send</label>
-                <div className={cx('input-group',
-                  {disabled: isSendingAmountFieldDisabled},
-                  {focused: sourceAmount.active})}>
-                  <span className="input-group-addon">
-                    {config.currencySymbol}
-                  </span>
-                  <Input object={sourceAmount} size="lg"
-                         disabled={isSendingAmountFieldDisabled} noErrors
-                         onChange={this.handleSourceAmountChange} debounce />
-                </div>
-
-                {sourceAmount.dirty && sourceAmount.error && <div className="text-danger">{sourceAmount.error}</div>}
-              </div>
-              <div className="col-sm-6 form-group">
-                <label>They Receive</label>
-                <div className={cx('input-group',
-                  {disabled: isReceivingAmountFieldDisabled},
-                  {focused: destinationAmount.active})}>
-                  <span className="input-group-addon">
-                    {(destinationInfo && destinationInfo.currencySymbol) || config.currencySymbol}
-                  </span>
-                  <Input object={destinationAmount} size="lg"
-                         disabled={isReceivingAmountFieldDisabled} noErrors
-                         onChange={this.handleDestinationAmountChange} debounce />
-                </div>
-
-                {destinationAmount.dirty && destinationAmount.error && <div className="text-danger">{destinationAmount.error}</div>}
-              </div>
-            </div>
+            <AmountsBox sourceAmountField={sourceAmount} destinationAmountField={destinationAmount} />
 
             {showAdvanced && advancedMode &&
             <div className={cx('advanced')}>
@@ -318,7 +192,7 @@ export default class SendForm extends Component {
             <div className="row">
               <div className="col-sm-5">
                 <button type="submit" className="btn btn-complete btn-block"
-                  disabled={(!data && pristine) || invalid || submitting || quoting || fail.id === 'NotFoundError' || fail.id === 'SendToSelfError'}>
+                  disabled={(!data && pristine) || invalid || submitting || quoting || err.id === 'NotFoundError'}>
                   {submitting ? 'Sending...' : 'Send'}
                 </button>
               </div>

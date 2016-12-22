@@ -31,7 +31,12 @@
   line-height: 22px;
 
   .counterparty {
-    font-weight: bold;
+    border-bottom: 1px dotted lighten($text-color, 40%);
+    @include singleLinkColor($text-color);
+
+    &:hover {
+      color: darken($text-color, 20%);
+    }
   }
 }
 .counterpartyIdentifier {

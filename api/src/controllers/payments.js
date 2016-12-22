@@ -15,6 +15,8 @@ const Utils = require('../lib/utils')
 const UserFactory = require('../models/user')
 const PaymentFactory = require('../models/payment')
 const InsufficientFundsError = require('../errors/ledger-insufficient-funds-error')
+const InvalidBodyError = require('../errors/invalid-body-error')
+const ServerError = require('../errors/server-error')
 const NoQuote = require('../errors/no-quote-error')
 
 PaymentsControllerFactory.constitute = [Auth, PaymentFactory, Log, Ledger, Config, Utils, SPSP, Socket, UserFactory, Pay]
@@ -154,22 +156,28 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
 
     // TODO don't allow payments to self
     static * putResource() {
-      const _this = this
+      const id = this.params.id && this.params.id.toLowerCase()
+      const payment = this.body
 
-      let id = _this.params.id
-      request.validateUriParameter('id', id, 'Uuid')
-      id = id.toLowerCase()
-      let payment = this.body
+      try {
+        request.validateUriParameter('id', id, 'Uuid')
+        request.validateBody(this, 'Payment')
+      } catch (e) {
+        // TODO more info on what exactly is wrong
+        throw new InvalidBodyError()
+      }
 
-      payment.id = id
-
-      yield pay.pay({
-        source: this.req.user.getDataExternal(),
-        destination: payment.destination,
-        sourceAmount: payment.sourceAmount,
-        destinationAmount: payment.destinationAmount,
-        message: payment.message
-      })
+      try {
+        yield pay.pay({
+          source: this.req.user.getDataExternal(),
+          destination: payment.destination,
+          sourceAmount: payment.sourceAmount,
+          destinationAmount: payment.destinationAmount,
+          message: payment.message
+        })
+      } catch (e) {
+        throw new ServerError()
+      }
 
       // TODO should be something more meaningful
       this.status = 200
@@ -258,6 +266,8 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
       const image_url = this.body.sender_image_url
       const memo = this.body.memo
       const destinationAmount = this.body.amount
+
+      if (!destinationAmount) throw new InvalidBodyError('destinationAmount is missing')
 
       // Get the user from the db. We need the id in the payment
       // TODO cache

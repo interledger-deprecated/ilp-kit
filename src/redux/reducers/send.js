@@ -2,14 +2,21 @@ import * as types from '../actionTypes'
 
 const initialState = {
   quote: {},
+  err: {},
   quoting: false,
-  destinationInfo: {}
+  destinationInfo: {},
+  sourceAmount: null,
+  destinationAmount: null
 }
 
 export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
+    case types.DESTINATION_CHANGE:
+      return {
+        ...state,
+        err: {}
+      }
     case types.DESTINATION_CHANGE_SUCCESS:
-      // TODO handle the affect this has on source/destination amounts and quoting
       return {
         ...state,
         destinationInfo: action.result
@@ -17,7 +24,14 @@ export default function reducer(state = initialState, action = {}) {
     case types.DESTINATION_CHANGE_FAIL:
       return {
         ...state,
-        destinationInfo: {}
+        destinationInfo: {},
+        err: action.error
+      }
+    case types.AMOUNTS_CHANGE:
+      return {
+        ...state,
+        sourceAmount: action.sourceAmount,
+        destinationAmount: action.destinationAmount
       }
     case types.REQUEST_QUOTE:
       return {
@@ -26,34 +40,31 @@ export default function reducer(state = initialState, action = {}) {
         quoting: true
       }
     case types.REQUEST_QUOTE_SUCCESS:
-      if (action.result && action.result.debits) {
-        return {
-          ...state,
-          quote: action.result,
-          quoting: false
-        }
-      }
-
       return {
         ...state,
         quote: action.result,
-        quoting: false
+        quoting: false,
+        sourceAmount: action.result.sourceAmount,
+        destinationAmount: action.result.destinationAmount,
+        err: {}
       }
     case types.REQUEST_QUOTE_FAIL:
       return {
         ...state,
         quote: {},
-        quoting: false
-      }
-    case types.SEND_SUCCESS:
-      return {
-        ...state
+        quoting: false,
+        err: action.error
       }
     case types.SEND_RESET:
       return {
         ...state,
         quote: {},
         destinationInfo: {}
+      }
+    case types.SEND_FAIL:
+      return {
+        ...state,
+        err: action.error
       }
     case types.DESTROY:
       return initialState

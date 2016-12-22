@@ -1,6 +1,14 @@
 import {createValidator, required, integer, number, minValue, lessThanBalance} from 'utils/validation'
 
-const sendValidation = (values, props) => {
+export const validate = (values, props) => {
+  // Destination
+  const notSelf = (destination) => {
+    if (destination === props.user.identifier || destination === props.user.username) {
+      return 'So you want to send money to yourself?'
+    }
+  }
+
+  // Source amount minimum
   const amountScale = props.config.amountScale
   let minAmount
 
@@ -14,18 +22,17 @@ const sendValidation = (values, props) => {
 
   const sourceAmountValidators = [required, number, minValue(minAmount)]
 
+  // Source amount maximum
   // TODO what if it's not -infinity but some other number
   if (props.user.minimum_allowed_balance !== '-infinity') {
     sourceAmountValidators.push(lessThanBalance(props.user.balance))
   }
 
   return createValidator({
-    destination: [required],
-    // TODO number validation
+    destination: [required, notSelf],
     sourceAmount: sourceAmountValidators,
     destinationAmount: [required, number],
     repeats: [integer],
     interval: [integer, minValue(200)]
   })(values, props)
 }
-export default sendValidation

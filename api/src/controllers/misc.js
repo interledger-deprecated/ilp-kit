@@ -47,6 +47,8 @@ function MiscControllerFactory (Auth, log, config, ledger, utils) {
      *    }
      */
     static * destination() {
+      if (!this.query.destination) return this.status = 400
+
       this.body = yield utils.parseDestination({
         destination: this.query.destination
       })

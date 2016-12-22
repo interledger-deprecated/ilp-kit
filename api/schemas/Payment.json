@@ -4,22 +4,22 @@
   "description": "Payment",
   "type": "object",
   "properties": {
-    "id": {
-      "description": "Resource identifier",
-      "$ref": "Iri.json"
-    },
-    "destination_user": {
-      "description": "Destination user",
+    "destination": {
+      "description": "Destination",
       "type": "string"
     },
-    "source_amount": {
+    "sourceAmount": {
       "description": "Source amount",
-      "type": "string"
+      "type": "number"
     },
-    "destination_amount": {
+    "destinationAmount": {
       "description": "Destination amount",
-      "type": "string"
+      "type": "number"
     }
   },
-  "required": []
+  "required": ["destination"],
+  "anyOf": [
+    {"required": ["sourceAmount"]},
+    {"required": ["destinationAmount"]}
+  ]
 }

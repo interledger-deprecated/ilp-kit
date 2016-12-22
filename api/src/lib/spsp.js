@@ -109,8 +109,8 @@ module.exports = class SPSP {
         params.sourceAmount))
 
     return {
-      sourceAmount,
-      destinationAmount
+      sourceAmount: parseFloat(sourceAmount),
+      destinationAmount: parseFloat(destinationAmount)
     }
   }
 
