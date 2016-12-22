@@ -231,7 +231,8 @@ module.exports = class SPSP {
 
   * createRequest(destinationUser, destinationAmount) {
     const precisionAndScale = yield this.ledger.getInfo()
-    const bnAmount = new BigNumber(destinationAmount)
+    // TODO Turn all of the numbers to bignumber
+    const bnAmount = new BigNumber(destinationAmount + '')
     const requiredPrecisionRounding = bnAmount.precision() - precisionAndScale.precision
     const requiredScaleRounding = bnAmount.decimalPlaces() - precisionAndScale.scale
 

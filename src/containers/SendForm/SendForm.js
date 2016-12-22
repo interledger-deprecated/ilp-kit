@@ -142,8 +142,6 @@ export default class SendForm extends Component {
       destinationAmount, message, repeats, interval }, err } = this.props
     const { showAdvanced } = this.state
 
-    console.log('SendForm:145', err)
-
     // TODO initial render should show a currency
     return (
       <div className="row">
