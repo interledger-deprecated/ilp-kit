@@ -176,6 +176,8 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
           message: payment.message
         })
       } catch (e) {
+        console.error(e)
+
         throw new ServerError()
       }
 
