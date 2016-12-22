@@ -20,10 +20,11 @@ const SPSP = require('./spsp')
 const User = require('../models/user')
 const Socket = require('./socket')
 const Pay = require('./pay')
+const Connector = require('./connector')
 
 module.exports = class App {
-  static constitute() { return [ Config, Auth, Router, Validator, Ledger, SPSP, DB, Log, Socket, User, Pay ] }
-  constructor(config, auth, router, validator, ledger, spsp, db, log, socket, user, pay) {
+  static constitute() { return [ Config, Auth, Router, Validator, Ledger, SPSP, DB, Log, Socket, User, Pay, Connector ] }
+  constructor(config, auth, router, validator, ledger, spsp, db, log, socket, user, pay, connector) {
     this.config = config.data
     this.auth = auth
     this.router = router
@@ -35,6 +36,7 @@ module.exports = class App {
     this.db = db
     this.pay = pay
     this.log = log('app')
+    this.connector = connector
 
     validator.loadSchemasFromDirectory(__dirname + '/../../schemas')
 
@@ -93,6 +95,7 @@ module.exports = class App {
     const adminAccount = yield this.user.setupAdminAccount()
     const connectorAccount = yield this.user.setupConnectorAccount()
 
+    this.connector.start()
     this.listen()
 
     // Wait for the server to start before funding the connector

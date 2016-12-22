@@ -20,11 +20,10 @@
     "finance"
   ],
   "scripts": {
-    "start": "DEBUG_COLORS=1 concurrently -p \"[{name}]\" -n \"ledger,connector,api,wallet\" -c \"red,magenta,blue,cyan\" \"npm run start-prod-ledger\" \"npm run start-prod-connector\" \"npm run start-prod-api\" \"npm run start-prod\"",
+    "start": "DEBUG_COLORS=1 concurrently -p \"[{name}]\" -n \"ledger,api,wallet\" -c \"red,blue,cyan\" \"npm run start-prod-ledger\" \"npm run start-prod-api\" \"npm run start-prod\"",
     "start-prod": "better-npm-run start-prod",
     "start-prod-api": "better-npm-run start-prod-api",
     "start-prod-ledger": "better-npm-run start-prod-ledger",
-    "start-prod-connector": "better-npm-run start-prod-connector",
     "build": "touch src/theme/variables-custom.scss ; better-npm-run build",
     "build-dlls": "touch src/theme/variables-custom.scss ; node ./bin/dlls.js",
     "postinstall": "npm rebuild node-sass",
@@ -32,9 +31,8 @@
     "start-dev": "better-npm-run start-dev",
     "start-dev-api": "better-npm-run start-dev-api",
     "start-dev-ledger": "better-npm-run start-dev-ledger",
-    "start-dev-connector": "better-npm-run start-dev-connector",
     "watch-client": "better-npm-run watch-client",
-    "dev": "DEBUG_COLORS=1 concurrently -p \"[{name}]\" -n \"watcher,ledger,connector,api,wallet\" -c \"yellow,red,magenta,blue,cyan\" \"npm run watch-client\" \"npm run start-dev-ledger\" \"npm run start-dev-connector\" \"npm run start-dev-api\" \"npm run start-dev\"",
+    "dev": "DEBUG_COLORS=1 concurrently -p \"[{name}]\" -n \"watcher,ledger,api,wallet\" -c \"yellow,red,blue,cyan\" \"npm run watch-client\" \"npm run start-dev-ledger\" \"npm run start-dev-api\" \"npm run start-dev\"",
     "test": "touch src/theme/variables-custom.scss ; karma start",
     "test-api": "better-npm-run test-api",
     "apidoc": "apidoc -i api/src/controllers/ -o apidoc-out",
@@ -65,12 +63,6 @@
         "NODE_ENV": "production"
       }
     },
-    "start-prod-connector": {
-      "command": "node ./bin/connector.js",
-      "env": {
-        "NODE_ENV": "production"
-      }
-    },
     "start-dev": {
       "command": "node ./bin/server.js",
       "env": {
@@ -89,13 +81,6 @@
       "command": "node ./bin/ledger.js | bunyan --color",
       "env": {
         "NODE_PATH": "./node_modules/five-bells-ledger",
-        "NODE_ENV": "development"
-      }
-    },
-    "start-dev-connector": {
-      "command": "node ./bin/connector.js | bunyan --color",
-      "env": {
-        "NODE_PATH": "./node_modules/ilp-connector",
         "NODE_ENV": "development"
       }
     },
