@@ -143,10 +143,12 @@ function WebfingerControllerFactory(log, config, ledger) {
         'properties': {
           'https://interledger.org/rel/publicKey': config.data.getIn(['connector', 'public_key'])
         },
-        'links': {
-          'rel': 'https://interledger.org/rel/ledgerUri',
-          'href': config.data.getIn(['ledger', 'public_uri'])
-        }
+        'links': [
+          {
+            'rel': 'https://interledger.org/rel/ledgerUri',
+            'href': config.data.getIn(['ledger', 'public_uri'])
+          }
+        ]
       }
     }
   }
