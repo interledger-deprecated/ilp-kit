@@ -4,12 +4,13 @@ module.exports = PeersControllerFactory
 
 const Auth = require('../lib/auth')
 const Config = require('../lib/config')
+const Connector = require('../lib/connector')
 const PeerFactory = require('../models/peer')
 
 const NotFoundError = require('../errors/not-found-error')
 
-PeersControllerFactory.constitute = [Auth, Config, PeerFactory]
-function PeersControllerFactory(auth, config, Peer) {
+PeersControllerFactory.constitute = [Auth, Config, PeerFactory, Connector]
+function PeersControllerFactory(auth, config, Peer, connector) {
   return class PeersController {
     static init(router) {
       router.get('/peers', auth.checkAuth, this.checkAdmin, this.getAll)
@@ -53,7 +54,11 @@ function PeersControllerFactory(auth, config, Peer) {
       peer.currency = this.body.currency
       peer.broker = this.body.broker
 
-      this.body = yield peer.save()
+      const dbPeer = yield peer.save()
+
+      yield connector.addPeer(dbPeer)
+
+      this.body = dbPeer
     }
 
     static * putResource() {

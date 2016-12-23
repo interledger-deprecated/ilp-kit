@@ -62,7 +62,7 @@ module.exports = class Utils {
       tls_only: true,
       uri_fallback: false,
       request_timeout: 5000
-    });
+    })
 
     let response
 
@@ -149,5 +149,40 @@ module.exports = class Utils {
 
   getWebfingerAddress(username) {
     return username + '@' + this.localHost
+  }
+
+  * hostLookup(host) {
+    // TODO:REFACTOR code dup with getWebfingerAccount
+    const webfinger = new WebFinger({
+      webfist_fallback: false,
+      tls_only: true,
+      uri_fallback: false,
+      request_timeout: 5000
+    })
+
+    let response
+
+    try {
+      response = yield new Promise(function(resolve, reject) {
+        webfinger.lookup(host,
+          function(err, res) {
+            if (err) {
+              return reject(err)
+            }
+
+            resolve(res.object)
+          }
+        )
+      })
+    } catch(e) {
+      console.error(e)
+      throw new NotFoundError('Unknown host')
+    }
+
+    if (!response) return
+
+    return {
+      publicKey: response.properties['https://interledger.org/rel/publicKey']
+    }
   }
 }
