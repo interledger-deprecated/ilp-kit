@@ -58,6 +58,12 @@ LoadModule ssl_module libexec/apache2/mod_ssl.so
 LoadModule rewrite_module libexec/apache2/mod_rewrite.so
 ```
 
+Make sure Apache is listening on port 80 and 443:
+```
+Listen 80
+Listen 443
+```
+
 > NOTE: Current webfinger implementation will not work if the public port is not 443 or 80.
 
 > NOTE: At the moment you need to have a 443 virtual host in addition to 80 virtual host if you're use 80 as a public port. 443 virtual host is used for the webfinger lookups. This is a [reported issue](https://github.com/e14n/webfinger/issues/27) in the webfinger lib used by the ilp-kit.
