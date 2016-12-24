@@ -6,6 +6,7 @@ const connector = require('ilp-connector')
 const crypto = require('crypto')
 const sodium = require('sodium-prebuilt').api
 const base64url = require('base64url')
+const Log = require('./log')
 const Config = require('./config')
 const Utils = require('./utils')
 const PeerFactory = require('../models/peer')
@@ -21,43 +22,47 @@ const currencies = {
 }
 
 module.exports = class Conncetor {
-  static constitute() { return [ Config, PeerFactory, Utils ] }
-  constructor(config, Peer, utils) {
+  static constitute() { return [ Config, PeerFactory, Utils, Log ] }
+  constructor(config, Peer, utils, log) {
     this.config = config.data
     this.utils = utils
     this.Peer = Peer
+    this.log = log('connector')
   }
 
-  start() {
+  * start() {
     const self = this
     const port = process.env.CLIENT_PORT
     const ledgerPublicPath = this.config.getIn(['ledger', 'public_uri'])
 
-    const interval = setInterval(() => {
-      // Wait for the ledger and the proxy to start
-      request.get('0.0.0.0:' + port + '/' + ledgerPublicPath)
-        .end(co.wrap(function *(err) {
+    self.log.info('Waiting for the ledger...')
+
+    yield new Promise((resolve) => {
+      const interval = setInterval(() => {
+        request.get('0.0.0.0:' + port + '/' + ledgerPublicPath).end(err => {
           if (!err) {
             clearInterval(interval)
-
-            yield self.listen()
+            resolve()
           }
-        }))
-    }, 2000)
+        })
+      }, 2000)
+    })
+
+    self.log.info('Starting the connector...')
+
+    yield self.listen()
   }
 
   * listen() {
-    const self = this
-
     // Start the connector
     connector.listen()
 
     // Add the peers
     const peers = yield this.Peer.findAll()
 
-    peers.forEach(co.wrap(function *(peer) {
-      yield self.addPeer(peer)
-    }))
+    for (const peer of peers) {
+      yield this.addPeer(peer)
+    }
   }
 
   * addPeer(peer) {
@@ -81,7 +86,7 @@ module.exports = class Conncetor {
 
     const ledgerName = 'peer.' + token.substring(0, 5) + '.' + peer.currency + '.'
 
-    connector.addPlugin(ledgerName, {
+    yield connector.addPlugin(ledgerName, {
       currency: peer.currency,
       plugin: 'ilp-plugin-virtual',
       store: true,
@@ -91,7 +96,7 @@ module.exports = class Conncetor {
         peerPublicKey: publicKey,
         prefix: ledgerName,
         broker: peer.broker,
-        maxBalance: peer.limit,
+        maxBalance: '' + peer.limit,
         currency: peer.currency,
         info: {
           currencyCode: peer.currency,

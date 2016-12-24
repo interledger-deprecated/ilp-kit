@@ -95,11 +95,12 @@ module.exports = class App {
     const adminAccount = yield this.user.setupAdminAccount()
     const connectorAccount = yield this.user.setupConnectorAccount()
 
-    this.connector.start()
     this.listen()
 
+    yield this.connector.start()
+
     // Wait for the server to start before funding the connector
-    yield wait(5000)
+    // yield wait(5000)
 
     // Initial connector funding
     if (connectorAccount && connectorAccount.new) {
