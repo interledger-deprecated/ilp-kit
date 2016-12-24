@@ -22,7 +22,7 @@ function PeersControllerFactory(auth, config, Peer, connector) {
     // TODO move to auth
     static * checkAdmin(next) {
       if (this.req.user.username === config.data.getIn(['ledger', 'admin', 'user'])) {
-        return yield next()
+        return yield next
       }
 
       // TODO throw exception
@@ -71,6 +71,8 @@ function PeersControllerFactory(auth, config, Peer, connector) {
       const peer = yield Peer.findOne({ where: { id } })
 
       if (!peer) throw new NotFoundError("Peer doesn't exist")
+
+      yield connector.removePeer(peer)
 
       yield peer.destroy()
 

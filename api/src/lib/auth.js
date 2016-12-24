@@ -131,7 +131,7 @@ module.exports = class Auth {
   * checkAuth(next) {
     // Local Strategy
     if (this.isAuthenticated()) {
-      return yield next()
+      return yield next
     }
 
     // Basic and OAuth strategies

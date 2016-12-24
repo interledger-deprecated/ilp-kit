@@ -28,6 +28,7 @@ module.exports = class Conncetor {
     this.utils = utils
     this.Peer = Peer
     this.log = log('connector')
+    this.peerPublicKeys = {}
   }
 
   * start() {
@@ -65,6 +66,20 @@ module.exports = class Conncetor {
     }
   }
 
+  getToken(publicKey) {
+    const secret = this.config.get('secret')
+
+    const shared = sodium.crypto_scalarmult(
+      sodium.crypto_hash_sha256(base64url.toBuffer(secret)),
+      base64url.toBuffer(publicKey)
+    )
+    return base64url(
+      crypto.createHmac('sha256', shared)
+        .update('token', 'ascii')
+        .digest()
+    )
+  }
+
   * addPeer(peer) {
     const self = this
     const secret = this.config.get('secret')
@@ -74,16 +89,7 @@ module.exports = class Conncetor {
 
     const publicKey = hostInfo.publicKey
 
-    const shared = sodium.crypto_scalarmult(
-      sodium.crypto_hash_sha256(base64url.toBuffer(secret)),
-      base64url.toBuffer(publicKey)
-    )
-    const token = base64url(
-      crypto.createHmac('sha256', shared)
-        .update('token', 'ascii')
-        .digest()
-    )
-
+    const token = this.getToken(hostInfo.publicKey)
     const ledgerName = 'peer.' + token.substring(0, 5) + '.' + peer.currency + '.'
 
     yield connector.addPlugin(ledgerName, {
@@ -111,5 +117,16 @@ module.exports = class Conncetor {
         }
       }
     })
+
+    this.peerPublicKeys[peer.id] = publicKey
+  }
+
+  * removePeer(peer) {
+    const token = this.getToken(this.peerPublicKeys[peer.id])
+    const ledgerName = 'peer.' + token.substring(0, 5) + '.' + peer.currency + '.'
+
+    yield connector.removePlugin(ledgerName)
+
+    delete this.peerPublicKeys[peer.id]
   }
 }
