@@ -50,3 +50,21 @@ a {
 div[tabindex="-1"]:focus {
   outline: 0;
 }
+
+// Dropzone
+.dropzone .dz-preview {
+  margin: 5px;
+}
+.dropzone .dz-preview .dz-image {
+  width: 80px;
+  height: 80px;
+
+  img {
+    width: 100%;
+  }
+}
+.dropzone .dz-preview .dz-progress {
+  top: 40%;
+  width: 50px;
+  margin-left: -25px;
+}

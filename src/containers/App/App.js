@@ -146,7 +146,7 @@ export default class App extends Component {
       <div className={cx('container')}>
         <Helmet
           defaultTitle={appConfig.title}
-          titleTemplate={'%s - ' + appConfig.title}
+          titleTemplate={appConfig.title && '%s - ' + appConfig.title}
           meta={[
             {'name': 'viewport', 'content': 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'},
 

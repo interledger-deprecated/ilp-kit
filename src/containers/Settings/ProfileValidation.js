@@ -1,7 +1,9 @@
 import {createValidator, required, minLength} from 'utils/validation';
 
 const PasswordValidation = createValidator({
-  password: [required, minLength(5)],
-  verifyPassword: [required, minLength(5)]
+  email: [required],
+  password: [required],
+  newPassword: [minLength(6)],
+  verifyNewPassword: [minLength(6)]
 });
 export default PasswordValidation;

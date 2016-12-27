@@ -302,22 +302,28 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
       const data = this.body
       const user = yield User.findOne({ where: {id: this.req.user.id} })
 
+      // Is the current password right?
+      yield ledger.getAccount({
+        username: user.username,
+        password: data.password
+      })
+
       // TODO:SECURITY sanity checking
 
       // Password change
-      if (data.password) {
-        if (data.password !== data.verifyPassword) {
+      if (data.newPassword) {
+        if (data.newPassword !== data.verifyNewPassword) {
           throw new PasswordsDontMatchError('Passwords don\'t match')
         }
 
         // Update the ledger user
         yield ledger.updateAccount({
           username: user.username,
-          password: user.password,
-          newPassword: data.password
+          password: data.password,
+          newPassword: data.newPassword
         })
 
-        user.password = data.password
+        user.password = data.newPassword
       }
 
       if (data.email) {
@@ -335,7 +341,7 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
       try {
         yield user.save()
 
-        this.req.logIn(user, err => {})
+        this.req.logIn(yield user.appendLedgerAccount(), err => {})
         this.body = user.getDataExternal()
       } catch(e) {
         // TODO throw an exception

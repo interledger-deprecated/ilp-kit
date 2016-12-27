@@ -10,13 +10,12 @@ const Log = require('../lib/log')
 const Ledger = require('../lib/ledger')
 const Mailer = require('../lib/mailer')
 const UserFactory = require('../models/user')
-const UsersControllerFactory = require('./users')
 
 const NotFoundError = require('../errors/not-found-error')
 const PasswordsDontMatchError = require('../errors/passwords-dont-match-error')
 
-AuthControllerFactory.constitute = [UserFactory, Log, Ledger, UsersControllerFactory, Mailer]
-function AuthControllerFactory(User, log, ledger, Users, mailer) {
+AuthControllerFactory.constitute = [UserFactory, Log, Ledger, Mailer]
+function AuthControllerFactory(User, log, ledger, mailer) {
   log = log('auth')
 
   return class AuthController {

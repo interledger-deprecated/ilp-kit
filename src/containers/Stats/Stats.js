@@ -26,9 +26,9 @@ export default class Home extends Component {
     this.props.loadStats()
   }
 
-  renderStat = (stat) => {
+  renderStat = (stat, key) => {
     return (
-      <div className={cx('stat')}>
+      <div className={cx('stat')} key={key}>
         <span className={cx('sourceName')}>{stat.source_name}</span>
         <span className={cx('destinationName')}>{stat.destination_name}</span>
         <span className={cx('sourceAmount')}>{stat.source_amount}</span>
@@ -52,8 +52,8 @@ export default class Home extends Component {
           <span className={cx('transfersCount')}>Total Payments</span>
           <span className={cx('recentDate')}>Recent Payment</span>
         </div>
-        {stats.map((stat) => {
-          return this.renderStat(stat)
+        {stats.map((stat, index) => {
+          return this.renderStat(stat, index)
         })}
       </div>
     )

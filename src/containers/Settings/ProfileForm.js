@@ -5,6 +5,8 @@ import Alert from 'react-bootstrap/lib/Alert'
 
 import * as actions from 'redux/actions/auth'
 
+import validate from './ProfileValidation'
+
 import { successable } from 'decorators'
 import { resetFormOnSuccess } from 'decorators'
 
@@ -16,8 +18,8 @@ const cx = classNames.bind(styles)
 
 @reduxForm({
   form: 'profileSettings',
-  fields: ['email', 'name']
-  // TODO local validation
+  fields: ['email', 'name', 'password', 'newPassword', 'verifyNewPassword'],
+  validate
 }, state => ({
   user: state.auth.user,
   fail: state.auth.fail,
@@ -47,7 +49,8 @@ export default class ProfileForm extends Component {
 
     // Auth
     user: PropTypes.object,
-    save: PropTypes.func
+    save: PropTypes.func,
+    updatePic: PropTypes.func
   }
 
   save = (data) => {
@@ -70,10 +73,6 @@ export default class ProfileForm extends Component {
     maxFiles: 1
   }
 
-  dropzoneCoreConfig = {
-    dictDefaultMessage: 'Drop an image or click to upload a picture'
-  }
-
   dropzoneEventHandlers = {
     init: (dropzone) => {
       this.dropzone = dropzone
@@ -82,8 +81,11 @@ export default class ProfileForm extends Component {
       // TODO:UX upload progress photo placeholders
     },
     // TODO handle error
-    success: (data, file) => {
-      this.props.updatePic()
+    success: () => {
+      setTimeout(() => {
+        this.props.updatePic()
+      }, 1000)
+
       tracker.track('Profile picture upload')
     },
     complete: (file) => {
@@ -96,7 +98,7 @@ export default class ProfileForm extends Component {
   }
 
   render() {
-    const { fields: { email, name }, pristine, invalid,
+    const { fields: { email, name, password, newPassword, verifyNewPassword }, pristine, invalid,
       handleSubmit, submitting, success, error, submitFailed, user } = this.props
 
     if (!user) return null
@@ -117,28 +119,33 @@ export default class ProfileForm extends Component {
             {(() => {
               switch (error.id) {
                 case 'EmailTakenError': return 'Email is already taken'
+                case 'NotFoundError': return 'Current password is wrong'
                 default: return 'Something went wrong'
               }
             })()}
           </Alert>}
 
-          <div className="row">
-            <div className="col-sm-3">
-              <img src={user.profile_picture || require('../../components/HistoryItem/placeholder.png')} className={cx('profilePic')} />
-            </div>
-            <div className="col-sm-9">
-              <DropzoneComponent
-                config={this.dropzoneConfig}
-                djsConfig={this.dropzoneCoreConfig}
-                eventHandlers={this.dropzoneEventHandlers}
-                className={cx('dropzone')}
-              />
-            </div>
+          <div className={cx('profilePicBox')}>
+            <img src={user.profile_picture || require('../../components/HistoryItem/placeholder.png')} className={cx('profilePic')} />
+            <DropzoneComponent
+              config={this.dropzoneConfig}
+              eventHandlers={this.dropzoneEventHandlers}
+              className={cx('dropzone', 'dropzoneLocal')}>
+              <div className="dz-message">
+                <i className="fa fa-cloud-upload" />
+                Drop an image or click to upload
+              </div>
+            </DropzoneComponent>
           </div>
 
           <form onSubmit={handleSubmit(this.save)}>
             <Input object={email} label="Email" type="email" size="lg" focus />
             <Input object={name} label="Name" type="text" size="lg" />
+            <Input object={password} label="Current Password" type="password" size="lg" />
+
+            <label>Change Password</label>
+            <Input object={newPassword} label="New Password" type="password" size="lg" />
+            <Input object={verifyNewPassword} label="Verify New Password" type="password" size="lg" />
 
             <button type="submit" className="btn btn-primary" disabled={pristine || (invalid && !submitFailed) || submitting}>
               {submitting ? ' Saving...' : ' Save'}
