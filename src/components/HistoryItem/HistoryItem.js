@@ -7,9 +7,10 @@ import TimeAgo from 'react-timeago'
 import { loadTransfers } from 'redux/actions/history'
 import { destinationChange, amountsChange } from 'redux/actions/send'
 
+import Amount from '../Amount/Amount'
+
 import { contextualizePayment } from '../../utils/api'
 import { getAccountName } from '../../utils/account'
-import { amount } from '../../utils/amount'
 
 import classNames from 'classnames/bind'
 import styles from './HistoryItem.scss'
@@ -86,7 +87,7 @@ export default class HistoryItem extends Component {
   handleAmountClick = e => {
     e.preventDefault()
 
-    this.props.amountsChange(this.state.type === 'outgoing' ? amount(this.state.item.source_amount) : amount(this.state.item.destination_amount), null)
+    this.props.amountsChange(this.state.type === 'outgoing' ? this.state.item.source_amount : this.state.item.destination_amount, null)
   }
 
   timeAgoFormatter = (value, unit, suffix) => {
@@ -109,6 +110,7 @@ export default class HistoryItem extends Component {
     const advancedMode = this.props.advancedMode
 
     const profilePic = (type === 'outgoing' ? item.destination_image_url : item.source_image_url) || require('./placeholder.png')
+    const paymentAmount = type === 'outgoing' ? item.source_amount : item.destination_amount
 
     // TODO payments grouping / message
     return (
@@ -151,7 +153,7 @@ export default class HistoryItem extends Component {
           <div className="col-xs-4">
             <div className={cx('amount', type)}>
               {/* TODO Show both source and destination amounts */}
-              {config.currencySymbol}{type === 'outgoing' ? amount(item.source_amount) : amount(item.destination_amount)}
+              <Amount amount={paymentAmount} currencySymbol={config.currencySymbol} />
             </div>
 
             <div className={cx('transfersCount')}>
@@ -194,7 +196,7 @@ export default class HistoryItem extends Component {
                     {moment(transfer.created_at).format('MMM D, YYYY LTS')}
                   </div>
                   <div className={cx('col-xs-4', 'amount')}>
-                    {config.currencySymbol}{type === 'outgoing' ? amount(transfer.source_amount) : amount(transfer.destination_amount)}
+                    <Amount amount={paymentAmount} currencySymbol={config.currencySymbol} />
                   </div>
                 </div>
               )

@@ -2,9 +2,10 @@ import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
 import ReactTooltip from 'react-tooltip'
 import * as authActions from 'redux/actions/auth'
-import { amount } from '../../utils/amount'
 
 import Alert from 'react-bootstrap/lib/Alert'
+
+import Amount from 'components/Amount/Amount'
 
 import SendForm from 'containers/SendForm/SendForm'
 import History from 'containers/History/History'
@@ -134,7 +135,7 @@ export default class Home extends Component {
               <div className={cx('balanceContainer')}>
                 <div className={cx('balanceDescription')}>Your Balance</div>
                 <div className={cx('balance')}>
-                  {amount(user.balance, config.currencySymbol)}
+                  <Amount amount={user.balance} currencySymbol={config.currencySymbol} />
                   {config.reload && <span className={cx('but')}>*</span>}
                 </div>
                 {config.reload &&
