@@ -37,6 +37,24 @@ try {
   }
 }
 
+// make sure versioning matches between file and this kit
+const ILP_KIT_CLI_SUPPORTED_VERSION = '10.1.0'
+
+const supportedVersion = ILP_KIT_CLI_SUPPORTED_VERSION.split('.')
+const version = (envVars.ILP_KIT_CLI_VERSION || '0.0.0').split('.')
+
+for (let i = 0; i < version.length; ++i) {
+  const v = +version[i], sv = +supportedVersion[i]
+  if (v > sv) {
+    break
+  } else if (v < sv) {
+    console.log('`env.list` version (' + envVars.ILP_KIT_CLI_VERSION
+      + ') is older than supported version (' + ILP_KIT_CLI_SUPPORTED_VERSION
+      + '). Back up your env.list and run `npm run configure` to update.')
+    process.exit()
+  }
+}
+
 // backwards compatibility
 if (!envVars.DB_URI) {
   envVars.DB_URI = envVars.API_DB_URI
