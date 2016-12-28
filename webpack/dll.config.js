@@ -155,7 +155,7 @@ module.exports = {
     extensions: ['', '.json', '.js', '.jsx']
   },
   sassLoader: {
-    includePaths: [path.resolve(__dirname, "../src/theme")]
+    includePaths: [path.resolve(__dirname, "../src/theme"), 'node_modules', '../../../']
   },
   plugins: [
     new webpack.DllPlugin({
