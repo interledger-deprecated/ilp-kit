@@ -39,7 +39,7 @@ export default class Home extends Component {
     this.props.getPage(1)
   }
 
-  handlePageClick = (data) => {
+  handlePageClick = data => {
     this.props.getPage(data.selected + 1)
     tracker.track('History paginate')
   }
@@ -75,12 +75,12 @@ export default class Home extends Component {
 
         {history && history.length > 0 &&
         <ReactPaginate
-          pageNum={totalPages || 1}
+          pageCount={totalPages || 1}
           pageRangeDisplayed={5}
           marginPagesDisplayed={1}
           previousLabel="&laquo;"
           nextLabel="&raquo;"
-          clickCallback={this.handlePageClick}
+          onPageChange={this.handlePageClick}
           breakLabel={<span>...</span>}
           containerClassName="pagination"
           activeClassName="active"
