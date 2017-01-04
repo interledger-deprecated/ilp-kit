@@ -90,7 +90,7 @@ module.exports = class Conncetor {
     const publicKey = hostInfo.publicKey
 
     const token = this.getToken(hostInfo.publicKey)
-    const ledgerName = 'peer.' + token.substring(0, 5) + '.' + peer.currency + '.'
+    const ledgerName = 'peer.' + token.substring(0, 5) + '.' + peer.currency.toLowerCase() + '.'
 
     yield connector.addPlugin(ledgerName, {
       currency: peer.currency,
