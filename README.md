@@ -36,6 +36,8 @@ ILP wallet with hosted ledger and connector instances
 
 ## Environment variables
 
+Note: Most of the variables can either be set as environment variable or in a config file. The default config file is `env.list`. Environment variables take precedence over variables set in the config file.
+
 ##### Required
 
 Name | Example | Description |
@@ -53,6 +55,7 @@ Name | Example | Description |
 
 Name | Example | Description |
 ---- | ------- | ----------- |
+`API_CONFIG_FILE` | custom-env.list | Specifies the path from which to load the config file. **Needs to be defined as environment variable**.
 `API_PUBLIC_HTTPS` |  | Whether or not the publicly visible instance of ILP kit is using HTTPS.
 `API_PRIVATE_HOSTNAME` | `localhost` | Private API hostname.
 `API_PUBLIC_PORT` |  | Api public port.
