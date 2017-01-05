@@ -1,15 +1,12 @@
 "use strict"
 
-const co = require('co')
 const request = require('superagent')
 const connector = require('ilp-connector')
-const crypto = require('crypto')
-const sodium = require('sodium-prebuilt').api
-const base64url = require('base64url')
 const Log = require('./log')
 const Config = require('./config')
 const Utils = require('./utils')
 const PeerFactory = require('../models/peer')
+const getToken = require('ilp-plugin-virtual/src/util/token').token
 
 const currencies = {
   'USD': '$',
@@ -66,20 +63,6 @@ module.exports = class Conncetor {
     }
   }
 
-  getToken(publicKey) {
-    const secret = this.config.get('secret')
-
-    const shared = sodium.crypto_scalarmult(
-      sodium.crypto_hash_sha256(base64url.toBuffer(secret)),
-      base64url.toBuffer(publicKey)
-    )
-    return base64url(
-      crypto.createHmac('sha256', shared)
-        .update('token', 'ascii')
-        .digest()
-    )
-  }
-
   * addPeer(peer) {
     const self = this
     const secret = this.config.get('secret')
@@ -89,7 +72,7 @@ module.exports = class Conncetor {
 
     const publicKey = hostInfo.publicKey
 
-    const token = this.getToken(hostInfo.publicKey)
+    const token = getToken(this.config.get('secret'), hostInfo.publicKey)
     const ledgerName = 'peer.' + token.substring(0, 5) + '.' + peer.currency.toLowerCase() + '.'
 
     yield connector.addPlugin(ledgerName, {
@@ -123,7 +106,7 @@ module.exports = class Conncetor {
 
   * removePeer(peer) {
     try {
-      const token = this.getToken(this.peerPublicKeys[peer.id])
+      const token = getToken(this.config.get('secret'), this.peerPublicKeys[peer.id])
       const ledgerName = 'peer.' + token.substring(0, 5) + '.' + peer.currency + '.'
 
       yield connector.removePlugin(ledgerName)
