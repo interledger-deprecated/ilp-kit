@@ -83,7 +83,7 @@ module.exports = {
     extensions: ['', '.json', '.js']
   },
   sassLoader: {
-    includePaths: [path.resolve(__dirname, "../src/theme"), 'node_modules', '../../../']
+    includePaths: [path.resolve(__dirname, "../src/theme"), 'node_modules']
   },
   plugins: [
     new CleanPlugin([assetsPath], { root: projectRootPath }),
