@@ -93,7 +93,7 @@ export default class Home extends Component {
           {!loadingPage && list.length === 0 && <li className={cx('loading')}>No payments to show</li>}
         </ul>
 
-        {history.length > 0 &&
+        {history && history.length > 0 &&
           <div className={cx('pagination')}>
             <ReactPaginate
               pageCount={totalPages || 1}
