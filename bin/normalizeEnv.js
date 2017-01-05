@@ -63,7 +63,7 @@ if (+supportedVersion.split('.')[0] !== +version.split('.')[0]) {
 
 // backwards compatibility
 if (!envVars.DB_URI) {
-  envVars.DB_URI = envVars.API_DB_URI
+  envVars.DB_URI = getVar('API_DB_URI')
 }
 
 // Add API env vars
