@@ -117,9 +117,7 @@ dependencies with the following commands:
 $ cd # start in your home folder
 $ git clone https://github.com/interledgerjs/ilp-kit
 $ cd ilp-kit
-$ npm install # this fails on the `node-gyp rebuild` step, due to a known error
-$ npm rebuild node-sass # but running this will remedy any problems
-$ npm run build
+$ npm install
 ```
 
 # Domain setup
