@@ -8,7 +8,7 @@ const cx = classNames.bind(styles)
 
 export default class Amount extends Component {
   static propTypes = {
-    amount: PropTypes.number,
+    amount: PropTypes.any,
     currencySymbol: PropTypes.string
   }
 
