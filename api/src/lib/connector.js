@@ -122,10 +122,14 @@ module.exports = class Conncetor {
   }
 
   * removePeer(peer) {
-    const token = this.getToken(this.peerPublicKeys[peer.id])
-    const ledgerName = 'peer.' + token.substring(0, 5) + '.' + peer.currency + '.'
+    try {
+      const token = this.getToken(this.peerPublicKeys[peer.id])
+      const ledgerName = 'peer.' + token.substring(0, 5) + '.' + peer.currency + '.'
 
-    yield connector.removePlugin(ledgerName)
+      yield connector.removePlugin(ledgerName)
+    } catch (e) {
+      this.log.err("Couldn't remove the plugin from the connector", e)
+    }
 
     delete this.peerPublicKeys[peer.id]
   }
