@@ -89,7 +89,11 @@ module.exports = class App {
   }
 
   * _start() {
-    yield this.db.migrate()
+    if (this.db.options.dialect === 'sqlite') {
+      yield this.db.sync()
+    } else {
+      yield this.db.migrate()
+    }
 
     // Ensure admin and connector accounts exists
     const adminAccount = yield this.user.setupAdminAccount()
