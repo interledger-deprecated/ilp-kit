@@ -65,7 +65,7 @@ module.exports = class Conncetor {
 
   * addPeer(peer) {
     const self = this
-    const secret = this.config.get('secret')
+    const secret = this.config.getIn(['connector', 'ed25519_secret_key'])
     const hostInfo = yield self.utils.hostLookup('https://' + peer.hostname)
 
     if (!hostInfo) return
