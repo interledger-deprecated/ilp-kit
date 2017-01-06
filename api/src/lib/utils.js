@@ -1,7 +1,7 @@
 "use strict"
 
 const _ = require('lodash')
-const url = require("url")
+const url = require('url')
 const WebFinger = require('webfinger.js')
 const superagent = require('superagent-promise')(require('superagent'), Promise)
 
@@ -19,14 +19,6 @@ module.exports = class Utils {
     this.ledgerPrefix = config.data.getIn(['ledger', 'prefix'])
     this.localUri = config.data.getIn(['server', 'base_uri'])
     this.localHost = config.data.getIn(['server', 'base_host'])
-  }
-
-  isAccountUri(destination) {
-    return destination.indexOf('http://') > -1 || destination.indexOf('https://') > -1
-  }
-
-  isForeignAccountUri(destination) {
-    return this.isAccountUri(destination) && destination.indexOf(this.ledgerUriPublic) === -1
   }
 
   * getAccount(accountUri) {
@@ -49,13 +41,6 @@ module.exports = class Utils {
 
   * getWebfingerAccount(address) {
     const parsed = url.parse(address)
-
-    // This dirty hack will stay here until there's a resolution to
-    // https://github.com/silverbucket/webfinger.js/issues/18
-    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
-      const username = parsed.path.match(/([^\/]*)\/*$/)[1]
-      address = username + '@' + parsed.hostname
-    }
 
     const webfinger = new WebFinger({
       webfist_fallback: false,
@@ -84,7 +69,6 @@ module.exports = class Utils {
     }
 
     return {
-      accountUri: _.filter(response.links, {rel: 'https://interledger.org/rel/ledgerAccount'})[0].href,
       ledgerUri: _.filter(response.links, {rel: 'https://interledger.org/rel/ledgerUri'})[0].href,
       paymentUri: _.filter(response.links, {rel: 'https://interledger.org/rel/receiver'})[0].href,
       ilpAddress: _.filter(response.links, {rel: 'https://interledger.org/rel/ilpAddress'})[0].href
@@ -95,25 +79,23 @@ module.exports = class Utils {
    * TODO better docs
    *
    * options
-   *  - destination - string
+   *  - destination - string (username or webfinger)
    */
   * parseDestination(options) {
     const self = this
 
     const destination = options.destination
 
-    let accountUri
     let ledgerUri
     let paymentUri
     let ilpAddress
 
     // Webfinger lookup
-    if (self.isWebfinger(destination) || self.isForeignAccountUri(destination)) {
+    if (self.isWebfinger(destination)) {
       // TODO use debug module
       console.log('webfinger account')
       const account = yield self.getWebfingerAccount(destination)
 
-      accountUri = account.accountUri
       ledgerUri = account.ledgerUri
       paymentUri = account.paymentUri
       ilpAddress = account.ilpAddress
@@ -121,21 +103,18 @@ module.exports = class Utils {
 
     // Local account
     else {
-      accountUri = self.isAccountUri(destination) ? destination : self.ledgerUriPublic + '/accounts/' + destination
       ledgerUri = self.ledgerUriPublic
       paymentUri = self.localUri + '/receivers/' + destination
       ilpAddress = self.ledgerPrefix + destination
 
       // Check if account exists
-      yield self.getAccount(accountUri)
+      yield self.getAccount(self.ledgerUriPublic + '/accounts/' + destination)
     }
 
     // Get SPSP receiver info
     const receiver = yield self.getAccount(paymentUri)
 
     return {
-      type: this.isForeignAccountUri(accountUri) ? 'foreign' : 'local',
-      accountUri: accountUri,
       ledgerUri: ledgerUri,
       paymentUri: paymentUri,
       ilpAddress: ilpAddress,

@@ -72,7 +72,7 @@ module.exports = class Conncetor {
 
     const publicKey = hostInfo.publicKey
 
-    const token = getToken(this.config.get('secret'), hostInfo.publicKey)
+    const token = getToken(this.config.get('secret'), publicKey)
     const ledgerName = 'peer.' + token.substring(0, 5) + '.' + peer.currency.toLowerCase() + '.'
 
     yield connector.addPlugin(ledgerName, {

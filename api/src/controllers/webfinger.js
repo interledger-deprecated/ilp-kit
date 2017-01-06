@@ -49,10 +49,6 @@ function WebfingerControllerFactory(log, config, ledger) {
      *          "href": "https://wallet.example/socket.io"
      *        },
      *        {
-     *          "rel": "https://interledger.org/rel/ledgerAccount",
-     *          "href": "https://wallet.example/ledger/accounts/alice"
-     *        },
-     *        {
      *          "rel": "https://interledger.org/rel/sender/payment",
      *          "href": "https://wallet.example/payments"
      *        },
@@ -116,10 +112,6 @@ function WebfingerControllerFactory(log, config, ledger) {
             {
               'rel': 'https://interledger.org/rel/ilpAddress',
               'href': config.data.getIn(['ledger', 'prefix']) + ledgerUser.name
-            },
-            {
-              'rel': 'https://interledger.org/rel/ledgerAccount',
-              'href': config.data.getIn(['ledger', 'public_uri']) + '/accounts/' + ledgerUser.name
             },
             {
               'rel': 'https://interledger.org/rel/sender/payment',

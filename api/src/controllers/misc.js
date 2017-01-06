@@ -35,7 +35,6 @@ function MiscControllerFactory (Auth, log, config, ledger, utils) {
      *    {
      *      {
      *        "type": "local",
-     *        "accountUri": "http://wallet.example/ledger/accounts/alice",
      *        "ledgerUri": "http://wallet.example/ledger",
      *        "paymentUri": "http://wallet.example/api/receivers/alice",
      *        "ilpAddress": "wallet.alice",
