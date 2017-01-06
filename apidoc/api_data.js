@@ -80,7 +80,7 @@ define({ "api": [
       "examples": [
         {
           "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"username\": \"alice\",\n  \"account\": \"https://wallet.example/ledger/accounts/alice\",\n  \"name\": \"Alice Faye\",\n  \"balance\": \"1000\",\n  \"id\": 1\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"username\": \"alice\",\n  \"name\": \"Alice Faye\",\n  \"balance\": \"1000\",\n  \"id\": 1\n}",
           "type": "json"
         }
       ]
@@ -107,7 +107,7 @@ define({ "api": [
       "examples": [
         {
           "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"username\": \"alice\",\n  \"account\": \"https://wallet.example/ledger/accounts/alice\",\n  \"name\": \"Alice Faye\",\n  \"balance\": \"1000\",\n  \"id\": 1\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"username\": \"alice\",\n  \"name\": \"Alice Faye\",\n  \"balance\": \"1000\",\n  \"id\": 1\n}",
           "type": "json"
         }
       ]
@@ -188,7 +188,7 @@ define({ "api": [
       "examples": [
         {
           "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"subject\": \"acct:alice@wallet.example\",\n  \"links\": [\n    {\n      \"rel\": \"https://interledger.org/rel/ledgerUri\",\n      \"href\": \"https://wallet.example/ledger\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/socketIOUri\",\n      \"href\": \"https://wallet.example/socket.io\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/ledgerAccount\",\n      \"href\": \"https://wallet.example/ledger/accounts/alice\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/sender/payment\",\n      \"href\": \"https://wallet.example/payments\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/sender/quote\",\n      \"href\": \"https://wallet.example/payments/quote\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/receiver\",\n      \"href\": \"https://wallet.example/receivers/alice\"\n    }\n  ]\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"subject\": \"acct:alice@wallet.example\",\n  \"links\": [\n    {\n      \"rel\": \"https://interledger.org/rel/ledgerUri\",\n      \"href\": \"https://wallet.example/ledger\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/socketIOUri\",\n      \"href\": \"https://wallet.example/socket.io\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/sender/payment\",\n      \"href\": \"https://wallet.example/payments\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/sender/quote\",\n      \"href\": \"https://wallet.example/payments/quote\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/receiver\",\n      \"href\": \"https://wallet.example/receivers/alice\"\n    }\n  ]\n}",
           "type": "json"
         }
       ]
@@ -215,7 +215,7 @@ define({ "api": [
       "examples": [
         {
           "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  {\n    \"type\": \"local\",\n    \"accountUri\": \"http://wallet.example/ledger/accounts/alice\",\n    \"ledgerUri\": \"http://wallet.example/ledger\",\n    \"paymentUri\": \"http://wallet.example/api/receivers/alice\",\n    \"ilpAddress\": \"wallet.alice\",\n    \"currencyCode\": \"USD\",\n    \"currencySymbol\": \"$\",\n    \"name\": \"Alice Faye\",\n    \"imageUrl\": \"\"\n  }\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  {\n    \"type\": \"local\",\n    \"ledgerUri\": \"http://wallet.example/ledger\",\n    \"paymentUri\": \"http://wallet.example/api/receivers/alice\",\n    \"ilpAddress\": \"wallet.alice\",\n    \"currencyCode\": \"USD\",\n    \"currencySymbol\": \"$\",\n    \"name\": \"Alice Faye\",\n    \"imageUrl\": \"\"\n  }\n}",
           "type": "json"
         }
       ]
@@ -320,7 +320,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "destination",
-            "description": "<p>destination account</p>"
+            "description": "<p>destination</p>"
           },
           {
             "group": "Parameter",
@@ -531,7 +531,7 @@ define({ "api": [
       "examples": [
         {
           "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"username\": \"alice\",\n  \"account\": \"https://wallet.example/ledger/accounts/alice\",\n  \"name\": \"Alice Faye\",\n  \"balance\": \"1000\",\n  \"id\": 1\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"username\": \"alice\",\n  \"name\": \"Alice Faye\",\n  \"balance\": \"1000\",\n  \"id\": 1\n}",
           "type": "json"
         }
       ]
@@ -577,7 +577,7 @@ define({ "api": [
       "examples": [
         {
           "title": "200 Response:",
-          "content": "HTTP/1.1 201 OK\n{\n  \"username\": \"alice\",\n  \"account\": \"https://wallet.example/ledger/accounts/alice\",\n  \"balance\": \"1000\",\n  \"id\": 1\n}",
+          "content": "HTTP/1.1 201 OK\n{\n  \"username\": \"alice\",\n  \"balance\": \"1000\",\n  \"id\": 1\n}",
           "type": "json"
         }
       ]
@@ -616,7 +616,7 @@ define({ "api": [
       "examples": [
         {
           "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"username\": \"alice\",\n  \"account\": \"https://wallet.example/ledger/accounts/alice\",\n  \"name\": \"Alice Faye\",\n  \"balance\": \"1000\",\n  \"id\": 1\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"username\": \"alice\",\n  \"name\": \"Alice Faye\",\n  \"balance\": \"1000\",\n  \"id\": 1\n}",
           "type": "json"
         }
       ]
@@ -701,7 +701,7 @@ define({ "api": [
       "examples": [
         {
           "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"username\": \"alice\",\n  \"account\": \"https://wallet.example/ledger/accounts/alice\",\n  \"balance\": \"1000\",\n  \"id\": 1,\n  \"email_verified\": true\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"username\": \"alice\",\n  \"balance\": \"1000\",\n  \"id\": 1,\n  \"email_verified\": true\n}",
           "type": "json"
         }
       ]
