@@ -44,7 +44,7 @@ Name | Example | Description |
 ---- | ------- | ----------- |
 `API_HOSTNAME` | `wallet.com` | API public hostname.
 `API_PORT` | `3000` | API private port (used as both public and private port if `API_PUBLIC_PORT` is not specified).
-`API_DB_URI` | `postgres://localhost/wallet` | URI for connecting to a database.
+`DB_URI` | `postgres://localhost/wallet` | URI for connecting to a database.
 `API_LEDGER_ADMIN_USER` | `admin` | Ledger admin username.
 `API_LEDGER_ADMIN_PASS` | `pass` | Ledger admin pass.
 `CLIENT_HOST` | `wallet.com` | Publicly visible hostname.
@@ -85,7 +85,7 @@ Name | Example | Description |
 
 Name | Default |
 ---- | ------- |
-`LEDGER_DB_URI` | `API_DB_URI`
+`LEDGER_DB_URI` | `DB_URI`
 `LEDGER_ADMIN_USER` | `API_LEDGER_ADMIN_USER`
 `LEDGER_ADMIN_PASS` | `API_LEDGER_ADMIN_PASS`
 `LEDGER_HOSTNAME` | `API_HOSTNAME`
