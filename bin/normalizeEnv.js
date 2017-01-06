@@ -1,6 +1,7 @@
 const fs = require('fs')
 const crypto = require('crypto')
 const _ = require('lodash')
+const Config = require('five-bells-shared').Config
 
 const envVars = {}
 
@@ -8,7 +9,7 @@ const generateSecret = (secret, name) => {
   return crypto.createHmac('sha256', secret).update(name).digest('base64')
 }
 
-const getVar = (name, def = false) => {
+const getVar = (name, def = '') => {
   return process.env[name] || envVars[name] || def
 }
 
@@ -44,7 +45,7 @@ try {
     console.log('DB_URI is not set. Did you configure ilp-kit? \n'
       + 'To configure ilp-kit, run: npm run configure')
 
-    process.exit()
+    process.exit(1)
   }
 }
 
@@ -58,7 +59,7 @@ if (+supportedVersion.split('.')[0] !== +version.split('.')[0]) {
   console.log('`env.list` version (' + version
     + ') is older than supported version (' + supportedVersion
     + '). Back up your env.list and run `npm run configure` to update.')
-  process.exit()
+  process.exit(1)
 }
 
 // backwards compatibility
@@ -86,14 +87,16 @@ if (!getVar('API_LEDGER_URI')) {
   envVars.LEDGER_PORT = getVar('LEDGER_PORT') || Number(getVar('API_PORT')) + 1
   envVars.LEDGER_PUBLIC_PORT = getVar('LEDGER_PUBLIC_PORT', clientPublicPort)
   envVars.LEDGER_PUBLIC_PATH = getVar('LEDGER_PUBLIC_PATH', 'ledger')
-  envVars.LEDGER_PUBLIC_HTTPS = getVar('LEDGER_PUBLIC_HTTPS') || getVar('API_PUBLIC_HTTPS')
   envVars.API_LEDGER_ADMIN_USER = getVar('LEDGER_ADMIN_USER') || getVar('LEDGER_ADMIN_USER', 'admin')
   envVars.API_LEDGER_ADMIN_PASS = getVar('LEDGER_ADMIN_PASS') || getVar('LEDGER_ADMIN_PASS', 'admin')
   envVars.LEDGER_SECRET = generateSecret(secret, 'LEDGER_SECRET')
   envVars.LEDGER_ENABLE = true
 
-  const protocol = getVar('API_PUBLIC_HTTPS') ? 'https:' : 'http:'
-
+  // is the API/LEDGER callable via http or https?
+  const API_PUBLIC_HTTPS = Config.castBool(getVar('API_PUBLIC_HTTPS'), true)
+  const LEDGER_PUBLIC_HTTPS = Config.castBool(getVar('LEDGER_PUBLIC_HTTPS'), API_PUBLIC_HTTPS)
+  envVars.LEDGER_PUBLIC_HTTPS = LEDGER_PUBLIC_HTTPS
+  const protocol = API_PUBLIC_HTTPS ? 'https:' : 'http:'
   envVars.API_LEDGER_URI = 'http://' + (getVar('API_PRIVATE_HOSTNAME') || getVar('LEDGER_HOSTNAME')) + ':' + getVar('LEDGER_PORT')
   envVars.API_LEDGER_PUBLIC_URI = protocol + '//' + getVar('LEDGER_HOSTNAME') + ledgerPublicPort + '/' + getVar('LEDGER_PUBLIC_PATH')
 }
