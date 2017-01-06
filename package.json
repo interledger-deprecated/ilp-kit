@@ -150,7 +150,7 @@
     "hoist-non-react-statics": "^1.0.3",
     "http-proxy": "^1.12.0",
     "ilp": "^7.1.0",
-    "ilp-connector": "^12.8.1",
+    "ilp-connector": "^12.10.0",
     "ilp-kit-cli": "^10.0.1",
     "ilp-plugin-bells": "^9.1.0",
     "ilp-plugin-virtual": "^10.0.2",
