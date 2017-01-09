@@ -56,7 +56,6 @@ Name | Example | Description |
 Name | Example | Description |
 ---- | ------- | ----------- |
 `API_CONFIG_FILE` | custom-env.list | Specifies the path from which to load the config file. **Needs to be defined as environment variable**.
-`API_PUBLIC_HTTPS` |  | Whether or not the publicly visible instance of ILP kit is using HTTPS.
 `API_PRIVATE_HOSTNAME` | `localhost` | Private API hostname.
 `API_PUBLIC_PORT` |  | Api public port.
 `API_SECRET` | `qO2UX+fdl+tg0a1bYt` | Api secret. Used to generate the session, oauth and condition secrets.
@@ -94,7 +93,6 @@ Name | Default |
 `LEDGER_PUBLIC_PATH` | `ledger`
 `LEDGER_CURRENCY_CODE` | `USD`
 `LEDGER_CURRENCY_SYMBOL` | `$`
-`LEDGER_PUBLIC_HTTPS` | `API_PUBLIC_HTTPS`
 
 ## Advanced Mode
 ILP kit UI comes with an "advanced mode" for developers and advanced users. You can activate it with a hot-key: `option+d` on Mac or `alt+d` on Windows. 
