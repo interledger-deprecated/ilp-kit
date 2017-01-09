@@ -87,7 +87,6 @@ function UserFactory (sequelize, validator, ledger, config, utils) {
         dbUser = new this()
 
         dbUser.username = username
-        dbUser.account = config.data.get(['ledger', 'public_uri']) + '/accounts/' + username
 
         dbUser = this.fromDatabaseModel(yield dbUser.save())
 
@@ -121,7 +120,6 @@ function UserFactory (sequelize, validator, ledger, config, utils) {
         dbUser = new this()
 
         dbUser.username = username
-        dbUser.account = config.data.get(['ledger', 'public_uri']) + '/accounts/' + username
 
         dbUser = this.fromDatabaseModel(yield dbUser.save())
 
@@ -232,10 +230,6 @@ function UserFactory (sequelize, validator, ledger, config, utils) {
       autoIncrement: true
     },
     username: {
-      type: Sequelize.STRING,
-      unique: true
-    },
-    account: {
       type: Sequelize.STRING,
       unique: true
     },

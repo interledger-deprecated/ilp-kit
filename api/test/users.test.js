@@ -25,7 +25,6 @@ describe('Users', () => {
       .expect({
         id: 1,
         username: 'alice',
-        account: 'http://localhost/accounts/alice',
         name: null,
         email: 'alice@example.com',
         email_verified: null,

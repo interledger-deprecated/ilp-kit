@@ -65,14 +65,14 @@ module.exports = class Conncetor {
 
   * addPeer(peer) {
     const self = this
-    const secret = this.config.get('secret')
+    const secret = this.config.getIn(['connector', 'ed25519_secret_key'])
     const hostInfo = yield self.utils.hostLookup('https://' + peer.hostname)
 
     if (!hostInfo) return
 
     const publicKey = hostInfo.publicKey
 
-    const token = getToken(this.config.get('secret'), hostInfo.publicKey)
+    const token = getToken(this.config.getIn(['connector', 'ed25519_secret_key']), publicKey)
     const ledgerName = 'peer.' + token.substring(0, 5) + '.' + peer.currency.toLowerCase() + '.'
 
     yield connector.addPlugin(ledgerName, {
@@ -106,7 +106,7 @@ module.exports = class Conncetor {
 
   * removePeer(peer) {
     try {
-      const token = getToken(this.config.get('secret'), this.peerPublicKeys[peer.id])
+      const token = getToken(this.config.getIn(['connector', 'ed25519_secret_key']), this.peerPublicKeys[peer.id])
       const ledgerName = 'peer.' + token.substring(0, 5) + '.' + peer.currency + '.'
 
       yield connector.removePlugin(ledgerName)

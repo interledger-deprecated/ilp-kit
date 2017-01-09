@@ -40,7 +40,6 @@ function AuthControllerFactory(User, log, ledger, mailer) {
        *    HTTP/1.1 200 OK
        *    {
        *      "username": "alice",
-       *      "account": "https://wallet.example/ledger/accounts/alice",
        *      "name": "Alice Faye",
        *      "balance": "1000",
        *      "id": 1
@@ -101,7 +100,6 @@ function AuthControllerFactory(User, log, ledger, mailer) {
      *    HTTP/1.1 200 OK
      *    {
      *      "username": "alice",
-     *      "account": "https://wallet.example/ledger/accounts/alice",
      *      "name": "Alice Faye",
      *      "balance": "1000",
      *      "id": 1

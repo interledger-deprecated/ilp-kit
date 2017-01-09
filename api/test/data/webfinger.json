@@ -14,10 +14,6 @@
       "href": "localhost.alice"
     },
     {
-      "rel": "https://interledger.org/rel/ledgerAccount",
-      "href": "http://localhost/ledger/accounts/alice"
-    },
-    {
       "rel" : "https://interledger.org/rel/sender/payment",
       "href" : "http://localhost/api/payments"
     },
