@@ -19,6 +19,8 @@ function PeersControllerFactory(auth, config, Peer, connector) {
       router.post('/peers', auth.checkAuth, this.checkAdmin, this.postResource)
       router.put('/peers/:id', auth.checkAuth, this.checkAdmin, this.putResource)
       router.delete('/peers/:id', auth.checkAuth, this.checkAdmin, this.deleteResource)
+
+      router.post('/peers/rpc', this.rpc)
     }
 
     // TODO move to auth
@@ -54,7 +56,6 @@ function PeersControllerFactory(auth, config, Peer, connector) {
       peer.hostname = this.body.hostname
       peer.limit = this.body.limit
       peer.currency = this.body.currency
-      peer.broker = this.body.broker
 
       const dbPeer = yield peer.save()
 
@@ -98,6 +99,15 @@ function PeersControllerFactory(auth, config, Peer, connector) {
       yield peer.destroy()
 
       this.body = this.params
+    }
+
+    static * rpc() {
+      const method = this.query.method
+      const params = this.body
+
+      yield connector.receive(method, params)
+
+      this.status = 200
     }
   }
 }

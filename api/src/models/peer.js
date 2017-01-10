@@ -44,8 +44,7 @@ function PeerFactory(sequelize, validator) {
     },
     hostname: Sequelize.STRING,
     limit: Sequelize.FLOAT,
-    currency: Sequelize.STRING,
-    broker: Sequelize.STRING
+    currency: Sequelize.STRING
   })
 
   return Peer
