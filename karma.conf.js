@@ -50,7 +50,7 @@ module.exports = function (config) {
         extensions: ['', '.json', '.js']
       },
       sassLoader: {
-        includePaths: [path.resolve(__dirname, "./src/theme")]
+        includePaths: [path.resolve(__dirname, "./src/theme"), 'node_modules']
       },
       plugins: [
         new webpack.IgnorePlugin(/webpack-stats\.json$/),

@@ -75,7 +75,6 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
      *    HTTP/1.1 200 OK
      *    {
      *      "username": "alice",
-     *      "account": "https://wallet.example/ledger/accounts/alice",
      *      "name": "Alice Faye",
      *      "balance": "1000",
      *      "id": 1
@@ -117,7 +116,6 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
      *    HTTP/1.1 201 OK
      *    {
      *      "username": "alice",
-     *      "account": "https://wallet.example/ledger/accounts/alice",
      *      "balance": "1000",
      *      "id": 1
      *    }
@@ -212,8 +210,6 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
         throw new UsernameTakenError('Ledger rejected username')
       }
 
-      userObj.account = ledgerUser.id
-
       // Create the db user
       dbUser = new User()
       dbUser.setDataExternal(userObj)
@@ -292,7 +288,6 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
      *    HTTP/1.1 200 OK
      *    {
      *      "username": "alice",
-     *      "account": "https://wallet.example/ledger/accounts/alice",
      *      "name": "Alice Faye",
      *      "balance": "1000",
      *      "id": 1
@@ -399,7 +394,6 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
      *    HTTP/1.1 200 OK
      *    {
      *      "username": "alice",
-     *      "account": "https://wallet.example/ledger/accounts/alice",
      *      "balance": "1000",
      *      "id": 1,
      *      "email_verified": true

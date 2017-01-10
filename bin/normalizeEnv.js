@@ -1,6 +1,5 @@
 const fs = require('fs')
 const crypto = require('crypto')
-const sodium = require('sodium-prebuilt')
 const _ = require('lodash')
 
 const envVars = {}
@@ -13,10 +12,22 @@ const getVar = (name, def = false) => {
   return process.env[name] || envVars[name] || def
 }
 
+function getConfigFilePath() {
+  let file = ''
+  // was an alternative path to the config file specified?
+  if (getVar('API_CONFIG_FILE')) {
+    // use alternative file path
+    file = getVar('API_CONFIG_FILE')
+  } else {
+    // use default file path
+    file = process.env.NODE_ENV === 'test' ? 'test.env.list' : 'env.list'
+  }
+  return file
+}
+
 // get env vars from the env file
 try {
-  const file = process.env.NODE_ENV === 'test' ? 'test.env.list' : 'env.list'
-
+  const file = getConfigFilePath()
   const envFile = fs.readFileSync(file)
   const fileLines = envFile.toString().split('\n')
 
@@ -52,7 +63,7 @@ if (+supportedVersion.split('.')[0] !== +version.split('.')[0]) {
 
 // backwards compatibility
 if (!envVars.DB_URI) {
-  envVars.DB_URI = envVars.API_DB_URI
+  envVars.DB_URI = getVar('API_DB_URI')
 }
 
 // Add API env vars

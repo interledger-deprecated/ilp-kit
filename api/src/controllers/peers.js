@@ -2,6 +2,7 @@
 
 module.exports = PeersControllerFactory
 
+const forEach = require('co-foreach')
 const Auth = require('../lib/auth')
 const Config = require('../lib/config')
 const Connector = require('../lib/connector')
@@ -31,10 +32,16 @@ function PeersControllerFactory(auth, config, Peer, connector) {
 
     static * getAll() {
       // TODO pagination
-      this.body = yield Peer.findAll({
+      const peers = yield Peer.findAll({
         include: [{ all: true }],
         order: [['created_at', 'DESC']]
       })
+
+      yield forEach(peers, function * (peer) {
+        peer.balance = yield connector.getPeerBalance(peer)
+      })
+
+      this.body = peers
     }
 
     static * getResource() {

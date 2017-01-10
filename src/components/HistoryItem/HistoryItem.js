@@ -196,7 +196,7 @@ export default class HistoryItem extends Component {
                     {moment(transfer.created_at).format('MMM D, YYYY LTS')}
                   </div>
                   <div className={cx('col-xs-4', 'amount')}>
-                    <Amount amount={paymentAmount} currencySymbol={config.currencySymbol} />
+                    <Amount amount={type === 'outgoing' ? transfer.source_amount : transfer.destination_amount} currencySymbol={config.currencySymbol} />
                   </div>
                 </div>
               )

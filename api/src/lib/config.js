@@ -3,7 +3,7 @@
 const Config = require('five-bells-shared').Config
 const envPrefix = 'api'
 const crypto = require('crypto')
-const sodium = require('sodium-prebuilt').api
+const getPublicKey = require('ilp-plugin-virtual/src/util/token').publicKey
 
 module.exports = class WalletConfig {
   constructor() {
@@ -65,8 +65,7 @@ module.exports = class WalletConfig {
       ledgers: Config.getEnv('CONNECTOR_LEDGERS')
     }
 
-    const secret = Buffer.from(localConfig.connector.ed25519_secret_key, 'base64')
-    localConfig.connector.public_key = sodium.crypto_sign_seed_keypair(secret).publicKey.toString('base64')
+    localConfig.connector.public_key = getPublicKey(localConfig.connector.ed25519_secret_key)
 
     localConfig.reload = Config.getEnv(envPrefix, 'RELOAD')
 

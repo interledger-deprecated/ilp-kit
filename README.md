@@ -36,13 +36,15 @@ ILP wallet with hosted ledger and connector instances
 
 ## Environment variables
 
+Note: Most of the variables can either be set as environment variable or in a config file. The default config file is `env.list`. Environment variables take precedence over variables set in the config file.
+
 ##### Required
 
 Name | Example | Description |
 ---- | ------- | ----------- |
 `API_HOSTNAME` | `wallet.com` | API public hostname.
 `API_PORT` | `3000` | API private port (used as both public and private port if `API_PUBLIC_PORT` is not specified).
-`API_DB_URI` | `postgres://localhost/wallet` | URI for connecting to a database.
+`DB_URI` | `postgres://localhost/wallet` | URI for connecting to a database.
 `API_LEDGER_ADMIN_USER` | `admin` | Ledger admin username.
 `API_LEDGER_ADMIN_PASS` | `pass` | Ledger admin pass.
 `CLIENT_HOST` | `wallet.com` | Publicly visible hostname.
@@ -53,7 +55,7 @@ Name | Example | Description |
 
 Name | Example | Description |
 ---- | ------- | ----------- |
-`API_PUBLIC_HTTPS` |  | Whether or not the publicly visible instance of ILP kit is using HTTPS.
+`API_CONFIG_FILE` | custom-env.list | Specifies the path from which to load the config file. **Needs to be defined as environment variable**.
 `API_PRIVATE_HOSTNAME` | `localhost` | Private API hostname.
 `API_PUBLIC_PORT` |  | Api public port.
 `API_SECRET` | `qO2UX+fdl+tg0a1bYt` | Api secret. Used to generate the session, oauth and condition secrets.
@@ -82,7 +84,7 @@ Name | Example | Description |
 
 Name | Default |
 ---- | ------- |
-`LEDGER_DB_URI` | `API_DB_URI`
+`LEDGER_DB_URI` | `DB_URI`
 `LEDGER_ADMIN_USER` | `API_LEDGER_ADMIN_USER`
 `LEDGER_ADMIN_PASS` | `API_LEDGER_ADMIN_PASS`
 `LEDGER_HOSTNAME` | `API_HOSTNAME`
@@ -91,7 +93,6 @@ Name | Default |
 `LEDGER_PUBLIC_PATH` | `ledger`
 `LEDGER_CURRENCY_CODE` | `USD`
 `LEDGER_CURRENCY_SYMBOL` | `$`
-`LEDGER_PUBLIC_HTTPS` | `API_PUBLIC_HTTPS`
 
 ## Advanced Mode
 ILP kit UI comes with an "advanced mode" for developers and advanced users. You can activate it with a hot-key: `option+d` on Mac or `alt+d` on Windows. 

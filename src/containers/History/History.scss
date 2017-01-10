@@ -9,10 +9,6 @@
   padding: 0;
   text-align: left;
 }
-.loading {
-  margin: 0 20px;
-  padding: 0;
-}
 .enter {
   background: $success-background;
   max-height: 0;
@@ -24,4 +20,10 @@
   max-height: 100px; // Should be bigger then the actual value
   opacity: 1;
   transition: background-color 1s ease, max-height 1s ease, opacity 1s ease;
+}
+.pagination {
+  .loading {
+    display: block;
+    padding: 0;
+  }
 }

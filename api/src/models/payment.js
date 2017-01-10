@@ -69,6 +69,13 @@ function PaymentFactory (sequelize, validator, container, User) {
 
       // TODO switch to a legit sequalize format
 
+      if (sequelize.options.dialect === 'sqlite') {
+        return {
+          list: [],
+          count: 0
+        }
+      }
+
       const list = yield sequelize.query(
         'SELECT source_identifier, destination_identifier,'
           + ' sum(source_amount) as source_amount,'
@@ -93,8 +100,8 @@ function PaymentFactory (sequelize, validator, container, User) {
           + 'destination_identifier, destination_name, destination_image_url,'
           + ' message, time_slot'
         + ' ORDER BY recent_date DESC'
-        + ' OFFSET ' + limit * (page - 1)
-        + ' LIMIT ' + limit,
+        + ' LIMIT ' + limit
+        + ' OFFSET ' + limit * (page - 1),
         {model: Payment.DbModel}
       )
 
@@ -123,7 +130,10 @@ function PaymentFactory (sequelize, validator, container, User) {
     }
 
     static getTransfers(params) {
-      console.log('payment:126', params)
+      if (sequelize.options.dialect === 'sqlite') {
+        return []
+      }
+
       return sequelize.query(
         'SELECT source_amount, destination_amount, created_at, transfer'
       + ' FROM "Payments"'

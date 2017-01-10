@@ -1,15 +1,12 @@
 "use strict"
 
-const co = require('co')
 const request = require('superagent')
 const connector = require('ilp-connector')
-const crypto = require('crypto')
-const sodium = require('sodium-prebuilt').api
-const base64url = require('base64url')
 const Log = require('./log')
 const Config = require('./config')
 const Utils = require('./utils')
 const PeerFactory = require('../models/peer')
+const getToken = require('ilp-plugin-virtual/src/util/token').token
 
 const currencies = {
   'USD': '$',
@@ -28,7 +25,7 @@ module.exports = class Conncetor {
     this.utils = utils
     this.Peer = Peer
     this.log = log('connector')
-    this.peerPublicKeys = {}
+    this.peers = {}
   }
 
   * start() {
@@ -66,31 +63,22 @@ module.exports = class Conncetor {
     }
   }
 
-  getToken(publicKey) {
-    const secret = this.config.get('secret')
-
-    const shared = sodium.crypto_scalarmult(
-      sodium.crypto_hash_sha256(base64url.toBuffer(secret)),
-      base64url.toBuffer(publicKey)
-    )
-    return base64url(
-      crypto.createHmac('sha256', shared)
-        .update('token', 'ascii')
-        .digest()
-    )
-  }
-
   * addPeer(peer) {
     const self = this
-    const secret = this.config.get('secret')
+    const secret = this.config.getIn(['connector', 'ed25519_secret_key'])
     const hostInfo = yield self.utils.hostLookup('https://' + peer.hostname)
 
     if (!hostInfo) return
 
     const publicKey = hostInfo.publicKey
 
-    const token = this.getToken(hostInfo.publicKey)
-    const ledgerName = 'peer.' + token.substring(0, 5) + '.' + peer.currency + '.'
+    const token = getToken(this.config.getIn(['connector', 'ed25519_secret_key']), publicKey)
+    const ledgerName = 'peer.' + token.substring(0, 5) + '.' + peer.currency.toLowerCase() + '.'
+
+    this.peers[peer.id] = {
+      ledgerName,
+      publicKey
+    }
 
     yield connector.addPlugin(ledgerName, {
       currency: peer.currency,
@@ -117,16 +105,20 @@ module.exports = class Conncetor {
         }
       }
     })
-
-    this.peerPublicKeys[peer.id] = publicKey
   }
 
   * removePeer(peer) {
-    const token = this.getToken(this.peerPublicKeys[peer.id])
-    const ledgerName = 'peer.' + token.substring(0, 5) + '.' + peer.currency + '.'
+    console.log('connector:111', this.peers, peer.id, this.peers[peer.id])
+    try {
+      yield connector.removePlugin(this.peers[peer.id].ledgerName)
+    } catch (e) {
+      this.log.err("Couldn't remove the plugin from the connector", e)
+    }
 
-    yield connector.removePlugin(ledgerName)
+    delete this.peers[peer.id]
+  }
 
-    delete this.peerPublicKeys[peer.id]
+  * getPeerBalance(peer) {
+    return connector.getPlugin(this.peers[peer.id].ledgerName).getBalance()
   }
 }
