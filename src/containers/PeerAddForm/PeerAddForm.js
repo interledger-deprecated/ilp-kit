@@ -72,9 +72,9 @@ export default class PeerAddForm extends Component {
         <form onSubmit={handleSubmit(this.handleSubmit)}>
           <div className="form-group">
             <Input object={hostname} label="Hostname" size="lg" focus />
-            <Input object={limit} label="Limit" size="lg" focus />
-            <Input object={currency} label="Currency" size="lg" focus />
-            <Input object={broker} label="Broker" size="lg" focus />
+            <Input object={limit} label="Limit" size="lg" />
+            <Input object={currency} label="Currency" size="lg" />
+            <Input object={broker} label="Broker" size="lg" />
           </div>
 
           <div className="row">

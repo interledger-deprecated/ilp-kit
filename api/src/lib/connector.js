@@ -25,7 +25,7 @@ module.exports = class Conncetor {
     this.utils = utils
     this.Peer = Peer
     this.log = log('connector')
-    this.peerPublicKeys = {}
+    this.peers = {}
   }
 
   * start() {
@@ -75,6 +75,11 @@ module.exports = class Conncetor {
     const token = getToken(this.config.getIn(['connector', 'ed25519_secret_key']), publicKey)
     const ledgerName = 'peer.' + token.substring(0, 5) + '.' + peer.currency.toLowerCase() + '.'
 
+    this.peers[peer.id] = {
+      ledgerName,
+      publicKey
+    }
+
     yield connector.addPlugin(ledgerName, {
       currency: peer.currency,
       plugin: 'ilp-plugin-virtual',
@@ -100,20 +105,20 @@ module.exports = class Conncetor {
         }
       }
     })
-
-    this.peerPublicKeys[peer.id] = publicKey
   }
 
   * removePeer(peer) {
+    console.log('connector:111', this.peers, peer.id, this.peers[peer.id])
     try {
-      const token = getToken(this.config.getIn(['connector', 'ed25519_secret_key']), this.peerPublicKeys[peer.id])
-      const ledgerName = 'peer.' + token.substring(0, 5) + '.' + peer.currency + '.'
-
-      yield connector.removePlugin(ledgerName)
+      yield connector.removePlugin(this.peers[peer.id].ledgerName)
     } catch (e) {
       this.log.err("Couldn't remove the plugin from the connector", e)
     }
 
-    delete this.peerPublicKeys[peer.id]
+    delete this.peers[peer.id]
+  }
+
+  * getPeerBalance(peer) {
+    return connector.getPlugin(this.peers[peer.id].ledgerName).getBalance()
   }
 }

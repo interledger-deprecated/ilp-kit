@@ -37,21 +37,21 @@ export default class Peers extends Component {
       <div className={cx('panel', 'panel-default', 'peer')} key={peer.id}>
         <div className="panel-body">
           <div className={cx('row')}>
-            <div className={cx('col-sm-4')}>
+            <div className={cx('col-sm-3')}>
               <span className={cx('lbl')}>Hostname</span>
               <a href={'http://' + peer.hostname}>{peer.hostname}</a>
             </div>
-            <div className={cx('col-sm-2')}>
+            <div className={cx('col-sm-3')}>
               <span className={cx('lbl')}>Limit</span>
               <span>{peer.limit}</span>
             </div>
-            <div className={cx('col-sm-2')}>
+            <div className={cx('col-sm-3')}>
               <span className={cx('lbl')}>Currency</span>
               <span>{peer.currency}</span>
             </div>
-            <div className={cx('col-sm-4')}>
-              <span className={cx('lbl')}>Broker</span>
-              <span>{peer.broker}</span>
+            <div className={cx('col-sm-3')}>
+              <span className={cx('lbl')}>Balance</span>
+              <span>{peer.balance}</span>
             </div>
           </div>
         </div>
