@@ -139,6 +139,10 @@ function WebfingerControllerFactory(log, config, ledger) {
           {
             'rel': 'https://interledger.org/rel/ledgerUri',
             'href': config.data.getIn(['ledger', 'public_uri'])
+          },
+          {
+            'rel': 'https://interledger.org/rel/peersRpcUri',
+            'href': config.data.getIn(['server', 'base_uri']) + '/peers/rpc'
           }
         ]
       }

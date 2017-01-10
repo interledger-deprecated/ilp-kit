@@ -161,7 +161,8 @@ module.exports = class Utils {
     if (!response) return
 
     return {
-      publicKey: response.properties['https://interledger.org/rel/publicKey']
+      publicKey: response.properties['https://interledger.org/rel/publicKey'],
+      peersRpcUri: _.filter(response.links, {rel: 'https://interledger.org/rel/peersRpcUri'})[0].href,
     }
   }
 }

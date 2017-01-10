@@ -84,68 +84,42 @@ module.exports = class Conncetor {
     if (!hostInfo) return
 
     const publicKey = hostInfo.publicKey
+    const peersRpcUri = hostInfo.peersRpcUri
+
     const token = getToken(this.config.getIn(['connector', 'ed25519_secret_key']), publicKey)
 
     this.peers[peer.id] = {
       publicKey,
+      peersRpcUri,
       ledgerName: 'peer.' + token.substring(0, 5) + '.' + peer.currency.toLowerCase() + '.',
       online: peerInfo ? peerInfo.online : false
     }
 
-    return this.peers[peer.id]
-  }
-
-  * connectPeer(peer) {
-    if (!this.peers[peer.id]) {
-      this.peers[peer.id] = {
-        online: false
-      }
-    }
-
-    // Skip if already connected
-    if (this.peers[peer.id].online) return
-
-    // Get host info
-    const hostInfo = yield this.getPeerInfo(peer)
-
-    // Couldn't get the host info (service might not be responding)
-    if (!hostInfo.publicKey) return
-
-    let promise
-
-    try {
-      promise = connector.addPlugin(hostInfo.ledgerName, {
+    return connector.addPlugin(ledgerName, {
+      currency: peer.currency,
+      plugin: 'ilp-plugin-virtual',
+      store: true,
+      options: {
+        name: peer.hostname,
+        secret: secret,
+        peerPublicKey: publicKey,
+        prefix: ledgerName,
+        rpcUri: peersRpcUri,
+        maxBalance: '' + peer.limit,
         currency: peer.currency,
-        plugin: 'ilp-plugin-virtual',
-        store: true,
-        options: {
-          name: peer.hostname,
-          secret: this.config.getIn(['connector', 'ed25519_secret_key']),
-          peerPublicKey: hostInfo.publicKey,
-          prefix: hostInfo.ledgerName,
-          broker: peer.broker,
-          maxBalance: '' + peer.limit,
-          currency: peer.currency,
-          info: {
-            currencyCode: peer.currency,
-            currencySymbol: currencies[peer.currency] || peer.currency,
-            precision: 10,
-            scale: 10,
-            connectors: [{
-              id: hostInfo.publicKey,
-              name: hostInfo.publicKey,
-              connector: hostInfo.ledgerName + hostInfo.publicKey
-            }]
-          }
+        info: {
+          currencyCode: peer.currency,
+          currencySymbol: currencies[peer.currency] || peer.currency,
+          precision: 10,
+          scale: 10,
+          connectors: [{
+            id: publicKey,
+            name: publicKey,
+            connector: ledgerName + publicKey
+          }]
         }
-      })
-
-      this.peers[peer.id].online = true
-    } catch (e) {
-      throw e
-    }
-
-    return promise
+      }
+    })
   }
 
   * removePeer(peer) {
