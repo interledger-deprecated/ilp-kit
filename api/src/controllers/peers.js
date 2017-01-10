@@ -9,6 +9,7 @@ const Connector = require('../lib/connector')
 const PeerFactory = require('../models/peer')
 
 const NotFoundError = require('../errors/not-found-error')
+const InvalidBodyError = require('../errors/invalid-body-error')
 
 PeersControllerFactory.constitute = [Auth, Config, PeerFactory, Connector]
 function PeersControllerFactory(auth, config, Peer, connector) {
@@ -69,8 +70,24 @@ function PeersControllerFactory(auth, config, Peer, connector) {
     }
 
     static * putResource() {
-      // TODO implement editing
-      this.status = 200
+      const id = this.params.id
+      let peer = yield Peer.findOne({ where: { id } })
+      const limit = this.body.limit
+
+      if (!peer) throw new NotFoundError("Peer doesn't exist")
+      if (!limit) throw new InvalidBodyError('Limit is not supplied')
+
+      // Update the connector
+      yield connector.removePeer(peer)
+      yield connector.addPeer(peer)
+
+      // Update in the db
+      peer.limit = limit
+      peer = Peer.fromDatabaseModel(yield peer.save())
+
+      peer.balance = yield connector.getPeerBalance(peer)
+
+      this.body = peer
     }
 
     static * deleteResource() {

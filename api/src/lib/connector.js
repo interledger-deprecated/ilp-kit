@@ -1,6 +1,7 @@
 "use strict"
 
 const request = require('superagent')
+const co = require('co')
 const connector = require('ilp-connector')
 const Log = require('./log')
 const Config = require('./config')
@@ -52,15 +53,25 @@ module.exports = class Conncetor {
   }
 
   * listen() {
+    const self = this
+
     // Start the connector
     connector.listen()
 
     // Add the peers
-    const peers = yield this.Peer.findAll()
+    const peers = yield self.Peer.findAll()
 
-    for (const peer of peers) {
-      yield this.addPeer(peer)
-    }
+    // TODO wait a bit before adding peers, until the below issue is resolved
+    // https://github.com/interledgerjs/ilp-connector/issues/294
+    setTimeout(co.wrap(function *() {
+      for (const peer of peers) {
+        try {
+          yield self.addPeer(peer)
+        } catch (e) {
+          self.log.err("Couldn't add the peer to the connector", e)
+        }
+      }
+    }), 5000)
   }
 
   * addPeer(peer) {
@@ -80,7 +91,7 @@ module.exports = class Conncetor {
       publicKey
     }
 
-    yield connector.addPlugin(ledgerName, {
+    return connector.addPlugin(ledgerName, {
       currency: peer.currency,
       plugin: 'ilp-plugin-virtual',
       store: true,
@@ -108,11 +119,10 @@ module.exports = class Conncetor {
   }
 
   * removePeer(peer) {
-    console.log('connector:111', this.peers, peer.id, this.peers[peer.id])
     try {
       yield connector.removePlugin(this.peers[peer.id].ledgerName)
     } catch (e) {
-      this.log.err("Couldn't remove the plugin from the connector", e)
+      this.log.err("Couldn't remove the peer from the connector", e)
     }
 
     delete this.peers[peer.id]

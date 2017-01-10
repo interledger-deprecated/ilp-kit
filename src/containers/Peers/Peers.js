@@ -2,7 +2,9 @@ import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
-import { loadPeers, remove } from 'redux/actions/peer'
+import { RIENumber } from 'riek'
+
+import { load, update, remove } from 'redux/actions/peer'
 import PeerAddForm from 'containers/PeerAddForm/PeerAddForm'
 
 import classNames from 'classnames/bind'
@@ -13,23 +15,29 @@ const cx = classNames.bind(styles)
   state => ({
     peers: state.peer.peers
   }),
-  { loadPeers, remove })
+  { load, update, remove })
 export default class Peers extends Component {
   static propTypes = {
     peers: PropTypes.array,
-    loadPeers: PropTypes.func,
-    remove: PropTypes.func
+    load: PropTypes.func.isRequired,
+    update: PropTypes.func.isRequired,
+    remove: PropTypes.func.isRequired
   }
 
   componentWillMount() {
-    this.props.loadPeers()
+    this.props.load()
   }
 
-  handleRemove = (code, e) => {
+  // TODO shouldn't be less then the balance
+  handleUpdate = (peerId, value) => {
+    this.props.update(peerId, value)
+  }
+
+  handleRemove = (peerId, e) => {
     e.preventDefault()
 
     // TODO:UX Show an are you sure message
-    this.props.remove(code)
+    this.props.remove(peerId)
   }
 
   renderPeer = (peer) => {
@@ -43,7 +51,16 @@ export default class Peers extends Component {
             </div>
             <div className={cx('col-sm-3')}>
               <span className={cx('lbl')}>Limit</span>
-              <span>{peer.limit}</span>
+              <span>
+                <RIENumber
+                  value={peer.limit}
+                  propName="limit"
+                  change={this.handleUpdate.bind(null, peer.id)}
+                  className={cx('limit')}
+                  classLoading={cx('loading')}
+                  classInvalid={cx('invalid')}
+                />
+              </span>
             </div>
             <div className={cx('col-sm-3')}>
               <span className={cx('lbl')}>Currency</span>

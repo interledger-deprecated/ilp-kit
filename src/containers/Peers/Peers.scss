@@ -8,6 +8,18 @@
     opacity: 1;
   }
 }
+.limit {
+  &.loading {
+    font-style: italic;
+  }
+  &.invalid {
+    color: #d9d9d9;
+  }
+}
+span.limit {
+  cursor: pointer;
+  border-bottom: 1px dashed;
+}
 .lbl {
   display: block;
 }
