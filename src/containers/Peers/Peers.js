@@ -29,15 +29,17 @@ export default class Peers extends Component {
   }
 
   // TODO shouldn't be less then the balance
-  handleUpdate = (peerId, value) => {
-    this.props.update(peerId, value)
+  handleUpdate = (peer, value) => {
+    if (Number(value.limit) === peer.limit) return
+
+    this.props.update(peer.id, value)
   }
 
-  handleRemove = (peerId, e) => {
+  handleRemove = (peer, e) => {
     e.preventDefault()
 
     // TODO:UX Show an are you sure message
-    this.props.remove(peerId)
+    this.props.remove(peer.id)
   }
 
   renderPeer = (peer) => {
@@ -52,10 +54,11 @@ export default class Peers extends Component {
             <div className={cx('col-sm-3')}>
               <span className={cx('lbl')}>Limit</span>
               <span>
+                {/* limit is converted to a string because of how <RIENumber> didValueChange works */}
                 <RIENumber
-                  value={peer.limit}
+                  value={peer.limit.toString()}
                   propName="limit"
-                  change={this.handleUpdate.bind(null, peer.id)}
+                  change={this.handleUpdate.bind(null, peer)}
                   className={cx('limit')}
                   classLoading={cx('loading')}
                   classInvalid={cx('invalid')}
@@ -74,7 +77,7 @@ export default class Peers extends Component {
         </div>
 
         {/* TODO:UX ask for confirmation */}
-        <a href="" className={cx('deleteButton')} onClick={this.handleRemove.bind(null, peer.id)}>
+        <a href="" className={cx('deleteButton')} onClick={this.handleRemove.bind(null, peer)}>
           <i className="fa fa-times" />
         </a>
       </div>
