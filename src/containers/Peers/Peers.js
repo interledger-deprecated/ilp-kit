@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
+import ReactTooltip from 'react-tooltip'
 
 import { RIENumber } from 'riek'
 
@@ -51,7 +52,7 @@ export default class Peers extends Component {
               <span className={cx('lbl')}>Hostname</span>
               <a href={'http://' + peer.hostname}>{peer.hostname}</a>
             </div>
-            <div className={cx('col-sm-3')}>
+            <div className={cx('col-sm-2')}>
               <span className={cx('lbl')}>Limit</span>
               <span>
                 {/* limit is converted to a string because of how <RIENumber> didValueChange works */}
@@ -65,13 +66,18 @@ export default class Peers extends Component {
                 />
               </span>
             </div>
-            <div className={cx('col-sm-3')}>
+            <div className={cx('col-sm-2')}>
               <span className={cx('lbl')}>Currency</span>
               <span>{peer.currency}</span>
             </div>
             <div className={cx('col-sm-3')}>
               <span className={cx('lbl')}>Balance</span>
               <span>{peer.balance}</span>
+            </div>
+            <div className={cx('col-sm-2', 'text-center')}>
+              <span className={cx('lbl')}>Status</span>
+              {peer.balance && <i className={cx('online', 'fa', 'fa-circle')} data-tip="Online" />}
+              {!peer.balance && <i className={cx('offline', 'fa', 'fa-circle')} data-tip="Offline" />}
             </div>
           </div>
         </div>
@@ -109,6 +115,8 @@ export default class Peers extends Component {
             </div>
           </div>
         </div>
+
+        <ReactTooltip />
       </div>
     )
   }

@@ -119,6 +119,8 @@ module.exports = class Conncetor {
   }
 
   * removePeer(peer) {
+    if (!this.peers[peer.id]) return
+
     try {
       yield connector.removePlugin(this.peers[peer.id].ledgerName)
     } catch (e) {
@@ -129,6 +131,6 @@ module.exports = class Conncetor {
   }
 
   * getPeerBalance(peer) {
-    return connector.getPlugin(this.peers[peer.id].ledgerName).getBalance()
+    if (this.peers[peer.id]) return connector.getPlugin(this.peers[peer.id].ledgerName).getBalance()
   }
 }

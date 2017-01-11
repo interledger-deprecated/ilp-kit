@@ -23,6 +23,12 @@ span.limit {
 .lbl {
   display: block;
 }
+.online {
+  color: $success;
+}
+.offline {
+  color: $danger;
+}
 .deleteButton {
   position: absolute;
   top: 0;
