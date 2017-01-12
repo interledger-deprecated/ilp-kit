@@ -38,6 +38,8 @@ module.exports = class Conncetor {
 
     this.log.info('Starting the connector...')
 
+    connector.listen()
+
     // Get the peers from the database
     const peers = yield self.Peer.findAll()
 
@@ -90,7 +92,7 @@ module.exports = class Conncetor {
       online: peerInfo ? peerInfo.online : false
     }
 
-    return peerInfo
+    return this.peers[peer.id]
   }
 
   * connectPeer(peer) {
