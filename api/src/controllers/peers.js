@@ -72,13 +72,13 @@ function PeersControllerFactory(auth, config, Peer, connector) {
       if (!peer) throw new NotFoundError("Peer doesn't exist")
       if (!limit) throw new InvalidBodyError('Limit is not supplied')
 
-      // Update the connector
-      yield connector.removePeer(peer)
-      yield connector.connectPeer(peer)
-
       // Update in the db
       peer.limit = limit
       peer = Peer.fromDatabaseModel(yield peer.save())
+
+      // Update the connector
+      yield connector.removePeer(peer)
+      yield connector.connectPeer(peer)
 
       const peerInfo = yield connector.getPeer(peer)
 
