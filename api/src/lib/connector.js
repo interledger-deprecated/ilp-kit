@@ -180,7 +180,6 @@ module.exports = class Conncetor {
   }
 
   * rpc(prefix, method, params) {
-    console.log('connector:183', prefix, method, params)
     const plugin = connector.getPlugin(prefix)
 
     return plugin.receive(method, params)
