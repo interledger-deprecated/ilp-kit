@@ -102,12 +102,14 @@ function PeersControllerFactory(auth, config, Peer, connector) {
     }
 
     static * rpc() {
+      const prefix = this.query.prefix
       const method = this.query.method
       const params = this.body
 
-      yield connector.receive(method, params)
+      if (!prefix) throw new InvalidBodyError('Prefix is not supplied')
+      if (!method) throw new InvalidBodyError('Method is not supplied')
 
-      this.status = 200
+      this.body = yield connector.rpc(prefix, method, params)
     }
   }
 }
