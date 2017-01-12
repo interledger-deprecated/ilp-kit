@@ -153,7 +153,7 @@
     "ilp-connector": "^12.11.0",
     "ilp-kit-cli": "^10.0.1",
     "ilp-plugin-bells": "^9.1.0",
-    "ilp-plugin-virtual": "^10.0.2",
+    "ilp-plugin-virtual": "interledgerjs/ilp-plugin-virtual#6de70fb72813b0304bf5ab650e68e382e26a820f",
     "istanbul": "^0.4.5",
     "jimp": "^0.2.27",
     "json-loader": "^0.5.4",
