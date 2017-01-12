@@ -39,19 +39,13 @@ function PeersControllerFactory(auth, config, Peer, connector) {
       })
 
       yield forEach(peers, function * (peer) {
-        peer.balance = yield connector.getPeerBalance(peer)
+        const peerInfo = yield connector.getPeer(peer)
+
+        peer.balance = peerInfo.balance
+        peer.online = peerInfo.online
       })
 
       this.body = peers
-    }
-
-    static * getResource() {
-      const id = this.params.id
-
-      const peer = yield Peer.findOne({ where: { id } })
-
-      // TODO throw exception instead of status = 404
-      return peer ? this.body = peer : this.status = 404
     }
 
     static * postResource() {
@@ -64,7 +58,7 @@ function PeersControllerFactory(auth, config, Peer, connector) {
 
       const dbPeer = yield peer.save()
 
-      yield connector.addPeer(dbPeer)
+      yield connector.connectPeer(dbPeer)
 
       this.body = dbPeer
     }
@@ -79,13 +73,16 @@ function PeersControllerFactory(auth, config, Peer, connector) {
 
       // Update the connector
       yield connector.removePeer(peer)
-      yield connector.addPeer(peer)
+      yield connector.connectPeer(peer)
 
       // Update in the db
       peer.limit = limit
       peer = Peer.fromDatabaseModel(yield peer.save())
 
-      peer.balance = yield connector.getPeerBalance(peer)
+      const peerInfo = yield connector.getPeer(peer)
+
+      peer.balance = peerInfo.balance
+      peer.online = peerInfo.online
 
       this.body = peer
     }

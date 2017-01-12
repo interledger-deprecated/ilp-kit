@@ -31,12 +31,34 @@ module.exports = class Conncetor {
 
   * start() {
     const self = this
+
+    this.log.info('Waiting for the ledger...')
+
+    yield this.waitForLedger()
+
+    this.log.info('Starting the connector...')
+
+    // Get the peers from the database
+    const peers = yield self.Peer.findAll()
+
+    // TODO wait a bit before adding peers (until the below issue is resolved)
+    // https://github.com/interledgerjs/ilp-connector/issues/294
+    setTimeout(co.wrap(function *() {
+      for (const peer of peers) {
+        try {
+          yield self.connectPeer(peer)
+        } catch (e) {
+          self.log.err("Couldn't add the peer to the connector", e)
+        }
+      }
+    }), 5000)
+  }
+
+  * waitForLedger() {
     const port = process.env.CLIENT_PORT
     const ledgerPublicPath = this.config.getIn(['ledger', 'public_uri'])
 
-    self.log.info('Waiting for the ledger...')
-
-    yield new Promise((resolve) => {
+    return new Promise(resolve => {
       const interval = setInterval(() => {
         request.get('0.0.0.0:' + port + '/' + ledgerPublicPath).end(err => {
           if (!err) {
@@ -46,83 +68,91 @@ module.exports = class Conncetor {
         })
       }, 2000)
     })
-
-    self.log.info('Starting the connector...')
-
-    yield self.listen()
   }
 
-  * listen() {
-    const self = this
+  * getPeerInfo(peer) {
+    const peerInfo = this.peers[peer.id]
 
-    // Start the connector
-    connector.listen()
+    // Already have the info
+    if (peerInfo.publicKey) return peerInfo
 
-    // Add the peers
-    const peers = yield self.Peer.findAll()
-
-    // TODO wait a bit before adding peers, until the below issue is resolved
-    // https://github.com/interledgerjs/ilp-connector/issues/294
-    setTimeout(co.wrap(function *() {
-      for (const peer of peers) {
-        try {
-          yield self.addPeer(peer)
-        } catch (e) {
-          self.log.err("Couldn't add the peer to the connector", e)
-        }
-      }
-    }), 5000)
-  }
-
-  * addPeer(peer) {
-    const self = this
-    const secret = this.config.getIn(['connector', 'ed25519_secret_key'])
-    const hostInfo = yield self.utils.hostLookup('https://' + peer.hostname)
+    // Get the host publicKey
+    const hostInfo = yield this.utils.hostLookup('https://' + peer.hostname)
 
     if (!hostInfo) return
 
     const publicKey = hostInfo.publicKey
-
     const token = getToken(this.config.getIn(['connector', 'ed25519_secret_key']), publicKey)
-    const ledgerName = 'peer.' + token.substring(0, 5) + '.' + peer.currency.toLowerCase() + '.'
 
     this.peers[peer.id] = {
-      ledgerName,
-      publicKey
+      publicKey,
+      ledgerName: 'peer.' + token.substring(0, 5) + '.' + peer.currency.toLowerCase() + '.',
+      online: peerInfo ? peerInfo.online : false
     }
 
-    return connector.addPlugin(ledgerName, {
-      currency: peer.currency,
-      plugin: 'ilp-plugin-virtual',
-      store: true,
-      options: {
-        name: peer.hostname,
-        secret: secret,
-        peerPublicKey: publicKey,
-        prefix: ledgerName,
-        broker: peer.broker,
-        maxBalance: '' + peer.limit,
-        currency: peer.currency,
-        info: {
-          currencyCode: peer.currency,
-          currencySymbol: currencies[peer.currency] || peer.currency,
-          precision: 10,
-          scale: 10,
-          connectors: [{
-            id: publicKey,
-            name: publicKey,
-            connector: ledgerName + publicKey
-          }]
-        }
+    return peerInfo
+  }
+
+  * connectPeer(peer) {
+    if (!this.peers[peer.id]) {
+      this.peers[peer.id] = {
+        online: false
       }
-    })
+    }
+
+    // Skip if already connected
+    if (this.peers[peer.id].online) return
+
+    // Get host info
+    const hostInfo = yield this.getPeerInfo(peer)
+
+    // Couldn't get the host info (service might not be responding)
+    if (!hostInfo.publicKey) return
+
+    let promise
+
+    try {
+      promise = connector.addPlugin(hostInfo.ledgerName, {
+        currency: peer.currency,
+        plugin: 'ilp-plugin-virtual',
+        store: true,
+        options: {
+          name: peer.hostname,
+          secret: this.config.getIn(['connector', 'ed25519_secret_key']),
+          peerPublicKey: hostInfo.publicKey,
+          prefix: hostInfo.ledgerName,
+          broker: peer.broker,
+          maxBalance: '' + peer.limit,
+          currency: peer.currency,
+          info: {
+            currencyCode: peer.currency,
+            currencySymbol: currencies[peer.currency] || peer.currency,
+            precision: 10,
+            scale: 10,
+            connectors: [{
+              id: hostInfo.publicKey,
+              name: hostInfo.publicKey,
+              connector: hostInfo.ledgerName + hostInfo.publicKey
+            }]
+          }
+        }
+      })
+
+      this.peers[peer.id].online = true
+    } catch (e) {
+      throw e
+    }
+
+    return promise
   }
 
   * removePeer(peer) {
-    if (!this.peers[peer.id]) return
+    const peerInfo = this.peers[peer.id]
+
+    if (!peerInfo || !peerInfo.online) return
 
     try {
-      yield connector.removePlugin(this.peers[peer.id].ledgerName)
+      yield connector.removePlugin(peerInfo.ledgerName)
     } catch (e) {
       this.log.err("Couldn't remove the peer from the connector", e)
     }
@@ -130,7 +160,19 @@ module.exports = class Conncetor {
     delete this.peers[peer.id]
   }
 
-  * getPeerBalance(peer) {
-    if (this.peers[peer.id]) return connector.getPlugin(this.peers[peer.id].ledgerName).getBalance()
+  * getPeer(peer) {
+    try {
+      yield this.connectPeer(peer)
+    } catch (e) {
+      // That's fine, we'll return an offline state
+    }
+
+    const peerInfo = this.peers[peer.id]
+    const online = peerInfo && peerInfo.online
+
+    return {
+      online,
+      balance: online && (yield connector.getPlugin(peerInfo.ledgerName).getBalance())
+    }
   }
 }
