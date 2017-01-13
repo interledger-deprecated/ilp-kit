@@ -7,6 +7,7 @@ import Alert from 'react-bootstrap/lib/Alert'
 
 import Amount from 'components/Amount/Amount'
 
+import Onboarding from 'containers/Onboarding/Onboarding'
 import SendForm from 'containers/SendForm/SendForm'
 import History from 'containers/History/History'
 import Stats from 'containers/Stats/Stats'
@@ -87,10 +88,12 @@ export default class Home extends Component {
 
     // For some reason dynamic routers have problems with that state
     if (!user) return null
-
     return (
       <div className="row">
         <div className="col-sm-8">
+          {/* Onboarding */}
+          <Onboarding />
+
           {/* History */}
           <div className="panel panel-default">
             <div className="panel-heading">
@@ -115,20 +118,21 @@ export default class Home extends Component {
         </div>
         <div className="col-sm-4">
           {/*
-          <div className="panel panel-default">
-            <div className="panel-heading">
-              <div className="panel-title">Use ILP kit as your default payment provider</div>
-            </div>
-            <div className="panel-body">
-              <button className="btn btn-complete btn-block" onClick={this.handleDefaultPayment}>Set as default</button>
-            </div>
-          </div>
-          */}
+           <div className="panel panel-default">
+           <div className="panel-heading">
+           <div className="panel-title">Use ILP kit as your default payment provider</div>
+           </div>
+           <div className="panel-body">
+           <button className="btn btn-complete btn-block" onClick={this.handleDefaultPayment}>Set as default</button>
+           </div>
+           </div>
+           */}
           {/* TODO:UX Invalid verification error */}
           {verified &&
           <Alert bsStyle="success">
             Your email has been verified!
           </Alert>}
+
           {/* Balance */}
           <div className="panel panel-default">
             <div className="panel-body">
@@ -142,7 +146,7 @@ export default class Home extends Component {
                 <div>
                   <a className="btn btn-complete btn-lg"
                      onClick={!user.isAdmin && this.reload} disabled={user.isAdmin}
-                     data-tip={user.isAdmin && 'You are the admin, you have enough'}>
+                     data-tip={user.isAdmin && "You have enough, you're the admin"}>
                     {!reloading && 'Get More'}
                     {reloading && 'Getting...'}
                   </a>
@@ -151,6 +155,8 @@ export default class Home extends Component {
               </div>
             </div>
           </div>
+
+          {/* Send Form */}
           <div className="panel panel-default">
             <div className="panel-heading">
               <div className="panel-title">Send Money</div>
@@ -171,5 +177,6 @@ export default class Home extends Component {
         <ReactTooltip />
       </div>
     )
+
   }
 }

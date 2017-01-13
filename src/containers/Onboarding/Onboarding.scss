@@ -1,0 +1,50 @@
+@import 'mixins';
+@import 'variables';
+
+.Onboarding {
+  h1 {
+    margin: 0 0 10px;
+  }
+}
+.list {
+  list-style-type: none;
+  padding: 0;
+  margin: 30px 0 0;
+
+  li {
+    clear: both;
+    overflow: hidden;
+    margin: 0 0 20px;
+  }
+
+  i {
+    float: left;
+    width: 20px;
+    margin: 5px 20px 0 0;
+    font-size: 22px;
+    text-align: center;
+
+    &.done {
+      color: $success;
+    }
+    &.todo {
+      color: $muted-text-color;
+    }
+  }
+
+  .title {
+    width: calc(100% - 40px);
+    float: left;
+    margin: 0;
+
+    a {
+      @include singleLinkColor($text-color);
+      border-bottom: 1px dotted $text-color;
+    }
+  }
+  .description {
+    width: calc(100% - 40px);
+    float: right;
+    font-size: 15px;
+  }
+}
