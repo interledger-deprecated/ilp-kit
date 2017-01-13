@@ -4,6 +4,7 @@ module.exports = PeersControllerFactory
 
 const forEach = require('co-foreach')
 const Auth = require('../lib/auth')
+const Log = require('../lib/log')
 const Config = require('../lib/config')
 const Connector = require('../lib/connector')
 const PeerFactory = require('../models/peer')
@@ -11,8 +12,10 @@ const PeerFactory = require('../models/peer')
 const NotFoundError = require('../errors/not-found-error')
 const InvalidBodyError = require('../errors/invalid-body-error')
 
-PeersControllerFactory.constitute = [Auth, Config, PeerFactory, Connector]
-function PeersControllerFactory(auth, config, Peer, connector) {
+PeersControllerFactory.constitute = [Auth, Config, Log, PeerFactory, Connector]
+function PeersControllerFactory(auth, config, log, Peer, connector) {
+  log = log('peers')
+
   return class PeersController {
     static init(router) {
       router.get('/peers', auth.checkAuth, this.checkAdmin, this.getAll)
@@ -109,7 +112,12 @@ function PeersControllerFactory(auth, config, Peer, connector) {
       if (!prefix) throw new InvalidBodyError('Prefix is not supplied')
       if (!method) throw new InvalidBodyError('Method is not supplied')
 
-      this.body = yield connector.rpc(prefix, method, params)
+      try {
+        this.body = yield connector.rpc(prefix, method, params)
+      } catch (e) {
+        // Server is not ready yet
+        log.err('connector.rpc() failed')
+      }
     }
   }
 }
