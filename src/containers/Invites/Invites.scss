@@ -1,6 +1,14 @@
 @import 'variables';
 @import 'mixins';
 
+.noInvites {
+  text-align: center;
+
+  i {
+    font-size: 50px;
+    margin: 10px 0 10px;
+  }
+}
 .invite {
   position: relative;
 

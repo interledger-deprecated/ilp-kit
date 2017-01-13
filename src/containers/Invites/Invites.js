@@ -83,6 +83,15 @@ export default class Invites extends Component {
         <div className={cx('row')}>
           {/* List */}
           <div className={cx('col-sm-8')}>
+            {codes.length < 1 &&
+            <div className={cx('panel', 'panel-default', 'noInvites')}>
+              <div className="panel-body">
+                <i className={cx('fa', 'fa-ticket')} />
+                <h1>No Invite Codes</h1>
+                <div>Use the form on the right to add invite codes</div>
+              </div>
+            </div>}
+
             {codes.map(this.renderCode)}
           </div>
 

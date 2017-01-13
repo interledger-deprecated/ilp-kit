@@ -43,7 +43,7 @@ export default class Peers extends Component {
     this.props.remove(peer.id)
   }
 
-  renderPeer = (peer) => {
+  renderPeer = peer => {
     return (
       <div className={cx('panel', 'panel-default', 'peer')} key={peer.id}>
         <div className="panel-body">
@@ -100,6 +100,15 @@ export default class Peers extends Component {
         <div className={cx('row')}>
           {/* List */}
           <div className={cx('col-sm-8')}>
+            {peers.length < 1 &&
+            <div className={cx('panel', 'panel-default', 'noPeers')}>
+              <div className="panel-body">
+                <i className={cx('fa', 'fa-link')} />
+                <h1>No Peers</h1>
+                <div>Use the form on the right to add your first peer</div>
+              </div>
+            </div>}
+
             {peers.map(this.renderPeer)}
           </div>
 
