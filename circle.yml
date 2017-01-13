@@ -11,11 +11,10 @@ dependencies:
     - npm prune && npm install
 
 test:
-  pre:
-    - npm run build
   override:
 #   - npm run lint
     - npm test
+    - npm run integration
   post:
     - docker build -t interledgerjs/ilp-kit:latest .
     - docker tag interledgerjs/ilp-kit:latest interledgerjs/ilp-kit:"$(git describe --tags)"
