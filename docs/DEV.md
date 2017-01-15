@@ -34,10 +34,19 @@ Edit your hosts file (`/private/etc/hosts` on OSX). Add these two lines
 127.0.0.1   wallet2.com
 ```
 
-## Port forwarding
+## Port forwarding (simple)
+
+> NOTE: Current webfinger implementation will not work if the public ports 443 and 80 don't point to the development server.
+
+``` sh
+npm run dev-with-proxy
+```
+
+## Port forwarding (two ILP Kits)
+
+If you would like to set up two ILP Kits on the same host, it's a good idea to use Apache for the virtual host handling.
 
 > NOTE: This is an apache server config for developers. If you want to setup a production environment check out [this guide](https://github.com/interledgerjs/ilp-kit/blob/master/docs/SETUP.md).
-
 
 In most cases it makes sense to expose the wallet through 443 (or 80) port, in which case you need to setup a port forwarding that will forward `API_PORT` requests to `API_PUBLIC_PORT` (443 or 80). Note that the port forwarding should work for both http(s) and websocket connections.
 
@@ -64,28 +73,24 @@ Listen 80
 Listen 443
 ```
 
-> NOTE: Current webfinger implementation will not work if the public port is not 443 or 80.
-
-> NOTE: At the moment you need to have a 443 virtual host in addition to 80 virtual host if you're use 80 as a public port. 443 virtual host is used for the webfinger lookups. This is a [reported issue](https://github.com/e14n/webfinger/issues/27) in the webfinger lib used by the ilp-kit.
-
 ```
-<VirtualHost *:443> 
+<VirtualHost *:443>
   ServerName wallet.com
-  
+
   RewriteEngine On
   RewriteCond %{HTTP:Connection} Upgrade [NC]
   RewriteRule /(.*) ws://wallet.com:3000/$1 [P,L]
-  
+
   ProxyRequests Off
   ProxyPass /ledger/websocket ws://localhost:3101/websocket
 
   ProxyPass / http://wallet.com:3000/ retry=0
   ProxyPassReverse / http://wallet.com:3000/
-  
+
   SSLEngine on
   SSLCertificateFile /etc/apache2/ssl/wallet.com.crt
   SSLCertificateKeyFile /etc/apache2/ssl/wallet.com.key
-</VirtualHost> 
+</VirtualHost>
 ```
 
 ## Apache Virtual Hosts
@@ -93,61 +98,61 @@ Listen 443
 > Note: The wallet instances are running on port 80, but we also need to setup virtual hosts on port 443 for the webfinger lookups (issue mentioned above).
 
 ```
-<VirtualHost *:80> 
+<VirtualHost *:80>
   ServerName wallet1.com
 
   RewriteEngine On
-  RewriteCond %{HTTP:Connection} Upgrade [NC]  
+  RewriteCond %{HTTP:Connection} Upgrade [NC]
   RewriteRule /(.*) ws://wallet1.com:3010/$1 [P,L]
-  
+
   ProxyRequests Off
   ProxyPass /ledger/websocket ws://localhost:3101/websocket
 
   ProxyPass / http://wallet1.com:3010/ retry=0
-  ProxyPassReverse / http://wallet1.com:3010/  
-</VirtualHost> 
+  ProxyPassReverse / http://wallet1.com:3010/
+</VirtualHost>
 
-<VirtualHost *:443> 
+<VirtualHost *:443>
   ServerName wallet1.com
   ProxyPass / http://wallet1.com:3010/ retry=0
   ProxyPassReverse / http://wallet1.com:3010/
   RedirectMatch ^/$ https://wallet1.com
-    
+
   ProxyRequests Off
   ProxyPass /ledger/websocket ws://localhost:3101/websocket
-  
+
   SSLEngine on
   SSLCertificateFile /etc/apache2/ssl/wallet1.com.crt
   SSLCertificateKeyFile /etc/apache2/ssl/wallet1.com.key
 </VirtualHost>
 
-<VirtualHost *:80> 
+<VirtualHost *:80>
   ServerName wallet2.com
 
   RewriteEngine On
   RewriteCond %{HTTP:Connection} Upgrade [NC]
   RewriteRule /(.*) ws://wallet2.com:3020/$1 [P,L]
-    
+
   ProxyRequests Off
   ProxyPass /ledger/websocket ws://localhost:3101/websocket
 
   ProxyPass / http://wallet2.com:3020/ retry=0
   ProxyPassReverse / http://wallet2.com:3020/
-</VirtualHost> 
+</VirtualHost>
 
-<VirtualHost *:443> 
+<VirtualHost *:443>
   ServerName wallet2.com
   ProxyPass / http://wallet2.com:3020/ retry=0
   ProxyPassReverse / http://wallet2.com:3020/
   RedirectMatch ^/$ https://wallet2.com
-    
+
   ProxyRequests Off
   ProxyPass /ledger/websocket ws://localhost:3101/websocket
-  
+
   SSLEngine on
   SSLCertificateFile /etc/apache2/ssl/wallet2.com.crt
   SSLCertificateKeyFile /etc/apache2/ssl/wallet2.com.key
-</VirtualHost> 
+</VirtualHost>
 ```
 
 > Note: You can use self signed certificates.
