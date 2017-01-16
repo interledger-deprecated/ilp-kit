@@ -117,6 +117,17 @@ export function username (value) {
   }
 }
 
+export function https (value) {
+  if (value && value.indexOf('http:') === 0) {
+    return 'Must be HTTPS'
+  }
+
+  if (!isEmpty(value) &&
+    !/^https:\/\/[^\s/$.?#].[^\s]*$/i.test(value)) {
+    return 'Invalid'
+  }
+}
+
 export function createValidator (rules) {
   return (data = {}) => {
     const errors = {}

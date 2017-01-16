@@ -8,12 +8,16 @@ module.exports = WebfingerControllerFactory
 
 const Config = require('../lib/config')
 const Ledger = require('../lib/ledger')
+const UserFactory = require('../models/user')
+const ReceiverFactory = require('../models/receiver')
 
 const NotFoundError = require('../errors/not-found-error')
 
 function WebfingerControllerFactory (deps) {
   const config = deps(Config)
   const ledger = deps(Ledger)
+  const User = deps(UserFactory)
+  const Receiver = deps(ReceiverFactory)
 
   return class WebfingerController {
     static init (router) {
@@ -82,7 +86,14 @@ function WebfingerControllerFactory (deps) {
             config.data.get('client_host'))
         }
 
-        ctx.body = await getWebfingerForUser(username)
+        const splitUsername = username.split(/[ +]/)
+        if (splitUsername.length === 1) {
+          ctx.body = await getWebfingerForUser(username)
+        } else if (splitUsername.length === 2) {
+          ctx.body = await getWebfingerForReceiver(splitUsername[0], splitUsername[1])
+        } else {
+          throw new NotFoundError('Username must contain zero or one plus signs or spaces')
+        }
       } else if (resource.slice(0, 6) === 'https:') {
         // Host lookup
         if (resource === config.data.get('client_uri')) {
@@ -118,11 +129,14 @@ function WebfingerControllerFactory (deps) {
 
       // Account lookup
       async function getWebfingerForUser (username) {
-        // Validate the ledger account
-        const ledgerUser = await ledger.getAccount({ username: username }, true)
+        // Validate the user account
+        const dbUser = await User.findOne({ where: { username } })
 
+        if (!dbUser) {
+          throw new NotFoundError('Username not found')
+        }
         return {
-          'subject': 'acct:' + ledgerUser.name + '@' + config.data.get('client_host'),
+          'subject': 'acct:' + dbUser.username + '@' + config.data.get('client_host'),
           'links': [
             {
               // TODO decide on rel names
@@ -136,7 +150,7 @@ function WebfingerControllerFactory (deps) {
             },
             {
               'rel': 'https://interledger.org/rel/ilpAddress',
-              'href': config.data.getIn(['ledger', 'prefix']) + ledgerUser.name
+              'href': config.data.getIn(['ledger', 'prefix']) + dbUser.username
             },
             {
               'rel': 'https://interledger.org/rel/sender/payment',
@@ -148,7 +162,55 @@ function WebfingerControllerFactory (deps) {
             },
             {
               'rel': 'https://interledger.org/rel/spsp/v2',
-              'href': config.data.getIn(['server', 'base_uri']) + '/spsp/' + ledgerUser.name
+              'href': config.data.getIn(['server', 'base_uri']) + '/spsp/' + dbUser.username
+            }
+          ]
+        }
+      }
+
+      // Receiver lookup
+      async function getWebfingerForReceiver (username, receivername) {
+        const dbUser = await User.findOne({ where: { username } })
+        if (!dbUser) {
+          throw new NotFoundError('Username not found')
+        }
+
+        const receiver = await Receiver.findOne({ where: {
+          user: dbUser.id, name: receivername
+        } })
+
+        console.log('receiver', receiver)
+        return {
+          'subject': 'acct:' + dbUser.username + '+' + receiver.name +
+            '@' + config.data.get('client_host'),
+          'links': [
+            {
+              // TODO decide on rel names
+              'rel': 'https://interledger.org/rel/ledgerUri',
+              'href': config.data.getIn(['ledger', 'public_uri'])
+            },
+            {
+              // TODO an actual rel to the docs
+              'rel': 'https://interledger.org/rel/socketIOUri',
+              'href': config.data.getIn(['server', 'base_uri']) + '/socket.io'
+            },
+            {
+              'rel': 'https://interledger.org/rel/ilpAddress',
+              'href': config.data.getIn(['ledger', 'prefix']) + dbUser.username +
+                '.~recv.' + receiver.name
+            },
+            {
+              'rel': 'https://interledger.org/rel/sender/payment',
+              'href': config.data.getIn(['server', 'base_uri']) + '/payments'
+            },
+            {
+              'rel': 'https://interledger.org/rel/sender/quote',
+              'href': config.data.getIn(['server', 'base_uri']) + '/payments/quote'
+            },
+            {
+              'rel': 'https://interledger.org/rel/spsp/v2',
+              'href': config.data.getIn(['server', 'base_uri']) + '/spsp/' +
+                dbUser.username + '/' + receiver.name
             }
           ]
         }
