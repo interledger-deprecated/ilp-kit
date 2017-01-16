@@ -238,49 +238,37 @@ their debt to you by $10, and you will forward the payment on your own ledger
 or on another trust-line. Because this balance is kept between peers rather
 than a ledger, one party could simply refuse to pay off their debt.
 
-In order to stop this from getting out of hand, each party sets a maximum
-balance.  If I have a trust-line balance of $10, then the other party on the
-trust-line owes me $10. Because the balance is capped, the other party cannot
+In order to stop this from getting out of hand, each party sets a limit. If I
+have a trust-line balance of $10, then the other party on the trust-line owes
+me $10. Because the balance is capped at the limit, the other party cannot
 borrow as much as they want, never to repay it.
 
 ### Make a trust-line
 
-First things first, agree on an MQTT server with your peer.
-[HiveMQ](http://www.hivemq.com/try-out/) and
-[Mosquitto](http://test.mosquitto.org/) both offer test MQTT servers which can
-be used for testing purposes. One party could also [run a broker](https://mosquitto.org/) on
-their own server. On an insecure MQTT server, someone can pretend to be your
-peer, and they can see all of your transactions.
+In order to establish a trust-line, you first need somebody to peer with.
+Find out your peer's hostname, and then continue following these instructions.
 
-Next, you'll need your public key. This public key, combined with an MQTT broker,
-is how your peer is going to connect to you. To get a public key, run:
+Log into your ILP Kit's UI as `admin` (you can find the credentials in
+`env.list` under the variables `LEDGER_ADMIN_NAME` and `LEDGER_ADMIN_PASS`),
+and select the `Peers` tab at the top of the page (or on `yourhostname.example/peers`)
 
-```sh
-$ npm run key
-```
+You'll see a form on the right which has three fields in it:
 
-It will generate the public key corresponding to the `API_SECRET` in `env.list`.
+- Hostname: Put your peer's ILP Kit hostname here. e.g. `nexus.justmoon.net`.
+- Limit: This is how much your peer is allowed to owe you. You can set this to whatever you want.
+- Currency: The currency **of the trustline**. Both parties that want to peer must enter the same thing here.
 
-Copy down your public key, and give it to the person you want to peer with. Make sure that you
-get their public key too. Once you have their public key, run:
+The currency doesn't have to be the same as either peer's ledger, but both
+peers must enter the same currency. If I create a trustline over `USD`, and my
+peer creates a trustline over `EUR`, these are two different trustlines.
+Instead, we should both enter `USD` as our trustline currency, or a third asset
+we both agree on.
 
-```sh
-$ npm run peer
-```
-
-This starts another CLI which provides suggested values. Here's what you should put:
-
-- Name: Use the name of your peer, e.g. `Bob`, so that you can find this trust-line later
-- MQTT Broker: Use the one that you and your peer agreed on. Make sure to include the port in the `mqtt://` URL.
-- Public Key: This should be provided to you by your peer. It'll look like `d4TOtjlltxPH_4gZXw_R0HBjY6tbh3X-tk2N2df2zAk`.
-- Currency Code: Should be agreed upon by you and your peer, so that you're assigning the same value to the balance. It doesn't have to match
-  either of your ILP Kit's native currencies, but it should be something your connector knows the exchange rate for. Default is `USD`.
-- Max Amount: The most that your peer can steal by defaulting on their debt to you. About $10 is a reasonable amount to start with; it can be
-  adjusted later by manually editing your configuration file. It's safer to err on the low side, and then increase later.
-
-Now your `env.list` will be modified to include this peering relationship. The trust-line is stored in the
-`CONNECTOR_LEDGERS` field, where it can be modified or removed later. If you want to see all of your trust-lines, then
-you can run `npm run list-peers`. If you want to remove one of your trust-lines, then run `npm run depeer`.
+When you add your trustline, an entry will appear in your peers list
+(`yourhostname.example/peers`). The trustline's entry has a status, which is a
+red circle right now. Once your peer adds a matching trustline (a trustline
+with your ILP Kit as the hostname and the same currency), the status will turn
+green. Now you can send payments between each other's ledgers.
 
 ## Launch ILP Kit
 
