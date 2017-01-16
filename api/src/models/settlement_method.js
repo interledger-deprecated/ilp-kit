@@ -33,7 +33,7 @@ function SettlementMethodFactory (deps) {
       data.logoUrl = data.logo && `/api/${data.logo}`
 
       if (data.type === 'paypal') {
-        data.logoUrl = config.data.get('client_host') + '/paypal.png'
+        data.logoUrl = config.data.get('client_uri') + '/paypal.png'
       }
 
       return data

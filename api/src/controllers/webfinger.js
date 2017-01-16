@@ -6,7 +6,6 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
 module.exports = WebfingerControllerFactory
 
-const url = require('url')
 const Config = require('../lib/config')
 const Ledger = require('../lib/ledger')
 
@@ -68,33 +67,62 @@ function WebfingerControllerFactory (deps) {
         return
       }
 
-      // TODO rel support
-      const parsed = url.parse(ctx.query.resource)
+      const resource = ctx.query.resource
 
-      // Validate ledger
-      if (config.data.getIn(['ledger', 'public_uri']).indexOf(parsed.hostname) < 0) {
-        throw new NotFoundError('Unknown account')
-      }
+      if (resource.slice(0, 5) === 'acct:') {
+        const splitResource = resource.slice(5).split('@')
+        if (splitResource.length !== 2) {
+          throw new NotFoundError('acct: URIs must contain exactly one @-symbol')
+        }
 
-      let username
+        const [username, hostname] = splitResource
 
-      // resource is an acct:
-      if (parsed.auth) {
-        username = parsed.auth
-      // resource is a http(s):
-      } else if (parsed.path) {
-        username = parsed.path.match(/([^/]*)\/*$/)[1]
+        if (hostname !== config.data.get('client_host')) {
+          throw new NotFoundError('Client asked about a user on another server, we are: ' +
+            config.data.get('client_host'))
+        }
+
+        ctx.body = await getWebfingerForUser(username)
+      } else if (resource.slice(0, 6) === 'https:') {
+        // Host lookup
+        if (resource === config.data.get('client_uri')) {
+          this.body = {
+            'subject': config.data.get('client_uri'),
+            'properties': {
+              'https://interledger.org/rel/publicKey': config.data.getIn(['connector', 'public_key'])
+            },
+            'links': [
+              {
+                'rel': 'https://interledger.org/rel/ledgerUri',
+                'href': config.data.getIn(['ledger', 'public_uri'])
+              },
+              {
+                'rel': 'https://interledger.org/rel/peersRpcUri',
+                'href': config.data.getIn(['server', 'base_uri']) + '/peers/rpc'
+              }
+            ]
+          }
+        }
+        const ledgerUri = config.data.getIn(['ledger', 'public_uri'])
+        const ledgerAccountsUri = ledgerUri + '/accounts/'
+        if (resource.slice(0, ledgerAccountsUri.length) === ledgerAccountsUri) {
+          const username = resource.match(/([^/]*)\/*$/)[1]
+          ctx.body = await getWebfingerForUser(username)
+        } else {
+          throw new NotFoundError('Unrecognized resource URI, should start with: ' +
+            ledgerAccountsUri)
+        }
       } else {
         throw new NotFoundError('Unknown account')
       }
 
       // Account lookup
-      if (username) {
+      async function getWebfingerForUser (username) {
         // Validate the ledger account
         const ledgerUser = await ledger.getAccount({ username: username }, true)
 
-        ctx.body = {
-          'subject': 'acct:' + ledgerUser.name + '@' + parsed.hostname,
+        return {
+          'subject': 'acct:' + ledgerUser.name + '@' + config.data.get('client_host'),
           'links': [
             {
               // TODO decide on rel names
@@ -124,12 +152,11 @@ function WebfingerControllerFactory (deps) {
             }
           ]
         }
-        return
       }
 
       // Host lookup
       ctx.body = {
-        'subject': config.data.get('client_host'),
+        'subject': config.data.get('client_uri'),
         'properties': {
           'https://interledger.org/rel/publicKey': config.data.getIn(['connector', 'public_key']),
           'https://interledger.org/rel/protocolVersion': 'Compatible: ilp-kit v' + config.data.getIn(['ilpKitVersion'])

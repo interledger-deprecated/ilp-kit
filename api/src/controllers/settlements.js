@@ -177,10 +177,10 @@ function SettlementsControllerFactory (deps) {
         })
 
         // TODO:BEFORE_DEPLOY handle destination.hostname, destination.currency for user
-        ctx.redirect(`${config.data.get('client_host')}/settlement/${settlement.id}`)
+        ctx.redirect(`${config.data.get('client_uri')}/settlement/${settlement.id}`)
       } catch (e) {
         console.log('settlements:174', e)
-        ctx.redirect(`${config.data.get('client_host')}/settlement/cancel`)
+        ctx.redirect(`${config.data.get('client_uri')}/settlement/cancel`)
       }
     }
 
@@ -189,7 +189,7 @@ function SettlementsControllerFactory (deps) {
 
       if (!destination) throw new NotFoundError('Invalid destination')
 
-      ctx.redirect(`${config.data.get('client_host')}/settle/paypal/${destination.destination}/cancel`)
+      ctx.redirect(`${config.data.get('client_uri')}/settle/paypal/${destination.destination}/cancel`)
     }
 
     static async getResource (ctx) {
