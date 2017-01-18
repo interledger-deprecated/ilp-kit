@@ -88,7 +88,7 @@ export default (store) => {
       cb(null, require('./containers/Users/Users'))
 
       store.dispatch(locationUpdate())
-    }, 'invites')
+    }, 'users')
   }
 
   const getPeers = (nextState, cb) => {
@@ -96,7 +96,47 @@ export default (store) => {
       cb(null, require('./containers/Peers/Peers'))
 
       store.dispatch(locationUpdate())
-    }, 'invites')
+    }, 'peers')
+  }
+
+  const getSettlement = (nextState, cb) => {
+    require.ensure(['./containers/Settlement/Settlement'], (require) => {
+      cb(null, require('./containers/Settlement/Settlement'))
+
+      store.dispatch(locationUpdate())
+    }, 'settlement')
+  }
+
+  const getSettlementPaypal = (nextState, cb) => {
+    require.ensure(['./containers/SettlementPaypal/SettlementPaypal'], (require) => {
+      cb(null, require('./containers/SettlementPaypal/SettlementPaypal'))
+
+      store.dispatch(locationUpdate())
+    }, 'settlementPaypal')
+  }
+
+  const getSettlementBitcoin = (nextState, cb) => {
+    require.ensure(['./containers/SettlementBitcoin/SettlementBitcoin'], (require) => {
+      cb(null, require('./containers/SettlementBitcoin/SettlementBitcoin'))
+
+      store.dispatch(locationUpdate())
+    }, 'settlementBitcoin')
+  }
+
+  const getSettlementRipple = (nextState, cb) => {
+    require.ensure(['./containers/SettlementRipple/SettlementRipple'], (require) => {
+      cb(null, require('./containers/SettlementRipple/SettlementRipple'))
+
+      store.dispatch(locationUpdate())
+    }, 'settlementRipple')
+  }
+
+  const getSettlementEtherium = (nextState, cb) => {
+    require.ensure(['./containers/SettlementEtherium/SettlementEtherium'], (require) => {
+      cb(null, require('./containers/SettlementEtherium/SettlementEtherium'))
+
+      store.dispatch(locationUpdate())
+    }, 'settlementEtherium')
   }
 
   /**
@@ -128,6 +168,12 @@ export default (store) => {
           <Route path="invites" getComponent={getInvites}/>
           <Route path="users" getComponent={getUsers}/>
           <Route path="peers" getComponent={getPeers}/>
+          <Route path="settlement" getComponent={getSettlement}>
+            <Route path="paypal" getComponent={getSettlementPaypal}/>
+            <Route path="bitcoin" getComponent={getSettlementBitcoin}/>
+            <Route path="ripple" getComponent={getSettlementRipple}/>
+            <Route path="etherium" getComponent={getSettlementEtherium}/>
+          </Route>
         </Route>
 
         { /* Routes available to all */ }

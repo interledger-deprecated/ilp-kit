@@ -15,6 +15,12 @@
   &:hover .deleteButton {
     opacity: 1;
   }
+
+  .icon {
+    display: inline-block;
+    width: 15px;
+    margin: 0 8px 0 0;
+  }
 }
 .limit {
   &.loading {
