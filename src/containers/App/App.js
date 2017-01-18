@@ -191,14 +191,18 @@ export default class App extends Component {
               <LinkContainer to="/peers">
                 <NavItem onClick={this.onNavItemClick}>Peers</NavItem>
               </LinkContainer>}
+		 {!user.github_id &&
+	 <LinkContainer to="/withdraw">
+           <NavItem onClick={this.onNavItemClick}>Withdraw</NavItem>
+           </LinkContainer>}
+        	{!user.github_id && 
+		<LinkContainer to="/contact">
+            <NavItem onClick={this.onNavItemClick}>Contact</NavItem>
+          </LinkContainer>}
               {!user.github_id &&
               <LinkContainer to="/settings">
                 <NavItem onClick={this.onNavItemClick}>Settings</NavItem>
               </LinkContainer>}
-              <NavItem href="https://interledgerjs.github.io/ilp-kit/apidoc/"
-                             target="_blank" onClick={this.onNavItemClick}>
-                API docs
-              </NavItem>
               <LinkContainer to="/logout">
                 <NavItem className="logout-link" onClick={this.handleLogout}>
                   Logout

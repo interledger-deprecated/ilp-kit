@@ -4,6 +4,8 @@ import { isLoaded as isAuthLoaded, load, locationUpdate } from 'redux/actions/au
 import App from 'containers/App/App'
 import NotFound from 'containers/NotFound/NotFound'
 import Widget from 'containers/Widget/Widget'
+import Contact from 'containers/Contact/Contact'
+import Withdraw from 'containers/Withdraw/Withdraw'
 
 export default (store) => {
   const isAuth = () => {
@@ -99,6 +101,25 @@ export default (store) => {
     }, 'invites')
   }
 
+
+const getContact  = (nextState, cb) => {
+    require.ensure(['./containers/Contact/Contact'], (require) => {
+      cb(null, require('./containers/Contact/Contact'))
+
+      store.dispatch(locationUpdate())
+    }, 'withdraw')
+  }
+
+  const getWithdraw  = (nextState, cb) => {
+    require.ensure(['./containers/Withdraw/Withdraw'], (require) => {
+      cb(null, require('./containers/Withdraw/Withdraw'))
+
+      store.dispatch(locationUpdate())
+    }, 'withdraw')
+  }
+
+
+
   /**
    * Please keep routes in alphabetical order
    */
@@ -121,6 +142,8 @@ export default (store) => {
         <Route onEnter={requireAuth}>
           <Route path="button" getComponent={getButton}/>
           <Route path="settings" getComponent={getSettings}/>
+	  <Route path="withdraw" getComponent={getWithdraw}/>
+ 	  <Route path="contact" getComponent={getContact}/>
         </Route>
 
         { /* Admin pages */ }
