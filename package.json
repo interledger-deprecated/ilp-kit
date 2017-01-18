@@ -39,11 +39,7 @@
     "test-api": "better-npm-run test-api",
     "integration": "integration-loader && integration all",
     "apidoc": "apidoc -i api/src/controllers/ -o apidoc-out",
-    "key": "./node_modules/ilp-kit-cli/bin/configure.js key",
-    "configure": "./node_modules/ilp-kit-cli/bin/configure.js configure",
-    "peer": "./node_modules/ilp-kit-cli/bin/configure.js peer",
-    "depeer": "./node_modules/ilp-kit-cli/bin/configure.js depeer",
-    "list-peers": "./node_modules/ilp-kit-cli/bin/configure.js list"
+    "configure": "./node_modules/ilp-kit-cli/bin/configure.js"
   },
   "betterScripts": {
     "start-prod": {
@@ -153,7 +149,7 @@
     "http-proxy": "^1.12.0",
     "ilp": "^7.1.0",
     "ilp-connector": "^12.11.0",
-    "ilp-kit-cli": "^10.0.1",
+    "ilp-kit-cli": "^11.0.1",
     "ilp-plugin-bells": "^9.1.0",
     "ilp-plugin-virtual": "^11.0.0",
     "istanbul": "^0.4.5",
