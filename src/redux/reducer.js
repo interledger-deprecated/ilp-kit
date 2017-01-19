@@ -9,6 +9,7 @@ import history from './reducers/history'
 import stats from './reducers/stats'
 import invite from './reducers/invite'
 import peer from './reducers/peer'
+import settlementMethod from './reducers/settlement_method'
 import user from './reducers/user'
 
 export default combineReducers({
@@ -20,6 +21,7 @@ export default combineReducers({
   stats,
   invite,
   peer,
+  settlementMethod,
   user,
   form
 })

@@ -107,36 +107,12 @@ export default (store) => {
     }, 'settlement')
   }
 
-  const getSettlementPaypal = (nextState, cb) => {
-    require.ensure(['./containers/SettlementPaypal/SettlementPaypal'], (require) => {
-      cb(null, require('./containers/SettlementPaypal/SettlementPaypal'))
+  const getSettlementMethod = (nextState, cb) => {
+    require.ensure(['./containers/SettlementMethod/SettlementMethod'], (require) => {
+      cb(null, require('./containers/SettlementMethod/SettlementMethod'))
 
       store.dispatch(locationUpdate())
-    }, 'settlementPaypal')
-  }
-
-  const getSettlementBitcoin = (nextState, cb) => {
-    require.ensure(['./containers/SettlementBitcoin/SettlementBitcoin'], (require) => {
-      cb(null, require('./containers/SettlementBitcoin/SettlementBitcoin'))
-
-      store.dispatch(locationUpdate())
-    }, 'settlementBitcoin')
-  }
-
-  const getSettlementRipple = (nextState, cb) => {
-    require.ensure(['./containers/SettlementRipple/SettlementRipple'], (require) => {
-      cb(null, require('./containers/SettlementRipple/SettlementRipple'))
-
-      store.dispatch(locationUpdate())
-    }, 'settlementRipple')
-  }
-
-  const getSettlementEtherium = (nextState, cb) => {
-    require.ensure(['./containers/SettlementEtherium/SettlementEtherium'], (require) => {
-      cb(null, require('./containers/SettlementEtherium/SettlementEtherium'))
-
-      store.dispatch(locationUpdate())
-    }, 'settlementEtherium')
+    }, 'settlementMethod')
   }
 
   /**
@@ -169,10 +145,7 @@ export default (store) => {
           <Route path="users" getComponent={getUsers}/>
           <Route path="peers" getComponent={getPeers}/>
           <Route path="settlement" getComponent={getSettlement}>
-            <Route path="paypal" getComponent={getSettlementPaypal}/>
-            <Route path="bitcoin" getComponent={getSettlementBitcoin}/>
-            <Route path="ripple" getComponent={getSettlementRipple}/>
-            <Route path="etherium" getComponent={getSettlementEtherium}/>
+            <Route path=":id" getComponent={getSettlementMethod}/>
           </Route>
         </Route>
 

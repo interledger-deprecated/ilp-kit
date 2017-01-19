@@ -11,6 +11,7 @@ const WebfingerController = require('../controllers/webfinger')
 const MiscController = require('../controllers/misc')
 const InviteController = require('../controllers/invites')
 const PeerController = require('../controllers/peers')
+const SettlementMethodsController = require('../controllers/settlement_methods')
 
 module.exports = class Router {
   static constitute() { return [ Container ] }
@@ -43,6 +44,9 @@ module.exports = class Router {
 
     const peers = this.container.constitute(PeerController)
     peers.init(this.router)
+
+    const settlementMethods = this.container.constitute(SettlementMethodsController)
+    settlementMethods.init(this.router)
   }
 
   attach(app) {

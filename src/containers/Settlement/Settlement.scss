@@ -6,12 +6,42 @@
   padding: 0;
 
   .option {
+    position: relative;
     display: block;
     text-align: center;
+    @include singleLinkColor($text-color)
+
+    .icon {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      padding: 5px;
+      font-size: 8px;
+
+      &.enabled {
+        color: $success;
+      }
+      &.disabled {
+        color: $danger;
+      }
+    }
+
+    &:hover {
+      background: darken($box-alternate-background-color, 2%);
+    }
   }
 
   img {
     margin: 5px;
     height: 50px;
+  }
+}
+
+.noResults {
+  text-align: center;
+
+  i {
+    font-size: 50px;
+    margin: 10px 0 10px;
   }
 }
