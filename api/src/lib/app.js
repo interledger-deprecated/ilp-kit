@@ -43,8 +43,13 @@ module.exports = class App {
 
     const uploadDir = __dirname + '/../../../uploads'
 
-    // Create if doesn't exist
-    if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir)
+    // Create uploads folder
+    try {
+      fs.mkdirSync(uploadDir)
+    } catch (err) {
+      // ignore if the folder already exists
+      if (err.code !== 'EEXIST') { throw err }
+    }
 
     app.use(bodyParser({
       multipart: true,
