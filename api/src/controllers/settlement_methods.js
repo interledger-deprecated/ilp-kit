@@ -36,7 +36,7 @@ function SettlementMethodsControllerFactory(auth, config, log, SettlementMethod)
       this.body = yield SettlementMethod.findAll({
         include: [{ all: true }],
         order: [
-          ['enabled', 'ASC'],
+          ['enabled', 'DESC NULLS LAST'],
           ['created_at', 'ASC']
         ]
       })
@@ -65,7 +65,11 @@ function SettlementMethodsControllerFactory(auth, config, log, SettlementMethod)
 
       if (!method) throw new NotFoundError("Settlement method doesn't exist")
 
-      // TODO Update in the db
+      if (this.body.enabled !== undefined) {
+        method.enabled = this.body.enabled
+      }
+
+      yield method.save()
 
       this.body = method
     }
