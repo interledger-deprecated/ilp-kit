@@ -25,6 +25,13 @@ export default function reducer(state = initialState, action = {}) {
           return action.result
         })
       }
+    case types.UPDATE_SETTLEMENT_METHOD_PIC:
+      return {
+        ...state,
+        user: {
+          ...state.user
+        }
+      }
     case types.REMOVE_SETTLEMENT_METHOD_SUCCESS:
       return {
         ...state,

@@ -2,6 +2,7 @@
 
 module.exports = SettlementMethodsControllerFactory
 
+const path = require('path')
 const Auth = require('../lib/auth')
 const Log = require('../lib/log')
 const Config = require('../lib/config')
@@ -19,6 +20,7 @@ function SettlementMethodsControllerFactory(auth, config, log, SettlementMethod)
       router.get('/settlement_methods', auth.checkAuth, this.checkAdmin, this.getAll)
       router.post('/settlement_methods', auth.checkAuth, this.checkAdmin, this.postResource)
       router.put('/settlement_methods/:id', auth.checkAuth, this.checkAdmin, this.putResource)
+      router.post('/settlement_methods/:id/logo', auth.checkAuth, this.checkAdmin, this.postLogoResource)
       router.delete('/settlement_methods/:id', auth.checkAuth, this.checkAdmin, this.deleteResource)
     }
 
@@ -59,11 +61,40 @@ function SettlementMethodsControllerFactory(auth, config, log, SettlementMethod)
       this.body = yield method.save()
     }
 
+    static * postLogoResource() {
+      const files = this.body.files
+      const id = this.params.id
+      const method = yield SettlementMethod.findOne({ where: { id } })
+
+      // TODO handle the name
+      method.logo = path.basename(files.file.path)
+
+      try {
+        yield method.save()
+      } catch (e) {
+        console.log('auth.js:191', e)
+      }
+
+      this.body = method
+    }
+
     static * putResource() {
       const id = this.params.id
-      let method = yield SettlementMethod.findOne({ where: { id } })
+      const method = yield SettlementMethod.findOne({ where: { id } })
 
       if (!method) throw new NotFoundError("Settlement method doesn't exist")
+
+      if (this.body.name !== undefined) {
+        method.name = this.body.name
+      }
+
+      if (this.body.description !== undefined) {
+        method.description = this.body.description
+      }
+
+      if (this.body.uri !== undefined) {
+        method.uri = this.body.uri
+      }
 
       if (this.body.enabled !== undefined) {
         method.enabled = this.body.enabled

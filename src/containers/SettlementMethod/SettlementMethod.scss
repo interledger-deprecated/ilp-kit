@@ -1,2 +1,20 @@
 @import 'variables';
 @import 'mixins';
+
+.enableBox {
+  margin-bottom: 20px;
+}
+.title {
+  padding-top: 10px;
+  font-size: 20px;
+}
+.dropzoneLocal {
+  margin: 0 0 10px;
+}
+.form {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+.logo {
+  margin: 0 0 10px;
+}

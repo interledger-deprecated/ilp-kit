@@ -72,12 +72,14 @@ module.exports = class App {
     app.use(errorHandler({log: log('error-handler')}))
     app.use(cors({origin: '*'}))
 
-    app.proxy = true;
+    app.proxy = true
 
     app.keys = [this.config.get('sessionSecret')]
     app.use(session({
       maxAge: 2592000000
     }, app))
+
+    app.use(require('koa-static')(__dirname + '/../../../uploads'))
 
     socket.attach(app)
     auth.attach(app)

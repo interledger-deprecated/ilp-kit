@@ -26,6 +26,8 @@ function SettlementMethodFactory(sequelize, validator) {
 
     static convertFromPersistent(data) {
       data = _.omit(data, _.isNull)
+      data.logoUrl = data.logo && '/api/' + data.logo
+
       return data
     }
 
