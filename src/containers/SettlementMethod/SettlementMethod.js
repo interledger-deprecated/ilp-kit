@@ -107,7 +107,6 @@ export default class SettlementMethod extends Component {
     // TODO handle error
     success: (file, response) => {
       setTimeout(() => {
-        // TODO implement logo upload
         this.props.updateLogo(response)
       }, 1000)
     },

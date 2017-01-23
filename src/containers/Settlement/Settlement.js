@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import { Link } from 'react-router'
 import ReactTooltip from 'react-tooltip'
+import { routeActions } from 'react-router-redux'
 
 import { load } from 'redux/actions/settlement_method'
 
@@ -14,11 +15,13 @@ const cx = classNames.bind(styles)
 
 @connect(state => ({
   list: state.settlementMethod.list
-}), { load })
+}), { load, pushState: routeActions.push })
 export default class Settlement extends Component {
   static propTypes = {
     children: PropTypes.object,
     load: PropTypes.func.isRequired,
+    params: PropTypes.object,
+    pushState: PropTypes.func,
     list: PropTypes.array
   }
 
@@ -26,6 +29,16 @@ export default class Settlement extends Component {
 
   componentWillMount() {
     this.props.load()
+
+    if (!this.props.params.id && this.props.list.length) {
+      this.props.pushState('/settlement/' + this.props.list[0].id)
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (!nextProps.params.id && nextProps.list.length) {
+      nextProps.pushState('/settlement/' + nextProps.list[0].id)
+    }
   }
 
   renderLogo = method => {
