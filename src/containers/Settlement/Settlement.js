@@ -7,7 +7,6 @@ import ReactTooltip from 'react-tooltip'
 import { load } from 'redux/actions/settlement_method'
 
 import SettlementAddButton from 'containers/SettlementAddButton/SettlementAddButton'
-import SettlementMethod from 'containers/SettlementMethod/SettlementMethod'
 
 import classNames from 'classnames/bind'
 import styles from './Settlement.scss'
@@ -38,11 +37,13 @@ export default class Settlement extends Component {
     if (!method.logo) {
       return method.name || 'Unnamed'
     }
+
+    return <img src={method.logoUrl} />
   }
 
   renderSettlementMethod = method => {
     return (
-      <Link to={'/settlement/' + method.id} className={cx('panel', 'panel-default', 'option')} key={method.id}>
+      <Link to={'/settlement/' + method.id} className={cx('panel', 'panel-default', 'option')} key={method.id} title={method.name}>
         {method.enabled
           ? <i className={cx('enabled', 'fa', 'fa-circle', 'icon')} data-tip="Enabled" />
           : <i className={cx('disabled', 'fa', 'fa-circle', 'icon')} data-tip="Disabled" />}

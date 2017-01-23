@@ -28,9 +28,11 @@ export default function reducer(state = initialState, action = {}) {
     case types.UPDATE_SETTLEMENT_METHOD_PIC:
       return {
         ...state,
-        user: {
-          ...state.user
-        }
+        list: state.list.map(settlementMethod => {
+          if (settlementMethod.id !== action.result.id) return settlementMethod
+
+          return action.result
+        })
       }
     case types.REMOVE_SETTLEMENT_METHOD_SUCCESS:
       return {

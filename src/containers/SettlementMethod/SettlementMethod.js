@@ -5,7 +5,7 @@ import Helmet from 'react-helmet'
 
 import { routeActions } from 'react-router-redux'
 
-import { get, update, remove } from 'redux/actions/settlement_method'
+import { get, update, updateLogo, remove } from 'redux/actions/settlement_method'
 
 import { successable } from 'decorators'
 import Input from 'components/Input/Input'
@@ -21,13 +21,14 @@ const cx = classNames.bind(styles)
   fields: ['name', 'description', 'logo', 'uri'],
 }, state => ({
   list: state.settlementMethod.list
-}), { get, update, remove, pushState: routeActions.push })
+}), { get, update, updateLogo, remove, pushState: routeActions.push })
 @successable()
 export default class SettlementMethod extends Component {
   static propTypes = {
     params: PropTypes.object.isRequired,
     get: PropTypes.func.isRequired,
     update: PropTypes.func.isRequired,
+    updateLogo: PropTypes.func.isRequired,
     remove: PropTypes.func.isRequired,
     pushState: PropTypes.func.isRequired,
 
@@ -104,10 +105,10 @@ export default class SettlementMethod extends Component {
       // TODO:UX upload progress photo placeholders
     },
     // TODO handle error
-    success: () => {
+    success: (file, response) => {
       setTimeout(() => {
         // TODO implement logo upload
-        // this.props.updatePic()
+        this.props.updateLogo(response)
       }, 1000)
     },
     complete: (file) => {

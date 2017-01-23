@@ -70,12 +70,10 @@ function SettlementMethodsControllerFactory(auth, config, log, SettlementMethod)
       method.logo = path.basename(files.file.path)
 
       try {
-        yield method.save()
+        this.body = SettlementMethod.fromDatabaseModel(yield method.save())
       } catch (e) {
         console.log('auth.js:191', e)
       }
-
-      this.body = method
     }
 
     static * putResource() {

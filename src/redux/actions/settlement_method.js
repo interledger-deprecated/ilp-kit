@@ -29,8 +29,9 @@ export const update = (id, data) => ({
   promise: (client) => client.put('/settlement_methods/' + id, {data})
 })
 
-export const updateLogo = () => ({
-  type: types.UPDATE_SETTLEMENT_METHOD_PIC
+export const updateLogo = result => ({
+  type: types.UPDATE_SETTLEMENT_METHOD_PIC,
+  result
 })
 
 export const remove = id => ({
