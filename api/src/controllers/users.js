@@ -484,11 +484,15 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
 
       user = user.getDataExternal()
 
+      const ledgerInfo = ledger.getInfo()
+
       this.body = {
         'type': 'payee',
         'account': ledgerPrefix + user.username,
         'currency_code': config.data.getIn(['ledger', 'currency', 'code']),
         'currency_symbol': config.data.getIn(['ledger', 'currency', 'symbol']),
+        'precision': ledgerInfo.precision,
+        'scale': ledgerInfo.scale,
         'name': user.name,
         'image_url': user.profile_picture
       }
