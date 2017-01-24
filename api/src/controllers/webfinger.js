@@ -143,6 +143,10 @@ function WebfingerControllerFactory(log, config, ledger) {
           {
             'rel': 'https://interledger.org/rel/peersRpcUri',
             'href': config.data.getIn(['server', 'base_uri']) + '/peers/rpc'
+          },
+          {
+            'rel': 'https://interledger.org/rel/settlementMethods',
+            'href': config.data.getIn(['server', 'base_uri']) + '/settlement_methods'
           }
         ]
       }

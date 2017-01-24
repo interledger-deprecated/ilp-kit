@@ -17,7 +17,7 @@ function SettlementMethodsControllerFactory(auth, config, log, SettlementMethod)
 
   return class SettlementMethodsController {
     static init(router) {
-      router.get('/settlement_methods', auth.checkAuth, this.checkAdmin, this.getAll)
+      router.get('/settlement_methods', this.getAll)
       router.post('/settlement_methods', auth.checkAuth, this.checkAdmin, this.postResource)
       router.put('/settlement_methods/:id', auth.checkAuth, this.checkAdmin, this.putResource)
       router.post('/settlement_methods/:id/logo', auth.checkAuth, this.checkAdmin, this.postLogoResource)
@@ -34,12 +34,22 @@ function SettlementMethodsControllerFactory(auth, config, log, SettlementMethod)
     }
 
     static * getAll() {
-      // TODO pagination
+      if (this.req.user && this.req.user.username === config.data.getIn(['ledger', 'admin', 'user'])) {
+        // TODO pagination
+        return this.body = yield SettlementMethod.findAll({
+          include: [{ all: true }],
+          order: [
+            ['enabled', 'DESC NULLS LAST'],
+            ['created_at', 'ASC']
+          ]
+        })
+      }
+
       this.body = yield SettlementMethod.findAll({
-        include: [{ all: true }],
+        attributes: ['name', 'type', 'logo', 'description', 'uri'],
+        where: { enabled: true },
         order: [
-          ['enabled', 'DESC NULLS LAST'],
-          ['created_at', 'ASC']
+          ['name', 'ASC']
         ]
       })
     }
