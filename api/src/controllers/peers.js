@@ -59,6 +59,7 @@ function PeersControllerFactory(auth, config, log, Peer, connector) {
       peer.hostname = this.body.hostname.replace(/.*?:\/\//g, "")
       peer.limit = this.body.limit
       peer.currency = this.body.currency
+      peer.destination = parseInt(Math.random() * 1000000)
 
       const dbPeer = yield peer.save()
 

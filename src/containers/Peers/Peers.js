@@ -60,7 +60,7 @@ export default class Peers extends Component {
                 {peer.currency}
               </div>
             </div>
-            <div className={cx('col-sm-3')}>
+            <div className={cx('col-sm-2')}>
               <span className={cx('lbl')}>Limit</span>
               <span>
                 {/* limit is converted to a string because of how <RIENumber> didValueChange works */}
@@ -78,7 +78,11 @@ export default class Peers extends Component {
               <span className={cx('lbl')}>Balance</span>
               <span>{peer.balance}</span>
             </div>
-            <div className={cx('col-sm-3', 'text-right')}>
+            <div className={cx('col-sm-2')}>
+              <span className={cx('lbl')}>Destination</span>
+              <span>{peer.destination}</span>
+            </div>
+            <div className={cx('col-sm-2', 'text-right')}>
               <PeerSettlementButton />
             </div>
           </div>
