@@ -56,7 +56,7 @@ function PeersControllerFactory(auth, config, log, Peer, connector) {
     static * postResource() {
       const peer = new Peer()
 
-      peer.hostname = this.body.hostname
+      peer.hostname = this.body.hostname.replace(/.*?:\/\//g, "")
       peer.limit = this.body.limit
       peer.currency = this.body.currency
 
