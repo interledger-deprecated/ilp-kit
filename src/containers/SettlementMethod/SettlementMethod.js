@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react'
-import { reduxForm } from 'redux-form'
-import DropzoneComponent from 'react-dropzone-component'
+import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 import { routeActions } from 'react-router-redux'
@@ -9,11 +8,11 @@ import SettlementPaypal from '../SettlementPaypal/SettlementPaypal'
 import SettlementBitcoin from '../SettlementBitcoin/SettlementBitcoin'
 import SettlementRipple from '../SettlementRipple/SettlementRipple'
 import SettlementEtherium from '../SettlementEtherium/SettlementEtherium'
+import SettlementCustom from '../SettlementCustom/SettlementCustom'
 
 import { get, update, updateLogo, remove } from 'redux/actions/settlement_method'
 
 import { successable } from 'decorators'
-import Input from 'components/Input/Input'
 
 import Alert from 'react-bootstrap/lib/Alert'
 
@@ -21,12 +20,11 @@ import classNames from 'classnames/bind'
 import styles from './SettlementMethod.scss'
 const cx = classNames.bind(styles)
 
-@reduxForm({
-  form: 'settlementMethod',
-  fields: ['name', 'description', 'logo', 'uri'],
-}, state => ({
-  list: state.settlementMethod.list
-}), { get, update, updateLogo, remove, pushState: routeActions.push })
+@connect(
+  state => ({
+    list: state.settlementMethod.list
+  }),
+  { get, update, updateLogo, remove, pushState: routeActions.push })
 @successable()
 export default class SettlementMethod extends Component {
   static propTypes = {
@@ -36,14 +34,6 @@ export default class SettlementMethod extends Component {
     updateLogo: PropTypes.func.isRequired,
     remove: PropTypes.func.isRequired,
     pushState: PropTypes.func.isRequired,
-
-    // Form
-    fields: PropTypes.object.isRequired,
-    invalid: PropTypes.bool.isRequired,
-    pristine: PropTypes.bool.isRequired,
-    submitting: PropTypes.bool.isRequired,
-    handleSubmit: PropTypes.func.isRequired,
-    initializeForm: PropTypes.func.isRequired,
 
     // Successable
     tempSuccess: PropTypes.func,
@@ -71,13 +61,6 @@ export default class SettlementMethod extends Component {
           this.setState({
             ...this.state,
             method
-          })
-
-          this.props.initializeForm({
-            name: method.name || undefined,
-            description: method.description || undefined,
-            logo: method.logo || undefined,
-            uri: method.uri || undefined
           })
         }
       })
@@ -125,14 +108,8 @@ export default class SettlementMethod extends Component {
   }
 
   render() {
-    const { handleSubmit, fields: { name, description, uri },
-      pristine, invalid, submitting, success, fail } = this.props
+    const { success, fail } = this.props
     const { method } = this.state
-
-    if (method.type === 'paypal') return <SettlementPaypal />
-    if (method.type === 'bitcoin') return <SettlementBitcoin />
-    if (method.type === 'ripple') return <SettlementRipple />
-    if (method.type === 'etherium') return <SettlementEtherium />
 
     return (
       <div className={cx('SettlementMethod')}>
@@ -170,33 +147,11 @@ export default class SettlementMethod extends Component {
           Something went wrong
         </Alert>}
 
-        <div className={cx('row', 'form')}>
-          <div className="col-sm-12">
-            <form onSubmit={handleSubmit(this.handleSave)}>
-              <Input object={name} label="Settlement Method Name" size="lg" />
-              <Input object={description} label="Description" size="lg" />
-              <Input object={uri} label="Uri" size="lg" />
-              {method.logo && <img src={method.logoUrl} className={cx('logo')} />}
-              <DropzoneComponent
-                config={{
-                  showFiletypeIcon: false,
-                  postUrl: '/api/settlement_methods/' + method.id + '/logo',
-                  maxFiles: 1
-                }}
-                eventHandlers={this.dropzoneEventHandlers}
-                className={cx('dropzone', 'dropzoneLocal')}>
-                <div className="dz-message">
-                  <i className="fa fa-cloud-upload" />
-                  Logo: Drop an image or click to upload
-                </div>
-              </DropzoneComponent>
-
-              <button type="submit" className="btn btn-success" disabled={pristine || invalid || submitting}>
-                {submitting ? ' Saving...' : ' Save'}
-              </button>
-            </form>
-          </div>
-        </div>
+        {method.type === 'paypal' && <SettlementPaypal />}
+        {method.type === 'bitcoin' && <SettlementBitcoin />}
+        {method.type === 'ripple' && <SettlementRipple />}
+        {method.type === 'etherium' && <SettlementEtherium />}
+        {method.type === 'custom' && <SettlementCustom method={method} handleSave={this.handleSave} />}
       </div>
     )
   }
