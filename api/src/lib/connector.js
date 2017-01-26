@@ -27,6 +27,7 @@ module.exports = class Conncetor {
     this.Peer = Peer
     this.log = log('connector')
     this.peers = {}
+    this.instance = connector
   }
 
   * start() {

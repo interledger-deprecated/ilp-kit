@@ -5,6 +5,11 @@ import Helmet from 'react-helmet'
 
 import { routeActions } from 'react-router-redux'
 
+import SettlementPaypal from '../SettlementPaypal/SettlementPaypal'
+import SettlementBitcoin from '../SettlementBitcoin/SettlementBitcoin'
+import SettlementRipple from '../SettlementRipple/SettlementRipple'
+import SettlementEtherium from '../SettlementEtherium/SettlementEtherium'
+
 import { get, update, updateLogo, remove } from 'redux/actions/settlement_method'
 
 import { successable } from 'decorators'
@@ -123,6 +128,11 @@ export default class SettlementMethod extends Component {
     const { handleSubmit, fields: { name, description, uri },
       pristine, invalid, submitting, success, fail } = this.props
     const { method } = this.state
+
+    if (method.type === 'paypal') return <SettlementPaypal />
+    if (method.type === 'bitcoin') return <SettlementBitcoin />
+    if (method.type === 'ripple') return <SettlementRipple />
+    if (method.type === 'etherium') return <SettlementEtherium />
 
     return (
       <div className={cx('SettlementMethod')}>

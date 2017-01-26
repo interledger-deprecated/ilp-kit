@@ -17,7 +17,6 @@ function PeerFactory(sequelize, validator) {
     }
 
     static convertToExternal(data) {
-      delete data.password
       delete data.created_at
       delete data.updated_at
 

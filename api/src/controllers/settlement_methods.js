@@ -6,13 +6,15 @@ const path = require('path')
 const Auth = require('../lib/auth')
 const Log = require('../lib/log')
 const Config = require('../lib/config')
+const SettlementFactory = require('../models/settlement')
 const SettlementMethodFactory = require('../models/settlement_method')
+const PeerFactory = require('../models/peer')
 
 const NotFoundError = require('../errors/not-found-error')
 const InvalidBodyError = require('../errors/invalid-body-error')
 
-SettlementMethodsControllerFactory.constitute = [Auth, Config, Log, SettlementMethodFactory]
-function SettlementMethodsControllerFactory(auth, config, log, SettlementMethod) {
+SettlementMethodsControllerFactory.constitute = [Auth, Config, Log, SettlementFactory, SettlementMethodFactory, PeerFactory]
+function SettlementMethodsControllerFactory(auth, config, log, Settlement, SettlementMethod, Peer) {
   log = log('settlement_methods')
 
   return class SettlementMethodsController {
