@@ -78,13 +78,6 @@ export default class SettlementMethod extends Component {
     this.props.remove(this.state.method.id)
   }
 
-  handleSave = data => {
-    this.props.update(this.state.method.id, data)
-      .then(() => {
-        this.props.tempSuccess()
-      })
-  }
-
   dropzoneEventHandlers = {
     init: (dropzone) => {
       this.dropzone = dropzone
@@ -147,11 +140,11 @@ export default class SettlementMethod extends Component {
           Something went wrong
         </Alert>}
 
-        {method.type === 'paypal' && <SettlementPaypal />}
+        {method.type === 'paypal' && <SettlementPaypal method={method} />}
         {method.type === 'bitcoin' && <SettlementBitcoin />}
         {method.type === 'ripple' && <SettlementRipple />}
         {method.type === 'etherium' && <SettlementEtherium />}
-        {method.type === 'custom' && <SettlementCustom method={method} handleSave={this.handleSave} />}
+        {method.type === 'custom' && <SettlementCustom method={method} />}
       </div>
     )
   }

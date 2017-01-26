@@ -110,6 +110,10 @@ function SettlementMethodsControllerFactory(auth, config, log, Settlement, Settl
         method.enabled = this.body.enabled
       }
 
+      if (this.body.options !== undefined) {
+        method.options = this.body.options
+      }
+
       yield method.save()
 
       this.body = method

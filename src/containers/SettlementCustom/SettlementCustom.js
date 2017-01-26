@@ -9,17 +9,17 @@ const cx = classNames.bind(styles)
 
 import Input from 'components/Input/Input'
 
+import { update } from 'redux/actions/settlement_method'
+
 @reduxForm({
   form: 'settlementMethod',
   fields: ['name', 'description', 'logo', 'uri'],
 }, state => ({
-  list: state.settlementMethod.list
-}), {})
+}), { update })
 export default class SettlementCustom extends Component {
   static propTypes = {
     // Props
     method: PropTypes.object.isRequired,
-    handleSave: PropTypes.func.isRequired,
 
     // Form
     fields: PropTypes.object.isRequired,
@@ -42,16 +42,20 @@ export default class SettlementCustom extends Component {
 
   updateMethod = (props = this.props) => {
     props.initializeForm({
-      name: this.props.method.name || undefined,
-      description: this.props.method.description || undefined,
-      logo: this.props.method.logo || undefined,
-      uri: this.props.method.uri || undefined
+      name: props.method.name || undefined,
+      description: props.method.description || undefined,
+      logo: props.method.logo || undefined,
+      uri: props.method.uri || undefined
     })
+  }
+
+  handleSave = data => {
+    this.props.update(this.props.method.id, data)
   }
 
   render() {
     const { handleSubmit, fields: { name, description, uri },
-      pristine, invalid, submitting, handleSave, method } = this.props
+      pristine, invalid, submitting, method } = this.props
 
     return (
       <div className={cx('SettlementCustom')}>
@@ -59,7 +63,7 @@ export default class SettlementCustom extends Component {
 
         <div className={cx('row', 'form')}>
           <div className="col-sm-12">
-            <form onSubmit={handleSubmit(handleSave)}>
+            <form onSubmit={handleSubmit(this.handleSave)}>
               <Input object={name} label="Settlement Method Name" size="lg" />
               <Input object={description} label="Description" size="lg" />
               <Input object={uri} label="Uri" size="lg" />

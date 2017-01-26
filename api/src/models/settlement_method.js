@@ -38,7 +38,6 @@ function SettlementMethodFactory(sequelize, validator) {
 
   SettlementMethod.validateExternal = validator.create('SettlementMethod')
 
-  // TODO:BEFORE_DEPLOY define columns
   PersistentModelMixin(SettlementMethod, sequelize, {
     id: {
       type: Sequelize.UUID,
@@ -50,7 +49,8 @@ function SettlementMethodFactory(sequelize, validator) {
     logo: Sequelize.STRING,
     description: Sequelize.STRING,
     uri: Sequelize.STRING,
-    enabled: Sequelize.BOOLEAN
+    enabled: Sequelize.BOOLEAN,
+    options: Sequelize.JSON
   })
 
   return SettlementMethod
