@@ -2,7 +2,7 @@
 
 module.exports = SettlementsControllerFactory
 
-const SettlementPlugin = require('ilp-plugin-settlement-adapter')
+const uuid = require('uuid4')
 const Auth = require('../lib/auth')
 const Log = require('../lib/log')
 const Config = require('../lib/config')
@@ -50,25 +50,34 @@ function SettlementsControllerFactory(auth, config, log, Settlement, SettlementM
         throw new InvalidBodyError('Invalid settlement method')
       }
 
-      const plugin = new SettlementPlugin({
-        amount: this.body.amount,
-        currency: this.body.currency,
-        destination: connector.peers[peer.id].ledgerName
-      })
-
-      // TODO:BEFORE_DEPLOY plugin name + settlement id
-      const pluginName = 'settlement'
+      const prefix = 'settlement.' + uuid() + '.'
+      const currency = this.body.currency
+      const amount = this.body.amount
 
       // Add the plugin to the connector
-      yield connector.instance.addPlugin(pluginName, plugin)
-      yield connector.instance.getPlugin(pluginName).receive()
-      yield connector.instance.removePlugin(pluginName)
+      yield connector.instance.addPlugin(prefix, {
+        plugin: 'ilp-plugin-settlement-adapter',
+        currency,
+        options: {
+          prefix,
+          currency,
+          amount,
+          destination: connector.peers[peer.id].ledgerName + connector.peers[peer.id].publicKey,
+          connectors: [prefix + 'connector']
+        }
+      })
+
+      // Emit a payment that gets routed to destination
+      yield connector.instance.getPlugin(prefix).receive()
+
+      // Remove the plugin
+      yield connector.instance.removePlugin(prefix)
 
       const settlement = new Settlement()
       settlement.settlement_method_id = settlementMethod.id
       settlement.peer_id = peer.id
-      settlement.amount = this.body.amount
-      settlement.currency = this.body.currency
+      settlement.amount = amount
+      settlement.currency = currency
 
       this.body = yield settlement.save()
     }

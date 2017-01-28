@@ -133,11 +133,7 @@ module.exports = class Conncetor {
             currencySymbol: currencies[peer.currency] || peer.currency,
             precision: 10,
             scale: 10,
-            connectors: [{
-              id: hostInfo.publicKey,
-              name: hostInfo.publicKey,
-              connector: hostInfo.ledgerName + hostInfo.publicKey
-            }]
+            connectors: [ hostInfo.ledgerName + hostInfo.publicKey ]
           }
         }
       })
