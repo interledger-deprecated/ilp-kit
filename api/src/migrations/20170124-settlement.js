@@ -20,7 +20,7 @@ module.exports = {
       settlement_method_id: {
         type: Sequelize.UUID,
         references: {
-          model: 'Settlements',
+          model: 'SettlementMethods',
           key: 'id'
         }
       },

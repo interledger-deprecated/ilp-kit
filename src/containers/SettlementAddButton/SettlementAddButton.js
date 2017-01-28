@@ -58,9 +58,9 @@ export default class SettlementAddButton extends Component {
     return (
       <div className={cx('SettlementAddButton')}>
         {!open &&
-        <a className={cx('panel', 'panel-default', 'button')} onClick={this.handleOpen}>
+        <a href="" className={cx('panel', 'panel-default', 'button')} onClick={this.handleAdd.bind(this, 'custom')}>
           <div className="panel-body">
-            + Add Settlement Method
+            + Add a Settlement Method
           </div>
         </a>}
 

@@ -2,6 +2,9 @@
 
 module.exports = SettlementsControllerFactory
 
+// const PluginPaypal = require('ilp-plugin-paypal')
+
+// const co = require('co')
 const uuid = require('uuid4')
 const Auth = require('../lib/auth')
 const Log = require('../lib/log')
@@ -21,6 +24,10 @@ function SettlementsControllerFactory(auth, config, log, Settlement, SettlementM
   return class SettlementsController {
     static init(router) {
       router.post('/settlements', auth.checkAuth, this.checkAdmin, this.postResource)
+
+      /*co(function * () {
+        yield SettlementsController.setupBuiltins()
+      })*/
     }
 
     // TODO move to auth
@@ -81,5 +88,26 @@ function SettlementsControllerFactory(auth, config, log, Settlement, SettlementM
 
       this.body = yield settlement.save()
     }
+
+    /*static * setupBuiltins () {
+      const methodPaypal = yield SettlementMethod.findOne({ where: { type: 'paypal' } })
+
+      // TODO what if the method is added while the ilp-kit is running
+      if (methodPaypal) {
+        log.info('Enabling Paypal settlements')
+
+        const pluginPaypal = new PluginPaypal({
+          host: 'http://localhost:8080', // TODO:BEFORE_DEPLOY real public host
+          port: '8080',
+          client_id: methodPaypal.options.clientId,
+          secret: methodPaypal.options.secret,
+          api: methodPaypal.options.api
+        })
+
+        pluginPaypal.connect().catch((e) => {
+          console.error(e)
+        })
+      }
+    }*/
   }
 }
