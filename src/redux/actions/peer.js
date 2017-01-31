@@ -20,3 +20,7 @@ export const remove = id => ({
   promise: (client) => client.del('/peers/' + id)
 })
 
+export const getSettlementMethods = id => ({
+  types: [types.LOAD_PEER_SETTLEMENT_METHODS, types.LOAD_PEER_SETTLEMENT_METHODS_SUCCESS, types.LOAD_PEER_SETTLEMENT_METHODS_FAIL],
+  promise: (client) => client.get('/peers/' + id + '/settlement_methods')
+})

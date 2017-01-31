@@ -88,7 +88,7 @@ export default (store) => {
       cb(null, require('./containers/Users/Users'))
 
       store.dispatch(locationUpdate())
-    }, 'invites')
+    }, 'users')
   }
 
   const getPeers = (nextState, cb) => {
@@ -96,7 +96,23 @@ export default (store) => {
       cb(null, require('./containers/Peers/Peers'))
 
       store.dispatch(locationUpdate())
-    }, 'invites')
+    }, 'peers')
+  }
+
+  const getSettlement = (nextState, cb) => {
+    require.ensure(['./containers/Settlement/Settlement'], (require) => {
+      cb(null, require('./containers/Settlement/Settlement'))
+
+      store.dispatch(locationUpdate())
+    }, 'settlement')
+  }
+
+  const getSettlementMethod = (nextState, cb) => {
+    require.ensure(['./containers/SettlementMethod/SettlementMethod'], (require) => {
+      cb(null, require('./containers/SettlementMethod/SettlementMethod'))
+
+      store.dispatch(locationUpdate())
+    }, 'settlementMethod')
   }
 
   /**
@@ -128,6 +144,9 @@ export default (store) => {
           <Route path="invites" getComponent={getInvites}/>
           <Route path="users" getComponent={getUsers}/>
           <Route path="peers" getComponent={getPeers}/>
+          <Route path="settlement" getComponent={getSettlement}>
+            <Route path=":id" getComponent={getSettlementMethod}/>
+          </Route>
         </Route>
 
         { /* Routes available to all */ }

@@ -62,10 +62,9 @@ module.exports = class WalletConfig {
 
     localConfig.connector = {
       ed25519_secret_key: Config.getEnv('CONNECTOR_ED25519_SECRET_KEY'),
-      ledgers: Config.getEnv('CONNECTOR_LEDGERS')
+      ledgers: Config.getEnv('CONNECTOR_LEDGERS'),
+      public_key: getPublicKey(Config.getEnv('CONNECTOR_ED25519_SECRET_KEY'))
     }
-
-    localConfig.connector.public_key = getPublicKey(localConfig.connector.ed25519_secret_key)
 
     localConfig.reload = Config.getEnv(envPrefix, 'RELOAD')
 

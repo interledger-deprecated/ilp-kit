@@ -34,7 +34,7 @@ export default class InviteCreateForm extends Component {
     submitting: PropTypes.bool.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     values: PropTypes.object,
-    initializeForm: PropTypes.func,
+
     resetData: PropTypes.func,
 
     // Successable

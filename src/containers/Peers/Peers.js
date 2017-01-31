@@ -7,6 +7,7 @@ import { RIENumber } from 'riek'
 
 import { load, update, remove } from 'redux/actions/peer'
 import PeerAddForm from 'containers/PeerAddForm/PeerAddForm'
+import PeerSettlementButton from 'containers/PeerSettlementButton/PeerSettlementButton'
 
 import classNames from 'classnames/bind'
 import styles from './Peers.scss'
@@ -48,11 +49,18 @@ export default class Peers extends Component {
       <div className={cx('panel', 'panel-default', 'peer')} key={peer.id}>
         <div className="panel-body">
           <div className={cx('row')}>
-            <div className={cx('col-sm-3')}>
-              <span className={cx('lbl')}>Hostname</span>
-              <a href={'http://' + peer.hostname}>{peer.hostname}</a>
+            <div className={cx('col-sm-4')}>
+              <div>
+                {peer.online && <i className={cx('online', 'fa', 'fa-circle', 'icon')} data-tip="Online" />}
+                {!peer.online && <i className={cx('offline', 'fa', 'fa-circle', 'icon')} data-tip="Offline" />}
+                <a href={'http://' + peer.hostname}>{peer.hostname}</a>
+              </div>
+              <div>
+                <i data-tip="Currency" className={cx('fa', 'fa-money', 'icon')} />
+                {peer.currency}
+              </div>
             </div>
-            <div className={cx('col-sm-3')}>
+            <div className={cx('col-sm-2')}>
               <span className={cx('lbl')}>Limit</span>
               <span>
                 {/* limit is converted to a string because of how <RIENumber> didValueChange works */}
@@ -67,17 +75,15 @@ export default class Peers extends Component {
               </span>
             </div>
             <div className={cx('col-sm-2')}>
-              <span className={cx('lbl')}>Currency</span>
-              <span>{peer.currency}</span>
-            </div>
-            <div className={cx('col-sm-2')}>
               <span className={cx('lbl')}>Balance</span>
               <span>{peer.balance}</span>
             </div>
-            <div className={cx('col-sm-2', 'text-center')}>
-              <span className={cx('lbl')}>Status</span>
-              {peer.online && <i className={cx('online', 'fa', 'fa-circle')} data-tip="Online" />}
-              {!peer.online && <i className={cx('offline', 'fa', 'fa-circle')} data-tip="Offline" />}
+            <div className={cx('col-sm-2')}>
+              <span className={cx('lbl')}>Destination</span>
+              <span>{peer.destination}</span>
+            </div>
+            <div className={cx('col-sm-2', 'text-right')}>
+              <PeerSettlementButton peer={peer} />
             </div>
           </div>
         </div>
