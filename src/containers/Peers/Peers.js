@@ -83,7 +83,7 @@ export default class Peers extends Component {
               <span>{peer.destination}</span>
             </div>
             <div className={cx('col-sm-2', 'text-right')}>
-              <PeerSettlementButton />
+              <PeerSettlementButton peer={peer} />
             </div>
           </div>
         </div>

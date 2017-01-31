@@ -7,6 +7,7 @@ const Log = require('./log')
 const Config = require('./config')
 const Utils = require('./utils')
 const PeerFactory = require('../models/peer')
+const SettlementMethodFactory = require('../models/settlement_method')
 const getToken = require('ilp-plugin-virtual/src/util/token').token
 
 const currencies = {
@@ -20,11 +21,12 @@ const currencies = {
 }
 
 module.exports = class Conncetor {
-  static constitute() { return [ Config, PeerFactory, Utils, Log ] }
-  constructor(config, Peer, utils, log) {
+  static constitute() { return [ Config, PeerFactory, Utils, Log, SettlementMethodFactory ] }
+  constructor(config, Peer, utils, log, SettlementMethod) {
     this.config = config.data
     this.utils = utils
     this.Peer = Peer
+    this.SettlementMethod = SettlementMethod
     this.log = log('connector')
     this.peers = {}
     this.instance = connector
@@ -38,6 +40,16 @@ module.exports = class Conncetor {
     yield this.waitForLedger()
 
     this.log.info('Starting the connector...')
+
+    // Settlement Methods
+    const settlementMethods = yield this.SettlementMethod.findAll({ where: { enabled: true }})
+
+    this.settlementMethods = settlementMethods.map(settlementMethod => ({
+      id: settlementMethod.id,
+      name: settlementMethod.name,
+      description: settlementMethod.description,
+      uri: settlementMethod.uri
+    }))
 
     connector.listen()
 
@@ -98,6 +110,8 @@ module.exports = class Conncetor {
   }
 
   * connectPeer(peer) {
+    const self = this
+
     if (!this.peers[peer.id]) {
       this.peers[peer.id] = {
         online: false
@@ -113,10 +127,8 @@ module.exports = class Conncetor {
     // Couldn't get the host info (service might not be responding)
     if (!hostInfo.publicKey) return
 
-    let promise
-
     try {
-      promise = connector.addPlugin(hostInfo.ledgerName, {
+      yield connector.addPlugin(hostInfo.ledgerName, {
         currency: peer.currency,
         plugin: 'ilp-plugin-virtual',
         store: true,
@@ -143,7 +155,22 @@ module.exports = class Conncetor {
       throw e
     }
 
-    return promise
+    const plugin = connector.getPlugin(hostInfo.ledgerName)
+
+    plugin.on('incoming_message', co.wrap(function * (message) {
+      if (message.data.method !== 'settlement_methods_request') return
+
+      yield plugin.sendMessage({
+        account: message.from,
+        from: message.to,
+        to: message.from,
+        ledger: message.ledger,
+        data: {
+          method: 'settlement_methods_response',
+          settlement_methods: self.settlementMethods
+        }
+      })
+    }))
   }
 
   * removePeer(peer) {
@@ -174,6 +201,35 @@ module.exports = class Conncetor {
       online,
       balance: online && (yield connector.getPlugin(peerInfo.ledgerName).getBalance())
     }
+  }
+
+  * getSettlementMethods(peer) {
+    const peerInfo = this.peers[peer.id]
+    const plugin = connector.getPlugin(peerInfo.ledgerName)
+
+    const promise = new Promise(resolve => {
+      const handler = message => {
+        if (message.data.method !== 'settlement_methods_response') return
+
+        plugin.removeListener('incoming_message', handler)
+
+        resolve(message.data.settlement_methods)
+      }
+
+      plugin.on('incoming_message', handler)
+    })
+
+    yield plugin.sendMessage({
+      account: peerInfo.ledgerName + peerInfo.publicKey,
+      from: peerInfo.ledgerName + this.config.getIn(['connector', 'public_key']),
+      to: peerInfo.ledgerName + peerInfo.publicKey,
+      ledger: peerInfo.ledgerName,
+      data: {
+        method: 'settlement_methods_request'
+      }
+    })
+
+    return promise
   }
 
   * rpc(prefix, method, params) {

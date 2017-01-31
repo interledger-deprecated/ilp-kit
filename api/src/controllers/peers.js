@@ -21,6 +21,7 @@ function PeersControllerFactory(auth, config, log, Peer, connector) {
       router.get('/peers', auth.checkAuth, this.checkAdmin, this.getAll)
       router.post('/peers', auth.checkAuth, this.checkAdmin, this.postResource)
       router.put('/peers/:id', auth.checkAuth, this.checkAdmin, this.putResource)
+      router.get('/peers/:id/settlement_methods', auth.checkAuth, this.checkAdmin, this.getSettlementMethods)
       router.delete('/peers/:id', auth.checkAuth, this.checkAdmin, this.deleteResource)
 
       router.post('/peers/rpc', this.rpc)
@@ -90,6 +91,15 @@ function PeersControllerFactory(auth, config, log, Peer, connector) {
       peer.online = peerInfo.online
 
       this.body = peer
+    }
+
+    static * getSettlementMethods() {
+      const id = this.params.id
+      const peer = yield Peer.findOne({ where: { id } })
+
+      if (!peer) throw new NotFoundError("Peer doesn't exist")
+
+      this.body = yield connector.getSettlementMethods(peer)
     }
 
     static * deleteResource() {
