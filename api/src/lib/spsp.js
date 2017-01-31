@@ -148,8 +148,7 @@ module.exports = class SPSP {
     const difference = parseFloat(paymentParams.destinationAmount) / parseFloat(params.destinationAmount)
 
     if (difference > 1.01 || difference < 0.99) {
-      // TODO throw exception
-      return
+      throw new Error("The quote difference is too big: " + difference)
     }
 
     yield sender.payRequest(paymentParams)
