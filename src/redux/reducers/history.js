@@ -21,17 +21,6 @@ function reducer(state = {}, action = {}) {
   }
 
   switch (action.type) {
-    // case PAYMENT_JSON_LOADING
-    // case PAYMENT_JSON_FAIL
-    case types.PAYMENT_JSON_SUCCESS:
-      return updateInHistory(action.id, {
-        showJson: true,
-        json: action.result
-      })
-    case types.PAYMENT_JSON_SHOW:
-      return updateInHistory(action.id, {showJson: true})
-    case types.PAYMENT_JSON_HIDE:
-      return updateInHistory(action.id, {showJson: false})
     case types.WS_PAYMENT:
       // Only do these things when the user is on the first page
       if (state.currentPage !== 1) return state

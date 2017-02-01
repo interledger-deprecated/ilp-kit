@@ -21,9 +21,6 @@
   opacity: 1;
   transition: background-color 1s ease, max-height 1s ease, opacity 1s ease;
 }
-.pagination {
-  .loading {
-    display: block;
-    padding: 0;
-  }
+.loading {
+  padding: 0 20px;
 }

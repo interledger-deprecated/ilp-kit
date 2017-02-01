@@ -15,7 +15,8 @@ const cx = classNames.bind(styles)
 
 @connect(
   state => ({
-    peers: state.peer.peers
+    peers: state.peer.peers,
+    loading: state.peer.loading
   }),
   { load, update, remove })
 export default class Peers extends Component {
@@ -23,7 +24,8 @@ export default class Peers extends Component {
     peers: PropTypes.array,
     load: PropTypes.func.isRequired,
     update: PropTypes.func.isRequired,
-    remove: PropTypes.func.isRequired
+    remove: PropTypes.func.isRequired,
+    loading: PropTypes.bool
   }
 
   componentWillMount() {
@@ -97,7 +99,7 @@ export default class Peers extends Component {
   }
 
   render() {
-    const { peers } = this.props
+    const { loading, peers } = this.props
 
     return (
       <div className={cx('Peers')}>
@@ -106,7 +108,7 @@ export default class Peers extends Component {
         <div className={cx('row')}>
           {/* List */}
           <div className={cx('col-sm-8')}>
-            {peers.length < 1 &&
+            {!loading && peers.length < 1 &&
             <div className={cx('panel', 'panel-default', 'noPeers')}>
               <div className="panel-body">
                 <i className={cx('fa', 'fa-link')} />

@@ -23,6 +23,7 @@ const paginationActionCreators = initActionCreators({
     history: state.history.list,
     totalPages: state.history.totalPages,
     loadingPage: state.history.loadingPage,
+    initialLoad: state.history.initialLoad
   }),
   {getPage, ...paginationActionCreators})
 export default class Home extends Component {
@@ -30,6 +31,7 @@ export default class Home extends Component {
     history: PropTypes.array,
     totalPages: PropTypes.number,
     loadingPage: PropTypes.bool,
+    initialLoad: PropTypes.bool,
 
     getPage: PropTypes.func
   }
@@ -69,7 +71,7 @@ export default class Home extends Component {
   }
 
   render() {
-    const {history, totalPages, loadingPage} = this.props
+    const {history, totalPages, loadingPage, initialLoad} = this.props
     const {list} = this.state
 
     return (
@@ -90,7 +92,7 @@ export default class Home extends Component {
           ))}
           </ReactCSSTransitionGroup>}
 
-          {!loadingPage && list.length === 0 && <li className={cx('loading')}>No payments to show</li>}
+          {initialLoad && list.length === 0 && <li className={cx('loading')}>No payments to show</li>}
         </ul>
 
         {history && history.length > 0 &&
@@ -112,4 +114,3 @@ export default class Home extends Component {
     )
   }
 }
-

@@ -211,7 +211,7 @@
     "redux": "^3.6.0",
     "redux-async-connect": "^1.0.0-rc4",
     "redux-form": "^5.3.1",
-    "redux-pagination": "^0.1.0",
+    "redux-pagination": "^0.2.0",
     "request-ip": "^1.2.3",
     "resolve-url-loader": "^1.6.0",
     "riek": "^1.0.7",

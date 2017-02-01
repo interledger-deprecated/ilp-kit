@@ -69,6 +69,8 @@ export default class Invites extends Component {
         <a href="" className={cx('deleteButton')} onClick={this.handleRemove.bind(null, invite.code)}>
           <i className="fa fa-times" />
         </a>
+
+        <ReactTooltip />
       </div>
     )
   }
@@ -107,8 +109,6 @@ export default class Invites extends Component {
             </div>
           </div>
         </div>
-
-        <ReactTooltip />
       </div>
     )
   }

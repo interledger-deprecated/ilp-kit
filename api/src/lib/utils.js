@@ -27,7 +27,6 @@ module.exports = class Utils {
     try {
       response = yield superagent.get(accountUri).end()
     } catch (e) {
-      console.error('utils:39', e)
       throw new NotFoundError('Unknown account')
     }
 
@@ -92,8 +91,6 @@ module.exports = class Utils {
 
     // Webfinger lookup
     if (self.isWebfinger(destination)) {
-      // TODO use debug module
-      console.log('webfinger account')
       const account = yield self.getWebfingerAccount(destination)
 
       ledgerUri = account.ledgerUri
