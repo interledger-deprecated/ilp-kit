@@ -1,16 +1,28 @@
 import * as types from '../actionTypes'
 
 const initialState = {
-  codes: [],
+  list: [],
+  loading: true,
   invite: {}
 }
 
 export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
+    case types.LOAD_INVITES:
+      return {
+        ...state,
+        loading: true
+      }
     case types.LOAD_INVITES_SUCCESS:
       return {
         ...state,
-        codes: action.result
+        loading: false,
+        list: action.result
+      }
+    case types.LOAD_INVITES_FAIL:
+      return {
+        ...state,
+        loading: false
       }
     case types.LOAD_INVITE:
       return {
@@ -32,12 +44,12 @@ export default function reducer(state = initialState, action = {}) {
     case types.CREATE_INVITE_SUCCESS:
       return {
         ...state,
-        codes: [action.result].concat(state.codes)
+        list: [action.result].concat(state.list)
       }
     case types.REMOVE_INVITE_SUCCESS:
       return {
         ...state,
-        codes: state.codes.filter(invite => invite.code !== action.result.code)
+        list: state.list.filter(invite => invite.code !== action.result.code)
       }
     default:
       return state

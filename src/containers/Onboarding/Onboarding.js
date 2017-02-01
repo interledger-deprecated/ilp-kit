@@ -11,7 +11,7 @@ const cx = classNames.bind(styles)
 @connect(
   state => ({
     user: state.auth.user,
-    peers: state.peer.peers
+    peers: state.peer.list
   }),
   { loadPeers })
 export default class Onboarding extends Component {

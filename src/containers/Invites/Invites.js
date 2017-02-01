@@ -4,6 +4,7 @@ import ReactTooltip from 'react-tooltip'
 import Helmet from 'react-helmet'
 
 import { loadCodes, remove } from 'redux/actions/invite'
+import List from 'components/List/List'
 import InviteCreateForm from 'containers/InviteCreateForm/InviteCreateForm'
 
 import classNames from 'classnames/bind'
@@ -12,13 +13,13 @@ const cx = classNames.bind(styles)
 
 @connect(
   state => ({
-    codes: state.invite.codes,
+    inviteState: state.invite,
     config: state.auth.config
   }),
   { loadCodes, remove })
 export default class Invites extends Component {
   static propTypes = {
-    codes: PropTypes.array,
+    inviteState: PropTypes.object,
     loadCodes: PropTypes.func,
     config: PropTypes.object
   }
@@ -76,25 +77,34 @@ export default class Invites extends Component {
   }
 
   render() {
-    const { codes } = this.props
+    const { inviteState } = this.props
 
     return (
       <div className={cx('Invites')}>
         <Helmet title={'Invites'} />
 
         <div className={cx('row')}>
-          {/* List */}
           <div className={cx('col-sm-8')}>
-            {codes.length < 1 &&
-            <div className={cx('panel', 'panel-default', 'noInvites')}>
-              <div className="panel-body">
-                <i className={cx('fa', 'fa-ticket')} />
-                <h1>No Invite Codes</h1>
-                <div>Use the form on the right to add invite codes</div>
-              </div>
-            </div>}
-
-            {codes.map(this.renderCode)}
+            <List
+              loadingScreen={(
+                <div className={cx('panel', 'panel-default', 'invitesStatus')}>
+                  <div className="panel-body">
+                    <i className={cx('fa', 'fa-ticket')} />
+                    <h1>Loading Invite Codes...</h1>
+                  </div>
+                </div>
+              )}
+              emptyScreen={(
+                <div className={cx('panel', 'panel-default', 'invitesStatus')}>
+                  <div className="panel-body">
+                    <i className={cx('fa', 'fa-ticket')} />
+                    <h1>No Invite Codes</h1>
+                    <div>Use the form on the right to add invite codes</div>
+                  </div>
+                </div>
+              )} state={inviteState}>
+              {inviteState.list.map(this.renderCode)}
+            </List>
           </div>
 
           {/* Create new */}

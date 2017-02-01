@@ -6,10 +6,9 @@ import ReactTooltip from 'react-tooltip'
 import { RIENumber } from 'riek'
 
 import { load, update, remove } from 'redux/actions/peer'
+import List from 'components/List/List'
 import PeerAddForm from 'containers/PeerAddForm/PeerAddForm'
 import PeerSettlementButton from 'containers/PeerSettlementButton/PeerSettlementButton'
-
-import List from 'components/List/List'
 
 import classNames from 'classnames/bind'
 import styles from './Peers.scss'
@@ -114,8 +113,7 @@ export default class Peers extends Component {
                 <div className={cx('panel', 'panel-default', 'peersStatus')}>
                   <div className="panel-body">
                     <i className={cx('fa', 'fa-link')} />
-                    <h1>Peers</h1>
-                    <div>Loading...</div>
+                    <h1>Loading Peers...</h1>
                   </div>
                 </div>
               )}

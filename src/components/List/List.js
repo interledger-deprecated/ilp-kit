@@ -5,7 +5,7 @@ export default class List extends Component {
     state: PropTypes.object.isRequired,
     loadingScreen: PropTypes.object.isRequired,
     emptyScreen: PropTypes.object.isRequired,
-    children: PropTypes.object.isRequired
+    children: PropTypes.any.isRequired
   }
 
   render() {
