@@ -14,7 +14,8 @@ import styles from './Settlement.scss'
 const cx = classNames.bind(styles)
 
 @connect(state => ({
-  list: state.settlementMethod.list
+  list: state.settlementMethod.list,
+  loading: state.settlementMethod.loading
 }), { load, pushState: routeActions.push })
 export default class Settlement extends Component {
   static propTypes = {
@@ -22,7 +23,8 @@ export default class Settlement extends Component {
     load: PropTypes.func.isRequired,
     params: PropTypes.object,
     pushState: PropTypes.func,
-    list: PropTypes.array
+    list: PropTypes.array,
+    loading: PropTypes.bool
   }
 
   state = {}
@@ -71,8 +73,7 @@ export default class Settlement extends Component {
   }
 
   render() {
-    const { children } = this.props
-    const list = this.props.list || []
+    const { children, list, loading } = this.props
 
     return (
       <div className={cx('Settlement')}>
@@ -90,7 +91,7 @@ export default class Settlement extends Component {
                 {/* TODO:BEFORE_DEPLOY handle not custom types */}
                 {children}
 
-                {list.length < 1 &&
+                {!loading && list && list.length < 1 &&
                 <div className={cx('noResults')}>
                   <i className={cx('fa', 'fa-credit-card-alt')} />
                   <h1>No Settlement Methods</h1>

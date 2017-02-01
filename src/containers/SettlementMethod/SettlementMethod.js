@@ -22,7 +22,6 @@ const cx = classNames.bind(styles)
 
 @connect(
   state => ({
-    list: state.settlementMethod.list
   }),
   { get, update, updateLogo, remove, pushState: routeActions.push })
 @successable()

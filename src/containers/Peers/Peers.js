@@ -9,19 +9,21 @@ import { load, update, remove } from 'redux/actions/peer'
 import PeerAddForm from 'containers/PeerAddForm/PeerAddForm'
 import PeerSettlementButton from 'containers/PeerSettlementButton/PeerSettlementButton'
 
+import List from 'components/List/List'
+
 import classNames from 'classnames/bind'
 import styles from './Peers.scss'
 const cx = classNames.bind(styles)
 
 @connect(
   state => ({
-    peers: state.peer.peers,
+    peerState: state.peer,
     loading: state.peer.loading
   }),
   { load, update, remove })
 export default class Peers extends Component {
   static propTypes = {
-    peers: PropTypes.array,
+    peerState: PropTypes.object,
     load: PropTypes.func.isRequired,
     update: PropTypes.func.isRequired,
     remove: PropTypes.func.isRequired,
@@ -99,25 +101,35 @@ export default class Peers extends Component {
   }
 
   render() {
-    const { loading, peers } = this.props
+    const { peerState } = this.props
 
     return (
       <div className={cx('Peers')}>
         <Helmet title={'Peers'} />
 
         <div className={cx('row')}>
-          {/* List */}
           <div className={cx('col-sm-8')}>
-            {!loading && peers.length < 1 &&
-            <div className={cx('panel', 'panel-default', 'noPeers')}>
-              <div className="panel-body">
-                <i className={cx('fa', 'fa-link')} />
-                <h1>No Peers</h1>
-                <div>Use the form on the right to add your first peer</div>
-              </div>
-            </div>}
-
-            {peers.map(this.renderPeer)}
+            <List
+              loadingScreen={(
+                <div className={cx('panel', 'panel-default', 'peersStatus')}>
+                  <div className="panel-body">
+                    <i className={cx('fa', 'fa-link')} />
+                    <h1>Peers</h1>
+                    <div>Loading...</div>
+                  </div>
+                </div>
+              )}
+              emptyScreen={(
+                <div className={cx('panel', 'panel-default', 'peersStatus')}>
+                  <div className="panel-body">
+                    <i className={cx('fa', 'fa-link')} />
+                    <h1>No Peers</h1>
+                    <div>Use the form on the right to add your first peer</div>
+                  </div>
+                </div>
+              )} state={peerState}>
+              {peerState.list.map(this.renderPeer)}
+            </List>
           </div>
 
           {/* Add new */}

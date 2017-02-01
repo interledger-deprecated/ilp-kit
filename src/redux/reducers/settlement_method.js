@@ -1,15 +1,27 @@
 import * as types from '../actionTypes'
 
 const initialState = {
+  loading: true,
   list: []
 }
 
 export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
+    case types.LOAD_SETTLEMENT_METHODS:
+      return {
+        ...state,
+        loading: true
+      }
     case types.LOAD_SETTLEMENT_METHODS_SUCCESS:
       return {
         ...state,
+        loading: false,
         list: action.result
+      }
+    case types.LOAD_SETTLEMENT_METHODS_FAIL:
+      return {
+        ...state,
+        loading: false
       }
     case types.ADD_SETTLEMENT_METHOD_SUCCESS:
       return {
