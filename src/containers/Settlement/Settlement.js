@@ -81,15 +81,14 @@ export default class Settlement extends Component {
 
         <div className={cx('row', 'list')}>
           <div className={cx('col-sm-4')}>
-            {list && list.map(this.renderSettlementMethod)}
+            {list && list.length > 0 && list.map(this.renderSettlementMethod)}
 
             <SettlementAddButton className={cx('option')} />
           </div>
           <div className={cx('col-sm-8')}>
             <div className={cx('panel', 'panel-default')}>
               <div className="panel-body">
-                {/* TODO:BEFORE_DEPLOY handle not custom types */}
-                {children}
+                {list && list.length > 0 && children}
 
                 {!loading && list && list.length < 1 &&
                 <div className={cx('noResults')}>

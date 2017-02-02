@@ -39,7 +39,10 @@ export default class Peers extends Component {
         <MenuItem>Loading...</MenuItem>}
 
         {methods && methods.map(method => (
-          <MenuItem href={method.uri} key={method.name}>{method.name}</MenuItem>
+          <MenuItem href={method.uri} target="_blank" key={method.name}>
+            <img src={method.logo} className={cx('logo')} />
+            {method.name}
+          </MenuItem>
         ))}
       </DropdownButton>
     )

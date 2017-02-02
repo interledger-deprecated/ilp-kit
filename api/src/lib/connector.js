@@ -11,13 +11,13 @@ const SettlementMethodFactory = require('../models/settlement_method')
 const getToken = require('ilp-plugin-virtual/src/util/token').token
 
 const currencies = {
-  'USD': '$',
-  'GBP': '£',
-  'EUR': '€',
-  'CNY': '¥',
-  'JPY': '¥',
-  'CAD': '$',
-  'AUD': '$'
+  USD: '$',
+  GBP: '£',
+  EUR: '€',
+  CNY: '¥',
+  JPY: '¥',
+  CAD: '$',
+  AUD: '$'
 }
 
 module.exports = class Conncetor {
@@ -48,7 +48,8 @@ module.exports = class Conncetor {
       id: settlementMethod.id,
       name: settlementMethod.name,
       description: settlementMethod.description,
-      uri: settlementMethod.uri
+      uri: settlementMethod.uri,
+      logo: settlementMethod.logoUrl
     }))
 
     connector.listen()
@@ -58,7 +59,7 @@ module.exports = class Conncetor {
 
     // TODO wait a bit before adding peers (until the below issue is resolved)
     // https://github.com/interledgerjs/ilp-connector/issues/294
-    setTimeout(co.wrap(function *() {
+    setTimeout(co.wrap(function * () {
       for (const peer of peers) {
         try {
           yield self.connectPeer(peer)

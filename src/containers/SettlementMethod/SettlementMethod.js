@@ -22,6 +22,7 @@ const cx = classNames.bind(styles)
 
 @connect(
   state => ({
+    list: state.settlementMethod.list
   }),
   { get, update, updateLogo, remove, pushState: routeActions.push })
 @successable()
@@ -102,6 +103,8 @@ export default class SettlementMethod extends Component {
   render() {
     const { success, fail } = this.props
     const { method } = this.state
+
+    if (!method) return null
 
     return (
       <div className={cx('SettlementMethod')}>
