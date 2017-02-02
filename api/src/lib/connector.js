@@ -157,7 +157,7 @@ module.exports = class Conncetor {
         id: settlementMethod.id,
         name: settlementMethod.name,
         description: settlementMethod.description,
-        uri: settlementMethod.uri,
+        uri: `${settlementMethod.uri}?destination=${peer.destination}`,
         logo: settlementMethod.logoUrl
       }))
 

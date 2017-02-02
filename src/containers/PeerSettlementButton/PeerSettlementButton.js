@@ -35,9 +35,8 @@ export default class Peers extends Component {
 
     return (
       <DropdownButton bsStyle="info" title="Settle" onToggle={this.handleToggle} id="settlement">
-        {!methods &&
-        <MenuItem>Loading...</MenuItem>}
-
+        {!methods && <MenuItem>Loading...</MenuItem>}
+        {methods && methods.length === 0 && <MenuItem>No Settlement Options available</MenuItem>}
         {methods && methods.map(method => (
           <MenuItem href={method.uri} target="_blank" key={method.name}>
             <img src={method.logo} className={cx('logo')} />
