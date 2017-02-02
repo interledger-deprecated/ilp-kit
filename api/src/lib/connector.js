@@ -41,17 +41,6 @@ module.exports = class Conncetor {
 
     this.log.info('Starting the connector...')
 
-    // Settlement Methods
-    const settlementMethods = yield this.SettlementMethod.findAll({ where: { enabled: true }})
-
-    this.settlementMethods = settlementMethods.map(settlementMethod => ({
-      id: settlementMethod.id,
-      name: settlementMethod.name,
-      description: settlementMethod.description,
-      uri: settlementMethod.uri,
-      logo: settlementMethod.logoUrl
-    }))
-
     connector.listen()
 
     // Get the peers from the database
@@ -146,7 +135,7 @@ module.exports = class Conncetor {
             currencySymbol: currencies[peer.currency] || peer.currency,
             precision: 10,
             scale: 10,
-            connectors: [ hostInfo.ledgerName + hostInfo.publicKey ]
+            connectors: [hostInfo.ledgerName + hostInfo.publicKey]
           }
         }
       })
@@ -158,8 +147,19 @@ module.exports = class Conncetor {
 
     const plugin = connector.getPlugin(hostInfo.ledgerName)
 
-    plugin.on('incoming_message', co.wrap(function * (message) {
+    plugin.on('incoming_message', co.wrap(function *(message) {
       if (message.data.method !== 'settlement_methods_request') return
+
+      // Settlement Methods
+      // TODO:PERFORMANCE don't call this on every request
+      const dbSettlementMethods = yield self.SettlementMethod.findAll({ where: { enabled: true } })
+      const settlementMethods = dbSettlementMethods.map(settlementMethod => ({
+        id: settlementMethod.id,
+        name: settlementMethod.name,
+        description: settlementMethod.description,
+        uri: settlementMethod.uri,
+        logo: settlementMethod.logoUrl
+      }))
 
       yield plugin.sendMessage({
         account: message.from,
@@ -168,7 +168,7 @@ module.exports = class Conncetor {
         ledger: message.ledger,
         data: {
           method: 'settlement_methods_response',
-          settlement_methods: self.settlementMethods
+          settlement_methods: settlementMethods
         }
       })
     }))

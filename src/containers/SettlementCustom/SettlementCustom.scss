@@ -8,8 +8,22 @@
   margin-top: 20px;
   margin-bottom: 20px;
 }
-.logo {
-  margin: 0 0 10px;
-  max-width: 100%;
-}
 
+.logoField {
+  float: right;
+  width: calc(100% - 110px);
+
+  &.full {
+    width: calc(100%);
+  }
+}
+.logoBox {
+  float: left;
+  width: 100px;
+  margin: 0 10px 0 0;
+}
+.logo {
+  max-width: 100px;
+  height: 100px;
+  margin: 0 0 10px;
+}
