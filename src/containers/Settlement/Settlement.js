@@ -44,10 +44,10 @@ export default class Settlement extends Component {
   }
 
   renderLogo = method => {
-    if (method.type === 'paypal') return <img src={require('./paypal.png')} />
-    if (method.type === 'bitcoin') return <img src={require('./bitcoin.png')} />
-    if (method.type === 'ripple') return <img src={require('./ripple.png')} />
-    if (method.type === 'etherium') return <img src={require('./etherium.png')} />
+    if (method.type === 'paypal') return <img src="/paypal.png" />
+    if (method.type === 'bitcoin') return <img src="/bitcoin.png" />
+    if (method.type === 'ripple') return <img src="/ripple.png" />
+    if (method.type === 'etherium') return <img src="/etherium.png" />
 
     if (!method.logo) {
       return method.name || 'Unnamed'

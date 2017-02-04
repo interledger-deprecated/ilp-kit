@@ -63,6 +63,10 @@ function SettlementMethodsControllerFactory(auth, config, log, Settlement, Settl
         throw new InvalidBodyError('Unknown settlement method type')
       }
 
+      if (['paypal', 'bitcoin', 'etherium', 'ripple'].indexOf(this.body.type) !== -1) {
+        method.name = this.body.type.charAt(0).toUpperCase() + this.body.type.slice(1)
+      }
+
       method.type = this.body.type
       // TODO
       // method.name
