@@ -14,6 +14,7 @@ import { get, settle } from 'redux/actions/peer'
 export default class Settle extends Component {
   static propTypes = {
     params: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
     get: PropTypes.func.isRequired,
     peer: PropTypes.object
   }
@@ -33,7 +34,7 @@ export default class Settle extends Component {
   handleSettle = e => {
     e.preventDefault()
 
-    if (!this.refs.amount.value) return
+    if (!this.refs.amount.value || parseInt(this.refs.amount.value) < 1) return
 
     // TODO handle exceptions
     this.props.settle(this.props.params.destination, {amount: this.refs.amount.value})
@@ -43,22 +44,26 @@ export default class Settle extends Component {
   }
 
   render() {
-    const { peer, params } = this.props
+    const { peer, params, location } = this.props
     const { hostname } = this.state
+
+    const initialAmount = (location.query && location.query.amount) || 0
 
     return (
       <div>
-        <div className={cx('title')}>
-          You're trying to settle the trustline between <b>{hostname}</b> and <b>{peer.hostname}</b> using <b>{params.method}</b>.
-        </div>
+        <h3 className={cx('title')}>
+          <div>You are trying to settle the trustline</div>
+          <div>between <b>{hostname}</b> and <b>{peer.hostname}</b></div>
+          <div>using <b>{params.method}</b>.</div>
+        </h3>
 
         <form onSubmit={this.handleSettle} className={cx('inputBox')}>
           <label>
-            Amount
-            <input type="text" ref="amount" className={cx('form-control')} />
+            <div>Amount</div>
+            <input type="text" ref="amount" className={cx('amountField')} defaultValue={initialAmount} />
           </label>
           <div>
-            <button type="submit" className={cx('btn', 'btn-success')}>Settle</button>
+            <button type="submit" className={cx('btn', 'btn-success', 'btn-lg')}>Make a Payment</button>
           </div>
         </form>
       </div>

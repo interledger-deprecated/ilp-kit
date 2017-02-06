@@ -14,7 +14,7 @@ export default class SettleCancel extends Component {
 
     return (
       <div>
-        <h1>Cancelled!</h1>
+        <h1 className="title">Settlement Cancelled!</h1>
       </div>
     )
   }

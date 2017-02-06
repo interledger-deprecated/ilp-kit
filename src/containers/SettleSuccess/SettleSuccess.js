@@ -14,7 +14,7 @@ export default class SettleSuccess extends Component {
 
     return (
       <div>
-        <h1>Success!</h1>
+        <h1 className="title">Settlement completed!</h1>
       </div>
     )
   }
