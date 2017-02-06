@@ -13,7 +13,12 @@ module.exports = class Paypal {
   }
 
   * getOptions() {
-    return this.options || (this.options = (yield this.SettlementMethod.findOne({ where: { type: 'paypal' } })).options)
+    if (this.options) return this.options
+
+    this.options = (yield this.SettlementMethod.findOne({ where: { type: 'paypal' } })).options
+    this.options.api = this.options.sandbox ? 'https://api.sandbox.paypal.com' : 'https://api.paypal.com'
+
+    return this.options
   }
 
   * getToken() {

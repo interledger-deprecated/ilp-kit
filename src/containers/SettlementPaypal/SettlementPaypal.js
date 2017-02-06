@@ -7,12 +7,13 @@ import styles from './SettlementPaypal.scss'
 const cx = classNames.bind(styles)
 
 import Input from 'components/Input/Input'
+import InputRaw from 'components/InputRaw/InputRaw'
 
 import { update } from 'redux/actions/settlement_method'
 
 @reduxForm({
   form: 'settlementPaypal',
-  fields: ['clientId', 'secret', 'api'],
+  fields: ['clientId', 'secret', 'sandbox'],
 }, state => ({
 }), { update })
 export default class SettlementPaypal extends Component {
@@ -45,7 +46,7 @@ export default class SettlementPaypal extends Component {
     props.initializeForm({
       clientId: props.method.options.clientId || undefined,
       secret: props.method.options.secret || undefined,
-      api: props.method.options.api || undefined
+      sandbox: props.method.options.sandbox || undefined
     })
   }
 
@@ -54,7 +55,7 @@ export default class SettlementPaypal extends Component {
   }
 
   render() {
-    const { handleSubmit, fields: { clientId, secret, api },
+    const { handleSubmit, fields: { clientId, secret, sandbox },
       pristine, invalid, submitting } = this.props
 
     return (
@@ -64,7 +65,11 @@ export default class SettlementPaypal extends Component {
         <form onSubmit={handleSubmit(this.handleSave)}>
           <Input object={clientId} label="Client ID" size="lg" />
           <Input object={secret} label="Secret" size="lg" />
-          <Input object={api} label="Api" size="lg" />
+
+          <div className="checkbox check-success">
+            <InputRaw object={sandbox} type="checkbox" id="sandbox" checked={sandbox.value} />
+            <label htmlFor="sandbox">Sandbox (are these Paypal Sandbox credentials?)</label>
+          </div>
 
           <button type="submit" className="btn btn-success" disabled={pristine || invalid || submitting}>
             {submitting ? ' Saving...' : ' Save'}
