@@ -123,10 +123,20 @@ function PeersControllerFactory(auth, config, log, Peer, connector) {
       if (!prefix) throw new InvalidBodyError('Prefix is not supplied')
       if (!method) throw new InvalidBodyError('Method is not supplied')
 
+      const plugin = connector.getPlugin(prefix)
+
+      if (!plugin) {
+        this.statusCode = 404
+        this.body = 'no plugin with prefix "' + prefix + '"'
+        log.debug('404\'d request for plugin with prefix "' + prefix + '"')
+        return
+      }
+
       try {
-        this.body = yield connector.rpc(prefix, method, params)
+        this.body = yield plugin.receive(method, params)
       } catch (e) {
-        // if rpc error, e.g. server is not ready yet or trustline exceeded
+        this.statusCode = 422
+        this.body = e.message
         log.err('connector.rpc() failed: ', e.stack)
       }
     }

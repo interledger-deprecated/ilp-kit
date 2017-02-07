@@ -233,9 +233,7 @@ module.exports = class Conncetor {
     return promise
   }
 
-  * rpc(prefix, method, params) {
-    const plugin = connector.getPlugin(prefix)
-
-    return plugin.receive(method, params)
+  getPlugin (prefix) {
+    return getPlugin(prefix)
   }
 }
