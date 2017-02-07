@@ -10,6 +10,8 @@ const PeerFactory = require('../models/peer')
 const SettlementMethodFactory = require('../models/settlement_method')
 const getToken = require('ilp-plugin-virtual/src/util/token').token
 
+const InvalidBodyError = require('../errors/invalid-body-error')
+
 const currencies = {
   USD: '$',
   GBP: '£',
@@ -21,8 +23,8 @@ const currencies = {
 }
 
 module.exports = class Conncetor {
-  static constitute() { return [ Config, PeerFactory, Utils, Log, SettlementMethodFactory ] }
-  constructor(config, Peer, utils, log, SettlementMethod) {
+  static constitute () { return [ Config, PeerFactory, Utils, Log, SettlementMethodFactory ] }
+  constructor (config, Peer, utils, log, SettlementMethod) {
     this.config = config.data
     this.utils = utils
     this.Peer = Peer
@@ -32,7 +34,7 @@ module.exports = class Conncetor {
     this.instance = connector
   }
 
-  * start() {
+  * start () {
     const self = this
 
     this.log.info('Waiting for the ledger...')
@@ -59,7 +61,7 @@ module.exports = class Conncetor {
     }), 5000)
   }
 
-  * waitForLedger() {
+  * waitForLedger () {
     const port = process.env.CLIENT_PORT
     const ledgerPublicPath = this.config.getIn(['ledger', 'public_uri'])
 
@@ -75,47 +77,36 @@ module.exports = class Conncetor {
     })
   }
 
-  * getPeerInfo(peer) {
-    const peerInfo = this.peers[peer.id]
+  * getPeerInfo (peer) {
+    const peerInfo = this.peers[peer.destination]
 
     // Already have the info
-    if (peerInfo.publicKey) return peerInfo
+    if (peerInfo && peerInfo.publicKey) return peerInfo
 
     // Get the host publicKey
     const hostInfo = yield this.utils.hostLookup('https://' + peer.hostname)
 
-    if (!hostInfo) return
-
     const publicKey = hostInfo.publicKey
     const token = getToken(this.config.getIn(['connector', 'ed25519_secret_key']), publicKey)
 
-    this.peers[peer.id] = {
+    this.peers[peer.destination] = {
       publicKey,
       rpcUri: hostInfo.peersRpcUri,
       ledgerName: 'peer.' + token.substring(0, 5) + '.' + peer.currency.toLowerCase() + '.',
       online: peerInfo ? peerInfo.online : false
     }
 
-    return this.peers[peer.id]
+    return this.peers[peer.destination]
   }
 
-  * connectPeer(peer) {
+  * connectPeer (peer) {
     const self = this
 
-    if (!this.peers[peer.id]) {
-      this.peers[peer.id] = {
-        online: false
-      }
-    }
-
     // Skip if already connected
-    if (this.peers[peer.id].online) return
+    if (this.peers[peer.destination] && this.peers[peer.destination].online) return
 
     // Get host info
     const hostInfo = yield this.getPeerInfo(peer)
-
-    // Couldn't get the host info (service might not be responding)
-    if (!hostInfo.publicKey) return
 
     try {
       yield connector.addPlugin(hostInfo.ledgerName, {
@@ -140,8 +131,15 @@ module.exports = class Conncetor {
         }
       })
 
-      this.peers[peer.id].online = true
+      if (!this.peers[peer.destination]) {
+        this.peers[peer.destination] = {}
+      }
+
+      this.peers[peer.destination].online = true
     } catch (e) {
+      if (e.message.indexOf('No rate available') > -1) {
+        throw new InvalidBodyError('Unsupported currency')
+      }
       throw e
     }
 
@@ -182,8 +180,8 @@ module.exports = class Conncetor {
     }))
   }
 
-  * removePeer(peer) {
-    const peerInfo = this.peers[peer.id]
+  * removePeer (peer) {
+    const peerInfo = this.peers[peer.destination]
 
     if (!peerInfo || !peerInfo.online) return
 
@@ -193,17 +191,17 @@ module.exports = class Conncetor {
       this.log.err("Couldn't remove the peer from the connector", e)
     }
 
-    delete this.peers[peer.id]
+    delete this.peers[peer.destination]
   }
 
-  * getPeer(peer) {
+  * getPeer (peer) {
     try {
       yield this.connectPeer(peer)
     } catch (e) {
       // That's fine, we'll return an offline state
     }
 
-    const peerInfo = this.peers[peer.id]
+    const peerInfo = this.peers[peer.destination]
     const online = peerInfo && peerInfo.online
 
     return {
@@ -212,8 +210,8 @@ module.exports = class Conncetor {
     }
   }
 
-  * getSettlementMethods(peer) {
-    const peerInfo = this.peers[peer.id]
+  * getSettlementMethods (peer) {
+    const peerInfo = this.peers[peer.destination]
     const plugin = connector.getPlugin(peerInfo.ledgerName)
 
     const promise = new Promise(resolve => {
@@ -241,7 +239,7 @@ module.exports = class Conncetor {
     return promise
   }
 
-  getPlugin(prefix) {
+  getPlugin (prefix) {
     return connector.getPlugin(prefix)
   }
 }

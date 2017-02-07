@@ -48,10 +48,12 @@ export default class PeerAddForm extends Component {
   }
 
   handleSubmit = (data) => {
-    return this.props.add(data).then(() => {
-      this.props.tempSuccess()
-      this.props.resetData()
-    })
+    return this.props.add(data)
+      .then(() => {
+        this.props.tempSuccess()
+        this.props.resetData()
+      })
+      .catch(this.props.permFail)
   }
 
   render() {
@@ -66,7 +68,7 @@ export default class PeerAddForm extends Component {
 
         {fail && fail.id &&
         <Alert bsStyle="danger">
-          Something went wrong
+          {fail.message}
         </Alert>}
 
         <form onSubmit={handleSubmit(this.handleSubmit)}>

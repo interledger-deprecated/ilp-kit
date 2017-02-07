@@ -13,11 +13,11 @@ const NotFoundError = require('../errors/not-found-error')
 const InvalidBodyError = require('../errors/invalid-body-error')
 
 PeersControllerFactory.constitute = [Auth, Config, Log, PeerFactory, Connector]
-function PeersControllerFactory(auth, config, log, Peer, connector) {
+function PeersControllerFactory (auth, config, log, Peer, connector) {
   log = log('peers')
 
   return class PeersController {
-    static init(router) {
+    static init (router) {
       router.get('/peers', auth.checkAuth, this.checkAdmin, this.getAll)
       router.post('/peers', auth.checkAuth, this.checkAdmin, this.postResource)
       router.get('/peers/:id/settlement_methods', auth.checkAuth, this.checkAdmin, this.getSettlementMethods)
@@ -37,7 +37,7 @@ function PeersControllerFactory(auth, config, log, Peer, connector) {
       throw new NotFoundError()
     }
 
-    static * getAll() {
+    static * getAll () {
       // TODO pagination
       const peers = yield Peer.findAll({
         include: [{ all: true }],
@@ -54,7 +54,7 @@ function PeersControllerFactory(auth, config, log, Peer, connector) {
       this.body = peers
     }
 
-    static* getResource() {
+    static* getResource () {
       const peer = yield Peer.findOne({ where: { destination: this.params.destination } })
 
       if (!peer) throw new NotFoundError('Unknown peer')
@@ -65,22 +65,20 @@ function PeersControllerFactory(auth, config, log, Peer, connector) {
       }
     }
 
-    static * postResource() {
+    static * postResource () {
       const peer = new Peer()
 
       peer.hostname = this.body.hostname.replace(/.*?:\/\//g, '')
       peer.limit = this.body.limit
-      peer.currency = this.body.currency
+      peer.currency = this.body.currency.toUpperCase()
       peer.destination = parseInt(Math.random() * 1000000)
 
-      const dbPeer = yield peer.save()
+      yield connector.connectPeer(peer)
 
-      yield connector.connectPeer(dbPeer)
-
-      this.body = dbPeer
+      this.body = yield peer.save()
     }
 
-    static * putResource() {
+    static * putResource () {
       const id = this.params.id
       let peer = yield Peer.findOne({ where: { id } })
       const limit = this.body.limit
