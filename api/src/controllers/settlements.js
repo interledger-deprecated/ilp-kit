@@ -138,9 +138,9 @@ function SettlementsControllerFactory(auth, config, log, Settlement, SettlementM
         })
 
         // TODO:BEFORE_DEPLOY include the paid amount etc
-        this.redirect(`${config.data.get('client_host')}/settle/paypal/${peer.destination}/success`)
+        this.redirect(`${config.data.get('client_host')}/settle/paypal/${peer.destination}/success?peer=${peer.hostname}&currency=${peer.currency}&amount=${payment.amount}`)
       } catch (e) {
-        this.redirect(`${config.data.get('client_host')}/settle/paypal/${peer.destination}/cancel`)
+        this.redirect(`${config.data.get('client_host')}/settle/paypal/${peer.destination}/cancel?peer=${peer.hostname}&currency=${peer.currency}&amount=${payment.amount}`)
       }
     }
 

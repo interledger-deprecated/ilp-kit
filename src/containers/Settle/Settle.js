@@ -36,6 +36,11 @@ export default class Settle extends Component {
 
     if (!this.refs.amount.value || parseInt(this.refs.amount.value) < 1) return
 
+    this.setState({
+      ...this.state,
+      loading: true
+    })
+
     // TODO handle exceptions
     this.props.settle(this.props.params.destination, {amount: this.refs.amount.value})
       .then(response => {
@@ -45,7 +50,7 @@ export default class Settle extends Component {
 
   render() {
     const { peer, params, location } = this.props
-    const { hostname } = this.state
+    const { hostname, loading } = this.state
 
     const initialAmount = (location.query && location.query.amount) || 0
 
@@ -63,7 +68,8 @@ export default class Settle extends Component {
             <input type="text" ref="amount" className={cx('amountField')} defaultValue={initialAmount} />
           </label>
           <div>
-            <button type="submit" className={cx('btn', 'btn-success', 'btn-lg')}>Make a Payment</button>
+            <button type="submit" className={cx('btn', 'btn-success', 'btn-lg')}
+                    disabled={loading}>{loading ? 'Loading...' : 'Make a Payment'}</button>
           </div>
         </form>
       </div>

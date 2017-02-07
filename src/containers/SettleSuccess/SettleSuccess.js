@@ -6,15 +6,31 @@ const cx = classNames.bind(styles)
 
 export default class SettleSuccess extends Component {
   static propTypes = {
-    query: PropTypes.object
+  }
+
+  state = {}
+
+  componentDidMount() {
+    this.setState({
+      hostname: location.hostname
+    })
   }
 
   render() {
-    const { query } = this.props
+    const { location: { query } } = this.props
+    const { hostname } = this.state
 
     return (
-      <div>
-        <h1 className="title">Settlement completed!</h1>
+      <div className={cx('SettleSuccess')}>
+        <i className={cx('fa', 'fa-check', 'icon')} />
+
+        <h3>
+          <b>{query.amount} {query.currency}</b> settlement between <b>{hostname}</b> and <b>{query.peer}</b> has been completed!
+        </h3>
+
+        <a href={`http://${query.peer}`} className={cx('goBack')}>
+          back to {query.peer}
+        </a>
       </div>
     )
   }
