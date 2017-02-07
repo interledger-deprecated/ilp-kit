@@ -155,8 +155,8 @@ module.exports = class Conncetor {
       // Settlement Methods
       // TODO:PERFORMANCE don't call this on every request
       const dbSettlementMethods = yield self.SettlementMethod.findAll({ where: { enabled: true } })
-      const settlementMethods = dbSettlementMethods.map(settlementMethod => {
-        const uri = settlementMethod === 'custom'
+      const settlementMethods = dbSettlementMethods.map((settlementMethod) => {
+        const uri = settlementMethod.type === 'custom'
           ? `${settlementMethod.uri}?destination=${peer.destination}`
           : self.config.get('client_host') + '/settle/' + settlementMethod.type + '/' + peer.destination + '?amount=' + Math.max(peerStatus.balance, 0)
 
