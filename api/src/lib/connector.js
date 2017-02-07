@@ -241,7 +241,7 @@ module.exports = class Conncetor {
     return promise
   }
 
-  getPlugin (prefix) {
-    return getPlugin(prefix)
+  getPlugin(prefix) {
+    return connector.getPlugin(prefix)
   }
 }
