@@ -32,7 +32,9 @@ export default class SettlementAddButton extends Component {
     }
   }
 
-  handleOpen = () => {
+  handleOpen = e => {
+    e.preventDefault()
+
     this.setState({
       ...this.state,
       open: true
@@ -58,7 +60,7 @@ export default class SettlementAddButton extends Component {
     return (
       <div className={cx('SettlementAddButton')}>
         {!open &&
-        <a href="" className={cx('panel', 'panel-default', 'button')} onClick={this.handleAdd.bind(this, 'custom')}>
+        <a href="" className={cx('panel', 'panel-default', 'button')} onClick={this.handleOpen}>
           <div className="panel-body">
             + Add a Settlement Method
           </div>
@@ -69,10 +71,10 @@ export default class SettlementAddButton extends Component {
           <div className="panel-body">
             {typeList.indexOf('paypal') === -1 &&
             <a href="" onClick={this.handleAdd.bind(this, 'paypal')} className={cx('option')}>
-              <img src={require('../Settlement/paypal.png')} />
+              <img src="/paypal.png" />
             </a>}
 
-            {typeList.indexOf('bitcoin') === -1 &&
+            {/* {typeList.indexOf('bitcoin') === -1 &&
             <a href="" onClick={this.handleAdd.bind(this, 'bitcoin')} className={cx('option')}>
               <img src={require('../Settlement/bitcoin.png')} />
             </a>}
@@ -85,7 +87,7 @@ export default class SettlementAddButton extends Component {
             {typeList.indexOf('etherium') === -1 &&
             <a href="" onClick={this.handleAdd.bind(this, 'etherium')} className={cx('option')}>
               <img src={require('../Settlement/etherium.png')} />
-            </a>}
+            </a>} */}
 
             {/* Not checking here, there could be multiple custom methods */}
             <a href="" onClick={this.handleAdd.bind(this, 'custom')} className={cx('option')}>

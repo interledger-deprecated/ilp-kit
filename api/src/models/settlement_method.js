@@ -8,9 +8,10 @@ const PersistentModelMixin = require('five-bells-shared').PersistentModelMixin
 const Database = require('../lib/db')
 const Validator = require('five-bells-shared/lib/validator')
 const Sequelize = require('sequelize')
+const Config = require('../lib/config')
 
-SettlementMethodFactory.constitute = [Database, Validator]
-function SettlementMethodFactory(sequelize, validator) {
+SettlementMethodFactory.constitute = [Database, Validator, Config]
+function SettlementMethodFactory(sequelize, validator, config) {
   class SettlementMethod extends Model {
     static convertFromExternal(data) {
       return data
@@ -26,7 +27,11 @@ function SettlementMethodFactory(sequelize, validator) {
 
     static convertFromPersistent(data) {
       data = _.omit(data, _.isNull)
-      data.logoUrl = data.logo && '/api/' + data.logo
+      data.logoUrl = data.logo && `/api/${data.logo}`
+
+      if (data.type === 'paypal') {
+        data.logoUrl = config.data.get('client_host') + '/paypal.png'
+      }
 
       return data
     }

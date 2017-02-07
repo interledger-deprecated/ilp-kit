@@ -12,10 +12,6 @@ import SettlementCustom from '../SettlementCustom/SettlementCustom'
 
 import { get, update, updateLogo, remove } from 'redux/actions/settlement_method'
 
-import { successable } from 'decorators'
-
-import Alert from 'react-bootstrap/lib/Alert'
-
 import classNames from 'classnames/bind'
 import styles from './SettlementMethod.scss'
 const cx = classNames.bind(styles)
@@ -25,7 +21,6 @@ const cx = classNames.bind(styles)
     list: state.settlementMethod.list
   }),
   { get, update, updateLogo, remove, pushState: routeActions.push })
-@successable()
 export default class SettlementMethod extends Component {
   static propTypes = {
     params: PropTypes.object.isRequired,
@@ -33,13 +28,7 @@ export default class SettlementMethod extends Component {
     update: PropTypes.func.isRequired,
     updateLogo: PropTypes.func.isRequired,
     remove: PropTypes.func.isRequired,
-    pushState: PropTypes.func.isRequired,
-
-    // Successable
-    tempSuccess: PropTypes.func,
-    success: PropTypes.bool,
-    permFail: PropTypes.func,
-    fail: PropTypes.any
+    pushState: PropTypes.func.isRequired
   }
 
   state = {
@@ -101,7 +90,6 @@ export default class SettlementMethod extends Component {
   }
 
   render() {
-    const { success, fail } = this.props
     const { method } = this.state
 
     if (!method) return null
@@ -131,16 +119,6 @@ export default class SettlementMethod extends Component {
             </button>
           </div>
         </div>
-
-        {success &&
-        <Alert bsStyle="success">
-          Settlement Method has been saved!
-        </Alert>}
-
-        {fail && fail.id &&
-        <Alert bsStyle="danger">
-          Something went wrong
-        </Alert>}
 
         {method.type === 'paypal' && <SettlementPaypal method={method} />}
         {method.type === 'bitcoin' && <SettlementBitcoin />}

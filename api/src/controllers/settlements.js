@@ -2,14 +2,13 @@
 
 module.exports = SettlementsControllerFactory
 
-// const PluginPaypal = require('ilp-plugin-paypal')
-
 // const co = require('co')
 const uuid = require('uuid4')
 const Auth = require('../lib/auth')
 const Log = require('../lib/log')
 const Config = require('../lib/config')
 const Connector = require('../lib/connector')
+const Paypal = require('../lib/paypal')
 const SettlementFactory = require('../models/settlement')
 const SettlementMethodFactory = require('../models/settlement_method')
 const PeerFactory = require('../models/peer')
@@ -17,21 +16,22 @@ const PeerFactory = require('../models/peer')
 const NotFoundError = require('../errors/not-found-error')
 const InvalidBodyError = require('../errors/invalid-body-error')
 
-SettlementsControllerFactory.constitute = [Auth, Config, Log, SettlementFactory, SettlementMethodFactory, PeerFactory, Connector]
-function SettlementsControllerFactory(auth, config, log, Settlement, SettlementMethod, Peer, connector) {
+SettlementsControllerFactory.constitute = [Auth, Config, Log, SettlementFactory, SettlementMethodFactory, PeerFactory, Connector, Paypal]
+function SettlementsControllerFactory(auth, config, log, Settlement, SettlementMethod, Peer, connector, paypal) {
   log = log('settlements')
 
   return class SettlementsController {
     static init(router) {
-      router.post('/settlements', auth.checkAuth, this.checkAdmin, this.postResource)
+      router.post('/settlements/:destination', auth.checkAuth, this.checkAdmin, this.custom)
 
-      /*co(function * () {
-        yield SettlementsController.setupBuiltins()
-      })*/
+      // Public
+      router.post('/settlements/:destination/paypal', this.paypal)
+      router.get('/settlements/:destination/paypal/execute', this.paypalExecute)
+      router.get('/settlements/:destination/paypal/cancel', this.paypalCancel)
     }
 
     // TODO move to auth
-    static * checkAdmin(next) {
+    static* checkAdmin(next) {
       if (this.req.user.username === config.data.getIn(['ledger', 'admin', 'user'])) {
         return yield next
       }
@@ -39,27 +39,11 @@ function SettlementsControllerFactory(auth, config, log, Settlement, SettlementM
       throw new NotFoundError()
     }
 
-    static * postResource() {
-      const destination = this.body.destination
-      const settlement_method = this.body.settlement_method
-
-      // TODO:BEFORE_DEPLOY Validation
-
-      const peer = yield Peer.findOne({ where: { destination } })
-
-      if (!peer) {
-        throw new InvalidBodyError('Invalid destination')
-      }
-
-      const settlementMethod = yield SettlementMethod.findOne({ where: { id: settlement_method } })
-
-      if (!settlementMethod) {
-        throw new InvalidBodyError('Invalid settlement method')
-      }
-
-      const prefix = 'settlement.' + uuid() + '.'
-      const currency = this.body.currency
-      const amount = this.body.amount
+    static* settle(params) {
+      const peer = params.peer
+      const amount = params.amount
+      const currency = params.currency
+      const prefix = `settlement.${uuid()}.`
 
       // Add the plugin to the connector
       yield connector.instance.addPlugin(prefix, {
@@ -70,7 +54,7 @@ function SettlementsControllerFactory(auth, config, log, Settlement, SettlementM
           currency,
           amount,
           destination: connector.peers[peer.id].ledgerName + connector.peers[peer.id].publicKey,
-          connectors: [prefix + 'connector']
+          connectors: [`${prefix}connector`]
         }
       })
 
@@ -80,34 +64,94 @@ function SettlementsControllerFactory(auth, config, log, Settlement, SettlementM
       // Remove the plugin
       yield connector.instance.removePlugin(prefix)
 
+      // Store the settlement in the database
       const settlement = new Settlement()
-      settlement.settlement_method_id = settlementMethod.id
+      settlement.settlement_method_id = params.settlementMethod.id
       settlement.peer_id = peer.id
       settlement.amount = amount
       settlement.currency = currency
 
-      this.body = yield settlement.save()
+      return settlement.save()
     }
 
-    /*static * setupBuiltins () {
-      const methodPaypal = yield SettlementMethod.findOne({ where: { type: 'paypal' } })
+    static* custom() {
+      const destination = this.params.destination
 
-      // TODO what if the method is added while the ilp-kit is running
-      if (methodPaypal) {
-        log.info('Enabling Paypal settlements')
+      // TODO:BEFORE_DEPLOY Validation
 
-        const pluginPaypal = new PluginPaypal({
-          host: 'http://localhost:8080', // TODO:BEFORE_DEPLOY real public host
-          port: '8080',
-          client_id: methodPaypal.options.clientId,
-          secret: methodPaypal.options.secret,
-          api: methodPaypal.options.api
-        })
+      const peer = yield Peer.findOne({ where: { destination } })
 
-        pluginPaypal.connect().catch((e) => {
-          console.error(e)
-        })
+      if (!peer) {
+        throw new InvalidBodyError('Invalid destination')
       }
-    }*/
+
+      const settlementMethod = yield SettlementMethod.findOne({
+        where: { id: this.body.settlement_method }
+      })
+
+      if (!settlementMethod) {
+        throw new InvalidBodyError('Invalid settlement method')
+      }
+
+      return yield SettlementsController.settle({
+        peer,
+        settlementMethod,
+        amount: this.body.amount,
+        currency: this.body.currency
+      })
+    }
+
+    static* paypal() {
+      const peer = yield Peer.findOne({ where: { destination: this.params.destination } })
+
+      if (!peer) return this.status = 404
+
+      this.body = {
+        approvalLink: yield paypal.createPayment(peer, this.body.amount)
+      }
+    }
+
+    static* paypalExecute() {
+      const peer = yield Peer.findOne({ where: { destination: this.params.destination } })
+
+      if (!peer) {
+        // TODO more than a 404?
+        throw new NotFoundError('Unknown peer')
+      }
+
+      try {
+        const payment = yield paypal.executePayment(this.query)
+
+        // Weird
+        if (peer.destination !== payment.destination) {
+          throw new InvalidBodyError("Payment destination doesn't match the expected destination")
+        }
+
+        const settlementMethod = yield SettlementMethod.findOne({ where: { type: 'paypal' } })
+
+        const settlement = yield SettlementsController.settle({
+          peer,
+          settlementMethod,
+          amount: payment.amount,
+          // TODO support other currencies
+          currency: 'USD'
+        })
+
+        // TODO:BEFORE_DEPLOY include the paid amount etc
+        this.redirect(`${config.data.get('client_host')}/settle/paypal/${peer.destination}/success?peer=${peer.hostname}&currency=${peer.currency}&amount=${payment.amount}`)
+      } catch (e) {
+        this.redirect(`${config.data.get('client_host')}/settle/paypal/${peer.destination}/cancel?peer=${peer.hostname}&currency=${peer.currency}&amount=${payment.amount}`)
+      }
+    }
+
+    static* paypalCancel() {
+      const peer = yield Peer.findOne({ where: { destination: this.params.destination } })
+
+      if (!peer) {
+        throw new NotFoundError('Unknown peer')
+      }
+
+      this.redirect(`${config.data.get('client_host')}/settle/paypal/${peer.destination}/cancel`)
+    }
   }
 }

@@ -20,11 +20,12 @@ function PeersControllerFactory(auth, config, log, Peer, connector) {
     static init(router) {
       router.get('/peers', auth.checkAuth, this.checkAdmin, this.getAll)
       router.post('/peers', auth.checkAuth, this.checkAdmin, this.postResource)
-      router.put('/peers/:id', auth.checkAuth, this.checkAdmin, this.putResource)
       router.get('/peers/:id/settlement_methods', auth.checkAuth, this.checkAdmin, this.getSettlementMethods)
       router.delete('/peers/:id', auth.checkAuth, this.checkAdmin, this.deleteResource)
 
+      // Public
       router.post('/peers/rpc', this.rpc)
+      router.get('/peers/:destination', this.getResource)
     }
 
     // TODO move to auth
@@ -33,8 +34,7 @@ function PeersControllerFactory(auth, config, log, Peer, connector) {
         return yield next
       }
 
-      // TODO throw exception
-      this.status = 404
+      throw new NotFoundError()
     }
 
     static * getAll() {
@@ -54,10 +54,21 @@ function PeersControllerFactory(auth, config, log, Peer, connector) {
       this.body = peers
     }
 
+    static* getResource() {
+      const peer = yield Peer.findOne({ where: { destination: this.params.destination } })
+
+      if (!peer) throw new NotFoundError('Unknown peer')
+
+      this.body = {
+        hostname: peer.hostname,
+        currency: peer.currency
+      }
+    }
+
     static * postResource() {
       const peer = new Peer()
 
-      peer.hostname = this.body.hostname.replace(/.*?:\/\//g, "")
+      peer.hostname = this.body.hostname.replace(/.*?:\/\//g, '')
       peer.limit = this.body.limit
       peer.currency = this.body.currency
       peer.destination = parseInt(Math.random() * 1000000)
