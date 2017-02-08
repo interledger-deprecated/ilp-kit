@@ -35,6 +35,11 @@ export default class SettlementAddButton extends Component {
   handleOpen = e => {
     e.preventDefault()
 
+    // Add custom settlement method if that's the only option
+    if (this.state.typeList.indexOf('paypal') !== -1) {
+      return this.handleAdd('custom')
+    }
+
     this.setState({
       ...this.state,
       open: true
@@ -42,7 +47,7 @@ export default class SettlementAddButton extends Component {
   }
 
   handleAdd = (type, e) => {
-    e.preventDefault()
+    e && e.preventDefault()
 
     this.props.add({ type })
       .then(method => {
