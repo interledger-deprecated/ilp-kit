@@ -60,7 +60,7 @@ export default class PeerAddForm extends Component {
     const { invalid, handleSubmit, submitting, success, fail, fields: { hostname, limit, currency } } = this.props
 
     return (
-      <div>
+      <div className={cx('PeerAddForm')}>
         {success &&
         <Alert bsStyle="success">
           Peer has been added!
@@ -73,17 +73,22 @@ export default class PeerAddForm extends Component {
 
         <form onSubmit={handleSubmit(this.handleSubmit)}>
           <div className="form-group">
-            <Input object={hostname} label="Hostname" size="lg" focus />
-            <Input object={limit} label="Limit" size="lg" />
-            <Input object={currency} label="Currency" size="lg" />
-          </div>
-
-          <div className="row">
-            <div className="col-sm-5">
-              <button type="submit" className="btn btn-complete btn-block"
-                      disabled={invalid || submitting}>
-                {submitting ? 'Adding...' : 'Add'}
-              </button>
+            <div className={cx('row')}>
+              <div className={cx('col-sm-5')}>
+                <Input object={hostname} label="Hostname" size="lg" focus />
+              </div>
+              <div className={cx('col-sm-2')}>
+                <Input object={limit} label="Limit" size="lg" />
+              </div>
+              <div className={cx('col-sm-2')}>
+                <Input object={currency} label="Currency" size="lg" />
+              </div>
+              <div className={cx('col-sm-3')}>
+                <button type="submit" className={cx('btn', 'btn-lg', 'btn-success', 'btn-block', 'btn-submit')}
+                        disabled={invalid || submitting}>
+                  {submitting ? 'Adding...' : 'Add'}
+                </button>
+              </div>
             </div>
           </div>
         </form>

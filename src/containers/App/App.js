@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap'
-import Waypoint from 'react-waypoint'
 import Helmet from 'react-helmet'
 
 import Navbar from 'react-bootstrap/lib/Navbar'
@@ -124,20 +123,6 @@ export default class App extends Component {
     this.props.logout()
   }
 
-  _handleWaypointEnter = () => {
-    if (this.navBar === 'navbar-active') {
-      this.navBar = ''
-      this.forceUpdate()
-    }
-  }
-
-  _handleWaypointLeave = () => {
-    if (!this.navBar) {
-      this.navBar = 'navbar-active'
-      this.forceUpdate()
-    }
-  }
-
   render() {
     const { user, advancedMode } = this.props
     const appConfig = this.props.config || {}
@@ -162,12 +147,8 @@ export default class App extends Component {
 
         {/* <script src="https://web-payments.net/polyfill.js"></script> */}
 
-        <div className={cx('waypoint')}>
-          <Waypoint onEnter={this._handleWaypointEnter} onLeave={this._handleWaypointLeave} />
-        </div>
-
         {user &&
-        <Navbar fixedTop className={this.navBar} expanded={ this.state.navExpanded } onToggle={ this.onNavbarToggle }>
+        <Navbar fixedTop expanded={ this.state.navExpanded } onToggle={ this.onNavbarToggle }>
           <Navbar.Header>
             <Navbar.Brand>
               {appConfig.title} {advancedMode && <Label bsStyle="warning">Advanced Mode</Label>}

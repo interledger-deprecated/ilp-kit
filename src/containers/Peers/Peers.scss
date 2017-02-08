@@ -1,6 +1,14 @@
 @import 'variables';
 @import 'mixins';
 
+.header {
+  margin-bottom: 20px;
+  padding: 0 20px;
+
+  h3 {
+    margin: 0;
+  }
+}
 .peersStatus {
   text-align: center;
 
@@ -11,6 +19,32 @@
 }
 .peer {
   position: relative;
+
+  .hostnameBox {
+    width: 30%;
+  }
+  .currencyBox {
+    width: 10%;
+  }
+  .limitBox {
+    width: 15%;
+    // To avoid RIENumber jumpiness
+    height: 40px;
+  }
+  .balanceBox {
+    width: 10%;
+  }
+  .destinationBox {
+    width: 10%;
+  }
+  .actionsBox {
+    width: 25%;
+    text-align: right;
+
+    .btn-delete {
+      margin-left: 10px;
+    }
+  }
 
   &:hover .deleteButton {
     opacity: 1;
@@ -29,6 +63,9 @@
   &.invalid {
     color: #d9d9d9;
   }
+}
+.limitInput {
+  width: 100%;
 }
 span.limit {
   cursor: pointer;
@@ -54,4 +91,7 @@ span.limit {
   &:hover {
     color: $danger;
   }
+}
+.btn-add-lg {
+  margin: 20px 0;
 }

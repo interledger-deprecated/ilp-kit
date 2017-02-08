@@ -16,6 +16,7 @@ a {
 }
 
 .appContent {
+  padding-top: 70px;
   padding-bottom: 30px;
 }
 
@@ -66,4 +67,13 @@ div[tabindex="-1"]:focus {
   top: 40%;
   width: 50px;
   margin-left: -25px;
+}
+
+// Bootstrap
+.col {
+  position: relative;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+  float: left;
 }
