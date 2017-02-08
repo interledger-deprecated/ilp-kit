@@ -1,20 +1,20 @@
 const isEmpty = value => value === undefined || value === null || value === ''
-const join = (rules) => (value, data) => rules.map(rule => rule(value, data)).filter(error => !!error)[0 /* first error */ ]
+const join = (rules) => (value, data) => rules.map(rule => rule(value, data)).filter(error => !!error)[0/* first error */]
 
-export function email(value) {
+export function email (value) {
   // Let's not start a debate on email regex. This is just for an example app!
   if (!isEmpty(value) && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
     return 'Invalid email address'
   }
 }
 
-export function required(value) {
+export function required (value) {
   if (isEmpty(value)) {
     return 'Required'
   }
 }
 
-export function minLength(min) {
+export function minLength (min) {
   return value => {
     if (!isEmpty(value) && value.length < min) {
       return `Must be at least ${min} characters`
@@ -22,7 +22,7 @@ export function minLength(min) {
   }
 }
 
-export function maxLength(max) {
+export function maxLength (max) {
   return value => {
     if (!isEmpty(value) && value.length > max) {
       return `Must be no more than ${max} characters`
@@ -30,19 +30,19 @@ export function maxLength(max) {
   }
 }
 
-export function integer(value) {
+export function integer (value) {
   if (value && !Number.isInteger(Number(value))) {
     return 'Must be an integer'
   }
 }
 
-export function number(value) {
+export function number (value) {
   if (value && isNaN(parseFloat(value)) || !isFinite(value)) {
     return 'Must be a number'
   }
 }
 
-export function minValue(min) {
+export function minValue (min) {
   return value => {
     if (value && value < min) {
       return `Must be at least ${min}`
@@ -50,7 +50,7 @@ export function minValue(min) {
   }
 }
 
-export function maxValue(max) {
+export function maxValue (max) {
   return value => {
     if (value && value > max) {
       return `Must be no more than ${max}`
@@ -58,7 +58,7 @@ export function maxValue(max) {
   }
 }
 
-export function lessThanBalance(balance) {
+export function lessThanBalance (balance) {
   return value => {
     if (value && parseFloat(value) > balance) {
       return `Sending amount should be less than your balance`
@@ -66,7 +66,7 @@ export function lessThanBalance(balance) {
   }
 }
 
-export function oneOf(enumeration) {
+export function oneOf (enumeration) {
   return value => {
     if (!~enumeration.indexOf(value)) {
       return `Must be one of: ${enumeration.join(', ')}`
@@ -74,7 +74,7 @@ export function oneOf(enumeration) {
   }
 }
 
-export function match(field) {
+export function match (field) {
   return (value, data) => {
     if (data) {
       if (value !== data[field]) {
@@ -84,13 +84,19 @@ export function match(field) {
   }
 }
 
-export function uuid(value) {
+export function uuid (value) {
   if (!isEmpty(value) && !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value)) {
     return 'Invalid'
   }
 }
 
-export function createValidator(rules) {
+export function username (value) {
+  if (value && value.length > 1 && !/^[a-z0-9]([a-z0-9]|[-](?!-)){0,18}[a-z0-9]$/.test(value)) {
+    return 'Username must be 2-20 characters, lowercase letters, numbers and hyphens ("-") only, with no two or more consecutive hyphens.'
+  }
+}
+
+export function createValidator (rules) {
   return (data = {}) => {
     const errors = {}
     Object.keys(rules).forEach((key) => {
