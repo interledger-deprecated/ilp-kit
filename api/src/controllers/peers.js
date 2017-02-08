@@ -20,6 +20,7 @@ function PeersControllerFactory (auth, config, log, Peer, connector) {
     static init (router) {
       router.get('/peers', auth.checkAuth, this.checkAdmin, this.getAll)
       router.post('/peers', auth.checkAuth, this.checkAdmin, this.postResource)
+      router.put('/peers/:id', auth.checkAuth, this.checkAdmin, this.putResource)
       router.get('/peers/:id/settlement_methods', auth.checkAuth, this.checkAdmin, this.getSettlementMethods)
       router.delete('/peers/:id', auth.checkAuth, this.checkAdmin, this.deleteResource)
 
