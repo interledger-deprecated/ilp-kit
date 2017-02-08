@@ -1,8 +1,9 @@
-import {createValidator, required, integer} from 'utils/validation'
+import {createValidator, required, integer, hostname, hostnameNotSelf, peerHostname} from 'utils/validation'
 
-const peerValidation = createValidator({
-  hostname: [required],
-  limit: [required, integer],
-  currency: [required]
-})
-export default peerValidation
+export const validate = (values, props) => {
+  return createValidator({
+    hostname: [required, hostname, hostnameNotSelf, peerHostname(props.peerState.list)],
+    limit: [required, integer],
+    currency: [required]
+  })(values, props)
+}

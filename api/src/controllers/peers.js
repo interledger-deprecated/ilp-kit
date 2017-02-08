@@ -30,7 +30,7 @@ function PeersControllerFactory (auth, config, log, Peer, connector) {
     }
 
     // TODO move to auth
-    static * checkAdmin(next) {
+    static * checkAdmin (next) {
       if (this.req.user.username === config.data.getIn(['ledger', 'admin', 'user'])) {
         return yield next
       }

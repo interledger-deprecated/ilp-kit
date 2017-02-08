@@ -152,10 +152,10 @@ module.exports = class Utils {
       })
     } catch (e) {
       console.error(e)
-      throw new NotFoundError('Unknown host')
+      throw new NotFoundError('Host is unavailable')
     }
 
-    if (!response) throw new NotFoundError('Unknown host')
+    if (!response) throw new NotFoundError('Host is unavailable')
 
     return {
       publicKey: response.properties['https://interledger.org/rel/publicKey'],

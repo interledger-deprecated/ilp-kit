@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const isEmpty = value => value === undefined || value === null || value === ''
 const join = (rules) => (value, data) => rules.map(rule => rule(value, data)).filter(error => !!error)[0/* first error */]
 
@@ -70,6 +71,26 @@ export function oneOf (enumeration) {
   return value => {
     if (!~enumeration.indexOf(value)) {
       return `Must be one of: ${enumeration.join(', ')}`
+    }
+  }
+}
+
+export const hostname = value => {
+  if (!/^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/i.test(value)) {
+    return 'Invalid hostname'
+  }
+}
+
+export const hostnameNotSelf = value => {
+  if (location.hostname === value) {
+    return 'You cannot be your own peer'
+  }
+}
+
+export const peerHostname = existingPeers => {
+  return value => {
+    if (_.find(existingPeers, ['hostname', value])) {
+      return `There's already a peering with ${value}`
     }
   }
 }

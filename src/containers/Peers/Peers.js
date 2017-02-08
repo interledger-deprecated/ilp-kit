@@ -133,7 +133,7 @@ export default class Peers extends Component {
             <div className="panel-title">Add a peer</div>
           </div>
           <div className="panel-body">
-            <PeerAddForm />
+            <PeerAddForm peerState={this.props.peerState} />
           </div>
         </div>}
 

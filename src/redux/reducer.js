@@ -23,5 +23,9 @@ export default combineReducers({
   peer,
   settlementMethod,
   user,
-  form
+  form: form.normalize({
+    peerAdd: {
+      currency: value => value && value.toUpperCase()
+    }
+  })
 })

@@ -3,7 +3,7 @@ import { reduxForm } from 'redux-form'
 
 import { add } from 'redux/actions/peer'
 
-import peerValidation from './PeerValidation'
+import { validate } from './PeerValidation'
 
 import { successable } from 'decorators'
 import { resetFormOnSuccess } from 'decorators'
@@ -19,7 +19,7 @@ import Input from 'components/Input/Input'
 @reduxForm({
   form: 'peerAdd',
   fields: ['hostname', 'limit', 'currency'],
-  validate: peerValidation
+  validate
 }, null, { add })
 @successable()
 @resetFormOnSuccess('peerAdd')
