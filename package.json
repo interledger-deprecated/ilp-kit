@@ -91,7 +91,7 @@
       }
     },
     "build": {
-      "command": "webpack --verbose --colors --display-error-details --progress --config webpack/prod.config.js",
+      "command": "webpack --verbose --colors --display-error-details --config webpack/prod.config.js",
       "env": {
         "NODE_ENV": "production"
       }
