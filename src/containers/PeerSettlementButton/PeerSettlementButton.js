@@ -33,7 +33,7 @@ export default class Peers extends Component {
   renderMethod = method => {
     return (
       <MenuItem href={method.uri} key={method.name}>
-        <img src={method.logo} className={cx('logo')} />
+        {method.logo && <img src={method.logo} className={cx('logo')} />}
         {method.name}
       </MenuItem>
     )
