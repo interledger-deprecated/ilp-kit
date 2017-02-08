@@ -115,6 +115,30 @@ export default (store) => {
     }, 'settlementMethod')
   }
 
+  const getSettle = (nextState, cb) => {
+    require.ensure(['./containers/Settle/Settle'], (require) => {
+      cb(null, require('./containers/Settle/Settle'))
+
+      store.dispatch(locationUpdate())
+    }, 'settle')
+  }
+
+  const getSettleSuccess = (nextState, cb) => {
+    require.ensure(['./containers/SettleSuccess/SettleSuccess'], (require) => {
+      cb(null, require('./containers/SettleSuccess/SettleSuccess'))
+
+      store.dispatch(locationUpdate())
+    }, 'settleSuccess')
+  }
+
+  const getSettleCancel = (nextState, cb) => {
+    require.ensure(['./containers/SettleCancel/SettleCancel'], (require) => {
+      cb(null, require('./containers/SettleCancel/SettleCancel'))
+
+      store.dispatch(locationUpdate())
+    }, 'settleCancel')
+  }
+
   /**
    * Please keep routes in alphabetical order
    */
@@ -123,34 +147,37 @@ export default (store) => {
       <Route path="widget" component={Widget} />
       <Route path="/" component={App}>
         { /* Home (main) route */ }
-        <IndexRoute getComponent={rootComponent}/>
+        <IndexRoute getComponent={rootComponent} />
 
         { /* Routes only available to guests */ }
         <Route onEnter={noAuth}>
-          <Route path="login" getComponent={getAuth}/>
-          <Route path="register(/:inviteCode)" getComponent={getAuth}/>
-          <Route path="forgot-password" getComponent={getAuth}/>
-          <Route path="change-password/:username/:passwordChangeCode" getComponent={getAuth}/>
+          <Route path="login" getComponent={getAuth} />
+          <Route path="register(/:inviteCode)" getComponent={getAuth} />
+          <Route path="forgot-password" getComponent={getAuth} />
+          <Route path="change-password/:username/:passwordChangeCode" getComponent={getAuth} />
         </Route>
 
         { /* Routes requiring Auth */ }
         <Route onEnter={requireAuth}>
-          <Route path="button" getComponent={getButton}/>
-          <Route path="settings" getComponent={getSettings}/>
+          <Route path="button" getComponent={getButton} />
+          <Route path="settings" getComponent={getSettings} />
         </Route>
 
         { /* Admin pages */ }
         <Route onEnter={requireAdmin}>
-          <Route path="invites" getComponent={getInvites}/>
-          <Route path="users" getComponent={getUsers}/>
-          <Route path="peers" getComponent={getPeers}/>
+          <Route path="invites" getComponent={getInvites} />
+          <Route path="users" getComponent={getUsers} />
+          <Route path="peers" getComponent={getPeers} />
           <Route path="settlement" getComponent={getSettlement}>
-            <Route path=":id" getComponent={getSettlementMethod}/>
+            <Route path=":id" getComponent={getSettlementMethod} />
           </Route>
         </Route>
 
         { /* Routes available to all */ }
-        <Route path="verify/:username/:verifyCode" getComponent={rootComponent}/>
+        <Route path="settle/:method/:destination" getComponent={getSettle} />
+        <Route path="settle/:method/:destination/success" getComponent={getSettleSuccess} />
+        <Route path="settle/:method/:destination/cancel" getComponent={getSettleCancel} />
+        <Route path="verify/:username/:verifyCode" getComponent={rootComponent} />
 
         { /* Catch all route */ }
         <Route path="*" component={NotFound} status={404} />

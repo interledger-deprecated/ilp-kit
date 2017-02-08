@@ -123,11 +123,11 @@ module.exports = class Utils {
     }
   }
 
-  getWebfingerAddress(username) {
+  getWebfingerAddress (username) {
     return username + '@' + this.localHost
   }
 
-  * hostLookup(host) {
+  * hostLookup (host) {
     // TODO:REFACTOR code dup with getWebfingerAccount
     const webfinger = new WebFinger({
       webfist_fallback: false,
@@ -139,9 +139,9 @@ module.exports = class Utils {
     let response
 
     try {
-      response = yield new Promise(function(resolve, reject) {
+      response = yield new Promise(function (resolve, reject) {
         webfinger.lookup(host,
-          function(err, res) {
+          function (err, res) {
             if (err) {
               return reject(err)
             }
@@ -150,16 +150,16 @@ module.exports = class Utils {
           }
         )
       })
-    } catch(e) {
+    } catch (e) {
       console.error(e)
       throw new NotFoundError('Unknown host')
     }
 
-    if (!response) return
+    if (!response) throw new NotFoundError('Unknown host')
 
     return {
       publicKey: response.properties['https://interledger.org/rel/publicKey'],
-      peersRpcUri: _.filter(response.links, {rel: 'https://interledger.org/rel/peersRpcUri'})[0].href,
+      peersRpcUri: _.filter(response.links, {rel: 'https://interledger.org/rel/peersRpcUri'})[0].href
     }
   }
 }

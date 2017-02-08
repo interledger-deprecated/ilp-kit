@@ -23,12 +23,14 @@ const InvalidVerification = require('../errors/invalid-verification-error')
 const ServerError = require('../errors/server-error')
 const InvalidBodyError = require('../errors/invalid-body-error')
 
+const USERNAME_REGEX = /^[a-z0-9]([a-z0-9]|[-](?!-)){0,18}[a-z0-9]$/
+
 UsersControllerFactory.constitute = [Auth, UserFactory, InviteFactory, Log, Ledger, Socket, Config, Mailer, Pay]
-function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config, mailer, pay) {
+function UsersControllerFactory (auth, User, Invite, log, ledger, socket, config, mailer, pay) {
   log = log('users')
 
   return class UsersController {
-    static init(router) {
+    static init (router) {
       router.get('/users/:username', auth.checkAuth, this.getResource)
       router.post('/users/:username', User.createBodyParser(), this.postResource)
       router.put('/users/:username', auth.checkAuth, this.putResource)
@@ -122,11 +124,14 @@ function UsersControllerFactory(auth, User, Invite, log, ledger, socket, config,
      */
 
     // TODO should support both create and update
-    static * postResource() {
-      let username = this.params.username
-      // TODO also validate email
-      request.validateUriParameter('username', username, 'Identifier')
-      username = username.toLowerCase()
+    static * postResource () {
+      let username = this.params.username.toLowerCase()
+
+      if (!USERNAME_REGEX.test(username)) {
+        throw new InvalidBodyError('Username must be 2-20 characters, lowercase letters, numbers and hyphens ("-") only, with no two or more consecutive hyphens.')
+      }
+
+      // TODO validate email
 
       const userObj = this.body
 

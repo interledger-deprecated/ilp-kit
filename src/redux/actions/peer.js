@@ -5,6 +5,12 @@ export const load = () => ({
   promise: client => client.get('/peers')
 })
 
+export const get = id => ({
+  types: [types.GET_PEER, types.GET_PEER_SUCCESS, types.GET_PEER_FAIL],
+  promise: client => client.get(`/peers/${id}`)
+})
+
+
 export const add = data => ({
   types: [types.ADD_PEER, types.ADD_PEER_SUCCESS, types.ADD_PEER_FAIL],
   promise: client => client.post('/peers', { data })
@@ -26,4 +32,9 @@ export const getSettlementMethods = id => ({
     types.LOAD_PEER_SETTLEMENT_METHODS_SUCCESS,
     types.LOAD_PEER_SETTLEMENT_METHODS_FAIL],
   promise: client => client.get(`/peers/${id}/settlement_methods`)
+})
+
+export const settle = (destination, data) => ({
+  types: [types.SETTLE, types.SETTLE_SUCCESS, types.SETTLE_FAIL],
+  promise: client => client.post(`/settlements/${destination}/paypal`, { data })
 })

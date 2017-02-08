@@ -13,18 +13,19 @@ const NotFoundError = require('../errors/not-found-error')
 const InvalidBodyError = require('../errors/invalid-body-error')
 
 PeersControllerFactory.constitute = [Auth, Config, Log, PeerFactory, Connector]
-function PeersControllerFactory(auth, config, log, Peer, connector) {
+function PeersControllerFactory (auth, config, log, Peer, connector) {
   log = log('peers')
 
   return class PeersController {
-    static init(router) {
+    static init (router) {
       router.get('/peers', auth.checkAuth, this.checkAdmin, this.getAll)
       router.post('/peers', auth.checkAuth, this.checkAdmin, this.postResource)
-      router.put('/peers/:id', auth.checkAuth, this.checkAdmin, this.putResource)
       router.get('/peers/:id/settlement_methods', auth.checkAuth, this.checkAdmin, this.getSettlementMethods)
       router.delete('/peers/:id', auth.checkAuth, this.checkAdmin, this.deleteResource)
 
+      // Public
       router.post('/peers/rpc', this.rpc)
+      router.get('/peers/:destination', this.getResource)
     }
 
     // TODO move to auth
@@ -33,11 +34,10 @@ function PeersControllerFactory(auth, config, log, Peer, connector) {
         return yield next
       }
 
-      // TODO throw exception
-      this.status = 404
+      throw new NotFoundError()
     }
 
-    static * getAll() {
+    static * getAll () {
       // TODO pagination
       const peers = yield Peer.findAll({
         include: [{ all: true }],
@@ -54,22 +54,31 @@ function PeersControllerFactory(auth, config, log, Peer, connector) {
       this.body = peers
     }
 
-    static * postResource() {
-      const peer = new Peer()
+    static* getResource () {
+      const peer = yield Peer.findOne({ where: { destination: this.params.destination } })
 
-      peer.hostname = this.body.hostname.replace(/.*?:\/\//g, "")
-      peer.limit = this.body.limit
-      peer.currency = this.body.currency
-      peer.destination = parseInt(Math.random() * 1000000)
+      if (!peer) throw new NotFoundError('Unknown peer')
 
-      const dbPeer = yield peer.save()
-
-      yield connector.connectPeer(dbPeer)
-
-      this.body = dbPeer
+      this.body = {
+        hostname: peer.hostname,
+        currency: peer.currency
+      }
     }
 
-    static * putResource() {
+    static * postResource () {
+      const peer = new Peer()
+
+      peer.hostname = this.body.hostname.replace(/.*?:\/\//g, '')
+      peer.limit = this.body.limit
+      peer.currency = this.body.currency.toUpperCase()
+      peer.destination = parseInt(Math.random() * 1000000)
+
+      yield connector.connectPeer(peer)
+
+      this.body = yield peer.save()
+    }
+
+    static * putResource () {
       const id = this.params.id
       let peer = yield Peer.findOne({ where: { id } })
       const limit = this.body.limit
@@ -123,10 +132,20 @@ function PeersControllerFactory(auth, config, log, Peer, connector) {
       if (!prefix) throw new InvalidBodyError('Prefix is not supplied')
       if (!method) throw new InvalidBodyError('Method is not supplied')
 
+      const plugin = connector.getPlugin(prefix)
+
+      if (!plugin) {
+        this.statusCode = 404
+        this.body = 'no plugin with prefix "' + prefix + '"'
+        log.debug('404\'d request for plugin with prefix "' + prefix + '"')
+        return
+      }
+
       try {
-        this.body = yield connector.rpc(prefix, method, params)
+        this.body = yield plugin.receive(method, params)
       } catch (e) {
-        // if rpc error, e.g. server is not ready yet or trustline exceeded
+        this.statusCode = 422
+        this.body = e.message
         log.err('connector.rpc() failed: ', e.stack)
       }
     }

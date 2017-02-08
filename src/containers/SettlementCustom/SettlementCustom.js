@@ -3,11 +3,15 @@ import { reduxForm } from 'redux-form'
 import Helmet from 'react-helmet'
 import DropzoneComponent from 'react-dropzone-component'
 
+import Alert from 'react-bootstrap/lib/Alert'
+import Input from 'components/Input/Input'
+
+import { successable } from 'decorators'
+
 import classNames from 'classnames/bind'
 import styles from './SettlementCustom.scss'
 const cx = classNames.bind(styles)
 
-import Input from 'components/Input/Input'
 
 import { update } from 'redux/actions/settlement_method'
 
@@ -16,6 +20,7 @@ import { update } from 'redux/actions/settlement_method'
   fields: ['name', 'description', 'logo', 'uri'],
 }, state => ({
 }), { update })
+@successable()
 export default class SettlementCustom extends Component {
   static propTypes = {
     // Props
@@ -28,6 +33,15 @@ export default class SettlementCustom extends Component {
     submitting: PropTypes.bool.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     initializeForm: PropTypes.func.isRequired,
+
+    // Successable
+    permSuccess: PropTypes.func,
+    tempSuccess: PropTypes.func,
+    success: PropTypes.bool,
+    permFail: PropTypes.func,
+    tempFail: PropTypes.func,
+    fail: PropTypes.any,
+    reset: PropTypes.func
   }
 
   componentWillMount() {
@@ -51,15 +65,27 @@ export default class SettlementCustom extends Component {
 
   handleSave = data => {
     this.props.update(this.props.method.id, data)
+      .then(this.props.tempSuccess)
+      .catch(this.props.tempFail)
   }
 
   render() {
     const { handleSubmit, fields: { name, description, uri },
-      pristine, invalid, submitting, method } = this.props
+      pristine, invalid, submitting, method, success, fail } = this.props
 
     return (
       <div className={cx('SettlementCustom')}>
         <Helmet title={'Custom - Settlement'} />
+
+        {success &&
+        <Alert bsStyle="success">
+          Settlement method has been updated!
+        </Alert>}
+
+        {fail && fail.id &&
+        <Alert bsStyle="danger">
+          Something went wrong
+        </Alert>}
 
         <div className={cx('row', 'form')}>
           <div className="col-sm-12">

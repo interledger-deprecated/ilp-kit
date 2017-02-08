@@ -145,7 +145,7 @@ export default class RegisterForm extends Component {
           {fail.id === 'EmailTakenError' &&
           <div>Email is already taken</div>}
           {fail.id === 'InvalidBodyError' &&
-          <div>Registration is disabled without an invite code</div>}
+          <div>{fail.message}</div>}
           {fail.id === 'ServerError' &&
           <div>Something went wrong</div>}
         </Alert>}
