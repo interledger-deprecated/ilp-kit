@@ -100,6 +100,8 @@ export const logout = () => ({
     .then(user => {
       tracker.clearIdentity()
 
+      window.location.reload()
+
       return user
     })
 })
