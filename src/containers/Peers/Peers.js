@@ -5,6 +5,8 @@ import ReactTooltip from 'react-tooltip'
 
 import { RIENumber } from 'riek'
 
+import HelpIcon from 'components/HelpIcon/HelpIcon'
+
 import { load, update, remove } from 'redux/actions/peer'
 import List from 'components/List/List'
 import PeerAddForm from 'containers/PeerAddForm/PeerAddForm'
@@ -92,7 +94,7 @@ export default class Peers extends Component {
               <span>{peer.balance}</span>
             </div>
             <div className={cx('col', 'destinationBox')}>
-              <span className={cx('lbl')}>Destination</span>
+              <span className={cx('lbl')}>Destination <HelpIcon text="Destination number is used for settlement" /></span>
               <span>{peer.destination}</span>
             </div>
             <div className={cx('col', 'actionsBox')}>
