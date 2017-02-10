@@ -121,6 +121,24 @@ describe('Utils', () => {
     })
   })
 
+  it('doesn\'t get a malformed webfinger record (bug #204)', function * () {
+    nock('https://mal.formed')
+      .get('/.well-known/webfinger?resource=acct:alice@mal.formed')
+      .reply(200, {
+        links: {
+          rel: 'https://interledger.org/rel/ledgerAccount',
+          href: 'account'
+        }
+      })
+    try {
+      yield this.utils.getWebfingerAccount(
+        'alice@mal.formed')
+      assert(false, 'this.util.getWebfingerAccount should have failed')
+    } catch (e) {
+      assert(nock.isDone(), 'nock should be called')
+    }
+  })
+
   it('gets a destination from non-foreign ID', function * () {
     nock('https://red.ilpdemo.org')
       .get('/ledger/accounts/alice')
