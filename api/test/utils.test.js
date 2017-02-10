@@ -143,11 +143,10 @@ describe('Utils', () => {
     assert.deepEqual(yield this.utils.parseDestination({
       destination: 'alice'
     }), {
-      type: 'local',
-      accountUri: 'http://localhost/ledger/accounts/alice',
-      ledgerUri: 'http://localhost/ledger',
-      paymentUri: 'http://localhost/api/receivers/alice',
-      ilpAddress: 'localhost.alice',
+      ledgerUri: 'https://red.ilpdemo.org/ledger',
+      paymentUri: 'https://localhost:80/api/receivers/alice',
+      identifier: 'alice@localhost:80',
+      ilpAddress: 'us.usd.red.alice',
       currencyCode: 'XDG',
       currencySymbol: 'D',
       name: 'alice',
