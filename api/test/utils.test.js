@@ -15,18 +15,6 @@ describe('Utils', () => {
     this.utils = container.constitute(Utils)
   })
 
-  it('detects a valid account URI', function () {
-    assert.isTrue(this.utils.isAccountUri('http://example'))
-    assert.isTrue(this.utils.isAccountUri('https://example'))
-    assert.isFalse(this.utils.isAccountUri('ftp://example'))
-  })
-
-  it('detects foreign account URI', function () {
-    assert.isTrue(this.utils.isForeignAccountUri('http://example'))
-    assert.isFalse(this.utils.isForeignAccountUri(this.utils.ledgerUriPublic))
-    assert.isFalse(this.utils.isAccountUri('ftp://example'))
-  })
-
   it('detects a webfinger identifier', function () {
     assert.isTrue(this.utils.isWebfinger('alice@example.com'))
     assert.isFalse(this.utils.isWebfinger('http://example'))
