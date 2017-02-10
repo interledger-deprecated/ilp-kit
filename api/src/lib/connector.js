@@ -134,8 +134,6 @@ module.exports = class Conncetor {
       if (!this.peers[peer.destination]) {
         this.peers[peer.destination] = {}
       }
-
-      this.peers[peer.destination].online = true
     } catch (e) {
       if (e.message.indexOf('No rate available') > -1) {
         throw new InvalidBodyError('Unsupported currency')
@@ -144,6 +142,14 @@ module.exports = class Conncetor {
     }
 
     const plugin = connector.getPlugin(hostInfo.ledgerName)
+
+    try {
+      yield plugin.getLimit()
+
+      this.peers[peer.destination].online = true
+    } catch (e) {
+      // Not connected. The other side hasn't peered with this kit yet
+    }
 
     plugin.on('incoming_message', co.wrap(function *(message) {
       if (message.data.method !== 'settlement_methods_request') return
@@ -204,9 +210,12 @@ module.exports = class Conncetor {
     const peerInfo = this.peers[peer.destination]
     const online = peerInfo && peerInfo.online
 
+    const plugin = connector.getPlugin(peerInfo.ledgerName)
+
     return {
       online,
-      balance: online && (yield connector.getPlugin(peerInfo.ledgerName).getBalance())
+      balance: online && (yield plugin.getBalance()),
+      minBalance: online && (yield plugin.getLimit())
     }
   }
 
