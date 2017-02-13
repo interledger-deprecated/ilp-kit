@@ -96,7 +96,7 @@ export default class Peers extends Component {
               </span>
             </div>
             <div className={cx('col', 'actionsBox')}>
-              {peer.minBalance !== 0 &&
+              {peer.online && peer.minBalance !== 0 &&
               <PeerSettlementButton peer={peer} />}
               {/* TODO:UX deleteion confirmation */}
               <button type="button" className={cx('btn', 'btn-danger', 'btn-delete')} onClick={this.handleRemove.bind(null, peer)}>
