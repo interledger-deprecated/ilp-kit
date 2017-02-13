@@ -50,7 +50,7 @@ try {
 }
 
 // make sure versioning matches between file and this kit
-const version = envVars.ILP_KIT_CLI_VERSION || '0.0.0'
+const version = getVar('ILP_KIT_CLI_VERSION', '0.0.0')
 const supportedVersion = require('../package.json')
   .dependencies['ilp-kit-cli']
   .replace(/^[\^\~]/, '')
