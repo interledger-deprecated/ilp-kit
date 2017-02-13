@@ -1,5 +1,13 @@
-.waypoint {
-  height: 50px;
+@import 'variables';
+
+.loadingBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: $brand-color;
+  //box-shadow: 0 1px 2px 0 lighten($brand-color, 10%);
+  height: 3px;
+  z-index: 1040;
 }
 .profilePic {
   width: 30px;

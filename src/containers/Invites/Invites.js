@@ -86,14 +86,6 @@ export default class Invites extends Component {
         <div className={cx('row')}>
           <div className={cx('col-sm-8')}>
             <List
-              loadingScreen={(
-                <div className={cx('panel', 'panel-default', 'invitesStatus')}>
-                  <div className="panel-body">
-                    <i className={cx('fa', 'fa-ticket')} />
-                    <h1>Loading Invite Codes...</h1>
-                  </div>
-                </div>
-              )}
               emptyScreen={(
                 <div className={cx('panel', 'panel-default', 'invitesStatus')}>
                   <div className="panel-body">

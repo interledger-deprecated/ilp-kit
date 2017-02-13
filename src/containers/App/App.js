@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap'
 import Helmet from 'react-helmet'
+import LoadingBar from 'react-redux-loading-bar'
 
 import Navbar from 'react-bootstrap/lib/Navbar'
 import Nav from 'react-bootstrap/lib/Nav'
@@ -144,6 +145,8 @@ export default class App extends Component {
             {'itemprop': 'name', 'content': appConfig.title}
           ]}
         />
+
+        <LoadingBar className={cx('loadingBar')} />
 
         {/* <script src="https://web-payments.net/polyfill.js"></script> */}
 

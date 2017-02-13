@@ -3,7 +3,7 @@ import React, { Component, PropTypes } from 'react'
 export default class List extends Component {
   static propTypes = {
     state: PropTypes.object.isRequired,
-    loadingScreen: PropTypes.object.isRequired,
+    loadingScreen: PropTypes.object,
     emptyScreen: PropTypes.object.isRequired,
     children: PropTypes.any.isRequired
   }

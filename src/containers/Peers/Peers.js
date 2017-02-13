@@ -19,7 +19,6 @@ const cx = classNames.bind(styles)
 @connect(
   state => ({
     peerState: state.peer,
-    loading: state.peer.loading,
     loaded: state.peer.loaded
   }),
   { load, update, remove })
@@ -29,7 +28,6 @@ export default class Peers extends Component {
     load: PropTypes.func.isRequired,
     update: PropTypes.func.isRequired,
     remove: PropTypes.func.isRequired,
-    loading: PropTypes.bool,
     loaded: PropTypes.bool
   }
 
@@ -141,14 +139,6 @@ export default class Peers extends Component {
         </div>}
 
         <List
-          loadingScreen={(
-            <div className={cx('panel', 'panel-default', 'peersStatus')}>
-              <div className="panel-body">
-                <i className={cx('fa', 'fa-link')} />
-                <h1>Loading Peers...</h1>
-              </div>
-            </div>
-          )}
           emptyScreen={(
             <div className={cx('panel', 'panel-default', 'peersStatus')}>
               <div className="panel-body">
