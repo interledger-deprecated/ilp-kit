@@ -1,5 +1,7 @@
 "use strict"
 
+// Due to https://github.com/interledgerjs/ilp-kit/blob/master/bin/normalizeEnv.js#L24
+// this will end up loading ../../test.env.list if process.env.NODE_ENV === 'test':
 require('../../bin/normalizeEnv')
 
 const constitute = require('constitute')
