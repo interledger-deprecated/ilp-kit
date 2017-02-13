@@ -15,7 +15,7 @@ describe('Webfinger', () => {
   })
 
   describe('GET /webfinger', () => {
-    it('respond with webfinger object', function * () {
+    it.skip('respond with webfinger object', function * () {
       yield this.agent
         .get('/webfinger')
         .query({resource: 'acct:alice@localhost'})

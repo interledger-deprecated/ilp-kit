@@ -37,6 +37,7 @@
     "dev-with-proxy": "echo 'need permission to bind to ports 80 and 443' ; sudo echo -n ; DEBUG_COLORS=1 concurrently -p \"[{name}]\" -n \"watcher,ledger,api,wallet,proxy\" -c \"yellow,red,blue,cyan,green\" \"npm run watch-client\" \"npm run start-dev-ledger\" \"npm run start-dev-api\" \"npm run start-dev\" \"sudo npm run proxy\"",
     "test": "touch src/theme/variables-custom.scss ; karma start",
     "test-api": "better-npm-run test-api",
+    "test-mocha": "NODE_ENV=test ./node_modules/.bin/mocha api/test",
     "integration": "integration-loader && integration all",
     "apidoc": "apidoc -i api/src/controllers/ -o apidoc-out",
     "configure": "./node_modules/ilp-kit-cli/bin/configure.js"
