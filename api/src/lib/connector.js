@@ -212,10 +212,13 @@ module.exports = class Conncetor {
 
     const plugin = connector.getPlugin(peerInfo.ledgerName)
 
+    const balance = online && (yield plugin.getBalance())
+    const minBalance = online && (yield plugin.getLimit())
+
     return {
       online,
-      balance: online && (yield plugin.getBalance()),
-      minBalance: online && (yield plugin.getLimit())
+      balance,
+      minBalance: minBalance || 0
     }
   }
 

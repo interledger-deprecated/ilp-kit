@@ -17,10 +17,16 @@ ILP wallet with hosted ledger and connector instances
 [snyk-image]: https://snyk.io/test/github/interledgerjs/ilp-kit/badge.svg
 [snyk-url]: https://snyk.io/test/github/interledgerjs/ilp-kit
 
+## [Setup](https://github.com/interledgerjs/ilp-kit/blob/master/docs/SETUP.md)
+
+See https://github.com/interledgerjs/ilp-kit/blob/master/docs/SETUP.md
+
+## [Development](https://github.com/interledgerjs/ilp-kit/blob/master/docs/DEV.md)
+
+See https://github.com/interledgerjs/ilp-kit/blob/master/docs/DEV.md
+
 ## Table of contents
 
-- [Setup](https://github.com/interledgerjs/ilp-kit/blob/master/docs/SETUP.md)
-- [Development](https://github.com/interledgerjs/ilp-kit/blob/master/docs/DEV.md)
 - [Environment variables](#environment-variables)
 - [Advanced Mode](#advanced-mode)
 - [Architecture](#architecture)
@@ -31,10 +37,6 @@ ILP wallet with hosted ledger and connector instances
   - [Client](#client)
     - [Using Redux DevTools](#using-redux-devtools)
     - [Theme Customization](#theme-customization)
-
-## [Setup](https://github.com/interledgerjs/ilp-kit/blob/master/docs/SETUP.md)
-
-## [Development](https://github.com/interledgerjs/ilp-kit/blob/master/docs/DEV.md)
 
 ## Environment variables
 

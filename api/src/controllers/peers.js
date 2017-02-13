@@ -49,6 +49,7 @@ function PeersControllerFactory (auth, config, log, Peer, connector) {
         const peerInfo = yield connector.getPeer(peer)
 
         peer.balance = peerInfo.balance
+        peer.minBalance = peerInfo.minBalance
         peer.online = peerInfo.online
       })
 
@@ -98,6 +99,7 @@ function PeersControllerFactory (auth, config, log, Peer, connector) {
       const peerInfo = yield connector.getPeer(peer)
 
       peer.balance = peerInfo.balance
+      peer.minBalance = peerInfo.minBalance
       peer.online = peerInfo.online
 
       this.body = peer

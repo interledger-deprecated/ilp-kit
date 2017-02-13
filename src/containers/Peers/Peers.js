@@ -59,6 +59,8 @@ export default class Peers extends Component {
   }
 
   renderPeer = peer => {
+    const currentPercent = 100 * (peer.balance - Math.min(peer.minBalance, 0)) / (peer.limit - Math.min(peer.minBalance, 0))
+
     return (
       <div className={cx('panel', 'panel-default', 'peer')} key={peer.id}>
         <div className="panel-body">
@@ -67,18 +69,22 @@ export default class Peers extends Component {
               {peer.online && <i className={cx('online', 'fa', 'fa-circle', 'icon')} data-tip="Online" />}
               {!peer.online && <i className={cx('offline', 'fa', 'fa-circle', 'icon')} data-tip="Offline" />}
               <a href={'http://' + peer.hostname}>{peer.hostname}</a>
+              {/* <div className={cx('destination')}>
+                <HelpIcon text="Destination number is used for settlement" />{peer.destination}
+              </div> */}
             </div>
-            <div className={cx('col', 'currencyBox')}>
-              <span className={cx('lbl')}>Currency</span>
-              <span>
-                {peer.currency}
-              </span>
-            </div>
-            <div className={cx('col', 'limitBox')}>
-              <span className={cx('lbl')}>Limit</span>
-              <span>
+            <div className={cx('col', 'balanceBox')}>
+              <span className={cx('minBalance')}>{peer.minBalance} {peer.currency} <HelpIcon text="The minimum allowed balance (set by the peer)" /></span>
+              <div className={cx('graph')}>
+                <span className={cx('min')} />
+                <span className={cx('current')} style={{left: `calc(${currentPercent}% - 0.5px)`}} />
+                <span className={cx('max')} />
+
+                <div className={cx('balance')}>{peer.balance || 0}</div>
+              </div>
+              <span className={cx('maxBalance')}>
                 {/* limit is converted to a string because of how <RIENumber> didValueChange works */}
-                <RIENumber
+                <HelpIcon text="The maximum allowed balance (set by you)" /> <RIENumber
                   value={peer.limit.toString()}
                   propName="limit"
                   change={this.handleUpdate.bind(null, peer)}
@@ -86,22 +92,15 @@ export default class Peers extends Component {
                   classEditing={cx('limitInput')}
                   classLoading={cx('loading')}
                   classInvalid={cx('invalid')}
-                />
+                /> {peer.currency}
               </span>
             </div>
-            <div className={cx('col', 'balanceBox')}>
-              <span className={cx('lbl')}>Balance</span>
-              <span>{peer.balance}</span>
-            </div>
-            <div className={cx('col', 'destinationBox')}>
-              <span className={cx('lbl')}>Destination <HelpIcon text="Destination number is used for settlement" /></span>
-              <span>{peer.destination}</span>
-            </div>
             <div className={cx('col', 'actionsBox')}>
-              <PeerSettlementButton peer={peer} />
+              {peer.minBalance !== 0 &&
+              <PeerSettlementButton peer={peer} />}
               {/* TODO:UX deleteion confirmation */}
               <button type="button" className={cx('btn', 'btn-danger', 'btn-delete')} onClick={this.handleRemove.bind(null, peer)}>
-                Remove
+                x
               </button>
             </div>
           </div>
