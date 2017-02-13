@@ -15,10 +15,16 @@ ILP wallet with hosted ledger and connector instances
 [circle-image]: https://circleci.com/gh/interledgerjs/ilp-kit.svg?style=shield&circle-token=65d802e1ea641aabcc95f8d28f2c6ade577716a9
 [circle-url]: https://circleci.com/gh/interledgerjs/ilp-kit
 
+## [Setup](https://github.com/interledgerjs/ilp-kit/blob/master/docs/SETUP.md)
+
+See https://github.com/interledgerjs/ilp-kit/blob/master/docs/SETUP.md
+
+## [Development](https://github.com/interledgerjs/ilp-kit/blob/master/docs/DEV.md)
+
+See https://github.com/interledgerjs/ilp-kit/blob/master/docs/DEV.md
+
 ## Table of contents
 
-- [Setup](https://github.com/interledgerjs/ilp-kit/blob/master/docs/SETUP.md)
-- [Development](https://github.com/interledgerjs/ilp-kit/blob/master/docs/DEV.md)
 - [Environment variables](#environment-variables)
 - [Advanced Mode](#advanced-mode)
 - [Architecture](#architecture)
@@ -29,10 +35,6 @@ ILP wallet with hosted ledger and connector instances
   - [Client](#client)
     - [Using Redux DevTools](#using-redux-devtools)
     - [Theme Customization](#theme-customization)
-
-## [Setup](https://github.com/interledgerjs/ilp-kit/blob/master/docs/SETUP.md)
-
-## [Development](https://github.com/interledgerjs/ilp-kit/blob/master/docs/DEV.md)
 
 ## Environment variables
 
