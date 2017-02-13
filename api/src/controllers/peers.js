@@ -2,6 +2,7 @@
 
 module.exports = PeersControllerFactory
 
+const _ = require('lodash')
 const forEach = require('co-foreach')
 const Auth = require('../lib/auth')
 const Log = require('../lib/log')
@@ -48,14 +49,17 @@ function PeersControllerFactory (auth, config, log, Peer, connector) {
       yield forEach(peers, function * (peer) {
         const peerInfo = yield connector.getPeer(peer)
 
-        if (!peerInfo) return
+        if (!peerInfo) {
+          peer.online = false
+          return
+        }
 
         peer.balance = peerInfo.balance
         peer.minBalance = peerInfo.minBalance
         peer.online = peerInfo.online
       })
 
-      this.body = peers
+      this.body = _.orderBy(peers, ['online', 'created_at'], ['desc', 'desc'])
     }
 
     static* getResource () {
