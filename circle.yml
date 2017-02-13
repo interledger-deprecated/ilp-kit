@@ -12,6 +12,7 @@ test:
   override:
 #   - npm run lint
     - npm test
+    - npm run test-mocha
     - npm run integration
   post:
     - docker build -t interledgerjs/ilp-kit:latest .

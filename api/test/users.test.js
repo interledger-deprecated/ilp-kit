@@ -19,7 +19,7 @@ describe('Users', () => {
       .expect(201)
   })
 
-  it('should get a user by name', function * () {
+  it.skip('should get a user by name', function * () {
     yield this.agent
       .get('/users/alice')
       .expect({
@@ -34,13 +34,13 @@ describe('Users', () => {
       })
   })
 
-  it('should 404 if auth user and user dont match', function * () {
+  it.skip('should 404 if auth user and user dont match', function * () {
     yield this.agent
       .get('/users/bob')
       .expect(404)
   })
 
-  it('should return 422 on existing user', function * () {
+  it.skip('should return 422 on existing user', function * () {
     yield this.agent
       .post('/users/alice')
       .send({
@@ -50,7 +50,7 @@ describe('Users', () => {
       .expect(422)
   })
 
-  it('should return 422 on existing email', function * () {
+  it.skip('should return 422 on existing email', function * () {
     yield this.agent
       .post('/users/steve')
       .send({
@@ -61,7 +61,7 @@ describe('Users', () => {
       .expect(422)
   })
 
-  it('should change email', function * () {
+  it.skip('should change email', function * () {
     yield this.agent
       .put('/users/alice')
       .send({
@@ -70,7 +70,7 @@ describe('Users', () => {
       .expect(200)
   })
 
-  it('should change password', function * () {
+  it.skip('should change password', function * () {
     yield this.agent
       .put('/users/alice')
       .send({
@@ -80,7 +80,7 @@ describe('Users', () => {
       .expect(200)
   })
 
-  it('should fail if passwords don\'t match', function * () {
+  it.skip('should fail if passwords don\'t match', function * () {
     yield this.agent
       .put('/users/alice')
       .send({
@@ -90,13 +90,13 @@ describe('Users', () => {
       .expect(422)
   })
 
-  it('should reload an account', function * () {
+  it.skip('should reload an account', function * () {
     yield this.agent
       .post('/users/alice/reload')
       .expect(200)
   })
 
-  it('should verify an email address', function * () {
+  it.skip('should verify an email address', function * () {
     yield this.agent
       .put('/users/alice/verify')
       .send({
@@ -105,7 +105,7 @@ describe('Users', () => {
       .expect(200)
   })
 
-  it('should not verify with wrong code', function * () {
+  it.skip('should not verify with wrong code', function * () {
     yield this.agent
       .put('/users/alice/verify')
       .send({
@@ -114,13 +114,13 @@ describe('Users', () => {
       .expect(400)
   })
 
-  it('should resend verification', function * () {
+  it.skip('should resend verification', function * () {
     yield this.agent
       .post('/users/alice/resend-verification')
       .expect(200)
   })
 
-  it('should get receiver', function * () {
+  it.skip('should get receiver', function * () {
     yield this.agent
       .get('/receivers/alice')
       .expect({
@@ -133,7 +133,7 @@ describe('Users', () => {
       })
   })
 
-  it('should fail to get nonexistant receiver', function * () {
+  it.skip('should fail to get nonexistant receiver', function * () {
     yield this.agent
       .get('/receivers/bob')
       .expect(404)

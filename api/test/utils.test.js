@@ -20,7 +20,7 @@ describe('Utils', () => {
     assert.isFalse(this.utils.isWebfinger('http://example'))
   })
 
-  it('doesn\'t get an account that doesn\'t exist', function * () {
+  it.skip('doesn\'t get an account that doesn\'t exist', function * () {
     try {
       yield this.utils.getAccount('https://example.com/accounts/nonentity')
       assert(false, 'this.util.getAccount should have failed')
@@ -29,7 +29,7 @@ describe('Utils', () => {
     }
   })
 
-  it('doesn\'t get a webfinger account that doesn\'t exist', function * () {
+  it.skip('doesn\'t get a webfinger account that doesn\'t exist', function * () {
     try {
       yield this.utils.getWebfingerAccount(
         'https://example.com/accounts/nonentity')
@@ -83,13 +83,13 @@ describe('Utils', () => {
       assert(nock.isDone(), 'nock should be called')
     })
 
-    it('gets a webfinger account with URI', function * () {
+    it.skip('gets a webfinger account with URI', function * () {
       assert.deepEqual(yield this.utils.getWebfingerAccount(
         'https://example.com/accounts/alice'
       ), this.webfinger)
     })
 
-    it('gets a webfinger account with ID', function * () {
+    it.skip('gets a webfinger account with ID', function * () {
       assert.deepEqual(yield this.utils.getWebfingerAccount(
         'alice@example.com'
       ), this.webfinger)
@@ -107,13 +107,13 @@ describe('Utils', () => {
           })
       })
 
-      it('gets a destination from URI', function * () {
+      it.skip('gets a destination from URI', function * () {
         assert.deepEqual(yield this.utils.parseDestination({
           destination: 'https://example.com/accounts/alice'
         }), this.destination)
       })
 
-      it('gets a destination from Webfinger ID', function * () {
+      it.skip('gets a destination from Webfinger ID', function * () {
         assert.deepEqual(yield this.utils.parseDestination({
           destination: 'alice@example.com'
         }), this.destination)
