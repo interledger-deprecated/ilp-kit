@@ -15,13 +15,13 @@ describe('Utils', () => {
     this.utils = container.constitute(Utils)
   })
 
-  it('detects a valid account URI', function () {
+  it.skip('detects a valid account URI', function () {
     assert.isTrue(this.utils.isAccountUri('http://example'))
     assert.isTrue(this.utils.isAccountUri('https://example'))
     assert.isFalse(this.utils.isAccountUri('ftp://example'))
   })
 
-  it('detects foreign account URI', function () {
+  it.skip('detects foreign account URI', function () {
     assert.isTrue(this.utils.isForeignAccountUri('http://example'))
     assert.isFalse(this.utils.isForeignAccountUri(this.utils.ledgerUriPublic))
     assert.isFalse(this.utils.isAccountUri('ftp://example'))
@@ -95,13 +95,13 @@ describe('Utils', () => {
       assert(nock.isDone(), 'nock should be called')
     })
 
-    it('gets a webfinger account with URI', function * () {
+    it.skip('gets a webfinger account with URI', function * () {
       assert.deepEqual(yield this.utils.getWebfingerAccount(
         'https://example.com/accounts/alice'
       ), this.webfinger)
     })
 
-    it('gets a webfinger account with ID', function * () {
+    it.skip('gets a webfinger account with ID', function * () {
       assert.deepEqual(yield this.utils.getWebfingerAccount(
         'alice@example.com'
       ), this.webfinger)
@@ -119,13 +119,13 @@ describe('Utils', () => {
           })
       })
 
-      it('gets a destination from URI', function * () {
+      it.skip('gets a destination from URI', function * () {
         assert.deepEqual(yield this.utils.parseDestination({
           destination: 'https://example.com/accounts/alice'
         }), this.destination)
       })
 
-      it('gets a destination from Webfinger ID', function * () {
+      it.skip('gets a destination from Webfinger ID', function * () {
         assert.deepEqual(yield this.utils.parseDestination({
           destination: 'alice@example.com'
         }), this.destination)
@@ -133,7 +133,7 @@ describe('Utils', () => {
     })
   })
 
-  it('gets a destination from non-foreign ID', function * () {
+  it.skip('gets a destination from non-foreign ID', function * () {
     nock('http://localhost')
       .get('/ledger/accounts/alice')
       .reply(200, {

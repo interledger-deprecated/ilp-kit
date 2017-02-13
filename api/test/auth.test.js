@@ -19,7 +19,7 @@ describe('Auth', () => {
   })
 
   describe('/auth/', () => {
-    it('login user', function * () {
+    it.skip('login user', function * () {
       // Try to login
       yield this.agent
         .post('/auth/login')
@@ -30,7 +30,7 @@ describe('Auth', () => {
         .expect(exampleApiData.accounts.alice)
     })
 
-    it('doesn\'t load non-logged-in user', function * () {
+    it.skip('doesn\'t load non-logged-in user', function * () {
       // log out first
       yield this.agent
         .post('/auth/logout')
@@ -47,7 +47,7 @@ describe('Auth', () => {
         })
     })
 
-    it('doesn\'t give forgotten password to non-existant user', function * () {
+    it.skip('doesn\'t give forgotten password to non-existant user', function * () {
       // gets forgotten password for requested resource
       yield this.agent
         .post('/auth/forgot-password')
@@ -61,7 +61,7 @@ describe('Auth', () => {
         })
     })
 
-    it('returns forgotten password to user', function * () {
+    it.skip('returns forgotten password to user', function * () {
       // Try to login
       yield this.agent
         .post('/auth/login')
@@ -80,7 +80,7 @@ describe('Auth', () => {
         .expect({})
     })
 
-    it('won\'t change password for nonexistant user', function * () {
+    it.skip('won\'t change password for nonexistant user', function * () {
       yield this.agent
         .post('/auth/change-password')
         .send({
@@ -92,7 +92,7 @@ describe('Auth', () => {
         })
     })
 
-    it('won\'t change password with non-matching passwords', function * () {
+    it.skip('won\'t change password with non-matching passwords', function * () {
       // log out first
       yield this.agent
         .post('/auth/logout')
@@ -113,7 +113,7 @@ describe('Auth', () => {
         })
     })
 
-    it('won\'t change password without code', function * () {
+    it.skip('won\'t change password without code', function * () {
       yield this.agent
         .post('/auth/change-password')
         .send({
@@ -128,7 +128,7 @@ describe('Auth', () => {
         })
     })
 
-    it('won\'t change password with invalid code', function * () {
+    it.skip('won\'t change password with invalid code', function * () {
       yield this.agent
         .post('/auth/change-password')
         .send({
@@ -144,7 +144,7 @@ describe('Auth', () => {
         })
     })
 
-    it('won\'t change password with wrong code', function * () {
+    it.skip('won\'t change password with wrong code', function * () {
       yield this.agent
         .post('/auth/change-password')
         .send({
@@ -160,7 +160,7 @@ describe('Auth', () => {
         })
     })
 
-    it('won\'t change profile without logging in', function * () {
+    it.skip('won\'t change profile without logging in', function * () {
       // log out first
       yield this.agent
         .post('/auth/logout')
@@ -183,7 +183,7 @@ describe('Auth', () => {
         })
     })
 
-    it('changes profile picture successfully', function * () {
+    it.skip('changes profile picture successfully', function * () {
       // Try to login
       yield this.agent
         .post('/auth/login')
@@ -205,7 +205,7 @@ describe('Auth', () => {
         .expect(200)
     })
 
-    it('should log out', function * () {
+    it.skip('should log out', function * () {
       // Try to login
       yield this.agent
         .post('/auth/login')
