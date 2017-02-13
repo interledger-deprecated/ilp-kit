@@ -15,18 +15,6 @@ describe('Utils', () => {
     this.utils = container.constitute(Utils)
   })
 
-  it('detects a valid account URI', function () {
-    assert.isTrue(this.utils.isAccountUri('http://example'))
-    assert.isTrue(this.utils.isAccountUri('https://example'))
-    assert.isFalse(this.utils.isAccountUri('ftp://example'))
-  })
-
-  it('detects foreign account URI', function () {
-    assert.isTrue(this.utils.isForeignAccountUri('http://example'))
-    assert.isFalse(this.utils.isForeignAccountUri(this.utils.ledgerUriPublic))
-    assert.isFalse(this.utils.isAccountUri('ftp://example'))
-  })
-
   it('detects a webfinger identifier', function () {
     assert.isTrue(this.utils.isWebfinger('alice@example.com'))
     assert.isFalse(this.utils.isWebfinger('http://example'))
@@ -134,7 +122,7 @@ describe('Utils', () => {
   })
 
   it('gets a destination from non-foreign ID', function * () {
-    nock('http://localhost')
+    nock('https://red.ilpdemo.org')
       .get('/ledger/accounts/alice')
       .reply(200, {
         name: 'alice',
@@ -143,7 +131,7 @@ describe('Utils', () => {
         currency_symbol: 'D'
       })
 
-    nock('http://localhost')
+    nock('https://localhost:80')
       .get('/api/receivers/alice')
       .reply(200, {
         name: 'alice',
@@ -155,11 +143,10 @@ describe('Utils', () => {
     assert.deepEqual(yield this.utils.parseDestination({
       destination: 'alice'
     }), {
-      type: 'local',
-      accountUri: 'http://localhost/ledger/accounts/alice',
-      ledgerUri: 'http://localhost/ledger',
-      paymentUri: 'http://localhost/api/receivers/alice',
-      ilpAddress: 'localhost.alice',
+      ledgerUri: 'https://red.ilpdemo.org/ledger',
+      paymentUri: 'https://localhost:80/api/receivers/alice',
+      identifier: 'alice@localhost:80',
+      ilpAddress: 'us.usd.red.alice',
       currencyCode: 'XDG',
       currencySymbol: 'D',
       name: 'alice',
