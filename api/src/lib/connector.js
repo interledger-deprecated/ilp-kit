@@ -84,18 +84,13 @@ module.exports = class Conncetor {
     if (peerInfo && peerInfo.publicKey) return peerInfo
 
     // Get the host publicKey
-    let hostInfo
-    try {
-      hostInfo = yield this.utils.hostLookup('https://' + peer.hostname)
-    } catch (e) {
-      this.log.warn(`Peer host ${peer.hostname} is down`)
-    }
+    const hostInfo = yield this.utils.hostLookup('https://' + peer.hostname)
 
     let publicKey
     let token
     let rpcUri
     let ledgerName
-    if (hostInfo && hostInfo.publicKey) {
+    if (hostInfo.publicKey) {
       publicKey = hostInfo.publicKey
       token = getToken(this.config.getIn(['connector', 'ed25519_secret_key']), publicKey)
       rpcUri = hostInfo.peersRpcUri

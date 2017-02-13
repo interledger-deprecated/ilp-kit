@@ -2,6 +2,7 @@ import * as types from '../actionTypes'
 
 const initialState = {
   loading: true,
+  loaded: false,
   list: [],
   peer: {}
 }
@@ -17,12 +18,14 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         loading: false,
+        loaded: true,
         list: action.result
       }
     case types.LOAD_PEERS_FAIL:
       return {
         ...state,
-        loading: false
+        loading: false,
+        loaded: true
       }
     case types.GET_PEER_SUCCESS:
       return {

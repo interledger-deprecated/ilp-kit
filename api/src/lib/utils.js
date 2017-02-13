@@ -133,7 +133,7 @@ module.exports = class Utils {
       webfist_fallback: false,
       tls_only: true,
       uri_fallback: false,
-      request_timeout: 5000
+      request_timeout: 2000
     })
 
     let response

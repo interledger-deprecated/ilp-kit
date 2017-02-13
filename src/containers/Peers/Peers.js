@@ -19,7 +19,8 @@ const cx = classNames.bind(styles)
 @connect(
   state => ({
     peerState: state.peer,
-    loading: state.peer.loading
+    loading: state.peer.loading,
+    loaded: state.peer.loaded
   }),
   { load, update, remove })
 export default class Peers extends Component {
@@ -28,7 +29,8 @@ export default class Peers extends Component {
     load: PropTypes.func.isRequired,
     update: PropTypes.func.isRequired,
     remove: PropTypes.func.isRequired,
-    loading: PropTypes.bool
+    loading: PropTypes.bool,
+    loaded: PropTypes.bool
   }
 
   state = {}
