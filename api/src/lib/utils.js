@@ -156,6 +156,7 @@ module.exports = class Utils {
     }
 
     if (!response) throw new NotFoundError('Host is unavailable')
+    if (!response.properties) throw new NotFoundError("Host doesn't have an ilp-kit or the version is not compatible")
 
     return {
       publicKey: response.properties['https://interledger.org/rel/publicKey'],
