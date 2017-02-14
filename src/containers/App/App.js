@@ -146,7 +146,8 @@ export default class App extends Component {
           ]}
         />
 
-        <LoadingBar className={cx('loadingBar')} />
+        {__CLIENT__ &&
+        <LoadingBar className={cx('loadingBar')} />}
 
         {/* <script src="https://web-payments.net/polyfill.js"></script> */}
 

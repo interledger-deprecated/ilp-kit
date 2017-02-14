@@ -7,9 +7,15 @@ export default function createStore (history, client, data) {
   // Sync dispatched route actions to the history
   const reduxRouterMiddleware = syncHistory(history)
 
-  const middleware = [createMiddleware(client), reduxRouterMiddleware, loadingBarMiddleware({
-    promiseTypeSuffixes: ['PENDING', 'SUCCESS', 'FAILURE']
-  })]
+  const middleware = [createMiddleware(client), reduxRouterMiddleware]
+
+  // Leave the __CLIENT__ check until below issue is resolved
+  // https://github.com/mironov/react-redux-loading-bar/issues/30
+  if (__CLIENT__) {
+    middleware.push(loadingBarMiddleware({
+      promiseTypeSuffixes: ['PENDING', 'SUCCESS', 'FAILURE']
+    }))
+  }
 
   let finalCreateStore
   if (__DEVELOPMENT__ && __CLIENT__ && __DEVTOOLS__) {
