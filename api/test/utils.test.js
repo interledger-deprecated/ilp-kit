@@ -140,15 +140,6 @@ describe('Utils', () => {
   })
 
   it('gets a destination from non-foreign ID', function * () {
-    nock('https://red.ilpdemo.org')
-      .get('/ledger/accounts/alice')
-      .reply(200, {
-        name: 'alice',
-        imageUrl: 'picture',
-        currency_code: 'XDG',
-        currency_symbol: 'D'
-      })
-
     nock('https://localhost:80')
       .get('/api/receivers/alice')
       .reply(200, {
