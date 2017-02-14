@@ -3,8 +3,8 @@ import moment from 'moment-timezone'
 
 import paginate from 'redux-pagination'
 
-function reducer(state = {}, action = {}) {
-  function updateInHistory(timeSlot, message, update) {
+function reducer (state = {}, action = {}) {
+  function updateInHistory (timeSlot, message, update) {
     return {
       ...state,
       list: state.list.map(payment => {

@@ -10,9 +10,21 @@ export default (store) => {
     return store.getState().auth.user
   }
 
+  let authLoadPromise
+
   const loadAuth = (cb) => {
-    if (!isAuthLoaded(store.getState())) {
-      store.dispatch(load()).then(cb).catch(cb)
+    if (!isAuthLoaded(store.getState()) && !authLoadPromise) {
+      authLoadPromise = store.dispatch(load())
+    }
+
+    if (authLoadPromise) {
+      authLoadPromise.then(() => {
+        authLoadPromise = undefined
+        cb()
+      }).catch(() => {
+        authLoadPromise = undefined
+        cb()
+      })
     } else {
       cb()
     }

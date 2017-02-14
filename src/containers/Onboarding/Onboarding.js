@@ -11,20 +11,24 @@ const cx = classNames.bind(styles)
 @connect(
   state => ({
     user: state.auth.user,
-    peers: state.peer.list
+    peers: state.peer.list,
+    peersLoaded: state.peer.loaded
   }),
   { loadPeers })
 export default class Onboarding extends Component {
   static propTypes = {
     user: PropTypes.object,
     peers: PropTypes.array,
-    loadPeers: PropTypes.func
+    loadPeers: PropTypes.func,
+    peersLoaded: PropTypes.bool
   }
 
   state = {}
 
   componentWillMount() {
-    this.props.loadPeers()
+    if (!this.props.peersLoaded) {
+      this.props.loadPeers()
+    }
   }
 
   render() {

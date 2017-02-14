@@ -11,17 +11,21 @@ const cx = classNames.bind(styles)
 
 @connect(
   state => ({
-    users: state.user.users
+    users: state.user.users,
+    loaded: state.user.loaded
   }),
   { loadUsers })
 export default class Invites extends Component {
   static propTypes = {
     loadUsers: PropTypes.func,
-    users: PropTypes.array
+    users: PropTypes.array,
+    loaded: PropTypes.bool
   }
 
   componentWillMount() {
-    this.props.loadUsers()
+    if(!this.props.loaded) {
+      this.props.loadUsers()
+    }
   }
 
   render() {

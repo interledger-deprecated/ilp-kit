@@ -41,8 +41,16 @@ export default class Home extends Component {
   }
 
   // Load the history
-  componentDidMount() {
-    this.props.getPage(1)
+  componentWillMount() {
+    if (!this.props.initialLoad) {
+      this.props.getPage(1)
+    }
+
+    if (this.props.history.length) {
+      this.setState({
+        list: this.props.history
+      })
+    }
   }
 
   componentWillReceiveProps(nextProps) {

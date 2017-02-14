@@ -6,7 +6,7 @@ export const register = data => ({
   types: [types.REGISTER, types.REGISTER_SUCCESS, types.REGISTER_FAIL],
   promise: client => client.post('/users/' + data.username, { data })
     .then(user => {
-      if (!__SERVER__) {
+      if (__CLIENT__) {
         if (socket) {
           socket.connect()
           socket.emit('subscribe', user.username)
@@ -43,7 +43,7 @@ export const load = () => dispatch => dispatch({
   types: [types.AUTH_LOAD, types.AUTH_LOAD_SUCCESS, types.AUTH_LOAD_FAIL],
   promise: (client) => client.get('/auth/load')
     .then(user => {
-      if (!__SERVER__) {
+      if (__CLIENT__) {
         if (socket) {
           socket.connect()
           socket.emit('subscribe', user.username)
@@ -60,7 +60,7 @@ export const login = data => dispatch => dispatch({
   types: [types.LOGIN, types.LOGIN_SUCCESS, types.LOGIN_FAIL],
   promise: client => client.post('/auth/login', { data })
     .then(user => {
-      if (!__SERVER__) {
+      if (__CLIENT__) {
         if (socket) {
           socket.connect()
           socket.emit('subscribe', user.username)

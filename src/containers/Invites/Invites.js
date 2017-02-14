@@ -14,18 +14,22 @@ const cx = classNames.bind(styles)
 @connect(
   state => ({
     inviteState: state.invite,
-    config: state.auth.config
+    config: state.auth.config,
+    loaded: state.invite.loaded
   }),
   { loadCodes, remove })
 export default class Invites extends Component {
   static propTypes = {
     inviteState: PropTypes.object,
     loadCodes: PropTypes.func,
-    config: PropTypes.object
+    config: PropTypes.object,
+    loaded: PropTypes.bool
   }
 
   componentWillMount() {
-    this.props.loadCodes()
+    if(!this.props.loaded) {
+      this.props.loadCodes()
+    }
   }
 
   componentDidMount() {

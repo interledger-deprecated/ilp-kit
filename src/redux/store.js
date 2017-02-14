@@ -13,7 +13,7 @@ export default function createStore (history, client, data) {
   // https://github.com/mironov/react-redux-loading-bar/issues/30
   if (__CLIENT__) {
     middleware.push(loadingBarMiddleware({
-      promiseTypeSuffixes: ['PENDING', 'SUCCESS', 'FAILURE']
+      promiseTypeSuffixes: ['PENDING', 'SUCCESS', 'FAIL']
     }))
   }
 

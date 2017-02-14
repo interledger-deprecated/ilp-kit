@@ -15,7 +15,8 @@ const cx = classNames.bind(styles)
 
 @connect(state => ({
   list: state.settlementMethod.list,
-  loading: state.settlementMethod.loading
+  loading: state.settlementMethod.loading,
+  loaded: state.settlementMethod.loaded
 }), { load, pushState: routeActions.push })
 export default class Settlement extends Component {
   static propTypes = {
@@ -24,13 +25,16 @@ export default class Settlement extends Component {
     params: PropTypes.object,
     pushState: PropTypes.func,
     list: PropTypes.array,
-    loading: PropTypes.bool
+    loading: PropTypes.bool,
+    loaded: PropTypes.bool
   }
 
   state = {}
 
   componentWillMount() {
-    this.props.load()
+    if (!this.props.loaded) {
+      this.props.load()
+    }
 
     if (!this.props.params.id && this.props.list.length) {
       this.props.pushState('/settlement/' + this.props.list[0].id)

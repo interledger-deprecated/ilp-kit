@@ -3,6 +3,7 @@ import * as types from '../actionTypes'
 const initialState = {
   list: [],
   loading: true,
+  loaded: false,
   invite: {}
 }
 
@@ -11,18 +12,21 @@ export default function reducer(state = initialState, action = {}) {
     case types.LOAD_INVITES:
       return {
         ...state,
-        loading: true
+        loading: true,
+        loaded: false
       }
     case types.LOAD_INVITES_SUCCESS:
       return {
         ...state,
         loading: false,
+        loaded: true,
         list: action.result
       }
     case types.LOAD_INVITES_FAIL:
       return {
         ...state,
-        loading: false
+        loading: false,
+        loaded: true
       }
     case types.LOAD_INVITE:
       return {
