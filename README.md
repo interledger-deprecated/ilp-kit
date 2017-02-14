@@ -110,7 +110,7 @@ ILP kit consists of a [Node.js](https://github.com/nodejs/node) (developed on v6
 The backend is responsible for communicating with the ILP ledger, creating accounts, sending payments and keeping the payment history.
 
 #### API docs
-[http://interledger.org/ilp-kit/apidoc](http://interledger.org/ilp-kit/apidoc/)
+[https://interledgerjs.github.io/ilp-kit/apidoc](https://interledgerjs.github.io/ilp-kit/apidoc/)
 
 #### SPSP
 
