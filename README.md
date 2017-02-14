@@ -10,8 +10,10 @@ ILP wallet with hosted ledger and connector instances
 
 <br>
 
-[![circle][circle-image]][circle-url] [![Known Vulnerabilities][snyk-image]][snyk-url]
+[![circle][circle-image]][circle-url] [![Known Vulnerabilities][snyk-image]][snyk-url] [![Deploy to Heroku][heroku-deploy-image]][heroku-deploy-url]
 
+[heroku-deploy-image]: https://www.herokucdn.com/deploy/button.svg
+[heroku-deploy-url]: https://heroku.com/deploy?template=https://github.com/interledgerjs/ilp-kit/tree/master
 [circle-image]: https://circleci.com/gh/interledgerjs/ilp-kit.svg?style=shield&circle-token=65d802e1ea641aabcc95f8d28f2c6ade577716a9
 [circle-url]: https://circleci.com/gh/interledgerjs/ilp-kit
 [snyk-image]: https://snyk.io/test/github/interledgerjs/ilp-kit/badge.svg
