@@ -26,9 +26,9 @@ export default class WebPaymentsSupport extends Component {
   handleClick() {
     e.preventDefault()
     console.log('clicked')
-    navigator.serviceWorker.register("./app.js")
+    navigator.serviceWorker.register('/app.js')
     .then(function(registration) {
-      console.log("Registering Interledger\n");
+      console.log('Registering Interledger\n');
       return registration.paymentAppManager.setManifest({
         name: 'Interledger',
         label: 'Interledger',
