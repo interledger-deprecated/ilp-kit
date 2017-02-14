@@ -2,7 +2,7 @@
   "name": "ilp-kit",
   "description": "ILP kit",
   "repository": "https://github.com/interledgerjs/ilp-kit",
-  "logo": "http://node-js-sample.herokuapp.com/node.svg",
+  "logo": "https://avatars1.githubusercontent.com/u/22465593",
   "keywords": [
     "five-bells",
     "ilp",
@@ -11,5 +11,137 @@
     "ui",
     "payments",
     "finance"
+  ],
+
+  "success_url": "/",
+  "scripts": {
+  },
+
+  "env": {
+    "ILP_KIT_CLI_VERSION": {
+      "description": "Env vars Versions (keep it as is)",
+      "value": "11.1.0"
+    },
+    "API_EMAIL_SENDER_ADDRESS": {
+      "description": "[NEEDS CHANGE] Sender Address",
+      "value": "ilpkit@<YOUR-APP-NAME>.herokuapp.com"
+    },
+    "API_EMAIL_SENDER_NAME": {
+      "description": "[NEEDS CHANGE] Sender name",
+      "value": "<YOUR-APP-NAME>"
+    },
+    "API_GITHUB_CLIENT_ID": {
+      "required": false
+    },
+    "API_GITHUB_CLIENT_SECRET": {
+      "required": false
+    },
+    "API_HOSTNAME": {
+      "description": "[NEEDS CHANGE] Hostname for this ledger (change <APP-NAME> to the app name you are creating)",
+      "value": "<APP-NAME>.herokuapp.com"
+    },
+    "API_MAILGUN_API_KEY": {
+      "required": false
+    },
+    "API_MAILGUN_DOMAIN": {
+      "required": false
+    },
+    "API_PORT": {
+      "value": "3100"
+    },
+    "API_PRIVATE_HOSTNAME": {
+      "value": "localhost"
+    },
+    "API_PUBLIC_HTTPS": {
+      "value": "true"
+    },
+    "API_PUBLIC_PATH": {
+      "value": "/api"
+    },
+    "API_PUBLIC_PORT": {
+      "value": "443"
+    },
+    "API_SECRET": {
+      "generator": "secret"
+    },
+    "BLUEBIRD_WARNINGS": {
+      "value": "0"
+    },
+    "CLIENT_HOST": {
+      "description": "[NEEDS CHANGE] Hostname for this ledger",
+      "value": "<APP-NAME>.herokuapp.com"
+    },
+    "CLIENT_PORT": {
+      "value": "3010"
+    },
+    "CLIENT_PUBLIC_PORT": {
+      "value": "443"
+    },
+    "CLIENT_TITLE": {
+      "description": "[NEEDS CHANGE] Set the Ledger title",
+      "value": "<YOUR-ILP-TITLE>"
+    },
+    "CONNECTOR_AUTOLOAD_PEERS": {
+      "value": "true"
+    },
+    "CONNECTOR_ENABLE": {
+      "value": "true"
+    },
+    "CONNECTOR_LEDGERS": {
+      "description": "[NEEDS CHANGE] Look into the JSON, and replace ~TWO~ <APP-NAME>",
+      "value": "{\"us.usd.<APP-NAME>.\":{\"currency\":\"USD\",\"plugin\":\"ilp-plugin-bells\",\"options\":{\"account\":\"https://<APP-NAME>.herokuapp.com/ledger/accounts/connector\",\"username\":\"connector\",\"password\":\"connector\"}}}"
+    },
+    "CONNECTOR_LOG_LEVEL": {
+      "value": "info"
+    },
+    "CONNECTOR_MAX_HOLD_TIME": {
+      "value": "100"
+    },
+    "CONNECTOR_PORT": {
+      "value": "4000"
+    },
+    "LEDGER_ADMIN_USER": {
+      "value": "admin"
+    },
+    "LEDGER_ADMIN_PASS": {
+      "value": "admin"
+    },
+    "LEDGER_CURRENCY_CODE": {
+      "description": "[YOUR CHOICE] Set the desired currency code",
+      "value": "USD"
+    },
+    "LEDGER_CURRENCY_SYMBOL": {
+      "description": "[YOUR CHOICE] Set the desired currency symbol",
+      "value": "$"
+    },
+    "LEDGER_ILP_PREFIX": {
+      "description": "[NEEDS CHANGE] Change to your appname (no spaces, alltogether)",
+      "value": "us.usd.<APPNAME>."
+    },
+    "LEDGER_PRECISION": {
+      "value": "10"
+    },
+    "LEDGER_RECOMMENDED_CONNECTORS": {
+      "value": "connector"
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "free"
+    }
+  },
+  "addons": [
+    {
+      "plan": "heroku-postgresql"
+    }
+  ],
+  "buildpacks": [
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-apt"
+    },
+    {
+      "url": "heroku/nodejs"
+    }
   ]
 }
