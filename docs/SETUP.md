@@ -69,6 +69,8 @@ root$ apt-get update && apt-get upgrade
 root$ apt-get install libssl-dev python build-essential libpq-dev postgresql postgresql-contrib
 ```
 
+Make sure your postgres version is at least 9.5 by running `postgres --version`.
+
 ### Add a non-root user
 
 ```
