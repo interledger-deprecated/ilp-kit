@@ -1,7 +1,6 @@
-"use strict"
+'use strict'
 
 const _ = require('lodash')
-const url = require('url')
 const WebFinger = require('webfinger.js')
 const superagent = require('superagent-promise')(require('superagent'), Promise)
 
@@ -12,8 +11,8 @@ const NotFoundError = require('../errors/not-found-error')
 
 // TODO implement caching
 module.exports = class Utils {
-  static constitute() { return [ Config, Ledger ] }
-  constructor(config, ledger) {
+  static constitute () { return [ Config, Ledger ] }
+  constructor (config, ledger) {
     this.ledger = ledger
     this.ledgerUriPublic = config.data.getIn(['ledger', 'public_uri'])
     this.ledgerPrefix = config.data.getIn(['ledger', 'prefix'])
@@ -21,66 +20,43 @@ module.exports = class Utils {
     this.localHost = config.data.getIn(['server', 'base_host'])
   }
 
-  * getAccount(accountUri) {
-    let response
-
-    try {
-      response = yield superagent.get(accountUri).end()
-    } catch (e) {
-      throw new NotFoundError('Unknown account')
-    }
-
-    return response.body
-  }
-
-  isWebfinger(destination) {
+  isWebfinger (destination) {
     // TODO better email style checking
     return destination.search('@') > -1
   }
 
-  * getWebfingerAccount(address) {
-    const parsed = url.parse(address)
-
+  * webfingerLookup (resource) {
     const webfinger = new WebFinger({
       webfist_fallback: false,
       tls_only: true,
       uri_fallback: false,
-      request_timeout: 5000
+      request_timeout: 3000
     })
 
-    let response
+    return (yield new Promise((resolve, reject) => {
+      webfinger.lookup(resource, (err, res) => err ? reject(err) : resolve(res.object))
+    })).body
+  }
 
+  * getWebfingerAccount (address) {
     try {
-      response = yield new Promise(function(resolve, reject) {
-        webfinger.lookup(address,
-          function(err, res) {
-            if (err) {
-              return reject(err)
-            }
+      const response = yield this.webfingerLookup(address)
 
-            resolve(res.object)
-          }
-        )
-      })
-    } catch(e) {
-      console.error(e)
+      return {
+        ledgerUri: _.filter(response.links, {rel: 'https://interledger.org/rel/ledgerUri'})[0].href,
+        paymentUri: _.filter(response.links, {rel: 'https://interledger.org/rel/receiver'})[0].href,
+        ilpAddress: _.filter(response.links, {rel: 'https://interledger.org/rel/ilpAddress'})[0].href
+      }
+    } catch (e) {
       throw new NotFoundError('Unknown account')
-    }
-
-    return {
-      ledgerUri: _.filter(response.links, {rel: 'https://interledger.org/rel/ledgerUri'})[0].href,
-      paymentUri: _.filter(response.links, {rel: 'https://interledger.org/rel/receiver'})[0].href,
-      ilpAddress: _.filter(response.links, {rel: 'https://interledger.org/rel/ilpAddress'})[0].href
     }
   }
 
   /**
-   * TODO better docs
-   *
    * options
    *  - destination - string (username or webfinger)
    */
-  * parseDestination(options) {
+  * parseDestination (options) {
     const self = this
 
     const destination = options.destination
@@ -89,27 +65,27 @@ module.exports = class Utils {
     let paymentUri
     let ilpAddress
 
-    // Webfinger lookup
     if (self.isWebfinger(destination)) {
+      // Webfinger lookup
       const account = yield self.getWebfingerAccount(destination)
 
       ledgerUri = account.ledgerUri
       paymentUri = account.paymentUri
       ilpAddress = account.ilpAddress
-    }
-
-    // Local account
-    else {
+    } else {
+      // Local account
       ledgerUri = self.ledgerUriPublic
       paymentUri = self.localUri + '/receivers/' + destination
       ilpAddress = self.ledgerPrefix + destination
-
-      // Check if account exists
-      yield self.getAccount(self.ledgerUriPublic + '/accounts/' + destination)
     }
 
     // Get SPSP receiver info
-    const receiver = yield self.getAccount(paymentUri)
+    let receiver
+    try {
+      receiver = (yield superagent.get(paymentUri).end()).body
+    } catch (e) {
+      throw new NotFoundError('Unknown receiver')
+    }
 
     return {
       ledgerUri: ledgerUri,
@@ -128,30 +104,10 @@ module.exports = class Utils {
   }
 
   * hostLookup (host) {
-    // TODO:REFACTOR code dup with getWebfingerAccount
-    const webfinger = new WebFinger({
-      webfist_fallback: false,
-      tls_only: true,
-      uri_fallback: false,
-      request_timeout: 2000
-    })
-
     let response
-
     try {
-      response = yield new Promise(function (resolve, reject) {
-        webfinger.lookup(host,
-          function (err, res) {
-            if (err) {
-              return reject(err)
-            }
-
-            resolve(res.object)
-          }
-        )
-      })
+      response = yield this.webfingerLookup(host)
     } catch (e) {
-      console.error(e)
       throw new NotFoundError('Host is unavailable')
     }
 
