@@ -35,7 +35,7 @@ module.exports = class Utils {
 
     return (yield new Promise((resolve, reject) => {
       webfinger.lookup(resource, (err, res) => err ? reject(err) : resolve(res.object))
-    })).body
+    }))
   }
 
   * getWebfingerAccount (address) {
