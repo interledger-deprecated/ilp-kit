@@ -104,7 +104,12 @@ Name | Default |
 ILP kit UI comes with an "advanced mode" for developers and advanced users. You can activate it with a hot-key: `option+d` on Mac or `alt+d` on Windows. 
 
 ## Architecture
-ILP kit consists of a [Node.js](https://github.com/nodejs/node) (developed on v6.9.1) backend (REST API) and a client built using [React](https://github.com/facebook/react).
+ILP kit consists of:
+* a connector
+* a Five Bells ledger
+* a [Node.js](https://github.com/nodejs/node) (developed on v6.9.1) backend (REST API)
+* a proxy in front of that API, known as the 'wallet'.
+* a client built using [React](https://github.com/facebook/react).
 
 ### Backend (REST API)
 The backend is responsible for communicating with the ILP ledger, creating accounts, sending payments and keeping the payment history.
@@ -112,9 +117,23 @@ The backend is responsible for communicating with the ILP ledger, creating accou
 #### API docs
 [https://interledgerjs.github.io/ilp-kit/apidoc](https://interledgerjs.github.io/ilp-kit/apidoc/)
 
-#### SPSP
+#### How it works
 
 The wallet implements [SPSP](https://github.com/interledger/rfcs/blob/master/0009-simple-payment-setup-protocol/0009-simple-payment-setup-protocol.md) for initiating and receiving payments.
+
+This means it announces an SPSP address of the form `user@host`, and links this to two things:
+* an ILP address (roughly of the form `g.us.usd.host.user`, but this is not enforced, and your ILP address is not a unique string)
+* a cryptographic key pair, used indirectly to generate and fulfill crypto conditions.
+
+The connector component can peer with other connectors on the Interledger, and basically acts as a router.
+
+The ledger can handle payments that are conditional on a cryptographic condition, and that's where the power of ILP lies.
+When you send money to an account on another ledger, your connector conditionally pays the next connector, all the way to the receiving connector.
+The receiving connector adds a conditional payment to the receiving ledger, and the receiver (which lives in the API component) fulfills the
+crypto condition, using (a key which from) the receiver's public key.
+
+Only the receiver of an Interledger payment can fulfill the crypto condition, and that's why you can be sure that the intermediate hops will all
+roll back if the money cannot be safely delivered.
 
 ##### Webfinger
 Webfinger is used to lookup account/user identifiers.
