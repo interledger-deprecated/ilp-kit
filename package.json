@@ -230,7 +230,7 @@
     "umzug": "^1.11.0",
     "url-loader": "^0.5.6",
     "uuid4": "^1.0.0",
-    "webfinger.js": "^2.6.1",
+    "webfinger.js": "^2.6.2",
     "webpack": "^1.13.2",
     "webpack-isomorphic-tools": "^2.5.7"
   },
