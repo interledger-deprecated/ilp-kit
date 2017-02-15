@@ -85,7 +85,7 @@ function PaymentFactory (sequelize, validator, container, User) {
           + ' destination_name,'
           + ' destination_image_url,'
           + ' message,'
-          + ' date_trunc(\'hour\', created_at) AS time_slot,'
+          + ' created_at AS time_slot,'
           + ' max(created_at) AS recent_date,'
           + ' count(*) as transfers_count'
         + ' FROM "Payments"'
@@ -111,7 +111,7 @@ function PaymentFactory (sequelize, validator, container, User) {
           + ' sum(source_amount) as source_amount,'
           + ' sum(destination_amount) as destination_amount,'
           + ' message,'
-          + ' date_trunc(\'hour\', created_at) AS time_slot'
+          + ' created_at AS time_slot'
         + ' FROM "Payments"'
         + ' WHERE state = \'success\' '
           + ' AND ('
@@ -140,7 +140,7 @@ function PaymentFactory (sequelize, validator, container, User) {
       + ' WHERE state = \'success\' '
         + " AND source_identifier = '" + params.sourceIdentifier + "'"
         + " AND destination_identifier = '" + params.destinationIdentifier + "'"
-        + " AND date_trunc('hour', created_at) = '" + params.timeSlot + "'"
+        + " AND created_at = '" + params.timeSlot + "'"
         + (params.message ? " AND message = '" + params.message + "'" : '')
       + ' ORDER BY created_at DESC',
         {model: Payment.DbModel}
@@ -211,7 +211,7 @@ function PaymentFactory (sequelize, validator, container, User) {
       type: Sequelize.STRING(512),
       unique: true
     },
-    state: Sequelize.ENUM('pending', 'success', 'fail'),
+    state: Sequelize.STRING(10),
     message: Sequelize.STRING(1024), // TODO decide on the size
     execution_condition: Sequelize.STRING(1024), // TODO decide on the size
     created_at: Sequelize.DATE,
@@ -220,7 +220,6 @@ function PaymentFactory (sequelize, validator, container, User) {
     indexes: [
       {
         name: 'Payments_execution_condition_idx',
-        method: 'BTREE',
         fields: ['execution_condition']
       }
     ]
