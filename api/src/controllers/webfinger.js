@@ -133,7 +133,8 @@ function WebfingerControllerFactory(log, config, ledger) {
       this.body = {
         'subject': config.data.get('client_host'),
         'properties': {
-          'https://interledger.org/rel/publicKey': config.data.getIn(['connector', 'public_key'])
+          'https://interledger.org/rel/publicKey': config.data.getIn(['connector', 'public_key']),
+          'https://interledger.org/rel/protocolVersion': 'Compatible: ilp-kit v' + config.data.getIn(['ilpKitVersion'])
         },
         'links': [
           {

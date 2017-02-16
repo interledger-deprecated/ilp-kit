@@ -101,6 +101,9 @@ if (!getVar('API_LEDGER_URI')) {
   envVars.API_LEDGER_PUBLIC_URI = protocol + '//' + getVar('LEDGER_HOSTNAME') + ledgerPublicPort + '/' + getVar('LEDGER_PUBLIC_PATH')
 }
 
+// Add this so it can be announced in webfinger:
+envVars.ILP_KIT_VERSION = require('../package.json').version;
+
 // Set envVars in environment
 _.each(envVars, (envVar, index) => {
   if (!process.env[index]) process.env[index] = envVar
