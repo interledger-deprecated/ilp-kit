@@ -22,6 +22,9 @@ module.exports = class WalletConfig {
       }
     }
 
+    // This will be announced in webfinger
+    localConfig.ilpKitVersion = process.env['ILP_KIT_VERSION'];
+
     // Google Analytics / Mixpanel tracking
     localConfig.track = {
       ga: Config.getEnv(envPrefix, 'TRACK_GA'),
