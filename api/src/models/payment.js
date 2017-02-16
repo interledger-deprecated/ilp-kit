@@ -71,8 +71,50 @@ function PaymentFactory (sequelize, validator, container, User) {
 
       if (sequelize.options.dialect === 'sqlite') {
         return {
-          list: [],
-          count: 0
+          list: yield sequelize.query(
+            'SELECT source_identifier, destination_identifier,'
+              + ' sum(source_amount) as source_amount,'
+              + ' source_name,'
+              + ' source_image_url,'
+              + ' sum(destination_amount) as destination_amount,'
+              + ' destination_name,'
+              + ' destination_image_url,'
+              + ' message,'
+              + ' created_at AS time_slot,'
+              + ' created_at AS recent_date,'
+              + ' count(*) as transfers_count'
+            + ' FROM "Payments"'
+            + ' WHERE state = \'success\' '
+              + ' AND ('
+                + ' source_user = ' + user.id
+                + " OR source_identifier = '" + user.identifier + "'"
+                + ' OR destination_user = ' + user.id
+                + " OR destination_identifier = '" + user.identifier + "'"
+              + ' )'
+            + ' GROUP BY source_identifier, source_name, source_image_url, '
+              + 'destination_identifier, destination_name, destination_image_url,'
+              + ' message, time_slot'
+            + ' ORDER BY recent_date DESC'
+            + ' LIMIT ' + limit
+            + ' OFFSET ' + limit * (page - 1),
+            {model: Payment.DbModel}
+          ),
+          count: yield sequelize.query(
+            'SELECT count(source_amount), destination_identifier,'
+              + ' sum(source_amount) as source_amount,'
+              + ' sum(destination_amount) as destination_amount,'
+              + ' message,'
+              + ' created_at AS time_slot'
+            + ' FROM "Payments"'
+            + ' WHERE state = \'success\' '
+              + ' AND ('
+                + ' source_user = ' + user.id
+                + " OR source_identifier = '" + user.identifier + "'"
+                + ' OR destination_user = ' + user.id
+                + " OR destination_identifier = '" + user.identifier + "'"
+              + ' )'
+            + ' GROUP BY source_identifier, destination_identifier, message, time_slot'
+          )
         }
       }
 
@@ -131,7 +173,17 @@ function PaymentFactory (sequelize, validator, container, User) {
 
     static getTransfers(params) {
       if (sequelize.options.dialect === 'sqlite') {
-        return []
+        return sequelize.query(
+          'SELECT source_amount, destination_amount, created_at, transfer'
+          + ' FROM "Payments"'
+          + ' WHERE state = \'success\' '
+          + " AND source_identifier = '" + params.sourceIdentifier + "'"
+          + " AND destination_identifier = '" + params.destinationIdentifier + "'"
+          + " AND created_at = '" + params.timeSlot + "'"
+          + (params.message ? " AND message = '" + params.message + "'" : '')
+          + ' ORDER BY created_at DESC',
+          {model: Payment.DbModel}
+        )
       }
 
       return sequelize.query(
@@ -211,7 +263,7 @@ function PaymentFactory (sequelize, validator, container, User) {
       type: Sequelize.STRING(512),
       unique: true
     },
-    state: Sequelize.ENUM('pending', 'success', 'fail'),
+    state: Sequelize.STRING('20'),
     message: Sequelize.STRING(1024), // TODO decide on the size
     execution_condition: Sequelize.STRING(1024), // TODO decide on the size
     created_at: Sequelize.DATE,
