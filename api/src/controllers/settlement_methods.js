@@ -41,7 +41,7 @@ function SettlementMethodsControllerFactory(auth, config, log, Settlement, Settl
         return this.body = yield SettlementMethod.findAll({
           include: [{ all: true }],
           order: [
-            ['enabled', 'DESC NULLS LAST'],
+            ['enabled', 'DESC'],
             ['created_at', 'ASC']
           ]
         })
@@ -68,6 +68,7 @@ function SettlementMethodsControllerFactory(auth, config, log, Settlement, Settl
       }
 
       method.type = this.body.type
+      method.enabled = false
       // TODO
       // method.name
       // method.logo
