@@ -46,11 +46,29 @@ export default class ProfileForm extends Component {
     // Successable
     tempSuccess: PropTypes.func,
     success: PropTypes.bool,
+    permFail: PropTypes.func,
+    fail: PropTypes.any,
 
     // Auth
     user: PropTypes.object,
     save: PropTypes.func,
     updatePic: PropTypes.func
+  }
+
+  state = {}
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.fail !== nextProps.fail) {
+      this.setState({
+        error: nextProps.fail
+      })
+    }
+
+    if (this.props.error !== nextProps.error) {
+      this.setState({
+        error: nextProps.error
+      })
+    }
   }
 
   save = (data) => {
@@ -88,6 +106,9 @@ export default class ProfileForm extends Component {
 
       tracker.track('Profile picture upload')
     },
+    error: (file, error) => {
+      this.props.permFail(error)
+    },
     complete: (file) => {
       this.dropzone.removeFile(file)
     },
@@ -99,7 +120,9 @@ export default class ProfileForm extends Component {
 
   render() {
     const { fields: { email, name, password, newPassword, verifyNewPassword }, pristine, invalid,
-      handleSubmit, submitting, success, error, submitFailed, user } = this.props
+      handleSubmit, submitting, success, submitFailed, user } = this.props
+
+    const { error } = this.state
 
     if (!user) return null
 
@@ -120,6 +143,7 @@ export default class ProfileForm extends Component {
               switch (error.id) {
                 case 'EmailTakenError': return 'Email is already taken'
                 case 'NotFoundError': return 'Current password is wrong'
+                case 'InvalidBodyError': return error.message
                 default: return 'Something went wrong'
               }
             })()}
