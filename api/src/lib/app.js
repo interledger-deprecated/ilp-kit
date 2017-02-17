@@ -22,9 +22,9 @@ const Pay = require('./pay')
 const Connector = require('./connector')
 
 module.exports = class App {
-  static constitute() { return [ Config, Auth, Router, Validator, Ledger, SPSP, DB, Log, Socket, User, Pay, Connector ] }
-  constructor(config, auth, router, validator, ledger, spsp, db, log, socket, user, pay, connector) {
-    this.config = config.data
+  static constitute () { return [ Config, Auth, Router, Validator, Ledger, SPSP, DB, Log, Socket, User, Pay, Connector ] }
+  constructor (config, auth, router, validator, ledger, spsp, db, log, socket, user, pay, connector) {
+    this.config = config
     this.auth = auth
     this.router = router
     this.socket = socket
@@ -74,7 +74,7 @@ module.exports = class App {
 
     app.proxy = true
 
-    app.keys = [this.config.get('sessionSecret')]
+    app.keys = [this.config.data.get('sessionSecret')]
     app.use(session({
       maxAge: 2592000000
     }, app))
@@ -122,9 +122,9 @@ module.exports = class App {
   }
 
   listen() {
-    this.app.listen(this.config.getIn(['server', 'port']))
-    this.log.info('wallet listening on ' + this.config.getIn(['server', 'bind_ip']) +
-      ':' + this.config.getIn(['server', 'port']))
-    this.log.info('public at ' + this.config.getIn(['server', 'base_uri']))
+    this.app.listen(this.config.data.getIn(['server', 'port']))
+    this.log.info('wallet listening on ' + this.config.data.getIn(['server', 'bind_ip']) +
+      ':' + this.config.data.getIn(['server', 'port']))
+    this.log.info('public at ' + this.config.data.getIn(['server', 'base_uri']))
   }
 }

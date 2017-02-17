@@ -4,9 +4,14 @@ const Config = require('five-bells-shared').Config
 const envPrefix = 'api'
 const crypto = require('crypto')
 const getPublicKey = require('ilp-plugin-virtual/src/util/token').publicKey
+const changeAdminPass = require('../../../bin/env').changeAdminPass
 
 module.exports = class WalletConfig {
-  constructor() {
+  constructor () {
+    this.init()
+  }
+
+  init () {
     const localConfig = {}
     localConfig.ledger = {
       uri: Config.getEnv(envPrefix, 'LEDGER_URI'),
@@ -85,7 +90,15 @@ module.exports = class WalletConfig {
     this.data = Config.loadConfig(envPrefix, localConfig)
   }
 
-  generateSecret(text) {
+  changeAdminPass (newPassword) {
+    // Save to the env file
+    changeAdminPass(newPassword)
+
+    // Update the instance
+    this.init()
+  }
+
+  generateSecret (text) {
     // TODO remove the hardcoded secret in case of API_SECRET not being present
     return crypto.createHmac('sha256', Config.getEnv(envPrefix, 'SECRET') || 'secret').update(text).digest()
   }
