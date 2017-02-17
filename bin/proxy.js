@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-require('./normalizeEnv')
+require('./env').normalizeEnv()
 
 const fs = require('fs')
 const path = require('path')

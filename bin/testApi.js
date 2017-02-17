@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-require('./normalizeEnv')
+require('./env').normalizeEnv()
 
 const exec = require('child_process').exec
 const cmd = 'istanbul test -- _mocha'

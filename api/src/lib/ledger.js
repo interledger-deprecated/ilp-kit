@@ -20,10 +20,10 @@ module.exports = class Ledger extends EventEmitter {
 
     const self = this
 
-    this.config = config.data
+    this.config = config
     this.log = log('ledger')
-    this.ledgerUri = this.config.getIn(['ledger', 'uri'])
-    this.ledgerUriPublic = this.config.getIn(['ledger', 'public_uri'])
+    this.ledgerUri = this.config.data.getIn(['ledger', 'uri'])
+    this.ledgerUriPublic = this.config.data.getIn(['ledger', 'public_uri'])
 
     container.schedulePostConstructor((User, Payment) => {
       self.User = User
@@ -46,13 +46,13 @@ module.exports = class Ledger extends EventEmitter {
     return response.body
   }
 
-  * getAccount(user, admin) {
+  * getAccount (user, admin) {
     let response
 
     try {
       response = yield superagent
         .get(this.ledgerUri + '/accounts/' + user.username)
-        .auth(admin ? this.config.getIn(['ledger', 'admin', 'user']) : user.username, admin ? this.config.getIn(['ledger', 'admin', 'pass']) : user.password)
+        .auth(admin ? this.config.data.getIn(['ledger', 'admin', 'user']) : user.username, admin ? this.config.data.getIn(['ledger', 'admin', 'pass']) : user.password)
         .end()
     } catch (e) {
       if (e.response && e.response.body &&
@@ -67,13 +67,13 @@ module.exports = class Ledger extends EventEmitter {
     return response.body
   }
 
-  * getAccounts() {
+  * getAccounts () {
     let response
 
     try {
       response = yield superagent
         .get(this.ledgerUri + '/accounts')
-        .auth(this.config.getIn(['ledger', 'admin', 'user']), this.config.getIn(['ledger', 'admin', 'pass']))
+        .auth(this.config.data.getIn(['ledger', 'admin', 'user']), this.config.data.getIn(['ledger', 'admin', 'pass']))
         .end()
     } catch (e) {
       if (e.response && e.response.body &&
@@ -99,8 +99,8 @@ module.exports = class Ledger extends EventEmitter {
 
   // Make sure admin minimum allowed balance is negative infinity
   * setupAdminAccount() {
-    const username = this.config.getIn(['ledger', 'admin', 'user'])
-    const password = this.config.getIn(['ledger', 'admin', 'pass'])
+    const username = this.config.data.getIn(['ledger', 'admin', 'user'])
+    const password = this.config.data.getIn(['ledger', 'admin', 'pass'])
 
     // Get the account
     const account = yield this.getAccount({ username, password })
@@ -120,7 +120,7 @@ module.exports = class Ledger extends EventEmitter {
     return response.body
   }
 
-  updateAccount(user, admin) {
+  updateAccount (user, admin) {
     const data = {
       name: user.username
     }
@@ -135,8 +135,8 @@ module.exports = class Ledger extends EventEmitter {
 
     if (admin) {
       user = {
-        username: this.config.getIn(['ledger', 'admin', 'user']),
-        password: this.config.getIn(['ledger', 'admin', 'pass'])
+        username: this.config.data.getIn(['ledger', 'admin', 'user']),
+        password: this.config.data.getIn(['ledger', 'admin', 'pass'])
       }
     }
 
@@ -154,8 +154,8 @@ module.exports = class Ledger extends EventEmitter {
     }
 
     return yield this.putAccount({
-      username: this.config.getIn(['ledger', 'admin', 'user']),
-      password: this.config.getIn(['ledger', 'admin', 'pass'])
+      username: this.config.data.getIn(['ledger', 'admin', 'user']),
+      password: this.config.data.getIn(['ledger', 'admin', 'pass'])
     }, data)
   }
 }

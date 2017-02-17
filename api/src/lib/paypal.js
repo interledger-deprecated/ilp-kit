@@ -8,7 +8,7 @@ const debug = require('debug')('ilp-kit:paypal')
 module.exports = class Paypal {
   static constitute() { return [Config, SettlementMethodFactory] }
   constructor(config, SettlementMethod) {
-    this.config = config.data
+    this.config = config
     this.SettlementMethod = SettlementMethod
   }
 
@@ -59,8 +59,8 @@ module.exports = class Paypal {
       .send({
         intent: 'sale',
         redirect_urls: {
-          return_url: `${this.config.getIn(['server', 'base_uri'])}/settlements/${peer.destination}/paypal/execute`,
-          cancel_url: `${this.config.getIn(['server', 'base_uri'])}/settlements/${peer.destination}/paypal/cancel`
+          return_url: `${this.config.data.getIn(['server', 'base_uri'])}/settlements/${peer.destination}/paypal/execute`,
+          cancel_url: `${this.config.data.getIn(['server', 'base_uri'])}/settlements/${peer.destination}/paypal/cancel`
         },
         payer: {
           payment_method: 'paypal'

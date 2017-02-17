@@ -1,7 +1,7 @@
 var Express = require('express');
 var webpack = require('webpack');
 
-require('../bin/normalizeEnv')
+require('../bin/env').normalizeEnv()
 
 var config = require('../src/config');
 var webpackConfig = require('./dev.config');

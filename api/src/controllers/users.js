@@ -298,7 +298,7 @@ function UsersControllerFactory (auth, User, Invite, log, ledger, socket, config
      *      "id": 1
      *    }
      */
-    static * putResource() {
+    static * putResource () {
       const data = this.body
       const user = yield User.findOne({ where: {id: this.req.user.id} })
 
@@ -322,6 +322,11 @@ function UsersControllerFactory (auth, User, Invite, log, ledger, socket, config
           password: data.password,
           newPassword: data.newPassword
         })
+
+        // If this is the admin, update the environment and the env.list file too
+        if (user.isAdmin) {
+          config.changeAdminPass(data.newPassword)
+        }
 
         user.password = data.newPassword
       }

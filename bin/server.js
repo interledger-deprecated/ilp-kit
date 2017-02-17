@@ -19,7 +19,7 @@ if (__DEVELOPMENT__) {
   }
 }
 
-require('./normalizeEnv')
+require('./env').normalizeEnv()
 
 // https://github.com/halt-hammerzeit/webpack-isomorphic-tools
 const WebpackIsomorphicTools = require('webpack-isomorphic-tools')

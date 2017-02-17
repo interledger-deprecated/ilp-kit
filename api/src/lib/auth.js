@@ -112,11 +112,6 @@ module.exports = class Auth {
           user = yield user.appendLedgerAccount()
           user.password = userObj.password
 
-          // isAdmin
-          if (user.username === self.config.data.getIn(['ledger', 'admin', 'user'])) {
-            user.isAdmin = true
-          }
-
           done(null, user)
         }))
     })
@@ -176,11 +171,6 @@ module.exports = class Auth {
         // Append ledger account
         const user = yield dbUser.appendLedgerAccount(ledgerUser)
         user.password = password
-
-        // isAdmin
-        if (dbUser.username === self.config.data.getIn(['ledger', 'admin', 'user'])) {
-          user.isAdmin = true
-        }
 
         return done(null, user)
       }
