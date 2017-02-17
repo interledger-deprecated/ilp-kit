@@ -305,7 +305,7 @@ function UsersControllerFactory (auth, User, Invite, log, ledger, socket, config
       // Is the current password right?
       yield ledger.getAccount({
         username: user.username,
-        password: data.password
+        password: this.req.user.password
       })
 
       // TODO:SECURITY sanity checking
