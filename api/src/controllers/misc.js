@@ -2,6 +2,7 @@
 
 module.exports = MiscControllerFactory
 
+const exec = require('child_process').exec
 const Auth = require('../lib/auth')
 const Log = require('../lib/log')
 const Config = require('../lib/config')
@@ -73,8 +74,15 @@ function MiscControllerFactory (Auth, log, config, ledger, utils) {
      *      "currencySymbol": "$"
      *    }
      */
-    static * config() {
+    static * config () {
       const ledgerInfo = yield ledger.getInfo()
+
+      const packageVersion = require('../../../package.json').version
+      const gitCommit = yield new Promise(resolve => {
+        exec('git rev-parse --short HEAD', { cwd: __dirname }, (err, stdout) => {
+          resolve(stdout.split('\n').join(''))
+        })
+      })
 
       const response = {
         clientUri: config.data.get('client_host'),
@@ -89,7 +97,8 @@ function MiscControllerFactory (Auth, log, config, ledger, utils) {
           ga: config.data.getIn(['track', 'ga']),
           mixpanel: config.data.getIn(['track', 'mixpanel'])
         },
-        githubAuth: (config.data.getIn(['github', 'client_id']) && config.data.getIn(['github', 'client_secret']))
+        githubAuth: (config.data.getIn(['github', 'client_id']) && config.data.getIn(['github', 'client_secret'])),
+        version: `${packageVersion}-${gitCommit}`
       }
 
       if (config.data.get('reload')) {
