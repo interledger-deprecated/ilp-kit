@@ -205,6 +205,8 @@ export default class App extends Component {
         <div className={cx('appContent')}>
           {this.props.children}
         </div>
+
+        {advancedMode && <div className={cx('version')}>Version: {config.version}</div>}
       </div>
     )
   }
