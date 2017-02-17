@@ -84,7 +84,10 @@ module.exports = class Conncetor {
     if (peerInfo && peerInfo.publicKey) return peerInfo
 
     // Get the host publicKey
-    const hostInfo = yield this.utils.hostLookup('https://' + peer.hostname)
+    const secure = this.config.getIn(['server', 'public_secure'])
+    const isLocalhost = /^localhost(:\d+)?$/i.test(peer.hostname)
+    const proto = (!secure && isLocalhost) ? 'http://' : 'https://' // allow http connections on localhost
+    const hostInfo = yield this.utils.hostLookup(proto + peer.hostname)
 
     let publicKey
     let token
