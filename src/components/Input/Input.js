@@ -13,7 +13,8 @@ export default class Input extends Component {
     autoCapitalize: PropTypes.string,
     onChange: PropTypes.func,
     debounce: PropTypes.bool,
-    noErrors: PropTypes.bool
+    noErrors: PropTypes.bool,
+    validText: PropTypes.any
   }
 
   static defaultProps = {
@@ -67,7 +68,7 @@ export default class Input extends Component {
   }
 
   renderInput() {
-    const { object, type, disabled, size, focus, autoCapitalize, noErrors } = this.props
+    const { object, type, disabled, size, focus, autoCapitalize, noErrors, validText } = this.props
 
     return (
       <span>
@@ -78,6 +79,7 @@ export default class Input extends Component {
                autoCapitalize={autoCapitalize} />
 
         {!noErrors && object.dirty && object.error && <div className="text-danger">{object.error}</div>}
+        {validText && <div className="text-success">{validText}</div>}
       </span>
     )
   }

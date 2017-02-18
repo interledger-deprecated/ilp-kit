@@ -1,6 +1,6 @@
 import React, {Component, PropTypes} from 'react'
 import {reduxForm} from 'redux-form'
-import { validate } from './SendValidation'
+import { validate, asyncValidate } from './SendValidation'
 import * as sendActions from 'redux/actions/send'
 
 import { successable } from 'decorators'
@@ -21,6 +21,7 @@ import Input from 'components/Input/Input'
   form: 'send',
   fields: ['destination', 'sourceAmount', 'destinationAmount', 'message', 'repeats', 'interval'],
   validate,
+  asyncValidate,
   asyncBlurFields: ['destination'],
 }, state => ({
   user: state.auth.user,
@@ -30,6 +31,7 @@ import Input from 'components/Input/Input'
   send: state.send,
   quote: state.send.quote,
   err: state.send.err,
+  quoteError: state.send.quoteError,
   quoting: state.send.quoting,
   advancedMode: state.auth.advancedMode,
   config: state.auth.config,
@@ -49,6 +51,7 @@ export default class SendForm extends Component {
     quote: PropTypes.object,
     quoting: PropTypes.bool,
     err: PropTypes.object,
+    quoteError: PropTypes.object,
     resetData: PropTypes.func,
     data: PropTypes.object,
     advancedMode: PropTypes.bool,
@@ -70,6 +73,10 @@ export default class SendForm extends Component {
   }
 
   state = {}
+
+  componentWillUnmount() {
+    this.props.unmount()
+  }
 
   transfer = data => {
     return this.props.transfer(data)
@@ -139,7 +146,7 @@ export default class SendForm extends Component {
 
     const { pristine, invalid, handleSubmit, submitting, success,
       advancedMode, quoting, data, fields: { destination, sourceAmount,
-      destinationAmount, message, repeats, interval }, err } = this.props
+      destinationAmount, message, repeats, interval }, err, quoteError } = this.props
     const { showAdvanced } = this.state
 
     // TODO initial render should show a currency
@@ -156,8 +163,6 @@ export default class SendForm extends Component {
             {(() => {
               switch (err.id) {
                 case 'LedgerInsufficientFundsError': return 'You have insufficient funds to make the payment'
-                case 'NotFoundError': return 'Account not found'
-                case 'NoQuoteError': return "Couldn't find a quote for the specified recipient or amount"
                 default: return 'Something went wrong'
               }
             })()}
@@ -189,8 +194,8 @@ export default class SendForm extends Component {
 
             <div className="row">
               <div className="col-sm-5">
-                <button type="submit" className="btn btn-complete btn-block"
-                  disabled={(!data && pristine) || invalid || submitting || quoting || err.id === 'NotFoundError'}>
+                <button type="submit" className="btn btn-complete btn-block btn-lg"
+                  disabled={(!data && pristine) || invalid || submitting || quoting || err.id === 'NotFoundError' || quoteError}>
                   {submitting ? 'Sending...' : 'Send'}
                 </button>
               </div>

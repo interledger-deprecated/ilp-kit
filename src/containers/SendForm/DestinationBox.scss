@@ -1,0 +1,26 @@
+@import 'variables';
+
+.inputBox {
+  position: relative;
+
+  input {
+    padding: 12px 0 33px 0 !important;
+  }
+
+  &.hasError input {
+    padding: 0 0 0 0 !important;
+  }
+
+  &.hasName input {
+    padding: 0 70px 0 0 !important;
+  }
+
+  img {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+  }
+}
