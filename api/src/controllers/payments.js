@@ -150,7 +150,7 @@ function PaymentsControllerFactory (deps) {
      *      "address": "wallet2.alice.~ipr.csWIkAxOSfo.3c51a836-6a2a-40b4-8905-a57e9806a1ac",
      *      "amount": "10.00",
      *      "expires_at": "2016-09-06T22:47:01.668Z",
-     *      "condition": "cc:0:3:XcJRQrVJQKsXrXnpHIk1Nm7PBm5JfnFgmd8ocsexjO4:32"
+     *      "condition": "XcJRQrVJQKsXrXnpHIk1Nm7PBm5JfnFgmd8ocsexjO4"
      *    }
      */
     static async query (ctx) {
