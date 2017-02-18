@@ -9,12 +9,13 @@ const initialState = {
   destinationAmount: null
 }
 
-export default function reducer(state = initialState, action = {}) {
+export default function reducer (state = initialState, action = {}) {
   switch (action.type) {
     case types.DESTINATION_CHANGE:
       return {
         ...state,
-        err: {}
+        err: {},
+        quoteError: null
       }
     case types.DESTINATION_CHANGE_SUCCESS:
       return {
@@ -22,10 +23,10 @@ export default function reducer(state = initialState, action = {}) {
         destinationInfo: action.result
       }
     case types.DESTINATION_CHANGE_FAIL:
+    case types.DESTINATION_RESET:
       return {
         ...state,
-        destinationInfo: {},
-        err: action.error
+        destinationInfo: {}
       }
     case types.AMOUNTS_CHANGE:
       return {
@@ -37,7 +38,8 @@ export default function reducer(state = initialState, action = {}) {
       return {
         ...state,
         quote: {},
-        quoting: true
+        quoting: true,
+        quoteError: null
       }
     case types.REQUEST_QUOTE_SUCCESS:
       return {
@@ -46,20 +48,21 @@ export default function reducer(state = initialState, action = {}) {
         quoting: false,
         sourceAmount: action.result.sourceAmount,
         destinationAmount: action.result.destinationAmount,
-        err: {}
+        quoteError: {}
       }
     case types.REQUEST_QUOTE_FAIL:
       return {
         ...state,
         quote: {},
         quoting: false,
-        err: action.error
+        quoteError: action.error
       }
     case types.SEND_RESET:
       return {
         ...state,
         quote: {},
-        destinationInfo: {}
+        destinationInfo: {},
+        quoteError: null
       }
     case types.SEND_FAIL:
       return {
