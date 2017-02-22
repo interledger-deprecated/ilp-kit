@@ -2,6 +2,7 @@
 
 module.exports = AuthControllerFactory
 
+const body = require('koa-better-body')
 const path = require('path')
 const passport = require('koa-passport')
 const jimp = require('jimp')
@@ -79,7 +80,13 @@ function AuthControllerFactory (User, log, ledger, mailer, auth) {
       router.get('/auth/load', this.load)
       router.post('/auth/forgot-password', this.forgotPassword)
       router.post('/auth/change-password', this.changePassword)
-      router.post('/auth/profilepic', auth.checkAuth, this.changeProfilePicture)
+      router.post('/auth/profilepic',
+        body({
+          multipart: true,
+          uploadDir: __dirname + '/../../../uploads'
+        }),
+        auth.checkAuth,
+        this.changeProfilePicture)
 
       // Logout. Clears the session
       router.post('/auth/logout', this.logout)
@@ -179,18 +186,19 @@ function AuthControllerFactory (User, log, ledger, mailer, auth) {
     }
 
     static * changeProfilePicture () {
-      const files = this.body.files
+      const file = this.request.files && this.request.files[0]
 
       let user = this.req.user
       if (!user) throw new NotFoundError('No active user session')
+      if (!file) throw new InvalidBodyError('Request doesn\'t include an image file')
 
       user = yield User.findOne({where: {id: user.id}})
 
-      const newFilePath = files.file.path.replace(/(\.[\w\d_-]+)$/i, '_square$1')
+      const newFilePath = file.path.replace(/(\.[\w\d_-]+)$/i, '_square$1')
 
       // Resize
       try {
-        const image = yield jimp.read(files.file.path)
+        const image = yield jimp.read(file.path)
 
         image.cover(200, 200, jimp.HORIZONTAL_ALIGN_CENTER, jimp.VERTICAL_ALIGN_TOP)
           .write(newFilePath, err => {

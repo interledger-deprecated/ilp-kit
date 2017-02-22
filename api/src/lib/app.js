@@ -3,7 +3,7 @@
 const fs = require('fs')
 const co = require('co')
 const Koa = require('koa.io')
-const bodyParser = require('koa-body')
+const body = require('koa-better-body')
 const logger = require('koa-mag')
 const session = require('koa-session')
 const cors = require('kcors')
@@ -51,19 +51,16 @@ module.exports = class App {
       if (err.code !== 'EEXIST') { throw err }
     }
 
-    app.use(bodyParser({
-      multipart: true,
-      formidable: {
-        keepExtensions: true,
-        uploadDir
-      }
+    app.use(body({
+      multipart: false,
+      strict: false
     }))
 
     app.use(function *(next) {
       if (this.request.method === 'POST' || this.request.method === 'PUT') {
         // the parsed body will store in this.request.body
         // if nothing was parsed, body will be an empty object {}
-        this.body = this.request.body
+        this.body = this.request.fields
       }
       yield next
     })
