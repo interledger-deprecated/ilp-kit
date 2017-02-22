@@ -127,7 +127,7 @@ export default class AmountsBox extends Component {
           </div>
         </div>
 
-        {quoteError && <div className="text-danger">No quote for the specified recipient or amount</div>}
+        {quoteError && quoteError.id && <div className="text-danger">No quote for the specified recipient or amount</div>}
       </div>
     )
   }
