@@ -21,8 +21,8 @@
   position: relative;
 
   .hostnameBox {
-    width: 25%;
-    padding-top: 10px;
+    width: 30%;
+    line-height: 35px;
 
     .destination i {
       width: 15px;
@@ -35,46 +35,44 @@
     height: 40px;
   }
   .balanceBox {
-    width: 55%;
+    width: 50%;
     overflow: hidden;
 
     .minBalance {
       float: left;
       text-align: right;
       width: 20%;
-      padding: 5px 5px 5px 0;
-      border-top: 1px solid transparent;
-      border-bottom: 1px solid transparent;
+      padding: 0 5px 0 0;
+      line-height: 35px;
     }
     .maxBalance {
       float: left;
       text-align: left;
-      width: 20%;
-      padding: 5px 0 5px 5px;
-      border-top: 1px solid transparent;
-      border-bottom: 1px solid transparent;
+      width: 25%;
+      padding: 0 0 0 5px;
+      line-height: 35px;
     }
 
     .graph {
       position: relative;
       float: left;
-      width: 60%;
-      height: 30px;
+      width: 55%;
+      height: 35px;
       border-top: 1px solid #d9d9d9;
       border-bottom: 1px solid #d9d9d9;
 
       .balance {
         text-align: center;
-        padding: 5px 0;
+        line-height: 35px;
       }
 
       .min, .current, .max {
         position: absolute;
         top: 0;
-        height: 28px;
-        width: 1px;
+        height: 34px;
+        width: 0;
         display: inline-block;
-        padding: 5px 0;
+        line-height: 35px;
         border-left: 1px solid #d9d9d9;
       }
       .min {
@@ -105,7 +103,7 @@
   .icon {
     display: inline-block;
     width: 15px;
-    margin: 0 8px 0 0;
+    margin: 0 5px 0 0;
   }
 }
 .limit {
@@ -117,7 +115,10 @@
   }
 }
 .limitInput {
-  width: 100%;
+  width: 70px;
+  border: 1px solid #d9d9d9;
+  padding: 6px 3px;
+  margin: -3px 0;
 }
 span.limit {
   cursor: pointer;

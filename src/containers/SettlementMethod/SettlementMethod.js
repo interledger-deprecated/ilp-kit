@@ -98,7 +98,7 @@ export default class SettlementMethod extends Component {
       <div className={cx('SettlementMethod')}>
         <Helmet title={method.name} />
 
-        <div className={cx('row', 'enableBox')}>
+        <div className={cx('row', 'row-sm', 'enableBox')}>
           <div className={cx('col-sm-8', 'title')}>
             {method.name}
           </div>

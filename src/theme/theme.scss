@@ -70,6 +70,17 @@ div[tabindex="-1"]:focus {
 }
 
 // Bootstrap
+.row-sm > div {
+  padding-left: 10px;
+  padding-right: 10px;
+
+  &:first-child {
+    padding-left: 15px;
+  }
+  &:last-child {
+    padding-right: 15px;
+  }
+}
 .col {
   position: relative;
   min-height: 1px;
