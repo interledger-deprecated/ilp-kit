@@ -6,6 +6,7 @@ import { HotKeys } from 'react-hotkeys'
 
 import { RIENumber } from 'riek'
 
+import DangerButton from 'components/DangerButton/DangerButton'
 import HelpIcon from 'components/HelpIcon/HelpIcon'
 
 import { load, update, remove } from 'redux/actions/peer'
@@ -99,10 +100,11 @@ export default class Peers extends Component {
             <div className={cx('col', 'actionsBox')}>
               {peer.online && peer.minBalance !== 0 &&
               <PeerSettlementButton peer={peer} />}
-              {/* TODO:UX deleteion confirmation */}
-              <button type="button" className={cx('btn', 'btn-danger', 'btn-delete')} onClick={this.handleRemove.bind(null, peer)}>
-                x
-              </button>
+              <DangerButton initialText="x"
+                            confirmationText="sure?"
+                            onConfirm={this.handleRemove.bind(null, peer)}
+                            id={peer.id}
+                            className={cx('btn-delete')} />
             </div>
           </div>
         </div>
