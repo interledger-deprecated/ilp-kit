@@ -4,15 +4,19 @@
   position: relative;
 
   input {
-    padding: 12px 0 33px 0 !important;
+    height: 50px !important;
   }
 
   &.hasError input {
-    padding: 0 0 0 0 !important;
+    height: 30px !important;
   }
 
   &.hasName input {
-    padding: 0 70px 0 0 !important;
+    height: 30px !important;
+  }
+
+  &.hasImage input {
+    padding-right: 75px;
   }
 
   img {

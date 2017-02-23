@@ -44,12 +44,11 @@ export default class DestinationBox extends Component {
   render() {
     const { destinationInfo, destinationField } = this.props
 
-    console.log('DestinationBox:47', destinationInfo)
-
     return (
       <div className={cx('DestinationBox')}>
         <div className={cx('form-group', 'inputBox',
           !destinationField.active && destinationInfo.name && 'hasName',
+          !destinationField.active && destinationInfo.imageUrl && 'hasImage',
           destinationField.dirty && destinationField.error && 'hasError')}>
           <Input object={destinationField}
                  label="Recipient"
