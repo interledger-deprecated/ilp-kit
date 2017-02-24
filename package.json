@@ -143,7 +143,7 @@
     "file-loader": "^0.9.0",
     "five-bells-condition": "^3.2.0",
     "five-bells-ledger": "^19.4.1",
-    "five-bells-shared": "^14.1.2",
+    "five-bells-shared": "^21.2.0",
     "font-awesome": "^4.7.0",
     "font-awesome-webpack": "0.0.4",
     "hoist-non-react-statics": "^1.0.3",
