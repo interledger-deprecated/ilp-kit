@@ -9,6 +9,5 @@
       "type": "string",
       "format": "email"
     }
-  },
-  "required": []
+  }
 }
