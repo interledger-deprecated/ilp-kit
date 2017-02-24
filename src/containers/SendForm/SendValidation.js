@@ -40,6 +40,9 @@ export const validate = (values, props) => {
 
 export const asyncValidate = (values, dispatch) => {
   return dispatch(destinationChange(values.destination))
+    .then(() => {
+      // promise should resolve without a value to be considered valid
+    })
     .catch(() => {
       throw {destination: 'Account not found'}
     })
