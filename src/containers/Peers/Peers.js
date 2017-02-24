@@ -6,7 +6,7 @@ import { HotKeys } from 'react-hotkeys'
 
 import { RIENumber } from 'riek'
 
-import DangerButton from 'components/DangerButton/DangerButton'
+import { ButtonDanger } from 'napo'
 import HelpIcon from 'components/HelpIcon/HelpIcon'
 
 import { load, update, remove } from 'redux/actions/peer'
@@ -100,7 +100,7 @@ export default class Peers extends Component {
             <div className={cx('col', 'actionsBox')}>
               {peer.online && peer.minBalance !== 0 &&
               <PeerSettlementButton peer={peer} />}
-              <DangerButton initialText="x"
+              <ButtonDanger initialText="x"
                             confirmationText="sure?"
                             onConfirm={this.handleRemove.bind(null, peer)}
                             id={peer.id}
