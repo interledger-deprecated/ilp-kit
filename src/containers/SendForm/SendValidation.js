@@ -1,4 +1,5 @@
-import {createValidator, required, integer, number, minValue, lessThanBalance} from 'utils/validation'
+import { createValidator, required, integer, number, minValue, lessThanBalance } from 'utils/validation'
+import { destinationChange } from 'redux/actions/send'
 
 export const validate = (values, props) => {
   // Destination
@@ -35,4 +36,11 @@ export const validate = (values, props) => {
     repeats: [integer],
     interval: [integer, minValue(200)]
   })(values, props)
+}
+
+export const asyncValidate = (values, dispatch) => {
+  return dispatch(destinationChange(values.destination))
+    .catch(() => {
+      throw {destination: 'Account not found'}
+    })
 }

@@ -3,7 +3,7 @@
 const fs = require('fs')
 const co = require('co')
 const Koa = require('koa.io')
-const bodyParser = require('koa-body')
+const body = require('koa-better-body')
 const logger = require('koa-mag')
 const session = require('koa-session')
 const cors = require('kcors')
@@ -22,9 +22,9 @@ const Pay = require('./pay')
 const Connector = require('./connector')
 
 module.exports = class App {
-  static constitute() { return [ Config, Auth, Router, Validator, Ledger, SPSP, DB, Log, Socket, User, Pay, Connector ] }
-  constructor(config, auth, router, validator, ledger, spsp, db, log, socket, user, pay, connector) {
-    this.config = config.data
+  static constitute () { return [ Config, Auth, Router, Validator, Ledger, SPSP, DB, Log, Socket, User, Pay, Connector ] }
+  constructor (config, auth, router, validator, ledger, spsp, db, log, socket, user, pay, connector) {
+    this.config = config
     this.auth = auth
     this.router = router
     this.socket = socket
@@ -51,19 +51,16 @@ module.exports = class App {
       if (err.code !== 'EEXIST') { throw err }
     }
 
-    app.use(bodyParser({
-      multipart: true,
-      formidable: {
-        keepExtensions: true,
-        uploadDir
-      }
+    app.use(body({
+      multipart: false,
+      strict: false
     }))
 
     app.use(function *(next) {
       if (this.request.method === 'POST' || this.request.method === 'PUT') {
         // the parsed body will store in this.request.body
         // if nothing was parsed, body will be an empty object {}
-        this.body = this.request.body
+        this.body = this.request.fields
       }
       yield next
     })
@@ -74,7 +71,7 @@ module.exports = class App {
 
     app.proxy = true
 
-    app.keys = [this.config.get('sessionSecret')]
+    app.keys = [this.config.data.get('sessionSecret')]
     app.use(session({
       maxAge: 2592000000
     }, app))
@@ -122,9 +119,9 @@ module.exports = class App {
   }
 
   listen() {
-    this.app.listen(this.config.getIn(['server', 'port']))
-    this.log.info('wallet listening on ' + this.config.getIn(['server', 'bind_ip']) +
-      ':' + this.config.getIn(['server', 'port']))
-    this.log.info('public at ' + this.config.getIn(['server', 'base_uri']))
+    this.app.listen(this.config.data.getIn(['server', 'port']))
+    this.log.info('wallet listening on ' + this.config.data.getIn(['server', 'bind_ip']) +
+      ':' + this.config.data.getIn(['server', 'port']))
+    this.log.info('public at ' + this.config.data.getIn(['server', 'base_uri']))
   }
 }

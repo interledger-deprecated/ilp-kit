@@ -1,7 +1,8 @@
-"use strict"
+'use strict'
 
 module.exports = AuthControllerFactory
 
+const body = require('koa-better-body')
 const path = require('path')
 const passport = require('koa-passport')
 const jimp = require('jimp')
@@ -13,13 +14,14 @@ const UserFactory = require('../models/user')
 
 const NotFoundError = require('../errors/not-found-error')
 const PasswordsDontMatchError = require('../errors/passwords-dont-match-error')
+const InvalidBodyError = require('../errors/invalid-body-error')
 
-AuthControllerFactory.constitute = [UserFactory, Log, Ledger, Mailer]
-function AuthControllerFactory(User, log, ledger, mailer) {
+AuthControllerFactory.constitute = [UserFactory, Log, Ledger, Mailer, Auth]
+function AuthControllerFactory (User, log, ledger, mailer, auth) {
   log = log('auth')
 
   return class AuthController {
-    static init(router) {
+    static init (router) {
       /**
        * @api {post} /auth/login Login
        * @apiName Login
@@ -78,7 +80,13 @@ function AuthControllerFactory(User, log, ledger, mailer) {
       router.get('/auth/load', this.load)
       router.post('/auth/forgot-password', this.forgotPassword)
       router.post('/auth/change-password', this.changePassword)
-      router.post('/auth/profilepic', this.changeProfilePicture)
+      router.post('/auth/profilepic',
+        body({
+          multipart: true,
+          uploadDir: __dirname + '/../../../uploads'
+        }),
+        auth.checkAuth,
+        this.changeProfilePicture)
 
       // Logout. Clears the session
       router.post('/auth/logout', this.logout)
@@ -105,7 +113,7 @@ function AuthControllerFactory(User, log, ledger, mailer) {
      *      "id": 1
      *    }
      */
-    static * load() {
+    static * load () {
       const user = this.req.user
 
       if (!user) throw new NotFoundError('No active user session')
@@ -130,7 +138,7 @@ function AuthControllerFactory(User, log, ledger, mailer) {
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
      */
-    static * forgotPassword() {
+    static * forgotPassword () {
       const resource = this.body.resource
 
       // TODO think about github users
@@ -154,7 +162,7 @@ function AuthControllerFactory(User, log, ledger, mailer) {
       this.status = 200
     }
 
-    static * changePassword() {
+    static * changePassword () {
       const dbUser = yield User.findOne({ where: { username: this.body.username } } )
 
       if (!dbUser) throw new NotFoundError('Wrong username')
@@ -177,28 +185,30 @@ function AuthControllerFactory(User, log, ledger, mailer) {
       this.body = dbUser.getDataExternal()
     }
 
-    static * changeProfilePicture() {
-      const files = this.body.files
+    static * changeProfilePicture () {
+      const file = this.request.files && this.request.files[0]
 
       let user = this.req.user
       if (!user) throw new NotFoundError('No active user session')
+      if (!file) throw new InvalidBodyError('Request doesn\'t include an image file')
 
       user = yield User.findOne({where: {id: user.id}})
 
-      const newFilePath = files.file.path.replace(/(\.[\w\d_-]+)$/i, '_square$1')
+      const newFilePath = file.path.replace(/(\.[\w\d_-]+)$/i, '_square$1')
 
       // Resize
-      jimp.read(files.file.path, (err, image) => {
-        if (err) {
-          throw err
-        }
+      try {
+        const image = yield jimp.read(file.path)
+
         image.cover(200, 200, jimp.HORIZONTAL_ALIGN_CENTER, jimp.VERTICAL_ALIGN_TOP)
           .write(newFilePath, err => {
             if (err) {
               console.log('auth:197', err)
             }
           })
-      })
+      } catch (e) {
+        throw new InvalidBodyError('Unsopported image format')
+      }
 
       user.profile_picture = path.basename(newFilePath)
 
@@ -226,7 +236,7 @@ function AuthControllerFactory(User, log, ledger, mailer) {
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
      */
-    static logout() {
+    static logout () {
       this.session = null
       this.status = 200
     }

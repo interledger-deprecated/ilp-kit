@@ -41,6 +41,10 @@ function UserFactory (sequelize, validator, ledger, config, utils) {
 
       data.identifier = utils.getWebfingerAddress(data.username)
 
+      if (data.username === config.data.getIn(['ledger', 'admin', 'user'])) {
+        data.isAdmin = true
+      }
+
       return data
     }
 
@@ -177,7 +181,7 @@ function UserFactory (sequelize, validator, ledger, config, utils) {
       return this
     }
 
-    * appendLedgerAccount(ledgerUser) {
+    * appendLedgerAccount (ledgerUser) {
       if (!ledgerUser) {
         ledgerUser = yield ledger.getAccount(this, true)
       }

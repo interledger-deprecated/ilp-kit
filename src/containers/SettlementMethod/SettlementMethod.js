@@ -4,6 +4,8 @@ import Helmet from 'react-helmet'
 
 import { routeActions } from 'react-router-redux'
 
+import DangerButton from 'components/DangerButton/DangerButton'
+
 import SettlementPaypal from '../SettlementPaypal/SettlementPaypal'
 import SettlementBitcoin from '../SettlementBitcoin/SettlementBitcoin'
 import SettlementRipple from '../SettlementRipple/SettlementRipple'
@@ -98,7 +100,7 @@ export default class SettlementMethod extends Component {
       <div className={cx('SettlementMethod')}>
         <Helmet title={method.name} />
 
-        <div className={cx('row', 'enableBox')}>
+        <div className={cx('row', 'row-sm', 'enableBox')}>
           <div className={cx('col-sm-8', 'title')}>
             {method.name}
           </div>
@@ -114,9 +116,7 @@ export default class SettlementMethod extends Component {
             </button>}
           </div>
           <div className={cx('col-sm-2')}>
-            <button className={cx('btn', 'btn-default', 'btn-block')} onClick={this.handleDelete}>
-              Delete
-            </button>
+            <DangerButton onConfirm={this.handleDelete} id={method.id} />
           </div>
         </div>
 

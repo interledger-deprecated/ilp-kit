@@ -76,6 +76,10 @@ function PeersControllerFactory (auth, config, log, Peer, connector) {
     static * postResource () {
       const peer = new Peer()
 
+      if (!this.body.hostname || !this.body.limit || !this.body.currency) {
+        throw new InvalidBodyError('At least one of the required fields is missing')
+      }
+
       peer.hostname = this.body.hostname.replace(/.*?:\/\//g, '')
       peer.limit = this.body.limit
       peer.currency = this.body.currency.toUpperCase()

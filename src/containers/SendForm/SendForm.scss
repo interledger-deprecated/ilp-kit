@@ -4,37 +4,6 @@
   font-size: 15px;
   padding: 15px;
 }
-.destinationPreview {
-  display: flex;
-  border: 1px dashed $box-border-color;
-  margin: 0 0 10px;
-  padding: 5px;
-  background: $box-alternate-background-color;
-  border-radius: 2px;
-
-  img {
-    height: 60px;
-    border-radius: 2px;
-  }
-  .info {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin: 0 0 0 10px;
-    width: calc(100% - 70px);
-
-    .name {
-      display: block;
-      font-size: 16px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .currency {
-      font-size: 12px;
-      color: $text-color;
-    }
-  }
-}
 .advanced {
   margin: 10px 0 0 0;
 

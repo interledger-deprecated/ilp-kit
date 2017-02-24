@@ -146,8 +146,8 @@ export default class App extends Component {
           ]}
         />
 
-        {__CLIENT__ &&
-        <LoadingBar className={cx('loadingBar')} />}
+        {/* TODO commented out until there's a solution to https://github.com/mironov/react-redux-loading-bar/issues/30 */}
+        {/* <LoadingBar className={cx('loadingBar')} /> */}
 
         {/* <script src="https://web-payments.net/polyfill.js"></script> */}
 
@@ -205,6 +205,8 @@ export default class App extends Component {
         <div className={cx('appContent')}>
           {this.props.children}
         </div>
+
+        {advancedMode && <div className={cx('version')}>Version: {config.version}</div>}
       </div>
     )
   }

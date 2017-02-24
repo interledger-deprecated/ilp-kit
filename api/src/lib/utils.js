@@ -25,7 +25,7 @@ module.exports = class Utils {
     return destination.search('@') > -1
   }
 
-  * webfingerLookup (resource) {
+  * _webfingerLookup (resource) {
     const webfinger = new WebFinger({
       webfist_fallback: false,
       tls_only: true,
@@ -35,12 +35,12 @@ module.exports = class Utils {
 
     return (yield new Promise((resolve, reject) => {
       webfinger.lookup(resource, (err, res) => err ? reject(err) : resolve(res.object))
-    })).body
+    }))
   }
 
   * getWebfingerAccount (address) {
     try {
-      const response = yield this.webfingerLookup(address)
+      const response = yield this._webfingerLookup(address)
 
       return {
         ledgerUri: _.filter(response.links, {rel: 'https://interledger.org/rel/ledgerUri'})[0].href,
@@ -106,7 +106,7 @@ module.exports = class Utils {
   * hostLookup (host) {
     let response
     try {
-      response = yield this.webfingerLookup(host)
+      response = yield this._webfingerLookup(host)
     } catch (e) {
       throw new NotFoundError('Host is unavailable')
     }
@@ -114,9 +114,13 @@ module.exports = class Utils {
     if (!response) throw new NotFoundError('Host is unavailable')
     if (!response.properties) throw new NotFoundError("Host doesn't have an ilp-kit or the version is not compatible")
 
-    return {
-      publicKey: response.properties['https://interledger.org/rel/publicKey'],
-      peersRpcUri: _.filter(response.links, {rel: 'https://interledger.org/rel/peersRpcUri'})[0].href
+    try {
+      return {
+        publicKey: response.properties['https://interledger.org/rel/publicKey'],
+        peersRpcUri: _.filter(response.links, {rel: 'https://interledger.org/rel/peersRpcUri'})[0].href
+      }
+    } catch (e) {
+      throw new NotFoundError('Host webfinger parsing failed')
     }
   }
 }

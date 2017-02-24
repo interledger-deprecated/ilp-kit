@@ -2,9 +2,11 @@ import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import ReactTooltip from 'react-tooltip'
+import { HotKeys } from 'react-hotkeys'
 
 import { RIENumber } from 'riek'
 
+import DangerButton from 'components/DangerButton/DangerButton'
 import HelpIcon from 'components/HelpIcon/HelpIcon'
 
 import { load, update, remove } from 'redux/actions/peer'
@@ -37,10 +39,10 @@ export default class Peers extends Component {
     this.props.load()
   }
 
-  handleShowAddForm = () => {
+  handleToggleAddForm = () => {
     this.setState({
       ...this.state,
-      showAddForm: true
+      showAddForm: !this.state.showAddForm
     })
   }
 
@@ -64,17 +66,17 @@ export default class Peers extends Component {
     return (
       <div className={cx('panel', 'panel-default', 'peer')} key={peer.id}>
         <div className="panel-body">
-          <div className={cx('row')}>
+          <div className={cx('row', 'row-sm')}>
             <div className={cx('col', 'hostnameBox')}>
               {peer.online && <i className={cx('online', 'fa', 'fa-circle', 'icon')} data-tip="Online" />}
               {!peer.online && <i className={cx('offline', 'fa', 'fa-circle', 'icon')} data-tip="Offline" />}
-              <a href={'http://' + peer.hostname}>{peer.hostname}</a>
+              <span className={cx('label')}>{peer.currency}</span> <a href={'http://' + peer.hostname}>{peer.hostname}</a>
               {/* <div className={cx('destination')}>
                 <HelpIcon text="Destination number is used for settlement" />{peer.destination}
               </div> */}
             </div>
             <div className={cx('col', 'balanceBox')}>
-              <span className={cx('minBalance')}>{peer.minBalance} {peer.currency} <HelpIcon text="The minimum allowed balance (set by the peer)" /></span>
+              <span className={cx('minBalance')}>{peer.minBalance || 0} <HelpIcon text="The minimum allowed balance (set by the peer)" /></span>
               <div className={cx('graph')}>
                 <span className={cx('min')} />
                 <span className={cx('current')} style={{left: `calc(${currentPercent}% - 0.5px)`}} />
@@ -92,16 +94,17 @@ export default class Peers extends Component {
                   classEditing={cx('limitInput')}
                   classLoading={cx('loading')}
                   classInvalid={cx('invalid')}
-                /> {peer.currency}
+                />
               </span>
             </div>
             <div className={cx('col', 'actionsBox')}>
               {peer.online && peer.minBalance !== 0 &&
               <PeerSettlementButton peer={peer} />}
-              {/* TODO:UX deleteion confirmation */}
-              <button type="button" className={cx('btn', 'btn-danger', 'btn-delete')} onClick={this.handleRemove.bind(null, peer)}>
-                x
-              </button>
+              <DangerButton initialText="x"
+                            confirmationText="sure?"
+                            onConfirm={this.handleRemove.bind(null, peer)}
+                            id={peer.id}
+                            className={cx('btn-delete')} />
             </div>
           </div>
         </div>
@@ -124,19 +127,21 @@ export default class Peers extends Component {
             <h3>Peers</h3>
           </div>
           <div className={cx('col-sm-2')}>
-            <button type="button" className={cx('btn', 'btn-success', 'btn-block')} onClick={this.handleShowAddForm}>Add Peer</button>
+            <button type="button" className={cx('btn', 'btn-success', 'btn-block')} onClick={this.handleToggleAddForm}>Add Peer</button>
           </div>
         </div>}
 
         {showAddForm &&
-        <div className="panel panel-default">
-          <div className="panel-heading">
-            <div className="panel-title">Add a peer</div>
+        <HotKeys handlers={{ esc: this.handleToggleAddForm }}>
+          <div className="panel panel-default">
+            <div className="panel-heading">
+              <div className="panel-title">Add a peer</div>
+            </div>
+            <div className="panel-body">
+              <PeerAddForm peerState={this.props.peerState} />
+            </div>
           </div>
-          <div className="panel-body">
-            <PeerAddForm peerState={this.props.peerState} />
-          </div>
-        </div>}
+        </HotKeys>}
 
         <List
           emptyScreen={(

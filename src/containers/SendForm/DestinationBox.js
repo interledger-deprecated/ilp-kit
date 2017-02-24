@@ -1,9 +1,9 @@
 import React, {Component, PropTypes} from 'react'
 import { connect } from 'react-redux'
-import { destinationChange } from 'redux/actions/send'
+import { destinationChange, destinationReset } from 'redux/actions/send'
 
 import classNames from 'classnames/bind'
-import styles from './SendForm.scss'
+import styles from './DestinationBox.scss'
 const cx = classNames.bind(styles)
 
 import Input from 'components/Input/Input'
@@ -13,7 +13,7 @@ import Input from 'components/Input/Input'
     user: state.auth.user,
     destinationInfo: state.send.destinationInfo
   }),
-  { destinationChange })
+  { destinationChange, destinationReset })
 export default class DestinationBox extends Component {
   static propTypes = {
     user: PropTypes.object.isRequired,
@@ -27,7 +27,7 @@ export default class DestinationBox extends Component {
     const identifier = nextProps.destinationInfo.identifier
 
     // Destination change
-    if (this.props.destinationInfo.identifier !== identifier) {
+    if (identifier && this.props.destinationInfo.identifier !== identifier) {
       // Update the input if it's not what caused the change (not focused)
       if (!input.active) {
         input.onChange(identifier)
@@ -35,28 +35,32 @@ export default class DestinationBox extends Component {
     }
   }
 
-  handleDestinationInputChange = target => {
-    if (target.value === this.props.destinationInfo.identifier || this.props.destinationField.invalid) return
-
-    this.props.destinationChange(target.value)
+  onChange = (e) => {
+    if (!e.value) {
+      this.props.destinationReset()
+    }
   }
 
   render() {
     const { destinationInfo, destinationField } = this.props
 
     return (
-      <div>
-        <div className="form-group">
-          <Input object={destinationField} label="Recipient" size="lg" focus onChange={this.handleDestinationInputChange} debounce />
+      <div className={cx('DestinationBox')}>
+        <div className={cx('form-group', 'inputBox',
+          !destinationField.active && destinationInfo.name && 'hasName',
+          !destinationField.active && destinationInfo.imageUrl && 'hasImage',
+          destinationField.dirty && destinationField.error && 'hasError')}>
+          <Input object={destinationField}
+                 label="Recipient"
+                 size="lg"
+                 validText={!destinationField.active && destinationInfo.name}
+                 onChange={this.onChange}
+                 focus
+                 debounce />
+
+          {!destinationField.active && destinationInfo.imageUrl &&
+          <img src={destinationInfo.imageUrl || require('../../components/HistoryItem/placeholder.png')} />}
         </div>
-        {destinationInfo.currencyCode &&
-        <div className={cx('destinationPreview')}>
-          <img src={destinationInfo.imageUrl || require('../../components/HistoryItem/placeholder.png')} />
-          <div className={cx('info')}>
-            <div className={cx('name')}>{destinationInfo.name || destinationField.value}</div>
-            <div className={cx('currency')}>Accepts {destinationInfo.currencyCode}({destinationInfo.currencySymbol})</div>
-          </div>
-        </div>}
       </div>
     )
   }

@@ -32,10 +32,10 @@ export default class Onboarding extends Component {
   }
 
   render() {
-    const { user, peers } = this.props
+    const { user, peers, peersLoaded } = this.props
 
     if (!user.isAdmin) return null
-    if (peers.length > 0) return null
+    if (!peersLoaded || peers.length > 0) return null
 
     return (
       <div className={cx('panel', 'panel-default', 'Onboarding')}>

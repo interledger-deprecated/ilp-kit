@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { amountsChange, requestQuote } from 'redux/actions/send'
 
 import classNames from 'classnames/bind'
-import styles from './SendForm.scss'
+import styles from './AmountsBox.scss'
 const cx = classNames.bind(styles)
 
 import Input from 'components/Input/Input'
@@ -17,7 +17,7 @@ import Input from 'components/Input/Input'
     config: state.auth.config,
     quoting: state.send.quoting,
     quote: state.send.quote,
-    err: state.send.err
+    quoteError: state.send.quoteError
   }),
   { amountsChange, requestQuote })
 export default class AmountsBox extends Component {
@@ -31,12 +31,12 @@ export default class AmountsBox extends Component {
     amountsChange: PropTypes.func,
     requestQuote: PropTypes.func.isRequired,
     quote: PropTypes.object,
+    quoteError: PropTypes.object,
     quoting: PropTypes.bool,
-    err: PropTypes.object,
 
     // Props
     sourceAmountField: PropTypes.object,
-    destinationAmountField: PropTypes.object
+    destinationAmountField: PropTypes.object,
   }
 
   componentWillReceiveProps(nextProps) {
@@ -81,49 +81,53 @@ export default class AmountsBox extends Component {
   }
 
   render() {
-    const { destinationInfo, quoting, config, err,
-      sourceAmountField, destinationAmountField } = this.props
+    const { destinationInfo, quoting, config,
+      sourceAmountField, destinationAmountField, quoteError } = this.props
 
     const isSendingAmountDisabled = !destinationInfo.identifier
-      || err.id === 'NotFoundError'
+      || destinationInfo.error
       || (quoting && this.lastQuotingField === 'destination')
     const isReceivingAmountDisabled = !destinationInfo.identifier
-      || err.id === 'NotFoundError'
+      || destinationInfo.error
       || (quoting && this.lastQuotingField === 'source')
 
     const sourceCurrency = config.currencySymbol
     const destinationCurrency = (destinationInfo && destinationInfo.currencySymbol) || config.currencySymbol
 
     return (
-      <div className="row">
-        <div className="col-sm-6 form-group">
-          <label>You Send</label>
-          <div className={cx('input-group',
-            {disabled: isSendingAmountDisabled},
-            {focused: sourceAmountField.active})}>
-            <span className="input-group-addon">{sourceCurrency}</span>
-            <Input object={sourceAmountField} size="lg"
-                   disabled={isSendingAmountDisabled} noErrors debounce
-                   onChange={this.handleInputChange.bind(this, 'source')} />
-          </div>
+      <div className={cx('AmountsBox')}>
+        <div className={cx('row')}>
+          <div className="col-sm-6 form-group">
+            <label>You Send</label>
+            <div className={cx('input-group',
+              {disabled: isSendingAmountDisabled},
+              {focused: sourceAmountField.active})}>
+              <span className="input-group-addon">{sourceCurrency}</span>
+              <Input object={sourceAmountField} size="lg"
+                     disabled={isSendingAmountDisabled} noErrors debounce
+                     onChange={this.handleInputChange.bind(this, 'source')} />
+            </div>
 
-          {sourceAmountField.dirty && sourceAmountField.error &&
+            {sourceAmountField.dirty && sourceAmountField.error &&
             <div className="text-danger">{sourceAmountField.error}</div>}
-        </div>
-        <div className="col-sm-6 form-group">
-          <label>They Receive</label>
-          <div className={cx('input-group',
-            {disabled: isReceivingAmountDisabled},
-            {focused: destinationAmountField.active})}>
-            <span className="input-group-addon">{destinationCurrency}</span>
-            <Input object={destinationAmountField} size="lg"
-                   disabled={isReceivingAmountDisabled} noErrors debounce
-                   onChange={this.handleInputChange.bind(this, 'destination')} />
           </div>
+          <div className="col-sm-6 form-group">
+            <label>They Receive</label>
+            <div className={cx('input-group',
+              {disabled: isReceivingAmountDisabled},
+              {focused: destinationAmountField.active})}>
+              <span className="input-group-addon">{destinationCurrency}</span>
+              <Input object={destinationAmountField} size="lg"
+                     disabled={isReceivingAmountDisabled} noErrors debounce
+                     onChange={this.handleInputChange.bind(this, 'destination')} />
+            </div>
 
-          {destinationAmountField.dirty && destinationAmountField.error &&
+            {destinationAmountField.dirty && destinationAmountField.error &&
             <div className="text-danger">{destinationAmountField.error}</div>}
+          </div>
         </div>
+
+        {quoteError && quoteError.id && <div className="text-danger">No quote for the specified recipient or amount</div>}
       </div>
     )
   }
