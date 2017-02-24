@@ -155,7 +155,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
      */
 
     // TODO don't allow payments to self
-    static * putResource() {
+    static * putResource () {
       const id = this.params.id && this.params.id.toLowerCase()
       const payment = this.body
 

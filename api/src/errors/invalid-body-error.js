@@ -3,12 +3,12 @@
 const BaseError = require('five-bells-shared/errors/base-error')
 
 class InvalidBodyError extends BaseError {
-  constructor(message, validationErrors) {
+  constructor (message, validationErrors) {
     super(message)
     this.validationErrors = validationErrors
   }
 
-  debugPrint(log, validationError, indent) {
+  debugPrint (log, validationError, indent) {
     indent = indent || ''
     log.debug(indent + '-- ' + validationError)
     log.debug(indent + '   ' + validationError.schemaPath)
@@ -19,7 +19,7 @@ class InvalidBodyError extends BaseError {
     }
   }
 
-  * handler(ctx, log) {
+  * handler (ctx, log) {
     log.warn('Invalid body: ' + this.message)
     if (this.validationErrors) {
       for (let ve of this.validationErrors) {
@@ -30,8 +30,8 @@ class InvalidBodyError extends BaseError {
     ctx.status = 400
     ctx.body = {
       id: this.name,
-      message: this.message,
-      validationErrors: this.validationErrors
+      message: this.message
+      // validationErrors: this.validationErrors
     }
   }
 }
