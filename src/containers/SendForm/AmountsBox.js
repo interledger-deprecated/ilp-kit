@@ -43,12 +43,21 @@ export default class AmountsBox extends Component {
     // Amounts didn't change, ignore the rest
     if (this.props.sourceAmount === nextProps.sourceAmount
       && this.props.destinationAmount === nextProps.destinationAmount) {
+
+      if (nextProps.sourceAmountField.value !== nextProps.sourceAmount) {
+        this.updateSourceInput(nextProps)
+      }
+
+      if (nextProps.destinationAmountField.value !== nextProps.destinationAmount) {
+        this.updateDestinationInput(nextProps)
+      }
+
       return
     }
 
     // Update the inputs
-    nextProps.sourceAmountField.onChange(nextProps.sourceAmount || '') // null values don't work with redux-form
-    nextProps.destinationAmountField.onChange(nextProps.destinationAmount || '')
+    this.updateSourceInput(nextProps)
+    this.updateDestinationInput(nextProps)
 
     // Quoting requires a destination
     if (!nextProps.destinationInfo.identifier) return
@@ -67,6 +76,18 @@ export default class AmountsBox extends Component {
     })
 
     this.lastQuotingField = nextProps.sourceAmount ? 'source' : 'destination'
+  }
+
+  updateSourceInput = (props = this.props) => {
+    if (!props.sourceAmountField.active) {
+      props.sourceAmountField.onChange(props.sourceAmount || '') // null values don't work with redux-form
+    }
+  }
+
+  updateDestinationInput = (props = this.props) => {
+    if (!props.destinationAmountField.active) {
+      props.destinationAmountField.onChange(props.destinationAmount || '') // null values don't work with redux-form
+    }
   }
 
   handleInputChange = (type, target) => {
