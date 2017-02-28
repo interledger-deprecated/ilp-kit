@@ -11,6 +11,8 @@
 }
 .invite {
   position: relative;
+  border-bottom: 1px solid $history-payment-separator-color;
+  padding: 15px 0;
 
   &:hover .deleteButton {
     opacity: 1;

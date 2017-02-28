@@ -3,6 +3,8 @@ import { connect } from 'react-redux'
 import ReactTooltip from 'react-tooltip'
 import Helmet from 'react-helmet'
 
+import { ButtonDanger } from 'napo'
+
 import { loadCodes, remove } from 'redux/actions/invite'
 import List from 'components/List/List'
 import InviteCreateForm from 'containers/InviteCreateForm/InviteCreateForm'
@@ -47,33 +49,32 @@ export default class Invites extends Component {
     const config = this.props.config
 
     return (
-      <div className={cx('panel', 'panel-default', 'invite')} key={invite.code}>
-        <div className="panel-body">
-          <div className={cx('row')}>
-            <div className={cx('col-sm-6')}>
-              <span className={cx('lbl')}>Code</span>
-              <a href="" onClick={e => {e.preventDefault()}} data-tip="click to copy the link"
-                 data-clipboard-text={config.clientUri + '/register/' + invite.code}
-                 className={cx('code', 'copy')}>{invite.code}</a>
-            </div>
-            <div className={cx('col-sm-4', 'amountColumn')}>
-              <span className={cx('lbl')}>Amount</span>
-              <span className={cx('amount')}>{invite.amount}</span>
-            </div>
-            <div className={cx('col-sm-2')}>
-              <span className={cx('lbl')}>Claimed</span>
-              {!invite.claimed && <span className={cx('claimed')}>No</span>}
+      <div className={cx('invite')} key={invite.code}>
+        <div className={cx('row')}>
+          <div className={cx('col-sm-5')}>
+            <span className={cx('lbl')}>Code</span>
+            <a href="" onClick={e => {e.preventDefault()}} data-tip="click to copy the link"
+               data-clipboard-text={config.clientUri + '/register/' + invite.code}
+               className={cx('code', 'copy')}>{invite.code}</a>
+          </div>
+          <div className={cx('col-sm-3', 'amountColumn')}>
+            <span className={cx('lbl')}>Amount</span>
+            <span className={cx('amount')}>{invite.amount}</span>
+          </div>
+          <div className={cx('col-sm-2')}>
+            <span className={cx('lbl')}>Claimed</span>
+            {!invite.claimed && <span className={cx('claimed')}>No</span>}
 
-              {invite.user_id && <strong>{invite.User.username}</strong>}
-            </div>
+            {invite.user_id && <strong>{invite.User.username}</strong>}
+          </div>
+          <div className={cx('col-sm-2')}>
+            {/* TODO:UX shouldn't be able to delete already claimed ones */}
+            <ButtonDanger confirmationText="sure?"
+                          onConfirm={this.handleRemove.bind(null, invite.code)}
+                          id={invite.code}
+                          className={cx('btn-block', 'btn-delete')} />
           </div>
         </div>
-
-        {/* TODO:UX ask for confirmation */}
-        {/* TODO:UX shouldn't be able to delete already claimed ones */}
-        <a href="" className={cx('deleteButton')} onClick={this.handleRemove.bind(null, invite.code)}>
-          <i className="fa fa-times" />
-        </a>
 
         <ReactTooltip />
       </div>

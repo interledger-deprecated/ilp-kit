@@ -6,8 +6,8 @@
 $screen-md: 992px;
 
 .item {
-  border-top: 1px solid $history-payment-separator-color;
-  padding: 12px 20px;
+  border-bottom: 1px solid $history-payment-separator-color;
+  padding: 12px 0;
 }
 .link, .link:hover, .link:active, .link:visited {
   display: block;

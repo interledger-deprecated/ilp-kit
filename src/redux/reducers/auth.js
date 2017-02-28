@@ -8,7 +8,7 @@ const extendUser = (user) => {
 
   if (user.name) {
     extendedUser.firstName = user.name.split(' ')[0]
-    extendedUser.displayName = extendedUser.firstName
+    extendedUser.displayName = user.name
   }
 
   return extendedUser

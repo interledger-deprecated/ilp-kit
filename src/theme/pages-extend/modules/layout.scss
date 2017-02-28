@@ -1,24 +1,34 @@
+.navbar-default {
+}
 .navbar-active {
   background: #fff;
   border-color: #e7e7e7;
 }
-.navbar-collapse > .navbar-text {
-  margin-top: 20px;
-  margin-bottom: 20px;
-  padding-left: 10px;
-  padding-right: 10px;
+.navbar-collapse {
+  padding: 0;
+
+  & > .navbar-text {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
 }
 .navbar-nav > li {
-  &.active {
-    background: transparent;
-  }
+  padding: 0;
 
   & > a {
+    font-weight: bold;
     padding-top: 20px;
     padding-bottom: 20px;
     background: transparent;
 
     &:hover, &:active, &:focus {
+      background: transparent !important;
+    }
+  }
+  &.active {
+    & > a {
       background: transparent !important;
     }
   }
@@ -30,7 +40,7 @@
 }
 
 .navbar-brand {
-  padding: 20px 35px;
+  padding-top: 20px;
 }
 
 .copyright{

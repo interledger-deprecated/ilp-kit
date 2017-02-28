@@ -90,18 +90,14 @@ export default class Settlement extends Component {
             <SettlementAddButton className={cx('option')} />
           </div>
           <div className={cx('col-sm-8')}>
-            <div className={cx('panel', 'panel-default')}>
-              <div className="panel-body">
-                {list && list.length > 0 && children}
+            {list && list.length > 0 && children}
 
-                {!loading && list && list.length < 1 &&
-                <div className={cx('noResults')}>
-                  <i className={cx('fa', 'fa-credit-card-alt')} />
-                  <h1>No Settlement Methods</h1>
-                  <div>Use the button on the left to add your first settlement method</div>
-                </div>}
-              </div>
-            </div>
+            {!loading && list && list.length < 1 &&
+            <div className={cx('noResults')}>
+              <i className={cx('fa', 'fa-credit-card-alt')} />
+              <h1>No Settlement Methods</h1>
+              <div>Use the button on the left to add your first settlement method</div>
+            </div>}
           </div>
         </div>
       </div>

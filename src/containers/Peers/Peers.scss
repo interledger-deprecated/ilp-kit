@@ -3,7 +3,6 @@
 
 .header {
   margin-bottom: 20px;
-  padding: 0 20px;
 
   h3 {
     margin: 0;
@@ -19,6 +18,8 @@
 }
 .peer {
   position: relative;
+  border-top: 1px solid $history-payment-separator-color;
+  padding: 15px 0;
 
   .hostnameBox {
     width: 30%;

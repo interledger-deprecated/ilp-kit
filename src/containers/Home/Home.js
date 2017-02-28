@@ -95,26 +95,21 @@ export default class Home extends Component {
           <Onboarding />
 
           {/* History */}
-          <div className="panel panel-default">
-            <div className="panel-heading">
-              <div className="panel-title">
-                {showStats &&
-                <a href="" onClick={this.toggleStats}>Payment History</a>}
-                {!showStats &&
-                <span>Payment History</span>}
-              </div>
-              <div className="panel-title pull-right">
-                {showStats &&
-                <span>Stats</span>}
-                {!showStats &&
-                <a href="" onClick={this.toggleStats}>Stats</a>}
-              </div>
-            </div>
-            <div className="panel-body">
-              {!showStats && <History />}
-              {showStats && <Stats />}
-            </div>
+          {/* <div>
+            {showStats &&
+            <a href="" onClick={this.toggleStats}>Payment History</a>}
+            {!showStats &&
+            <span>Payment History</span>}
           </div>
+          <div className="pull-right">
+            {showStats &&
+            <span>Stats</span>}
+            {!showStats &&
+            <a href="" onClick={this.toggleStats}>Stats</a>}
+          </div> */}
+
+          {!showStats && <History />}
+          {showStats && <Stats />}
         </div>
         <div className="col-sm-4">
           {/*
@@ -134,26 +129,21 @@ export default class Home extends Component {
           </Alert>}
 
           {/* Balance */}
-          <div className="panel panel-default">
-            <div className="panel-body">
-              <div className={cx('balanceContainer')}>
-                <div className={cx('balanceDescription')}>Your Balance</div>
-                <div className={cx('balance')}>
-                  <Amount amount={user.balance} currencySymbol={config.currencySymbol} />
-                  {config.reload && <span className={cx('but')}>*</span>}
-                </div>
-                {config.reload &&
-                <div>
-                  <a className="btn btn-complete btn-lg"
-                     onClick={!user.isAdmin && this.reload} disabled={user.isAdmin}
-                     data-tip={user.isAdmin && "You have enough, you're the admin"}>
-                    {!reloading && 'Get More'}
-                    {reloading && 'Getting...'}
-                  </a>
-                  <div className={cx('balanceFake')}>* Don't get too excited, this is fake money</div>
-                </div>}
-              </div>
+          <div className={cx('balanceContainer')}>
+            <div className={cx('balance')}>
+              <Amount amount={user.balance} currencySymbol={config.currencySymbol} />
+              {config.reload && <span className={cx('but')}>*</span>}
             </div>
+            {config.reload &&
+            <div>
+              <a className="btn btn-complete btn-lg"
+                 onClick={!user.isAdmin && this.reload} disabled={user.isAdmin}
+                 data-tip={user.isAdmin && "You have enough, you're the admin"}>
+                {!reloading && 'Get More'}
+                {reloading && 'Getting...'}
+              </a>
+              <div className={cx('balanceFake')}>* Don't get too excited, this is fake money</div>
+            </div>}
           </div>
 
           {/* Send Form */}

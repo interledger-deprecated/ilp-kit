@@ -7,6 +7,8 @@ import LoadingBar from 'react-redux-loading-bar'
 import Navbar from 'react-bootstrap/lib/Navbar'
 import Nav from 'react-bootstrap/lib/Nav'
 import NavItem from 'react-bootstrap/lib/NavItem'
+import NavDropdown from 'react-bootstrap/lib/NavDropdown'
+import MenuItem from 'react-bootstrap/lib/MenuItem'
 import Label from 'react-bootstrap/lib/Label'
 
 import hotkeys from 'decorators/hotkeys'
@@ -129,7 +131,7 @@ export default class App extends Component {
     const appConfig = this.props.config || {}
 
     return (
-      <div className={cx('container')}>
+      <div>
         <Helmet
           defaultTitle={appConfig.title}
           titleTemplate={appConfig.title && '%s - ' + appConfig.title}
@@ -152,7 +154,7 @@ export default class App extends Component {
         {/* <script src="https://web-payments.net/polyfill.js"></script> */}
 
         {user &&
-        <Navbar fixedTop expanded={ this.state.navExpanded } onToggle={ this.onNavbarToggle }>
+        <Navbar inverse expanded={ this.state.navExpanded } onToggle={ this.onNavbarToggle }>
           <Navbar.Header>
             <Navbar.Brand>
               {appConfig.title} {advancedMode && <Label bsStyle="warning">Advanced Mode</Label>}
@@ -180,29 +182,21 @@ export default class App extends Component {
               <LinkContainer to="/settlement">
                 <NavItem onClick={this.onNavItemClick}>Settlement</NavItem>
               </LinkContainer>}
-              {!user.github_id &&
-              <LinkContainer to="/settings">
-                <NavItem onClick={this.onNavItemClick}>Settings</NavItem>
-              </LinkContainer>}
-              <NavItem href="https://interledgerjs.github.io/ilp-kit/apidoc/"
-                             target="_blank" onClick={this.onNavItemClick}>
-                API docs
-              </NavItem>
-              <LinkContainer to="/logout">
-                <NavItem className="logout-link" onClick={this.handleLogout}>
-                  Logout
-                </NavItem>
-              </LinkContainer>
+
+              <NavDropdown id="navDropdown" title={<span>{user.profile_picture && <img className={cx('profilePic')} src={user.profile_picture} />} {user.displayName}</span>}>
+                {!user.github_id &&
+                <LinkContainer to="/settings">
+                  <MenuItem>Settings</MenuItem>
+                </LinkContainer>}
+                <MenuItem href="https://interledgerjs.github.io/ilp-kit/apidoc/" target="_blank">API Docs</MenuItem>
+                <MenuItem divider />
+                <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
+              </NavDropdown>
             </Nav>
-            <Navbar.Text pullRight>
-              {user.profile_picture &&
-              <img className={cx('profilePic')} src={user.profile_picture} />}
-              Hi {user.displayName}
-            </Navbar.Text>
           </Navbar.Collapse>
         </Navbar>}
 
-        <div className={cx('appContent')}>
+        <div className={cx('container', 'appContent')}>
           {this.props.children}
         </div>
 

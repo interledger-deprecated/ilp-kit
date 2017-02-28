@@ -64,48 +64,46 @@ export default class Peers extends Component {
     const currentPercent = 100 * (peer.balance - Math.min(peer.minBalance, 0)) / (peer.limit - Math.min(peer.minBalance, 0))
 
     return (
-      <div className={cx('panel', 'panel-default', 'peer')} key={peer.id}>
-        <div className="panel-body">
-          <div className={cx('row', 'row-sm')}>
-            <div className={cx('col', 'hostnameBox')}>
-              {peer.online && <i className={cx('online', 'fa', 'fa-circle', 'icon')} data-tip="Online" />}
-              {!peer.online && <i className={cx('offline', 'fa', 'fa-circle', 'icon')} data-tip="Offline" />}
-              <span className={cx('label')}>{peer.currency}</span> <a href={'http://' + peer.hostname}>{peer.hostname}</a>
-              {/* <div className={cx('destination')}>
-                <HelpIcon text="Destination number is used for settlement" />{peer.destination}
-              </div> */}
-            </div>
-            <div className={cx('col', 'balanceBox')}>
-              <span className={cx('minBalance')}>{peer.minBalance || 0} <HelpIcon text="The minimum allowed balance (set by the peer)" /></span>
-              <div className={cx('graph')}>
-                <span className={cx('min')} />
-                <span className={cx('current')} style={{left: `calc(${currentPercent}% - 0.5px)`}} />
-                <span className={cx('max')} />
+      <div className={cx('peer')} key={peer.id}>
+        <div className={cx('row', 'row-sm')}>
+          <div className={cx('col', 'hostnameBox')}>
+            {peer.online && <i className={cx('online', 'fa', 'fa-circle', 'icon')} data-tip="Online" />}
+            {!peer.online && <i className={cx('offline', 'fa', 'fa-circle', 'icon')} data-tip="Offline" />}
+            <span className={cx('label')}>{peer.currency}</span> <a href={'http://' + peer.hostname}>{peer.hostname}</a>
+            {/* <div className={cx('destination')}>
+              <HelpIcon text="Destination number is used for settlement" />{peer.destination}
+            </div> */}
+          </div>
+          <div className={cx('col', 'balanceBox')}>
+            <span className={cx('minBalance')}>{peer.minBalance || 0} <HelpIcon text="The minimum allowed balance (set by the peer)" /></span>
+            <div className={cx('graph')}>
+              <span className={cx('min')} />
+              <span className={cx('current')} style={{left: `calc(${currentPercent}% - 0.5px)`}} />
+              <span className={cx('max')} />
 
-                <div className={cx('balance')}>{peer.balance || 0}</div>
-              </div>
-              <span className={cx('maxBalance')}>
-                {/* limit is converted to a string because of how <RIENumber> didValueChange works */}
-                <HelpIcon text="The maximum allowed balance (set by you)" /> <RIENumber
-                  value={peer.limit.toString()}
-                  propName="limit"
-                  change={this.handleUpdate.bind(null, peer)}
-                  className={cx('limit')}
-                  classEditing={cx('limitInput')}
-                  classLoading={cx('loading')}
-                  classInvalid={cx('invalid')}
-                />
-              </span>
+              <div className={cx('balance')}>{peer.balance || 0}</div>
             </div>
-            <div className={cx('col', 'actionsBox')}>
-              {peer.online && peer.minBalance !== 0 &&
-              <PeerSettlementButton peer={peer} />}
-              <ButtonDanger initialText="x"
-                            confirmationText="sure?"
-                            onConfirm={this.handleRemove.bind(null, peer)}
-                            id={peer.id}
-                            className={cx('btn-delete')} />
-            </div>
+            <span className={cx('maxBalance')}>
+              {/* limit is converted to a string because of how <RIENumber> didValueChange works */}
+              <HelpIcon text="The maximum allowed balance (set by you)" /> <RIENumber
+                value={peer.limit.toString()}
+                propName="limit"
+                change={this.handleUpdate.bind(null, peer)}
+                className={cx('limit')}
+                classEditing={cx('limitInput')}
+                classLoading={cx('loading')}
+                classInvalid={cx('invalid')}
+              />
+            </span>
+          </div>
+          <div className={cx('col', 'actionsBox')}>
+            {peer.online && peer.minBalance !== 0 &&
+            <PeerSettlementButton peer={peer} />}
+            <ButtonDanger initialText="x"
+                          confirmationText="sure?"
+                          onConfirm={this.handleRemove.bind(null, peer)}
+                          id={peer.id}
+                          className={cx('btn-delete')} />
           </div>
         </div>
       </div>
@@ -133,14 +131,7 @@ export default class Peers extends Component {
 
         {showAddForm &&
         <HotKeys handlers={{ esc: this.handleToggleAddForm }}>
-          <div className="panel panel-default">
-            <div className="panel-heading">
-              <div className="panel-title">Add a peer</div>
-            </div>
-            <div className="panel-body">
-              <PeerAddForm peerState={this.props.peerState} />
-            </div>
-          </div>
+          <PeerAddForm peerState={this.props.peerState} />
         </HotKeys>}
 
         <List

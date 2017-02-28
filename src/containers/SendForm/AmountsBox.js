@@ -44,6 +44,8 @@ export default class AmountsBox extends Component {
     if (this.props.sourceAmount === nextProps.sourceAmount
       && this.props.destinationAmount === nextProps.destinationAmount) {
 
+      if (!nextProps.quoting) return
+
       if (nextProps.sourceAmountField.value !== nextProps.sourceAmount) {
         this.updateSourceInput(nextProps)
       }

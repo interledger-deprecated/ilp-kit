@@ -1,10 +1,7 @@
 html,
 body {
   height: 100%;
-}
-
-body {
-  padding-top: 10px;
+  background: #fff;
 }
 
 body > div {
@@ -16,7 +13,6 @@ a {
 }
 
 .appContent {
-  padding-top: 70px;
   padding-bottom: 30px;
 }
 

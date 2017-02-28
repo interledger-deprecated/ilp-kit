@@ -127,55 +127,54 @@ export default class ProfileForm extends Component {
     if (!user) return null
 
     return (
-      <div className="panel panel-default">
-        <div className="panel-heading">
-          <div className="panel-title">Edit Profile</div>
+      <div className={cx('ProfileForm')}>
+        <div className={cx('header')}>
+          <h3>Edit Profile</h3>
         </div>
-        <div className="panel-body">
-          {success &&
-          <Alert bsStyle="success">
-            Your profile has been successfully changed!
-          </Alert>}
 
-          {error && error.id &&
-          <Alert bsStyle="danger">
-            {(() => {
-              switch (error.id) {
-                case 'EmailTakenError': return 'Email is already taken'
-                case 'NotFoundError': return 'Current password is wrong'
-                case 'InvalidBodyError': return error.message
-                default: return 'Something went wrong'
-              }
-            })()}
-          </Alert>}
+        {success &&
+        <Alert bsStyle="success">
+          Your profile has been successfully changed!
+        </Alert>}
 
-          <div className={cx('profilePicBox')}>
-            <img src={user.profile_picture || require('../../components/HistoryItem/placeholder.png')} className={cx('profilePic')} />
-            <DropzoneComponent
-              config={this.dropzoneConfig}
-              eventHandlers={this.dropzoneEventHandlers}
-              className={cx('dropzone', 'dropzoneLocal')}>
-              <div className="dz-message">
-                <i className="fa fa-cloud-upload" />
-                Drop an image or click to upload
-              </div>
-            </DropzoneComponent>
-          </div>
+        {error && error.id &&
+        <Alert bsStyle="danger">
+          {(() => {
+            switch (error.id) {
+              case 'EmailTakenError': return 'Email is already taken'
+              case 'NotFoundError': return 'Current password is wrong'
+              case 'InvalidBodyError': return error.message
+              default: return 'Something went wrong'
+            }
+          })()}
+        </Alert>}
 
-          <form onSubmit={handleSubmit(this.save)}>
-            <Input object={email} label="Email" type="email" size="lg" focus />
-            <Input object={name} label="Name" type="text" size="lg" />
-            <Input object={password} label="Current Password" type="password" size="lg" />
-
-            <label>Change Password</label>
-            <Input object={newPassword} label="New Password" type="password" size="lg" />
-            <Input object={verifyNewPassword} label="Verify New Password" type="password" size="lg" />
-
-            <button type="submit" className="btn btn-primary" disabled={pristine || (invalid && !submitFailed) || submitting}>
-              {submitting ? ' Saving...' : ' Save'}
-            </button>
-          </form>
+        <div className={cx('profilePicBox')}>
+          <img src={user.profile_picture || require('../../components/HistoryItem/placeholder.png')} className={cx('profilePic')} />
+          <DropzoneComponent
+            config={this.dropzoneConfig}
+            eventHandlers={this.dropzoneEventHandlers}
+            className={cx('dropzone', 'dropzoneLocal')}>
+            <div className="dz-message">
+              <i className="fa fa-cloud-upload" />
+              Drop an image or click to upload
+            </div>
+          </DropzoneComponent>
         </div>
+
+        <form onSubmit={handleSubmit(this.save)}>
+          <Input object={email} label="Email" type="email" size="lg" focus />
+          <Input object={name} label="Name" type="text" size="lg" />
+          <Input object={password} label="Current Password" type="password" size="lg" />
+
+          <label>Change Password</label>
+          <Input object={newPassword} label="New Password" type="password" size="lg" />
+          <Input object={verifyNewPassword} label="Verify New Password" type="password" size="lg" />
+
+          <button type="submit" className="btn btn-primary" disabled={pristine || (invalid && !submitFailed) || submitting}>
+            {submitting ? ' Saving...' : ' Save'}
+          </button>
+        </form>
       </div>
     )
   }
