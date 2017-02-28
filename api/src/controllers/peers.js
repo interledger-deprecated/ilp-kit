@@ -47,7 +47,14 @@ function PeersControllerFactory (auth, config, log, Peer, connector) {
       })
 
       yield forEach(peers, function * (peer) {
-        const peerInfo = yield connector.getPeer(peer)
+        let peerInfo
+
+        try {
+          peerInfo = yield connector.getPeer(peer)
+        } catch (e) {
+          // Couldn't get the peer for some reason
+          log.err("couldn't get the peer", e.stack)
+        }
 
         if (!peerInfo) {
           peer.online = false
