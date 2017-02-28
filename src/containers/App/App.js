@@ -131,7 +131,7 @@ export default class App extends Component {
     const appConfig = this.props.config || {}
 
     return (
-      <div>
+      <div className={cx('App', !user && 'darkBg')}>
         <Helmet
           defaultTitle={appConfig.title}
           titleTemplate={appConfig.title && '%s - ' + appConfig.title}
@@ -196,7 +196,7 @@ export default class App extends Component {
           </Navbar.Collapse>
         </Navbar>}
 
-        <div className={cx('container', 'appContent')}>
+        <div className={cx('container')}>
           {this.props.children}
         </div>
 

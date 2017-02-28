@@ -1,4 +1,7 @@
-.navbar-default {
+.navbar-inverse {
+  top: 0;
+  border-radius: 0;
+  border: 0;
 }
 .navbar-active {
   background: #fff;
@@ -6,6 +9,7 @@
 }
 .navbar-collapse {
   padding: 0;
+  background: #222 !important;
 
   & > .navbar-text {
     margin-top: 20px;

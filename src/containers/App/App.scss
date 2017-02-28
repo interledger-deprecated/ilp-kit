@@ -1,5 +1,12 @@
 @import 'variables';
 
+.App {
+  min-height: 100%;
+
+  &.darkBg {
+    background: #333333;
+  }
+}
 .loadingBar {
   position: fixed;
   top: 0;

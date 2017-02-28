@@ -1,14 +1,58 @@
 @import 'variables';
 
-.oauthContainer {
-  background: #fff;
-  padding: 15px;
-  margin: 15px 0 0 0;
-  line-height: 35px;
+.Auth {
+  // Flex
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  // just to bring the .window a bit higher
+  padding-bottom: 3%;
+
+  position: relative;
+  min-height: 100vh;
 }
-.panel-auth {
-  ul > li {
-    width: 50%;
-    text-align: center;
+.header {
+  margin: 0 0 20px;
+}
+.title {
+  color: #fff;
+  text-align: center;
+}
+.window {
+  width: 350px;
+  background: #fff;
+  border-radius: 3px;
+  padding: 25px;
+}
+.oauthBox {
+  color: #d9d9d9;
+  padding: 15px 25px;
+  line-height: 35px;
+
+  div {
+    margin: 0 0 0 10px;
+  }
+}
+.switchBox {
+  position: absolute;
+  bottom: 5%;
+  right: 5%;
+
+  .label {
+    color: #d9d9d9;
+    line-height: 35px;
+  }
+  .btnSwitch {
+    color: #d9d9d9;
+    border: 1px solid #d9d9d9;
+    background: transparent;
+    margin: 0 0 0 10px;
+    transition: all .3s;
+
+    &:hover {
+      color: #696969;
+      background: #fff;
+    }
   }
 }

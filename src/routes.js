@@ -1,5 +1,5 @@
 import React from 'react'
-import {Router, IndexRoute, Route} from 'react-router'
+import { Router, IndexRoute, Route } from 'react-router'
 import { isLoaded as isAuthLoaded, load, locationUpdate } from 'redux/actions/auth'
 import App from 'containers/App/App'
 import NotFound from 'containers/NotFound/NotFound'

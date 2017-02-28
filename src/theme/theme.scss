@@ -4,16 +4,17 @@ body {
   background: #fff;
 }
 
-body > div {
-  min-height: 100%;
+#content {
+  display: table;
+  width: 100%;
+  height: inherit;
+}
+#app {
+  display: table-cell;
 }
 
 a {
   cursor: pointer;
-}
-
-.appContent {
-  padding-bottom: 30px;
 }
 
 .footer {
