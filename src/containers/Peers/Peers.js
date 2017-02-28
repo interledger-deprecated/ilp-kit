@@ -120,7 +120,7 @@ export default class Peers extends Component {
 
         {/* Add new */}
         {!showAddForm && peerState.list.length > 0 &&
-        <div className={cx('header', 'row')}>
+        <div className={cx('header', 'row', 'row-sm')}>
           <div className={cx('col-sm-10')}>
             <h3>Peers</h3>
           </div>
@@ -144,7 +144,7 @@ export default class Peers extends Component {
                 <div>
                   <div>Click the button below to add your first peer.</div>
                   <button type="button"
-                          onClick={this.handleShowAddForm}
+                          onClick={this.handleToggleAddForm}
                           className={cx('btn', 'btn-success', 'btn-lg', 'btn-add-lg')}>
                     Add Peer
                   </button>

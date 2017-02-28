@@ -58,7 +58,7 @@ export default class ChangePasswordForm extends Component {
       <form onSubmit={handleSubmit(this.handleSubmit)}>
         {success &&
         <Alert bsStyle="success">
-          Your password has been changed successfully
+          Your password has been updated successfully
         </Alert>}
 
         {error && error.id &&

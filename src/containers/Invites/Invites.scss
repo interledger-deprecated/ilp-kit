@@ -1,6 +1,13 @@
 @import 'variables';
 @import 'mixins';
 
+.header {
+  margin-bottom: 20px;
+
+  h3 {
+    margin: 0;
+  }
+}
 .invitesStatus {
   text-align: center;
 
@@ -11,7 +18,7 @@
 }
 .invite {
   position: relative;
-  border-bottom: 1px solid $history-payment-separator-color;
+  border-top: 1px solid $history-payment-separator-color;
   padding: 15px 0;
 
   &:hover .deleteButton {

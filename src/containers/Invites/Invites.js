@@ -1,7 +1,8 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import ReactTooltip from 'react-tooltip'
 import Helmet from 'react-helmet'
+import ReactTooltip from 'react-tooltip'
+import { HotKeys } from 'react-hotkeys'
 
 import { ButtonDanger } from 'napo'
 
@@ -28,6 +29,8 @@ export default class Invites extends Component {
     loaded: PropTypes.bool
   }
 
+  state = {}
+
   componentWillMount() {
     if(!this.props.loaded) {
       this.props.loadCodes()
@@ -37,6 +40,13 @@ export default class Invites extends Component {
   componentDidMount() {
     const Clipboard = require('clipboard')
     new Clipboard('.copy')
+  }
+
+  handleToggleAddForm = () => {
+    this.setState({
+      ...this.state,
+      showAddForm: !this.state.showAddForm
+    })
   }
 
   handleRemove = (code, e) => {
@@ -50,7 +60,7 @@ export default class Invites extends Component {
 
     return (
       <div className={cx('invite')} key={invite.code}>
-        <div className={cx('row')}>
+        <div className={cx('row', 'row-sm')}>
           <div className={cx('col-sm-5')}>
             <span className={cx('lbl')}>Code</span>
             <a href="" onClick={e => {e.preventDefault()}} data-tip="click to copy the link"
@@ -69,8 +79,7 @@ export default class Invites extends Component {
           </div>
           <div className={cx('col-sm-2')}>
             {/* TODO:UX shouldn't be able to delete already claimed ones */}
-            <ButtonDanger confirmationText="sure?"
-                          onConfirm={this.handleRemove.bind(null, invite.code)}
+            <ButtonDanger onConfirm={this.handleRemove.bind(null, invite.code)}
                           id={invite.code}
                           className={cx('btn-block', 'btn-delete')} />
           </div>
@@ -83,39 +92,48 @@ export default class Invites extends Component {
 
   render() {
     const { inviteState } = this.props
+    const { showAddForm } = this.state
 
     return (
       <div className={cx('Invites')}>
         <Helmet title={'Invites'} />
 
-        <div className={cx('row')}>
-          <div className={cx('col-sm-8')}>
-            <List
-              emptyScreen={(
-                <div className={cx('panel', 'panel-default', 'invitesStatus')}>
-                  <div className="panel-body">
-                    <i className={cx('fa', 'fa-ticket')} />
-                    <h1>No Invite Codes</h1>
-                    <div>Use the form on the right to add invite codes</div>
-                  </div>
-                </div>
-              )} state={inviteState}>
-              {inviteState.list.map(this.renderCode)}
-            </List>
+        {/* Add new */}
+        {!showAddForm && inviteState.list.length > 0 &&
+        <div className={cx('header', 'row', 'row-sm')}>
+          <div className={cx('col-sm-10')}>
+            <h3>Invite Codes</h3>
           </div>
+          <div className={cx('col-sm-2')}>
+            <button type="button" className={cx('btn', 'btn-success', 'btn-block')} onClick={this.handleToggleAddForm}>Add Invite Code</button>
+          </div>
+        </div>}
 
-          {/* Create new */}
-          <div className={cx('col-sm-4')}>
-            <div className="panel panel-default">
-              <div className="panel-heading">
-                <div className="panel-title">Generate an Invite Code</div>
-              </div>
+        {showAddForm &&
+        <HotKeys handlers={{ esc: this.handleToggleAddForm }}>
+          <InviteCreateForm />
+        </HotKeys>}
+
+        <List
+          emptyScreen={(
+            <div className={cx('panel', 'panel-default', 'invitesStatus')}>
               <div className="panel-body">
-                <InviteCreateForm />
+                <i className={cx('fa', 'fa-ticket')} />
+                <h1>No Invite Codes</h1>
+                {!showAddForm &&
+                <div>
+                  <div>Click the button below to add your first invite code.</div>
+                  <button type="button"
+                          onClick={this.handleToggleAddForm}
+                          className={cx('btn', 'btn-success', 'btn-lg', 'btn-add-lg')}>
+                    Add Invite Code
+                  </button>
+                </div>}
               </div>
             </div>
-          </div>
-        </div>
+          )} state={inviteState}>
+          {inviteState.list.map(this.renderCode)}
+        </List>
       </div>
     )
   }

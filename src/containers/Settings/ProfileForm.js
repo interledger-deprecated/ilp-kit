@@ -134,7 +134,7 @@ export default class ProfileForm extends Component {
 
         {success &&
         <Alert bsStyle="success">
-          Your profile has been successfully changed!
+          Your profile has been successfully updated!
         </Alert>}
 
         {error && error.id &&
