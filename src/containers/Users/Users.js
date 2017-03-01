@@ -28,6 +28,12 @@ export default class Invites extends Component {
     }
   }
 
+  renderProfilePic = (cell, row) => {
+    return <img
+      src={cell ? `/api/users/${row.username}/profilepic` : require('components/HistoryItem/placeholder.png')}
+      className={cx('profilePic')} />
+  }
+
   render() {
     const { users } = this.props
 
@@ -35,9 +41,24 @@ export default class Invites extends Component {
       <div className={cx('Users')}>
         <Helmet title={'Users'} />
 
-        <BootstrapTable data={users} striped hover>
-          <TableHeaderColumn dataField="name" isKey dataSort>Name</TableHeaderColumn>
-          <TableHeaderColumn dataField="balance" dataSort>Balance</TableHeaderColumn>
+        <div className={cx('header')}>
+          <h3>Users</h3>
+        </div>
+
+        {/* TODO:UX add search attribute */}
+        <BootstrapTable
+          data={users}
+          bordered={false}
+          pagination
+          ignoreSinglePage
+          trClassName={cx('tr')}
+          tableHeaderClass={cx('header')}
+        >
+          <TableHeaderColumn dataField="profile_picture" dataFormat={ this.renderProfilePic } width='66px' />
+          <TableHeaderColumn dataField="username" isKey dataSort>Username</TableHeaderColumn>
+          <TableHeaderColumn dataField="name" dataSort>Name</TableHeaderColumn>
+          <TableHeaderColumn dataField="email" dataSort>Email</TableHeaderColumn>
+          <TableHeaderColumn dataField="email_verified" dataSort>Email Verified</TableHeaderColumn>
         </BootstrapTable>
       </div>
     )

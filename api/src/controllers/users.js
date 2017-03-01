@@ -57,8 +57,9 @@ function UsersControllerFactory (auth, User, Invite, log, ledger, socket, config
       this.status = 404
     }
 
-    static * getAll() {
-      this.body = yield ledger.getAccounts()
+    static * getAll () {
+      // this.body = yield ledger.getAccounts()
+      this.body = yield User.findAll()
     }
 
     /**
