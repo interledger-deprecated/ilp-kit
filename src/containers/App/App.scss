@@ -8,6 +8,19 @@
     background: #333333;
   }
 }
+.notVerifiedBox {
+  padding-left: 0;
+  padding-right: 0;
+  margin-top: -20px;
+  border-radius: 0;
+  border-top: 0;
+  border-right: 0;
+  border-left: 0;
+}
+.brand {
+  color: #fff !important;
+  cursor: default;
+}
 .loadingBar {
   position: fixed;
   top: 0;

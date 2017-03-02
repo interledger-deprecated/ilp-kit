@@ -58,7 +58,7 @@ export default class LoginForm extends Component {
         </div>
         <div className="row">
           <div className="col-sm-4">
-            <button type="submit" className="btn btn-complete btn-lg" disabled={pristine || invalid || submitting}>
+            <button type="submit" className="btn btn-success btn-lg" disabled={pristine || invalid || submitting}>
               {submitting ? ' Logging In...' : ' Login'}
             </button>
           </div>

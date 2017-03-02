@@ -171,7 +171,7 @@ export default class ProfileForm extends Component {
           <Input object={newPassword} label="New Password" type="password" size="lg" />
           <Input object={verifyNewPassword} label="Verify New Password" type="password" size="lg" />
 
-          <button type="submit" className="btn btn-primary" disabled={pristine || (invalid && !submitFailed) || submitting}>
+          <button type="submit" className="btn btn-success" disabled={pristine || (invalid && !submitFailed) || submitting}>
             {submitting ? ' Saving...' : ' Save'}
           </button>
         </form>

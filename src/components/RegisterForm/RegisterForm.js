@@ -226,7 +226,7 @@ export default class RegisterForm extends Component {
             Provided invite code has already been used. <a href="" onClick={this.handleAddInviteCodeClick}>Try another one</a>
           </div>}
         </div>
-        <button type="submit" className="btn btn-complete btn-lg" disabled={pristine || invalid || submitting}>
+        <button type="submit" className="btn btn-success btn-lg" disabled={pristine || invalid || submitting}>
           {submitting ? ' Registering...' : ' Register'}
         </button>
       </form>

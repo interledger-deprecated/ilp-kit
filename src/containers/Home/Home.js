@@ -19,7 +19,6 @@ const cx = classNames.bind(styles)
 @connect(
   state => ({
     user: state.auth.user,
-    verificationEmailSent: state.auth.verificationEmailSent,
     activeTab: state.auth.activeTab,
     verified: state.auth.verified,
     config: state.auth.config
@@ -30,12 +29,6 @@ export default class Home extends Component {
     user: PropTypes.object,
     reload: PropTypes.func,
     config: PropTypes.object,
-
-    // User verification
-    params: PropTypes.object,
-    resendVerificationEmail: PropTypes.func,
-    verificationEmailSent: PropTypes.bool,
-    verified: PropTypes.bool
   }
 
   state = {}
@@ -65,12 +58,6 @@ export default class Home extends Component {
     navigator.registerPaymentHandler('interledger', location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/widget')
   }
 
-  resendVerification = (event) => {
-    event.preventDefault()
-
-    this.props.resendVerificationEmail(this.props.user.username)
-  }
-
   toggleStats = (event) => {
     this.setState({
       ...this.state,
@@ -83,14 +70,14 @@ export default class Home extends Component {
   }
 
   render() {
-    const { user, verified, verificationEmailSent, config } = this.props
+    const { user, config } = this.props
     const { showStats, reloading } = this.state
 
     // For some reason dynamic routers have problems with that state
     if (!user) return null
     return (
       <div className="row">
-        <div className="col-sm-8">
+        <div className={cx('col-sm-8', 'historyBox')}>
           {/* Onboarding */}
           <Onboarding />
 
@@ -108,6 +95,10 @@ export default class Home extends Component {
             <a href="" onClick={this.toggleStats}>Stats</a>}
           </div> */}
 
+          <div className={cx('header')}>
+            <h3>Payment history</h3>
+          </div>
+
           {!showStats && <History />}
           {showStats && <Stats />}
         </div>
@@ -122,21 +113,17 @@ export default class Home extends Component {
            </div>
            </div>
            */}
-          {/* TODO:UX Invalid verification error */}
-          {verified &&
-          <Alert bsStyle="success">
-            Your email has been verified!
-          </Alert>}
 
           {/* Balance */}
           <div className={cx('balanceContainer')}>
+            <h4 className={cx('balanceDescription')}>Your Balance</h4>
             <div className={cx('balance')}>
               <Amount amount={user.balance} currencySymbol={config.currencySymbol} />
               {config.reload && <span className={cx('but')}>*</span>}
             </div>
             {config.reload &&
             <div>
-              <a className="btn btn-complete btn-lg"
+              <a className="btn btn-success btn-lg"
                  onClick={!user.isAdmin && this.reload} disabled={user.isAdmin}
                  data-tip={user.isAdmin && "You have enough, you're the admin"}>
                 {!reloading && 'Get More'}
@@ -155,13 +142,6 @@ export default class Home extends Component {
               <SendForm />
             </div>
           </div>
-          {!user.email_verified &&
-          <Alert bsStyle="danger">
-            An email has been sent to <strong>{user.email}</strong>.
-            Please follow the steps in the message to confirm your email address.&nbsp;
-            {!verificationEmailSent && <a href="" onClick={this.resendVerification}>Resend the message</a>}
-            {verificationEmailSent && <strong>Verification email sent!</strong>}
-          </Alert>}
         </div>
 
         <ReactTooltip />

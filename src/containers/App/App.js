@@ -4,6 +4,8 @@ import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap'
 import Helmet from 'react-helmet'
 import LoadingBar from 'react-redux-loading-bar'
 
+import Alert from 'react-bootstrap/lib/Alert'
+
 import Navbar from 'react-bootstrap/lib/Navbar'
 import Nav from 'react-bootstrap/lib/Nav'
 import NavItem from 'react-bootstrap/lib/NavItem'
@@ -13,7 +15,7 @@ import Label from 'react-bootstrap/lib/Label'
 
 import hotkeys from 'decorators/hotkeys'
 
-import { isLoaded as isAuthLoaded, load as loadAuth, loadConfig, logout, updateBalance, verify } from 'redux/actions/auth'
+import { isLoaded as isAuthLoaded, load as loadAuth, loadConfig, logout, updateBalance, verify, resendVerificationEmail } from 'redux/actions/auth'
 import { routeActions } from 'react-router-redux'
 import { addPayment as historyAddPayment } from 'redux/actions/history'
 import { asyncConnect } from 'redux-async-connect'
@@ -38,9 +40,10 @@ const cx = classNames.bind(styles)
     user: state.auth.user,
     config: state.auth.config,
     loading: state.auth.loading,
-    advancedMode: state.auth.advancedMode
+    advancedMode: state.auth.advancedMode,
+    verificationEmailSent: state.auth.verificationEmailSent
   }),
-  {logout, pushState: routeActions.push, historyAddPayment, updateBalance, verify, loadConfig})
+  {logout, pushState: routeActions.push, historyAddPayment, updateBalance, verify, loadConfig, resendVerificationEmail})
 @hotkeys()
 export default class App extends Component {
   static propTypes = {
@@ -56,9 +59,13 @@ export default class App extends Component {
     // TODO:UI add loading screen
     loading: PropTypes.bool,
     advancedMode: PropTypes.bool,
+    loadConfig: PropTypes.func,
 
+    // User verification
+    verified: PropTypes.bool,
     verify: PropTypes.func,
-    loadConfig: PropTypes.func
+    verificationEmailSent: PropTypes.bool,
+    resendVerificationEmail: PropTypes.func
   }
 
   static contextTypes = {
@@ -126,8 +133,14 @@ export default class App extends Component {
     this.props.logout()
   }
 
+  resendVerification = (event) => {
+    event.preventDefault()
+
+    this.props.resendVerificationEmail(this.props.user.username)
+  }
+
   render() {
-    const { user, advancedMode } = this.props
+    const { user, advancedMode, verified, verificationEmailSent } = this.props
     const appConfig = this.props.config || {}
 
     return (
@@ -156,7 +169,7 @@ export default class App extends Component {
         {user &&
         <Navbar inverse expanded={ this.state.navExpanded } onToggle={ this.onNavbarToggle }>
           <Navbar.Header>
-            <Navbar.Brand>
+            <Navbar.Brand className={cx('brand')}>
               {appConfig.title} {advancedMode && <Label bsStyle="warning">Advanced Mode</Label>}
             </Navbar.Brand>
             <Navbar.Toggle />
@@ -195,6 +208,20 @@ export default class App extends Component {
             </Nav>
           </Navbar.Collapse>
         </Navbar>}
+
+        {user && (!user.email_verified || verified) &&
+        <Alert bsStyle={verified ? 'success' : 'info'} className={cx('notVerifiedBox')}>
+          <div className={cx('container')}>
+            {verified && <span>Your email has been verified!</span>}
+            {!verified &&
+            <span>
+              An email has been sent to <strong>{user.email}</strong>.
+              Please follow the steps in the message to confirm your email address.&nbsp;
+              {!verificationEmailSent && <a href="" onClick={this.resendVerification}>Resend the message</a>}
+              {verificationEmailSent && <strong>Verification email sent!</strong>}
+            </span>}
+          </div>
+        </Alert>}
 
         <div className={cx('container')}>
           {this.props.children}

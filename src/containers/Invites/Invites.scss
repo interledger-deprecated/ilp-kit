@@ -24,6 +24,14 @@
   &:hover .deleteButton {
     opacity: 1;
   }
+
+  & > div > div {
+    line-height: 40px;
+  }
+}
+.tableHead {
+  font-size: 15px;
+  padding: 10px 0;
 }
 .lbl {
   display: block;
@@ -37,10 +45,7 @@
   text-align: center;
 }
 .amount {
-  display: block;
-  margin: 3px 0;
   font-size: 20px;
-  color: $brand-color;
 }
 .claimed {
   color: $muted-text-color;

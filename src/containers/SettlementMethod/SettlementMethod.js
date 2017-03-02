@@ -106,7 +106,7 @@ export default class SettlementMethod extends Component {
           </div>
           <div className={cx('col-sm-3')}>
             {!method.enabled &&
-            <button className={cx('btn', 'btn-primary', 'btn-block')} onClick={this.handleToggle}>
+            <button className={cx('btn', 'btn-success', 'btn-block')} onClick={this.handleToggle}>
               Enable
             </button>}
 

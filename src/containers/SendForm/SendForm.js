@@ -194,7 +194,7 @@ export default class SendForm extends Component {
 
             <div className="row">
               <div className="col-sm-5">
-                <button type="submit" className="btn btn-complete btn-block btn-lg"
+                <button type="submit" className="btn btn-success btn-block btn-lg"
                   disabled={(!data && pristine) || invalid || submitting || quoting || err.id === 'NotFoundError' || (quoteError && quoteError.id)}>
                   {submitting ? 'Sending...' : 'Send'}
                 </button>

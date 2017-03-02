@@ -62,26 +62,26 @@ export default class Invites extends Component {
       <div className={cx('invite')} key={invite.code}>
         <div className={cx('row', 'row-sm')}>
           <div className={cx('col-sm-5')}>
-            <span className={cx('lbl')}>Code</span>
             <a href="" onClick={e => {e.preventDefault()}} data-tip="click to copy the link"
                data-clipboard-text={config.clientUri + '/register/' + invite.code}
                className={cx('code', 'copy')}>{invite.code}</a>
           </div>
           <div className={cx('col-sm-3', 'amountColumn')}>
-            <span className={cx('lbl')}>Amount</span>
             <span className={cx('amount')}>{invite.amount}</span>
           </div>
           <div className={cx('col-sm-2')}>
-            <span className={cx('lbl')}>Claimed</span>
             {!invite.claimed && <span className={cx('claimed')}>No</span>}
 
             {invite.user_id && <strong>{invite.User.username}</strong>}
           </div>
-          <div className={cx('col-sm-2')}>
+          <div className={cx('col-sm-2', 'text-right')}>
             {/* TODO:UX shouldn't be able to delete already claimed ones */}
-            <ButtonDanger onConfirm={this.handleRemove.bind(null, invite.code)}
-                          id={invite.code}
-                          className={cx('btn-block', 'btn-delete')} />
+            <ButtonDanger
+              initialText="x"
+              confirmationText="sure?"
+              onConfirm={this.handleRemove.bind(null, invite.code)}
+              id={invite.code}
+              className={cx('btn-delete')} />
           </div>
         </div>
 
@@ -113,6 +113,18 @@ export default class Invites extends Component {
         <HotKeys handlers={{ esc: this.handleToggleAddForm }}>
           <InviteCreateForm />
         </HotKeys>}
+
+        <div className={cx('row', 'row-sm', 'tableHead')}>
+          <div className={cx('col-sm-5')}>
+            Code
+          </div>
+          <div className={cx('col-sm-3', 'amountColumn')}>
+            Amount
+          </div>
+          <div className={cx('col-sm-2')}>
+            Claimed
+          </div>
+        </div>
 
         <List
           emptyScreen={(

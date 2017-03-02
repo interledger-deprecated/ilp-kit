@@ -28,7 +28,7 @@ export default class SettlementRipple extends Component {
         <Helmet title={'Ripple - Settlement'} />
 
         <Input object={destination} label="Destination" size="lg" focus />
-        <button type="submit" className="btn btn-complete" disabled={pristine || invalid || submitting}>
+        <button type="submit" className="btn btn-success" disabled={pristine || invalid || submitting}>
           {submitting ? ' Saving...' : ' Save'}
         </button>
       </div>

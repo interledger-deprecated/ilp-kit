@@ -101,7 +101,7 @@ export default class Home extends Component {
           {currentView === 'login' && config.githubAuth &&
           <div className={cx('oauthBox', 'clearfix')}>
             <div className="pull-right">
-              <a href="/api/auth/github" className="btn btn-primary">Github</a>
+              <a href="/api/auth/github" className="btn btn-default">Github</a>
             </div>
             <div className="pull-right">Or login using</div>
           </div>}

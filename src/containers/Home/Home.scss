@@ -1,11 +1,18 @@
 @import 'variables';
 
+.header {
+  margin-bottom: 20px;
+
+  h3 {
+    margin: 0;
+  }
+}
 .balanceContainer {
   text-align: center;
+  padding: 20px;
 
   .balanceDescription {
-    font-size: 14px;
-    margin-bottom: -10px;
+    margin: 0;
   }
   .balance {
     font-size: 40px;
