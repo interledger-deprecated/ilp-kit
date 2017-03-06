@@ -209,7 +209,7 @@ export default class App extends Component {
           </Navbar.Collapse>
         </Navbar>}
 
-        {user && (!user.email_verified || verified) &&
+        {user && user.email && (!user.email_verified || verified) &&
         <Alert bsStyle={verified ? 'success' : 'info'} className={cx('notVerifiedBox')}>
           <div className={cx('container')}>
             {verified && <span>Your email has been verified!</span>}

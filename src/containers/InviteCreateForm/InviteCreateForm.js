@@ -59,11 +59,6 @@ export default class InviteCreateForm extends Component {
 
     return (
       <div>
-        {success &&
-        <Alert bsStyle="success">
-          Invite code has been created!
-        </Alert>}
-
         {fail && fail.id &&
         <Alert bsStyle="danger">
           Something went wrong

@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import ReactTooltip from 'react-tooltip'
 import { HotKeys } from 'react-hotkeys'
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
 import { ButtonDanger } from 'napo'
 
@@ -114,6 +115,7 @@ export default class Invites extends Component {
           <InviteCreateForm />
         </HotKeys>}
 
+        {inviteState.list.length > 0 &&
         <div className={cx('row', 'row-sm', 'tableHead')}>
           <div className={cx('col-sm-5')}>
             Code
@@ -124,7 +126,7 @@ export default class Invites extends Component {
           <div className={cx('col-sm-2')}>
             Claimed
           </div>
-        </div>
+        </div>}
 
         <List
           emptyScreen={(
@@ -144,7 +146,19 @@ export default class Invites extends Component {
               </div>
             </div>
           )} state={inviteState}>
-          {inviteState.list.map(this.renderCode)}
+          {inviteState.list.length > 0 &&
+          <ReactCSSTransitionGroup
+            transitionName={{
+              enter: cx('enter'),
+              enterActive: cx('enterActive'),
+              leave: cx('leave'),
+              leaveActive: cx('leaveActive')
+            }}
+            transitionEnterTimeout={1000}
+            transitionLeaveTimeout={500}
+            component="div">
+            {inviteState.list.map(this.renderCode)}
+          </ReactCSSTransitionGroup>}
         </List>
       </div>
     )
