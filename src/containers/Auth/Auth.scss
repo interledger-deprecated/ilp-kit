@@ -1,4 +1,5 @@
 @import 'variables';
+@import 'mixins';
 
 .Auth {
   // Flex
@@ -9,7 +10,6 @@
   // just to bring the .window a bit higher
   padding-bottom: 3%;
 
-  position: relative;
   min-height: 100vh;
 }
 .header {
@@ -35,9 +35,12 @@
   }
 }
 .switchBox {
+  background: #333333;
   position: absolute;
-  bottom: 5%;
-  right: 5%;
+  bottom: 5vh;
+  right: 5vh;
+  padding: 10px 20px;
+  border-radius: 5px;
 
   .label {
     color: #d9d9d9;
@@ -54,5 +57,17 @@
       color: #696969;
       background: #fff;
     }
+  }
+}
+.closeButton {
+  position: absolute;
+  top: 40px;
+  right: 40px;
+  font-size: 25px;
+
+  @include singleLinkColor(darken(#fff, 50%));
+
+  &:hover {
+    color: #fff;
   }
 }

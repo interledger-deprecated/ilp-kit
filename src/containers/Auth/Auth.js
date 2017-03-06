@@ -2,6 +2,7 @@ import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
 import {Link} from 'react-router'
 import * as authActions from 'redux/actions/auth'
+import { routeActions } from 'react-router-redux'
 
 import Alert from 'react-bootstrap/lib/Alert'
 
@@ -21,7 +22,7 @@ const cx = classNames.bind(styles)
     verified: state.auth.verified,
     config: state.auth.config
   }),
-  authActions)
+  {...authActions, pushState: routeActions.push})
 export default class Home extends Component {
   static propTypes = {
     user: PropTypes.object,
@@ -33,6 +34,7 @@ export default class Home extends Component {
     changeTab: PropTypes.func,
     route: PropTypes.object,
     config: PropTypes.object,
+    pushState: PropTypes.func.isRequired,
 
     // User verification
     params: PropTypes.object,
@@ -62,6 +64,12 @@ export default class Home extends Component {
     })
   }
 
+  goBack = e => {
+    e && e.preventDefault()
+
+    this.props.pushState('/')
+  }
+
   render() {
     const {authFail, login, register, forgot, changePassword, verified, params, config} = this.props
     const {currentView} = this.state
@@ -70,15 +78,6 @@ export default class Home extends Component {
 
     return (
       <div className={cx('Auth', 'container')}>
-        {/* <ul className="nav nav-tabs nav-tabs-linetriangle" role="tablist" data-init-reponsive-tabs="collapse">
-          <li className={currentView === 'login' ? 'active' : ''}>
-            <Link to="/login" data-toggle="tab" role="tab" aria-expanded="true">Login</Link>
-          </li>
-          {config.registration &&
-          <li className={currentView === 'register' ? 'active' : ''}>
-            <Link to="/register" data-toggle="tab" role="tab" aria-expanded="true">Register</Link>
-          </li>}
-        </ul> */}
         <div>
           <div className={cx('header')}>
             <h1 className={cx('title')}>{appConfig.title}</h1>
@@ -116,6 +115,9 @@ export default class Home extends Component {
             <Link to="/login" data-toggle="tab" role="tab" aria-expanded="true" className={cx('btnSwitch', 'btn', 'btn-default')}>Login</Link>
           </div>}
         </div>
+
+        {(currentView === 'forgot-password' || currentView === 'change-password') &&
+        <a href="" onClick={this.goBack} className={cx('closeButton')}>✕</a>}
       </div>
     )
   }
