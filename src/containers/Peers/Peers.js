@@ -154,8 +154,6 @@ export default class Peers extends Component {
           )} state={peerState}>
           {peerState.list.map(this.renderPeer)}
         </List>
-
-        <ReactTooltip />
       </div>
     )
   }
