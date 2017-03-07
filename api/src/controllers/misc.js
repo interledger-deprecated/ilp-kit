@@ -85,8 +85,6 @@ function MiscControllerFactory (Auth, log, config, ledger, utils, connector) {
         })
       })
 
-      const settlementMethods = yield connector.getSelfSettlementMethods(123, 0)
-
       const response = {
         clientUri: config.data.get('client_host'),
         ledgerUri: config.data.getIn(['ledger', 'public_uri']),
@@ -101,8 +99,11 @@ function MiscControllerFactory (Auth, log, config, ledger, utils, connector) {
           mixpanel: config.data.getIn(['track', 'mixpanel'])
         },
         githubAuth: (config.data.getIn(['github', 'client_id']) && config.data.getIn(['github', 'client_secret'])),
-        version: `${packageVersion}-${gitCommit}`,
-        settlementMethods
+        version: `${packageVersion}-${gitCommit}`
+      }
+
+      if (this.req.user) {
+        response.settlementMethods = yield connector.getSelfSettlementMethods(this.req.user.destination, 0)
       }
 
       if (config.data.get('reload')) {

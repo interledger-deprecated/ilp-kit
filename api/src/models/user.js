@@ -19,24 +19,24 @@ const EmailTakenError = require('../errors/email-taken-error')
 UserFactory.constitute = [Database, Validator, Ledger, Config, Utils]
 function UserFactory (sequelize, validator, ledger, config, utils) {
   class User extends Model {
-    static convertFromExternal(data) {
+    static convertFromExternal (data) {
       return data
     }
 
-    static convertToExternal(data) {
+    static convertToExternal (data) {
       delete data.password
       delete data.created_at
       delete data.updated_at
 
       if (data.profile_picture && data.profile_picture.indexOf('://') === -1) {
-        data.profile_picture = config.data.getIn(['server', 'base_uri'])
-          + '/users/' + data.username + '/profilepic'
+        data.profile_picture = config.data.getIn(['server', 'base_uri']) +
+          '/users/' + data.username + '/profilepic'
       }
 
       return data
     }
 
-    static convertFromPersistent(data) {
+    static convertFromPersistent (data) {
       data = _.omit(data, _.isNull)
 
       data.identifier = utils.getWebfingerAddress(data.username)
@@ -48,11 +48,11 @@ function UserFactory (sequelize, validator, ledger, config, utils) {
       return data
     }
 
-    static convertToPersistent(data) {
+    static convertToPersistent (data) {
       return data
     }
 
-    static createBodyParser() {
+    static createBodyParser () {
       const Self = this
 
       return function * (next) {
@@ -73,15 +73,15 @@ function UserFactory (sequelize, validator, ledger, config, utils) {
       }
     }
 
-    static getVerificationCode(email) {
+    static getVerificationCode (email) {
       return config.generateSecret('verify' + email).toString('hex')
     }
 
-    static getVerificationLink(username, email) {
+    static getVerificationLink (username, email) {
       return config.data.get(['client_host']) + '/verify/' + username + '/' + User.getVerificationCode(email)
     }
 
-    static * setupAdminAccount() {
+    static * setupAdminAccount () {
       const username = config.data.getIn(['ledger', 'admin', 'user'])
 
       let dbUser = yield this.findOne({ where: { username } })
@@ -103,7 +103,7 @@ function UserFactory (sequelize, validator, ledger, config, utils) {
       return yield dbUser.appendLedgerAccount(ledgerAccount)
     }
 
-    static * setupConnectorAccount() {
+    static * setupConnectorAccount () {
       const ledgers = JSON.parse(config.data.getIn(['connector', 'ledgers']))
       const prefix = config.data.getIn(['ledger', 'prefix'])
 
@@ -147,7 +147,7 @@ function UserFactory (sequelize, validator, ledger, config, utils) {
       return yield dbUser.appendLedgerAccount(ledgerAccount)
     }
 
-    * changeEmail(email, verified) {
+    * changeEmail (email, verified) {
       if (this.email === email) return this
 
       this.email = email
@@ -191,17 +191,17 @@ function UserFactory (sequelize, validator, ledger, config, utils) {
       return this
     }
 
-    generateForgotPasswordCode(date) {
+    generateForgotPasswordCode (date) {
       date = date || Math.floor(Date.now() / 1000)
 
       return date + '.' + config.generateSecret(+date + this.id + this.updated_at.toString()).toString('hex')
     }
 
-    generateForgotPasswordLink() {
+    generateForgotPasswordLink () {
       return config.data.get(['client_host']) + '/change-password/' + this.username + '/' + this.generateForgotPasswordCode()
     }
 
-    verifyForgotPasswordCode(code) {
+    verifyForgotPasswordCode (code) {
       if (!code) throw new InvalidBodyError('Missing code')
 
       const parts = code.split('.')
@@ -248,6 +248,7 @@ function UserFactory (sequelize, validator, ledger, config, utils) {
       type: Sequelize.INTEGER,
       unique: true
     },
+    destination: Sequelize.STRING,
     profile_picture: Sequelize.STRING,
     name: {
       type: Sequelize.STRING
