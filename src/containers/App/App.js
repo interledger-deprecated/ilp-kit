@@ -162,7 +162,7 @@ export default class App extends Component {
         />
 
         {/* TODO commented out until there's a solution to https://github.com/mironov/react-redux-loading-bar/issues/30 */}
-        {/* <LoadingBar className={cx('loadingBar')} /> */}
+         <LoadingBar className={cx('loadingBar')} />
 
         {/* <script src="https://web-payments.net/polyfill.js"></script> */}
 
