@@ -4,7 +4,7 @@ const join = (rules) => (value, data) => rules.map(rule => rule(value, data)).fi
 
 export function email (value) {
   // Let's not start a debate on email regex. This is just for an example app!
-  if (!isEmpty(value) && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
+  if (!isEmpty(value) && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,63}$/i.test(value)) {
     return 'Invalid email address'
   }
 }
