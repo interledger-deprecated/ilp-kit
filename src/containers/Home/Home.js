@@ -54,10 +54,6 @@ export default class Home extends Component {
       })
   }
 
-  handleDefaultPayment = () => {
-    navigator.registerPaymentHandler('interledger', location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/widget')
-  }
-
   toggleStats = (event) => {
     this.setState({
       ...this.state,
@@ -103,17 +99,6 @@ export default class Home extends Component {
           {showStats && <Stats />}
         </div>
         <div className="col-sm-4">
-          {/*
-           <div className="panel panel-default">
-           <div className="panel-heading">
-           <div className="panel-title">Use ILP kit as your default payment provider</div>
-           </div>
-           <div className="panel-body">
-           <button className="btn btn-complete btn-block" onClick={this.handleDefaultPayment}>Set as default</button>
-           </div>
-           </div>
-           */}
-
           {/* Balance */}
           <div className={cx('balanceContainer')}>
             <h4 className={cx('balanceDescription')}>Your Balance</h4>

@@ -160,11 +160,8 @@ export default class App extends Component {
             {'itemprop': 'name', 'content': appConfig.title}
           ]}
         />
-
-        {/* TODO commented out until there's a solution to https://github.com/mironov/react-redux-loading-bar/issues/30 */}
-         <LoadingBar className={cx('loadingBar')} />
-
-        {/* <script src="https://web-payments.net/polyfill.js"></script> */}
+        
+        <LoadingBar className={cx('loadingBar')} />
 
         {user &&
         <Navbar inverse expanded={ this.state.navExpanded } onToggle={ this.onNavbarToggle }>
