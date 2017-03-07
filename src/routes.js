@@ -119,14 +119,6 @@ export default (store) => {
     }, 'settlement')
   }
 
-  const getSettlementMethod = (nextState, cb) => {
-    require.ensure(['./containers/SettlementMethod/SettlementMethod'], (require) => {
-      cb(null, require('./containers/SettlementMethod/SettlementMethod'))
-
-      store.dispatch(locationUpdate())
-    }, 'settlementMethod')
-  }
-
   const getSettle = (nextState, cb) => {
     require.ensure(['./containers/Settle/Settle'], (require) => {
       cb(null, require('./containers/Settle/Settle'))
@@ -180,9 +172,7 @@ export default (store) => {
           <Route path="invites" getComponent={getInvites} />
           <Route path="users" getComponent={getUsers} />
           <Route path="peers" getComponent={getPeers} />
-          <Route path="settlement" getComponent={getSettlement}>
-            <Route path=":id" getComponent={getSettlementMethod} />
-          </Route>
+          <Route path="settlement" getComponent={getSettlement} />
         </Route>
 
         { /* Routes available to all */ }

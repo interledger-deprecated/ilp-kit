@@ -88,7 +88,7 @@ export default class SettlementPaypal extends Component {
           Something went wrong
         </Alert>}
 
-        <form onSubmit={handleSubmit(this.handleSave)}>
+        <form onSubmit={handleSubmit(this.handleSave)} className={cx('clearfix')}>
           <Input object={clientId} label="Client ID" size="lg"/>
           <Input object={secret} label="Secret" size="lg"/>
 
@@ -99,7 +99,7 @@ export default class SettlementPaypal extends Component {
               credentials?)</label>
           </div>
 
-          <button type="submit" className="btn btn-success"
+          <button type="submit" className="btn btn-success pull-right"
                   disabled={pristine || invalid || submitting}>
             {submitting ? ' Saving...' : ' Save'}
           </button>

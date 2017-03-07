@@ -1,13 +1,16 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import { Link } from 'react-router'
-import ReactTooltip from 'react-tooltip'
 import { routeActions } from 'react-router-redux'
+import { HotKeys } from 'react-hotkeys'
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
-import { load } from 'redux/actions/settlement_method'
+import Dropdown from 'react-bootstrap/lib/Dropdown'
+import MenuItem from 'react-bootstrap/lib/MenuItem'
 
-import SettlementAddButton from 'containers/SettlementAddButton/SettlementAddButton'
+import { load, add } from 'redux/actions/settlement_method'
+
+import SettlementMethod from 'containers/SettlementMethod/SettlementMethod'
 
 import classNames from 'classnames/bind'
 import styles from './Settlement.scss'
@@ -15,9 +18,10 @@ const cx = classNames.bind(styles)
 
 @connect(state => ({
   list: state.settlementMethod.list,
+  settlementState: state.settlementMethod,
   loading: state.settlementMethod.loading,
   loaded: state.settlementMethod.loaded
-}), { load, pushState: routeActions.push })
+}), { load, add, pushState: routeActions.push })
 export default class Settlement extends Component {
   static propTypes = {
     children: PropTypes.object,
@@ -25,71 +29,72 @@ export default class Settlement extends Component {
     params: PropTypes.object,
     pushState: PropTypes.func,
     list: PropTypes.array,
+    settlementState: PropTypes.object,
     loading: PropTypes.bool,
     loaded: PropTypes.bool
   }
-
-  state = {}
 
   componentWillMount() {
     if (!this.props.loaded) {
       this.props.load()
     }
-
-    if (!this.props.params.id && this.props.list.length) {
-      this.props.pushState('/settlement/' + this.props.list[0].id)
-    }
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!nextProps.params.id && nextProps.list.length) {
-      nextProps.pushState('/settlement/' + nextProps.list[0].id)
-    }
-  }
+  handleAdd = (type, e) => {
+    e && e.preventDefault()
 
-  renderLogo = method => {
-    if (method.type === 'paypal') return <img src="/paypal.png" />
-    if (method.type === 'bitcoin') return <img src="/bitcoin.png" />
-    if (method.type === 'ripple') return <img src="/ripple.png" />
-    if (method.type === 'etherium') return <img src="/etherium.png" />
-
-    if (!method.logo) {
-      return method.name || 'Unnamed'
-    }
-
-    return <img src={method.logoUrl} />
-  }
-
-  renderSettlementMethod = method => {
-    return (
-      <Link to={'/settlement/' + method.id} className={cx('panel', 'panel-default', 'option')} key={method.id} title={method.name}>
-        {method.enabled
-          ? <i className={cx('enabled', 'fa', 'fa-circle', 'icon')} data-tip="Enabled" />
-          : <i className={cx('disabled', 'fa', 'fa-circle', 'icon')} data-tip="Disabled" />}
-
-        <div className="panel-body">
-          {this.renderLogo(method)}
-        </div>
-
-        <ReactTooltip />
-      </Link>
-    )
+    this.props.add({ type })
   }
 
   render() {
-    const { children, list, loading } = this.props
+    const { children, list, loading, settlementState } = this.props
 
     return (
       <div className={cx('Settlement')}>
         <Helmet title={'Settlement'} />
 
-        <div className={cx('row', 'list')}>
-          <div className={cx('col-sm-4')}>
-            {list && list.length > 0 && list.map(this.renderSettlementMethod)}
-
-            <SettlementAddButton className={cx('option')} />
+        {/* Add new */}
+        <div className={cx('header', 'row', 'row-sm')}>
+          <div className={cx('col-sm-9')}>
+            <h3>Settlement Methods</h3>
           </div>
-          <div className={cx('col-sm-8')}>
+          <div className={cx('col-sm-3', 'addButtonBox')}>
+            <Dropdown id="settlementAddButton" pullRight>
+              <Dropdown.Toggle bsStyle="success">
+                Add a Settlement Method
+              </Dropdown.Toggle>
+              <Dropdown.Menu className={cx('options')}>
+                <MenuItem onClick={this.handleAdd.bind(this, 'paypal')}>
+                  <img src="/paypal.png" className={cx('logo')}/>
+                </MenuItem>
+                <MenuItem onClick={this.handleAdd.bind(this, 'custom')}>
+                  Custom
+                </MenuItem>
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
+        </div>
+
+        <div className={cx('list')}>
+          {list && list.length > 0 &&
+          <ReactCSSTransitionGroup
+            transitionName={{
+              enter: cx('enter'),
+              enterActive: cx('enterActive'),
+              leave: cx('leave'),
+              leaveActive: cx('leaveActive')
+            }}
+            transitionEnterTimeout={1000}
+            transitionLeaveTimeout={500}
+            component="div">
+            {list.map(method =>
+              <div className={cx('settlementMethod')} key={method.id}>
+                <SettlementMethod method={method} />
+              </div>
+            )}
+          </ReactCSSTransitionGroup>}
+
+          {/*<div className={cx('col-sm-8')}>
             {list && list.length > 0 && children}
 
             {!loading && list && list.length < 1 &&
@@ -98,7 +103,7 @@ export default class Settlement extends Component {
               <h1>No Settlement Methods</h1>
               <div>Use the button on the left to add your first settlement method</div>
             </div>}
-          </div>
+          </div>*/}
         </div>
       </div>
     )

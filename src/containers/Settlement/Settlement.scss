@@ -1,38 +1,51 @@
 @import 'variables';
 @import 'mixins';
 
+.header {
+  margin-bottom: 20px;
+
+  h3 {
+    margin: 0;
+  }
+}
+.addButtonBox {
+  text-align: right;
+
+  .options {
+    padding: 0;
+
+    a {
+      padding: 10px 20px;
+      width: 212px;
+
+      &:hover {
+        background: $success-background;
+      }
+    }
+  }
+  .logo {
+    height: 12px;
+  }
+}
 .list {
   list-style-type: none;
   padding: 0;
 
-  .option {
-    position: relative;
-    display: block;
-    text-align: center;
-    @include singleLinkColor($text-color);
-
-    .icon {
-      position: absolute;
-      top: 5px;
-      right: 5px;
-      padding: 5px;
-      font-size: 8px;
-
-      &.enabled {
-        color: $success;
-      }
-      &.disabled {
-        color: $danger;
-      }
+  .settlementMethod {
+    // Animation
+    &.enter {
+      opacity: 0;
     }
-
-    &:hover {
-      background: darken($box-alternate-background-color, 2%);
+    &.enterActive {
+      opacity: 1;
+      transition: all 1s;
     }
-
-    img {
-      margin: 5px;
-      height: 50px;
+    &.leave {
+      opacity: 1;
+    }
+    &.leaveActive {
+      opacity: 0;
+      transition: all .5s;
     }
   }
 }

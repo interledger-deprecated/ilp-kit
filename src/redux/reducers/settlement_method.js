@@ -30,7 +30,7 @@ export default function reducer (state = initialState, action = {}) {
     case types.ADD_SETTLEMENT_METHOD_SUCCESS:
       return {
         ...state,
-        list: state.list.concat(action.result)
+        list: [action.result].concat(state.list)
       }
     case types.UPDATE_SETTLEMENT_METHOD_SUCCESS:
       return {

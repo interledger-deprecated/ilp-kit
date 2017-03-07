@@ -25,7 +25,7 @@ const cx = classNames.bind(styles)
   { get, update, updateLogo, remove, pushState: routeActions.push })
 export default class SettlementMethod extends Component {
   static propTypes = {
-    params: PropTypes.object.isRequired,
+    method: PropTypes.object.isRequired,
     get: PropTypes.func.isRequired,
     update: PropTypes.func.isRequired,
     updateLogo: PropTypes.func.isRequired,
@@ -33,40 +33,18 @@ export default class SettlementMethod extends Component {
     pushState: PropTypes.func.isRequired
   }
 
-  state = {
-    method: {}
-  }
-
-  componentWillMount() {
-    this.updateMethod()
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.updateMethod(nextProps)
-  }
-
-  updateMethod = (props = this.props) => {
-    props.get(props.params.id)
-      .then(method => {
-        if (this.state.method !== method) {
-          this.setState({
-            ...this.state,
-            method
-          })
-        }
-      })
-  }
+  state = {}
 
   handleToggle = () => {
-    this.props.update(this.state.method.id, {
-      enabled: !this.state.method.enabled
+    this.props.update(this.props.method.id, {
+      enabled: !this.props.method.enabled
     })
   }
 
   // TODO:UX confirmation
   handleDelete = () => {
     this.props.pushState('/settlement')
-    this.props.remove(this.state.method.id)
+    this.props.remove(this.props.method.id)
   }
 
   dropzoneEventHandlers = {
@@ -91,31 +69,46 @@ export default class SettlementMethod extends Component {
     }
   }
 
-  render() {
-    const { method } = this.state
+  handleToggleForm = () => {
+    this.setState({
+      ...this.state,
+      showEditForm: !this.state.showEditForm
+    })
+  }
 
-    if (!method) return null
+  renderLogo = method => {
+    if (method.type === 'paypal') return <img src="/paypal.png" />
+    if (method.type === 'bitcoin') return <img src="/bitcoin.png" />
+    if (method.type === 'ripple') return <img src="/ripple.png" />
+    if (method.type === 'etherium') return <img src="/etherium.png" />
+
+    if (!method.logo) {
+      return method.name || 'Unnamed'
+    }
+
+    return <img src={method.logoUrl} />
+  }
+
+  renderForm = () => {
+    const { method } = this.props
 
     return (
-      <div className={cx('SettlementMethod')}>
+      <div className={cx('form')}>
         <Helmet title={method.name} />
 
         <div className={cx('row', 'row-sm', 'enableBox')}>
-          <div className={cx('col-sm-6', 'title')}>
-            {method.name}
-          </div>
-          <div className={cx('col-sm-3')}>
+          <div className={cx('col-sm-offset-8', 'col-sm-2')}>
             {!method.enabled &&
             <button className={cx('btn', 'btn-success', 'btn-block')} onClick={this.handleToggle}>
               Enable
             </button>}
 
             {method.enabled &&
-            <button className={cx('btn', 'btn-default', 'btn-block')} onClick={this.handleToggle}>
+            <button className={cx('btn', 'btn-block')} onClick={this.handleToggle}>
               Disable
             </button>}
           </div>
-          <div className={cx('col-sm-3')}>
+          <div className={cx('col-sm-2')}>
             <ButtonDanger onConfirm={this.handleDelete} id={method.id} className={cx('btn-block')} />
           </div>
         </div>
@@ -125,6 +118,31 @@ export default class SettlementMethod extends Component {
         {method.type === 'ripple' && <SettlementRipple />}
         {method.type === 'etherium' && <SettlementEtherium />}
         {method.type === 'custom' && <SettlementCustom method={method} />}
+      </div>
+    )
+  }
+
+  render() {
+    const { method } = this.props
+    const { showEditForm } = this.state
+
+    if (!method) return null
+
+    return (
+      <div className={cx('SettlementMethod')}>
+        <div className={cx('row', 'row-sm')}>
+          <div className={cx('col-sm-8', 'logoBox')}>
+            {this.renderLogo(method)}
+          </div>
+          <div className={cx('col-sm-2', !method.enabled && 'disabled')}>
+            {method.enabled && 'Enabled'}
+            {!method.enabled && 'Disabled'}
+          </div>
+          <div className={cx('col-sm-2')}>
+            <button className={cx('btn', 'btn-default', 'btn-block')} onClick={this.handleToggleForm}>Edit</button>
+          </div>
+        </div>
+        {showEditForm && this.renderForm()}
       </div>
     )
   }

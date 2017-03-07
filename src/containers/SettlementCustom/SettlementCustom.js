@@ -87,41 +87,37 @@ export default class SettlementCustom extends Component {
           Something went wrong
         </Alert>}
 
-        <div className={cx('row', 'form')}>
-          <div className="col-sm-12">
-            <form onSubmit={handleSubmit(this.handleSave)}>
-              <Input object={name} label="Settlement Method Name" size="lg" />
-              <Input object={description} label="Description" size="lg" />
-              <Input object={uri} label="Uri" size="lg" />
-              <div className="clearfix">
-                <div className={cx('logoField', method.logo || 'full')}>
-                  <DropzoneComponent
-                    config={{
-                      showFiletypeIcon: false,
-                      postUrl: '/api/settlement_methods/' + method.id + '/logo',
-                      maxFiles: 1
-                    }}
-                    eventHandlers={this.dropzoneEventHandlers}
-                    className={cx('dropzone', 'dropzoneLocal')}>
-                    <div className="dz-message">
-                      <i className="fa fa-cloud-upload" />
-                      Logo: Drop an image or click to upload
-                    </div>
-                  </DropzoneComponent>
+        <form onSubmit={handleSubmit(this.handleSave)} className={cx('clearfix')}>
+          <Input object={name} label="Settlement Method Name" size="lg" />
+          <Input object={description} label="Description" size="lg" />
+          <Input object={uri} label="Uri" size="lg" />
+          <div className="clearfix">
+            <div className={cx('logoField', method.logo || 'full')}>
+              <DropzoneComponent
+                config={{
+                  showFiletypeIcon: false,
+                  postUrl: '/api/settlement_methods/' + method.id + '/logo',
+                  maxFiles: 1
+                }}
+                eventHandlers={this.dropzoneEventHandlers}
+                className={cx('dropzone', 'dropzoneLocal')}>
+                <div className="dz-message">
+                  <i className="fa fa-cloud-upload" />
+                  Logo: Drop an image or click to upload
                 </div>
-                {method.logo &&
-                <div className={cx('logoBox')}>
-                  <img src={method.logoUrl} className={cx('logo')} />
-                </div>}
-              </div>
-
-              <button type="submit" className="btn btn-success pull-right"
-                      disabled={pristine || invalid || submitting}>
-                {submitting ? ' Saving...' : ' Save'}
-              </button>
-            </form>
+              </DropzoneComponent>
+            </div>
+            {method.logo &&
+            <div className={cx('logoBox')}>
+              <img src={method.logoUrl} className={cx('logo')} />
+            </div>}
           </div>
-        </div>
+
+          <button type="submit" className="btn btn-success pull-right"
+                  disabled={pristine || invalid || submitting}>
+            {submitting ? ' Saving...' : ' Save'}
+          </button>
+        </form>
       </div>
     )
   }
