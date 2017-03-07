@@ -164,22 +164,6 @@ module.exports = class Conncetor {
       if (!peerStatus) return
 
       // Settlement Methods
-      // TODO:PERFORMANCE don't call this on every request
-      const dbSettlementMethods = yield self.SettlementMethod.findAll({ where: { enabled: true } })
-      const settlementMethods = dbSettlementMethods.map((settlementMethod) => {
-        const uri = settlementMethod.type === 'custom'
-          ? `${settlementMethod.uri}?destination=${peer.destination}`
-          : self.config.data.get('client_host') + '/settle/' + settlementMethod.type + '/' + peer.destination + '?amount=' + Math.max(peerStatus.balance, 0)
-
-        return {
-          id: settlementMethod.id,
-          name: settlementMethod.name,
-          description: settlementMethod.description,
-          uri,
-          logo: settlementMethod.logoUrl
-        }
-      })
-
       yield plugin.sendMessage({
         account: message.from,
         from: message.to,
@@ -187,10 +171,28 @@ module.exports = class Conncetor {
         ledger: message.ledger,
         data: {
           method: 'settlement_methods_response',
-          settlement_methods: settlementMethods
+          settlement_methods: yield self.getSelfSettlementMethods(peer.destination, peerStatus.balance)
         }
       })
     }))
+  }
+
+  * getSelfSettlementMethods (destination, amount) {
+    // TODO:PERFORMANCE don't call this on every request
+    const dbSettlementMethods = yield this.SettlementMethod.findAll({ where: { enabled: true } })
+    return dbSettlementMethods.map(settlementMethod => {
+      const uri = settlementMethod.type === 'custom'
+        ? `${settlementMethod.uri}?destination=${destination}`
+        : this.config.data.get('client_host') + '/settle/' + settlementMethod.type + '/' + destination + '?amount=' + Math.max(amount, 0)
+
+      return {
+        id: settlementMethod.id,
+        name: settlementMethod.name,
+        description: settlementMethod.description,
+        uri,
+        logo: settlementMethod.logoUrl
+      }
+    })
   }
 
   * removePeer (peer) {

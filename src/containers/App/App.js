@@ -160,7 +160,7 @@ export default class App extends Component {
             {'itemprop': 'name', 'content': appConfig.title}
           ]}
         />
-        
+
         <LoadingBar className={cx('loadingBar')} />
 
         {user &&

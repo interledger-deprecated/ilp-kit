@@ -8,9 +8,10 @@ const Log = require('../lib/log')
 const Config = require('../lib/config')
 const Ledger = require('../lib/ledger')
 const Utils = require('../lib/utils')
+const Connector = require('../lib/connector')
 
-MiscControllerFactory.constitute = [Auth, Log, Config, Ledger, Utils]
-function MiscControllerFactory (Auth, log, config, ledger, utils) {
+MiscControllerFactory.constitute = [Auth, Log, Config, Ledger, Utils, Connector]
+function MiscControllerFactory (Auth, log, config, ledger, utils, connector) {
   log = log('misc')
 
   return class MiscController {
@@ -84,6 +85,8 @@ function MiscControllerFactory (Auth, log, config, ledger, utils) {
         })
       })
 
+      const settlementMethods = yield connector.getSelfSettlementMethods(123, 0)
+
       const response = {
         clientUri: config.data.get('client_host'),
         ledgerUri: config.data.getIn(['ledger', 'public_uri']),
@@ -98,7 +101,8 @@ function MiscControllerFactory (Auth, log, config, ledger, utils) {
           mixpanel: config.data.getIn(['track', 'mixpanel'])
         },
         githubAuth: (config.data.getIn(['github', 'client_id']) && config.data.getIn(['github', 'client_secret'])),
-        version: `${packageVersion}-${gitCommit}`
+        version: `${packageVersion}-${gitCommit}`,
+        settlementMethods
       }
 
       if (config.data.get('reload')) {
