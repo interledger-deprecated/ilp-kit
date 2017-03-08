@@ -14,11 +14,11 @@ const NotFoundError = require('../errors/not-found-error')
 const InvalidBodyError = require('../errors/invalid-body-error')
 
 SettlementMethodsControllerFactory.constitute = [Auth, Config, Log, SettlementFactory, SettlementMethodFactory, PeerFactory]
-function SettlementMethodsControllerFactory(auth, config, log, Settlement, SettlementMethod, Peer) {
+function SettlementMethodsControllerFactory (auth, config, log, Settlement, SettlementMethod, Peer) {
   log = log('settlement_methods')
 
   return class SettlementMethodsController {
-    static init(router) {
+    static init (router) {
       router.get('/settlement_methods', this.getAll)
       router.post('/settlement_methods', auth.checkAuth, this.checkAdmin, this.postResource)
       router.put('/settlement_methods/:id', auth.checkAuth, this.checkAdmin, this.putResource)
@@ -27,7 +27,7 @@ function SettlementMethodsControllerFactory(auth, config, log, Settlement, Settl
     }
 
     // TODO move to auth
-    static * checkAdmin(next) {
+    static * checkAdmin (next) {
       if (this.req.user.username === config.data.getIn(['ledger', 'admin', 'user'])) {
         return yield next
       }
@@ -35,16 +35,18 @@ function SettlementMethodsControllerFactory(auth, config, log, Settlement, Settl
       throw new NotFoundError()
     }
 
-    static * getAll() {
+    static * getAll () {
       if (this.req.user && this.req.user.username === config.data.getIn(['ledger', 'admin', 'user'])) {
         // TODO pagination
-        return this.body = yield SettlementMethod.findAll({
+        this.body = yield SettlementMethod.findAll({
           include: [{ all: true }],
           order: [
             ['enabled', 'DESC'],
             ['created_at', 'ASC']
           ]
         })
+
+        return
       }
 
       this.body = yield SettlementMethod.findAll({
@@ -56,7 +58,7 @@ function SettlementMethodsControllerFactory(auth, config, log, Settlement, Settl
       })
     }
 
-    static * postResource() {
+    static * postResource () {
       const method = new SettlementMethod()
 
       if (['paypal', 'bitcoin', 'etherium', 'ripple', 'custom'].indexOf(this.body.type) === -1) {
@@ -78,7 +80,7 @@ function SettlementMethodsControllerFactory(auth, config, log, Settlement, Settl
       this.body = yield method.save()
     }
 
-    static * postLogoResource() {
+    static * postLogoResource () {
       const files = this.body.files
       const id = this.params.id
       const method = yield SettlementMethod.findOne({ where: { id } })
@@ -93,7 +95,7 @@ function SettlementMethodsControllerFactory(auth, config, log, Settlement, Settl
       }
     }
 
-    static * putResource() {
+    static * putResource () {
       const id = this.params.id
       const method = yield SettlementMethod.findOne({ where: { id } })
 
@@ -124,7 +126,7 @@ function SettlementMethodsControllerFactory(auth, config, log, Settlement, Settl
       this.body = method
     }
 
-    static * deleteResource() {
+    static * deleteResource () {
       const id = this.params.id
       const method = yield SettlementMethod.findOne({ where: { id } })
 

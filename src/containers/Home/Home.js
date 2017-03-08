@@ -3,7 +3,8 @@ import {connect} from 'react-redux'
 import ReactTooltip from 'react-tooltip'
 import * as authActions from 'redux/actions/auth'
 
-import Alert from 'react-bootstrap/lib/Alert'
+import Dropdown from 'react-bootstrap/lib/Dropdown'
+import MenuItem from 'react-bootstrap/lib/MenuItem'
 
 import Amount from 'components/Amount/Amount'
 
@@ -106,6 +107,22 @@ export default class Home extends Component {
               <Amount amount={user.balance} currencySymbol={config.currencySymbol} />
               {config.reload && <span className={cx('but')}>*</span>}
             </div>
+            {!config.reload && config.settlementMethods && config.settlementMethods.length > 0 &&
+            <div className={cx('settlementButtonBox')}>
+              <Dropdown id="settlementButton" pullRight>
+                <Dropdown.Toggle bsStyle="success">
+                  Deposit
+                </Dropdown.Toggle>
+                <Dropdown.Menu className={cx('options')}>
+                  {config.settlementMethods.map(settlementMethod =>
+                    <MenuItem href={settlementMethod.uri} key={settlementMethod.name}>
+                      {settlementMethod.logo && <img src={settlementMethod.logo} className={cx('logo')}/>}
+                      {!settlementMethod.logo && settlementMethod.name}
+                    </MenuItem>
+                  )}
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>}
             {config.reload &&
             <div>
               <a className="btn btn-success btn-lg"

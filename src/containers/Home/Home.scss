@@ -30,3 +30,20 @@
   font-size: 12px;
   margin: 10px 0;
 }
+.settlementButtonBox {
+  .options {
+    padding: 0;
+
+    a {
+      padding: 10px 20px;
+      width: 212px;
+
+      &:hover {
+        background: $success-background;
+      }
+    }
+  }
+  .logo {
+    height: 12px;
+  }
+}

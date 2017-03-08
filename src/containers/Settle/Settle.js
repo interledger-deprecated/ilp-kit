@@ -6,23 +6,23 @@ import classNames from 'classnames/bind'
 import styles from './Settle.scss'
 const cx = classNames.bind(styles)
 
-import { get, settle } from 'redux/actions/peer'
+import { getDestination, settle } from 'redux/actions/settlement_method'
 
 @connect(state => ({
-  peer: state.peer.peer
-}), { get, settle })
+  destination: state.settlementMethod.destination
+}), { getDestination, settle })
 export default class Settle extends Component {
   static propTypes = {
     params: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
-    get: PropTypes.func.isRequired,
-    peer: PropTypes.object
+    getDestination: PropTypes.func.isRequired,
+    destination: PropTypes.object
   }
 
   state = {}
 
   componentWillMount() {
-    this.props.get(this.props.params.destination)
+    this.props.getDestination(this.props.params.destination)
   }
 
   componentDidMount() {
@@ -49,7 +49,7 @@ export default class Settle extends Component {
   }
 
   render() {
-    const { peer, params, location } = this.props
+    const { destination, params, location } = this.props
     const { hostname, loading } = this.state
 
     const initialAmount = (location.query && location.query.amount) || 0
@@ -57,9 +57,15 @@ export default class Settle extends Component {
     return (
       <div>
         <h3 className={cx('title')}>
-          <div>You are trying to settle the trustline</div>
-          <div>between <b>{hostname}</b> and <b>{peer.hostname}</b></div>
-          <div>using <b>{params.method}</b>.</div>
+          {destination.type === 'peer' &&
+          <div>
+            <div>You are trying to settle the trustline</div>
+            <div>between <b>{hostname}</b> and <b>{destination.hostname}</b></div>
+            <div>using <b>{params.method}</b>.</div>
+          </div>}
+
+          {destination.type === 'user' &&
+          <div>You are depositing money using <b>{params.method}</b>.</div>}
         </h3>
 
         <form onSubmit={this.handleSettle} className={cx('inputBox')}>

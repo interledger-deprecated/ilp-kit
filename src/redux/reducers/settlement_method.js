@@ -3,7 +3,8 @@ import * as types from '../actionTypes'
 const initialState = {
   loading: true,
   loaded: false,
-  list: []
+  list: [],
+  destination: {}
 }
 
 export default function reducer (state = initialState, action = {}) {
@@ -54,6 +55,11 @@ export default function reducer (state = initialState, action = {}) {
       return {
         ...state,
         list: state.list.filter(settlementMethod => settlementMethod.id !== action.result.id)
+      }
+    case types.GET_DESTINATION_SUCCESS:
+      return {
+        ...state,
+        destination: action.result
       }
     default:
       return state

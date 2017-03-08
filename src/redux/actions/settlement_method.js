@@ -21,12 +21,12 @@ export const get = id => (dispatch, getState) => dispatch(() => {
 
 export const add = data => ({
   types: [types.ADD_SETTLEMENT_METHOD, types.ADD_SETTLEMENT_METHOD_SUCCESS, types.ADD_SETTLEMENT_METHOD_FAIL],
-  promise: (client) => client.post('/settlement_methods', {data})
+  promise: client => client.post('/settlement_methods', {data})
 })
 
 export const update = (id, data) => ({
   types: [types.UPDATE_SETTLEMENT_METHOD, types.UPDATE_SETTLEMENT_METHOD_SUCCESS, types.UPDATE_SETTLEMENT_METHOD_FAIL],
-  promise: (client) => client.put('/settlement_methods/' + id, {data})
+  promise: client => client.put(`/settlement_methods/${id}`, {data})
 })
 
 export const updateLogo = result => ({
@@ -36,5 +36,15 @@ export const updateLogo = result => ({
 
 export const remove = id => ({
   types: [types.REMOVE_SETTLEMENT_METHOD, types.REMOVE_SETTLEMENT_METHOD_SUCCESS, types.REMOVE_SETTLEMENT_METHOD_FAIL],
-  promise: (client) => client.del('/settlement_methods/' + id)
+  promise: client => client.del(`/settlement_methods/${id}`)
+})
+
+export const settle = (destination, data) => ({
+  types: [types.SETTLE, types.SETTLE_SUCCESS, types.SETTLE_FAIL],
+  promise: client => client.post(`/settlements/${destination}/paypal`, { data })
+})
+
+export const getDestination = destination => ({
+  types: [types.GET_DESTINATION, types.GET_DESTINATION_SUCCESS, types.GET_DESTINATION_FAIL],
+  promise: client => client.get(`/settlements/${destination}`)
 })

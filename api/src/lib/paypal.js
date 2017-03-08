@@ -1,4 +1,4 @@
-"use strict"
+'use strict'
 
 const request = require('superagent')
 const Config = require('./config')
@@ -6,13 +6,13 @@ const SettlementMethodFactory = require('../models/settlement_method')
 const debug = require('debug')('ilp-kit:paypal')
 
 module.exports = class Paypal {
-  static constitute() { return [Config, SettlementMethodFactory] }
-  constructor(config, SettlementMethod) {
+  static constitute () { return [Config, SettlementMethodFactory] }
+  constructor (config, SettlementMethod) {
     this.config = config
     this.SettlementMethod = SettlementMethod
   }
 
-  * getOptions() {
+  * getOptions () {
     if (this.options) return this.options
 
     this.options = (yield this.SettlementMethod.findOne({ where: { type: 'paypal' } })).options
@@ -21,7 +21,7 @@ module.exports = class Paypal {
     return this.options
   }
 
-  * getToken() {
+  * getToken () {
     if (this.token) return this.token
 
     debug('fetching auth token...')
@@ -47,7 +47,7 @@ module.exports = class Paypal {
     return this.token
   }
 
-  * createPayment(peer, amount) {
+  * createPayment (destination, amount) {
     const options = yield this.getOptions()
     const token = yield this.getToken()
 
@@ -59,8 +59,8 @@ module.exports = class Paypal {
       .send({
         intent: 'sale',
         redirect_urls: {
-          return_url: `${this.config.data.getIn(['server', 'base_uri'])}/settlements/${peer.destination}/paypal/execute`,
-          cancel_url: `${this.config.data.getIn(['server', 'base_uri'])}/settlements/${peer.destination}/paypal/cancel`
+          return_url: `${this.config.data.getIn(['server', 'base_uri'])}/settlements/${destination}/paypal/execute`,
+          cancel_url: `${this.config.data.getIn(['server', 'base_uri'])}/settlements/${destination}/paypal/cancel`
         },
         payer: {
           payment_method: 'paypal'
@@ -70,7 +70,7 @@ module.exports = class Paypal {
             total: parseFloat(amount).toFixed(2),
             currency: 'USD' // TODO: support currencies
           },
-          description: `Memo: ${peer.destination}`
+          description: `Memo: ${destination}`
         }]
       })
 
@@ -85,7 +85,7 @@ module.exports = class Paypal {
     return approvalLink
   }
 
-  * executePayment(query) {
+  * executePayment (query) {
     const options = yield this.getOptions()
     const token = yield this.getToken()
 

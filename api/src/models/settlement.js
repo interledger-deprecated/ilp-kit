@@ -10,28 +10,29 @@ const Database = require('../lib/db')
 const Validator = require('five-bells-shared/lib/validator')
 const Sequelize = require('sequelize')
 const PeerFactory = require('./peer')
+const UserFactory = require('./user')
 const SettlementMethodFactory = require('./settlement_method')
 
 SettlementFactory.constitute = [Database, Validator, Container]
-function SettlementFactory(sequelize, validator, container) {
+function SettlementFactory (sequelize, validator, container) {
   class Settlement extends Model {
-    static convertFromExternal(data) {
+    static convertFromExternal (data) {
       return data
     }
 
-    static convertToExternal(data) {
+    static convertToExternal (data) {
       delete data.created_at
       delete data.updated_at
 
       return data
     }
 
-    static convertFromPersistent(data) {
+    static convertFromPersistent (data) {
       data = _.omit(data, _.isNull)
       return data
     }
 
-    static convertToPersistent(data) {
+    static convertToPersistent (data) {
       return data
     }
   }
@@ -51,6 +52,10 @@ function SettlementFactory(sequelize, validator, container) {
   container.schedulePostConstructor(Peer => {
     Settlement.DbModel.belongsTo(Peer.DbModel)
   }, [ PeerFactory ])
+
+  container.schedulePostConstructor(User => {
+    Settlement.DbModel.belongsTo(User.DbModel)
+  }, [ UserFactory ])
 
   container.schedulePostConstructor(SettlementMethod => {
     Settlement.DbModel.belongsTo(SettlementMethod.DbModel)

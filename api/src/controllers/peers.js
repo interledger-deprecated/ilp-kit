@@ -27,7 +27,6 @@ function PeersControllerFactory (auth, config, log, Peer, connector) {
 
       // Public
       router.post('/peers/rpc', this.rpc)
-      router.get('/peers/:destination', this.getResource)
     }
 
     // TODO move to auth
@@ -67,17 +66,6 @@ function PeersControllerFactory (auth, config, log, Peer, connector) {
       })
 
       this.body = _.orderBy(peers, ['online', 'created_at'], ['desc', 'desc'])
-    }
-
-    static* getResource () {
-      const peer = yield Peer.findOne({ where: { destination: this.params.destination } })
-
-      if (!peer) throw new NotFoundError('Unknown peer')
-
-      this.body = {
-        hostname: peer.hostname,
-        currency: peer.currency
-      }
     }
 
     static * postResource () {

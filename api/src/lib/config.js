@@ -1,4 +1,4 @@
-"use strict"
+'use strict'
 
 const Config = require('five-bells-shared').Config
 const envPrefix = 'api'
@@ -28,7 +28,7 @@ module.exports = class WalletConfig {
     }
 
     // This will be announced in webfinger
-    localConfig.ilpKitVersion = process.env['ILP_KIT_VERSION'];
+    localConfig.ilpKitVersion = process.env['ILP_KIT_VERSION']
 
     // Google Analytics / Mixpanel tracking
     localConfig.track = {
