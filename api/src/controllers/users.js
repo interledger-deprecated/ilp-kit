@@ -208,6 +208,9 @@ function UsersControllerFactory (auth, User, Invite, log, ledger, socket, config
 
       userObj.username = username
 
+      // TODO:BEFORE_DEPLOY make sure doesn't already exist (do the same for peers)
+      userObj.destination = parseInt(Math.random() * 1000000)
+
       // Create the ledger account
       let ledgerUser
       try {
