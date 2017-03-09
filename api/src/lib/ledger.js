@@ -46,6 +46,17 @@ module.exports = class Ledger extends EventEmitter {
     return response.body
   }
 
+  * existsAccount (user) {
+    try {
+      yield this.getAccount(user, true)
+      return true
+    } catch (e) {
+      if (e.name === 'NotFoundError') {
+        return false
+      } else { throw e }
+    }
+  }
+
   * getAccount (user, admin) {
     let response
 
