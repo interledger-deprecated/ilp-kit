@@ -65,12 +65,12 @@ export default class Settle extends Component {
           </div>}
 
           {destination.type === 'user' &&
-          <div>You are depositing money using <b>{params.method}</b>.</div>}
+          <div>You are depositing using <b>{params.method}</b>.</div>}
         </h3>
 
         <form onSubmit={this.handleSettle} className={cx('inputBox')}>
           <label>
-            <div>Amount</div>
+            <div>Enter the amount</div>
             <input type="text" ref="amount" className={cx('amountField')} defaultValue={initialAmount} />
           </label>
           <div>

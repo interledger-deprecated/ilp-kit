@@ -127,20 +127,20 @@ export default (store) => {
     }, 'settle')
   }
 
-  const getSettleSuccess = (nextState, cb) => {
-    require.ensure(['./containers/SettleSuccess/SettleSuccess'], (require) => {
-      cb(null, require('./containers/SettleSuccess/SettleSuccess'))
+  const getSettlementInfo = (nextState, cb) => {
+    require.ensure(['./containers/SettlementInfo/SettlementInfo'], (require) => {
+      cb(null, require('./containers/SettlementInfo/SettlementInfo'))
 
       store.dispatch(locationUpdate())
-    }, 'settleSuccess')
+    }, 'settlementInfo')
   }
 
-  const getSettleCancel = (nextState, cb) => {
-    require.ensure(['./containers/SettleCancel/SettleCancel'], (require) => {
-      cb(null, require('./containers/SettleCancel/SettleCancel'))
+  const getSettlementCancel = (nextState, cb) => {
+    require.ensure(['./containers/SettlementCancel/SettlementCancel'], (require) => {
+      cb(null, require('./containers/SettlementCancel/SettlementCancel'))
 
       store.dispatch(locationUpdate())
-    }, 'settleCancel')
+    }, 'settlementCancel')
   }
 
   /**
@@ -177,8 +177,8 @@ export default (store) => {
 
         { /* Routes available to all */ }
         <Route path="settle/:method/:destination" getComponent={getSettle} />
-        <Route path="settle/:method/:destination/success" getComponent={getSettleSuccess} />
-        <Route path="settle/:method/:destination/cancel" getComponent={getSettleCancel} />
+        <Route path="settlement/cancel" getComponent={getSettlementCancel} />
+        <Route path="settlement/:id" getComponent={getSettlementInfo} />
         <Route path="verify/:username/:verifyCode" getComponent={rootComponent} />
 
         { /* Catch all route */ }

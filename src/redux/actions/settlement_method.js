@@ -46,5 +46,5 @@ export const settle = (destination, data) => ({
 
 export const getDestination = destination => ({
   types: [types.GET_DESTINATION, types.GET_DESTINATION_SUCCESS, types.GET_DESTINATION_FAIL],
-  promise: client => client.get(`/settlements/${destination}`)
+  promise: client => client.get(`/destinations/${destination}`)
 })

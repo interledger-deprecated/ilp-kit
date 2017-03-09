@@ -1,6 +1,6 @@
 @import 'variables';
 
-.SettleSuccess {
+.SettlementCancel {
   text-align: center;
 
   h3 {
@@ -8,6 +8,7 @@
   }
 }
 .icon {
+  margin: 20px 0 30px;
   font-size: 250px;
-  color: $success;
+  color: $danger;
 }

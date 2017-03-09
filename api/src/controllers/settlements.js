@@ -27,13 +27,17 @@ function SettlementsControllerFactory (auth, config, log, Settlement, Settlement
 
   return class SettlementsController {
     static init (router) {
-      router.post('/settlements/:destination', auth.checkAuth, this.checkAdmin, this.custom)
-
       // Public
-      router.get('/settlements/:destination', this.getDestination)
+      router.get('/destinations/:destination', this.getDestination)
       router.post('/settlements/:destination/paypal', this.paypal)
       router.get('/settlements/:destination/paypal/execute', this.paypalExecute)
       router.get('/settlements/:destination/paypal/cancel', this.paypalCancel)
+
+      // User
+      router.get('/settlements/:id', auth.checkAuth, this.getResource)
+
+      // Admin
+      router.post('/settlements/:destination', auth.checkAuth, this.checkAdmin, this.custom)
     }
 
     // TODO move to auth
@@ -67,7 +71,7 @@ function SettlementsControllerFactory (auth, config, log, Settlement, Settlement
       let ilpAddress
 
       if (destination.hostname) {
-        ilpAddress = connector.peers[destination.id].ledgerName + connector.peers[destination.id].publicKey
+        ilpAddress = connector.peers[destination.destination].ledgerName + connector.peers[destination.destination].publicKey
       } else {
         ilpAddress = config.data.getIn(['ledger', 'prefix']) + destination.username
       }
@@ -145,7 +149,6 @@ function SettlementsControllerFactory (auth, config, log, Settlement, Settlement
 
       try {
         const payment = yield paypal.executePayment(this.query)
-
         // Weird
         if (destination.destination !== payment.destination) {
           // TODO this is caught locally
@@ -154,7 +157,7 @@ function SettlementsControllerFactory (auth, config, log, Settlement, Settlement
 
         const settlementMethod = yield SettlementMethod.findOne({ where: { type: 'paypal' } })
 
-        yield SettlementsController.settle({
+        const settlement = yield SettlementsController.settle({
           destination,
           settlementMethod,
           amount: payment.amount,
@@ -163,9 +166,10 @@ function SettlementsControllerFactory (auth, config, log, Settlement, Settlement
         })
 
         // TODO:BEFORE_DEPLOY handle destination.hostname, destination.currency for user
-        this.redirect(`${config.data.get('client_host')}/settle/paypal/${destination.destination}/success?peer=${destination.hostname}&currency=${destination.currency}&amount=${payment.amount}`)
+        this.redirect(`${config.data.get('client_host')}/settlement/${settlement.id}`)
       } catch (e) {
-        this.redirect(`${config.data.get('client_host')}/settle/paypal/${destination.destination}/cancel?peer=${destination.hostname}&currency=${destination.currency}`)
+        console.log('settlements:174', e)
+        this.redirect(`${config.data.get('client_host')}/settlement/cancel`)
       }
     }
 
@@ -175,6 +179,24 @@ function SettlementsControllerFactory (auth, config, log, Settlement, Settlement
       if (!destination) throw new NotFoundError('Invalid destination')
 
       this.redirect(`${config.data.get('client_host')}/settle/paypal/${destination.destination}/cancel`)
+    }
+
+    static * getResource () {
+      const settlement = yield Settlement.findOne({
+        where: { id: this.params.id },
+        include: [{ all: true }]
+      })
+
+      if (!settlement) throw new NotFoundError()
+
+      this.body = {
+        amount: settlement.amount,
+        currency: settlement.currency,
+        method: settlement.SettlementMethod.type,
+        date: settlement.created_at,
+        peer: settlement.Peer && settlement.Peer.hostname,
+        user: settlement.User && settlement.User.username
+      }
     }
   }
 }
