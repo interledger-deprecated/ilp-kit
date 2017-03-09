@@ -3,9 +3,8 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import ReactTooltip from 'react-tooltip'
 import { HotKeys } from 'react-hotkeys'
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
-import { ButtonDanger } from 'napo'
+import { ButtonDanger, AnimateEnterLeave } from 'napo'
 
 import { loadCodes, remove } from 'redux/actions/invite'
 import List from 'components/List/List'
@@ -147,18 +146,9 @@ export default class Invites extends Component {
             </div>
           )} state={inviteState}>
           {inviteState.list.length > 0 &&
-          <ReactCSSTransitionGroup
-            transitionName={{
-              enter: cx('enter'),
-              enterActive: cx('enterActive'),
-              leave: cx('leave'),
-              leaveActive: cx('leaveActive')
-            }}
-            transitionEnterTimeout={1000}
-            transitionLeaveTimeout={500}
-            component="div">
+          <AnimateEnterLeave>
             {inviteState.list.map(this.renderCode)}
-          </ReactCSSTransitionGroup>}
+          </AnimateEnterLeave>}
         </List>
       </div>
     )

@@ -3,7 +3,8 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import { routeActions } from 'react-router-redux'
 import { HotKeys } from 'react-hotkeys'
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
+
+import { AnimateEnterLeave } from 'napo'
 
 import Dropdown from 'react-bootstrap/lib/Dropdown'
 import MenuItem from 'react-bootstrap/lib/MenuItem'
@@ -77,22 +78,13 @@ export default class Settlement extends Component {
 
         <div className={cx('list')}>
           {list && list.length > 0 &&
-          <ReactCSSTransitionGroup
-            transitionName={{
-              enter: cx('enter'),
-              enterActive: cx('enterActive'),
-              leave: cx('leave'),
-              leaveActive: cx('leaveActive')
-            }}
-            transitionEnterTimeout={1000}
-            transitionLeaveTimeout={500}
-            component="div">
+          <AnimateEnterLeave>
             {list.map(method =>
               <div className={cx('settlementMethod')} key={method.id}>
                 <SettlementMethod method={method} />
               </div>
             )}
-          </ReactCSSTransitionGroup>}
+          </AnimateEnterLeave>}
 
           {/*<div className={cx('col-sm-8')}>
             {list && list.length > 0 && children}
