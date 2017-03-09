@@ -6,6 +6,8 @@ import * as authActions from 'redux/actions/auth'
 import Dropdown from 'react-bootstrap/lib/Dropdown'
 import MenuItem from 'react-bootstrap/lib/MenuItem'
 
+import { LinkContainer } from 'react-router-bootstrap'
+
 import Amount from 'components/Amount/Amount'
 
 import Onboarding from 'containers/Onboarding/Onboarding'
@@ -66,6 +68,26 @@ export default class Home extends Component {
     tracker.track('Toggle Stats')
   }
 
+  renderDepositLink = settlementMethod => {
+    if (settlementMethod.type === 'custom') {
+      return (
+        <MenuItem href={settlementMethod.uri} key={settlementMethod.name}>
+          {settlementMethod.logo && <img src={settlementMethod.logo} className={cx('logo')}/>}
+          {!settlementMethod.logo && settlementMethod.name}
+        </MenuItem>
+      )
+    }
+
+    return (
+      <LinkContainer to={`/settle/${settlementMethod.type}/${this.props.user.destination}`} key={settlementMethod.name}>
+        <MenuItem>
+          {settlementMethod.logo && <img src={settlementMethod.logo} className={cx('logo')}/>}
+          {!settlementMethod.logo && settlementMethod.name}
+        </MenuItem>
+      </LinkContainer>
+    )
+  }
+
   render() {
     const { user, config } = this.props
     const { showStats, reloading } = this.state
@@ -110,16 +132,11 @@ export default class Home extends Component {
             {!config.reload && config.settlementMethods && config.settlementMethods.length > 0 &&
             <div className={cx('settlementButtonBox')}>
               <Dropdown id="settlementButton" pullRight>
-                <Dropdown.Toggle bsStyle="success">
+                <Dropdown.Toggle bsStyle="success" bsSize="large">
                   Deposit
                 </Dropdown.Toggle>
                 <Dropdown.Menu className={cx('options')}>
-                  {config.settlementMethods.map(settlementMethod =>
-                    <MenuItem href={settlementMethod.uri} key={settlementMethod.name}>
-                      {settlementMethod.logo && <img src={settlementMethod.logo} className={cx('logo')}/>}
-                      {!settlementMethod.logo && settlementMethod.name}
-                    </MenuItem>
-                  )}
+                  {config.settlementMethods.map(this.renderDepositLink)}
                 </Dropdown.Menu>
               </Dropdown>
             </div>}

@@ -188,6 +188,7 @@ module.exports = class Conncetor {
       return {
         id: settlementMethod.id,
         name: settlementMethod.name,
+        type: settlementMethod.type,
         description: settlementMethod.description,
         uri,
         logo: settlementMethod.logoUrl
