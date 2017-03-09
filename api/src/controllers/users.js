@@ -3,8 +3,6 @@
 module.exports = UsersControllerFactory
 
 const fs = require('fs')
-const superagent = require('superagent-promise')(require('superagent'), Promise)
-const requestIp = require('request-ip')
 const request = require('five-bells-shared/utils/request')
 const Auth = require('../lib/auth')
 const Log = require('../lib/log')
@@ -13,8 +11,11 @@ const Socket = require('../lib/socket')
 const Config = require('../lib/config')
 const Mailer = require('../lib/mailer')
 const Pay = require('../lib/pay')
+const Antifraud = require('../lib/antifraud')
 const UserFactory = require('../models/user')
 const InviteFactory = require('../models/invite')
+const Database = require('../lib/db')
+const co = require('co')
 
 const UsernameTakenError = require('../errors/username-taken-error')
 const EmailTakenError = require('../errors/email-taken-error')
@@ -25,8 +26,8 @@ const InvalidBodyError = require('../errors/invalid-body-error')
 
 const USERNAME_REGEX = /^[a-z0-9]([a-z0-9]|[-](?!-)){0,18}[a-z0-9]$/
 
-UsersControllerFactory.constitute = [Auth, UserFactory, InviteFactory, Log, Ledger, Socket, Config, Mailer, Pay]
-function UsersControllerFactory (auth, User, Invite, log, ledger, socket, config, mailer, pay) {
+UsersControllerFactory.constitute = [Database, Auth, UserFactory, InviteFactory, Log, Ledger, Socket, Config, Mailer, Pay, Antifraud]
+function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, socket, config, mailer, pay, antifraud) {
   log = log('users')
 
   return class UsersController {
@@ -124,154 +125,146 @@ function UsersControllerFactory (auth, User, Invite, log, ledger, socket, config
      *    }
      */
 
-    // TODO should support both create and update
+    // Only supports create
     static * postResource () {
-      let username = this.params.username.toLowerCase()
-
-      if (!USERNAME_REGEX.test(username)) {
-        throw new InvalidBodyError('Username must be 2-20 characters, lowercase letters, numbers and hyphens ("-") only, with no two or more consecutive hyphens.')
-      }
-
-      // TODO validate email
-
-      const userObj = this.body
-
       // check if registration is enabled
       if (!config.data.get('registration') && !userObj.inviteCode) {
         throw new InvalidBodyError('Registration is disabled without an invite code')
       }
 
+      let username = this.params.username.toLowerCase()
+      if (!USERNAME_REGEX.test(username)) {
+        throw new InvalidBodyError('Username must be 2-20 characters, lowercase letters, numbers and hyphens ("-") only, with no two or more consecutive hyphens.')
+      }
+
+      const userObj = this.body
+
+      yield antifraud.checkRisk(userObj) // throws if fraud risk is too high
+
+      let dbUser
       let invite
+      yield sequelize.transaction(sequelize.Promise.coroutine(function * (t) {
+        const opts = {transaction: t}
 
-      // Invite code
-      if (userObj.inviteCode) {
-        invite = yield Invite.findOne({where: {code: userObj.inviteCode, claimed: false}})
+        userObj.username = username
+        // TODO:BEFORE_DEPLOY make sure doesn't already exist (do the same for peers)
+        userObj.destination = parseInt(Math.random() * 1000000)
 
-        if (!invite && !config.data.get('registration')) {
-          throw new InvalidBodyError('The invite code is wrong')
+        dbUser = new User()
+        dbUser.setDataExternal(userObj)
+
+        // Check if invite code is valid
+        if (userObj.inviteCode) {
+          invite = yield Invite.findOne(Object.assign({
+            where: {
+              code: userObj.inviteCode,
+              claimed: false
+            }
+          }, opts))
+
+          if (invite) {
+            dbUser.invite_code = invite.code
+            invite.user_id = dbUser.id
+            // throws if the user identified by user_id has already claimed another invite
+            yield invite.save(opts)
+          } else if (!config.data.get('registration')) {
+            throw new InvalidBodyError('The invite code is wrong')
+          }
         }
-      }
 
-      let dbUser = yield User.findOne({where: {
-        $or: [
-          { username: username },
-          { email: userObj.email }
-        ]
-      }})
-
-      // TODO check if the ledger account already exists (probably not)
-      if (dbUser) {
-        // Username is already taken
-        if (dbUser.username === username) {
-          throw new UsernameTakenError('Username is already taken')
-        }
-
-        // Email is already taken
-        throw new EmailTakenError('Email is already taken')
-      }
-
-      // Check for fraud
-      const serviceUrl = config.data.getIn(['antifraud', 'service_url'])
-
-      if (serviceUrl) {
-        const maxRisk = config.data.getIn(['antifraud', 'max_risk'])
-        let response
-
+        // Create the db user
         try {
-          response = yield superagent.post(serviceUrl, {
-            email: userObj.email || '',
-            username: userObj.username || '',
-            name: userObj.name || '',
-            phone: userObj.phone || '',
-            address1: userObj.address1 || '',
-            address2: userObj.address2 || '',
-            city: userObj.city || '',
-            region: userObj.region || '',
-            country: userObj.country || '',
-            zip_code: userObj.zip_code || '',
-            ip_address: requestIp.getClientIp(this.req),
-            augurio_unique_id: userObj.fingerprint
-          })
-        } catch (err) {
-          console.log('users:172', err)
-        }
-
-        if (response.body && response.body.risklevel) {
-          log.debug('Signup try: risk level is', response.body.risklevel)
-
-          if (response.body.risklevel > maxRisk) {
-            // TODO something more meaningful
+          dbUser = yield dbUser.save(opts)
+          dbUser = User.fromDatabaseModel(dbUser)
+        } catch (e) {
+          let errorMsg = e.errors && e.errors[0] && e.errors[0].message
+          if (errorMsg === 'username must be unique') {
+            throw new UsernameTakenError('Username already registered.')
+          } else if (errorMsg === 'email must be unique') {
+            throw new EmailTakenError('Email already registered.')
+          // } else if (errorMsg === 'invite_code must be unique') {
+          } else {
+            log.error(e)
             throw new ServerError()
           }
         }
-      }
 
-      userObj.username = username
-
-      // TODO:BEFORE_DEPLOY make sure doesn't already exist (do the same for peers)
-      userObj.destination = parseInt(Math.random() * 1000000)
-
-      // Create the ledger account
-      let ledgerUser
-      try {
-        ledgerUser = yield ledger.createAccount(userObj)
-      } catch (e) {
-        throw new UsernameTakenError('Ledger rejected username')
-      }
-
-      // Create the db user
-      dbUser = new User()
-      dbUser.setDataExternal(userObj)
-
-      try {
-        dbUser = yield dbUser.save()
-        dbUser = User.fromDatabaseModel(dbUser)
-
-        // Invite codes can only be used once
-        if (invite) {
-          // Admin account funding the new account
-          const source = yield User.findOne({
-            where: {
-              username: config.data.getIn(['ledger', 'admin', 'user'])
-            }
-          })
-
-          // Send the invite money
-          yield pay.pay({
-            source: source.getDataExternal(),
-            destination: dbUser.username,
-            sourceAmount: invite.amount,
-            destinationAmount: invite.amount,
-            message: 'Claimed invite code: ' + invite.code
-          })
-
-          invite.user_id = dbUser.id
-          invite.claimed = true
-
-          yield invite.save()
+        try {
+          // Sanity check: Verify that a ledger account with that name does not exist yet
+          // Otherwise an attacker could take over a ledger account
+          // for which no ILP kit account exits
+          const exists = yield co(ledger.existsAccount.bind(ledger, userObj))
+          if (!exists) {
+            yield co(ledger.createAccount.bind(ledger, userObj))
+          } else {
+            throw new Error(`Username ${userObj.username} already exists on the ledger` +
+              ', but not in the ILP kit.')
+          }
+        } catch (e) {
+          log.error(e)
+          throw new UsernameTakenError('Ledger rejected username')
         }
+      })).then(co.wrap(function * (result) {
+        // transaction was commited
+        yield co(UsersController._onboardUser.bind(this, invite, dbUser))
+      }).bind(this)).catch(function (e) {
+        // transaction was rolled back
+        log.debug(e)
+        throw e
+      })
+    }
 
-      // TODO:SECURITY account should be funded at this point
+    static * _handleInvite (invite, username) {
+      try {
+        if (invite) {
+          if (invite.amount) {
+            // Admin account funding the new account
+            const source = yield User.findOne({
+              where: {
+                username: config.data.getIn(['ledger', 'admin', 'user'])
+              }
+            })
+
+            // Send the invite money
+            yield pay.pay({
+              source: source.getDataExternal(),
+              destination: username,
+              sourceAmount: invite.amount,
+              destinationAmount: invite.amount,
+              message: 'Claimed invite code: ' + invite.code
+            })
+            invite.claimed = true
+            invite.save()
+          }
+        }
       } catch (e) {
+        // TODO User did not receive his invite money
+        log.error(e)
         throw new ServerError()
+      }
+    }
+
+    static * _onboardUser (invite, dbUser) {
+      if (invite) {
+        yield co(UsersController._handleInvite(invite, dbUser.username))
       }
 
       // Fund the newly created account
-      yield UsersController.reload(dbUser)
+      yield co(UsersController.reload(dbUser))
 
       // Send a welcome email
-      yield mailer.sendWelcome({
+      yield co(mailer.sendWelcome({
         name: dbUser.username,
         to: dbUser.email,
         link: User.getVerificationLink(dbUser.username, dbUser.email)
-      })
+      }))
 
-      const user = yield dbUser.appendLedgerAccount()
+      const user = yield co(dbUser.appendLedgerAccount())
 
       // TODO callbacks?
       this.req.logIn(user, err => {})
 
-      log.debug('created user ' + username)
+      log.debug('created user ' + dbUser.username)
 
       this.body = user.getDataExternal()
       this.status = 201
