@@ -102,9 +102,7 @@ function MiscControllerFactory (Auth, log, config, ledger, utils, connector) {
         version: `${packageVersion}-${gitCommit}`
       }
 
-      if (this.req.user) {
-        response.settlementMethods = yield connector.getSelfSettlementMethods(this.req.user.destination, 0)
-      }
+      response.settlementMethods = yield connector.getSelfSettlementMethods(false, 0)
 
       if (config.data.get('reload')) {
         response.reload = true

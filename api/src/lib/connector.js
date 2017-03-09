@@ -181,9 +181,15 @@ module.exports = class Conncetor {
     // TODO:PERFORMANCE don't call this on every request
     const dbSettlementMethods = yield this.SettlementMethod.findAll({ where: { enabled: true } })
     return dbSettlementMethods.map(settlementMethod => {
-      const uri = settlementMethod.type === 'custom'
-        ? `${settlementMethod.uri}?destination=${destination}`
-        : this.config.data.get('client_host') + '/settle/' + settlementMethod.type + '/' + destination + '?amount=' + Math.max(amount, 0)
+      let uri
+
+      if (destination) {
+        uri = settlementMethod.type === 'custom'
+          ? `${settlementMethod.uri}?destination=${destination}`
+          : this.config.data.get('client_host') + '/settle/' + settlementMethod.type + '/' + destination + '?amount=' + Math.max(amount, 0)
+      } else {
+        uri = settlementMethod.uri
+      }
 
       return {
         id: settlementMethod.id,
