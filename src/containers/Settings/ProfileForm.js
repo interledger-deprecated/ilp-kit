@@ -149,32 +149,37 @@ export default class ProfileForm extends Component {
           })()}
         </Alert>}
 
-        <div className={cx('profilePicBox')}>
-          <img src={user.profile_picture || require('../../components/HistoryItem/placeholder.png')} className={cx('profilePic')} />
-          <DropzoneComponent
-            config={this.dropzoneConfig}
-            eventHandlers={this.dropzoneEventHandlers}
-            className={cx('dropzone', 'dropzoneLocal')}>
-            <div className="dz-message">
-              <i className="fa fa-cloud-upload" />
-              Drop an image or click to upload
+        <div className={cx('row', 'row-sm')}>
+          <div className={cx('col-sm-3')}>
+            <div className={cx('profilePicBox')}>
+              <img src={user.profile_picture || require('../../components/HistoryItem/placeholder.png')} className={cx('profilePic')} />
+              <DropzoneComponent
+                config={this.dropzoneConfig}
+                eventHandlers={this.dropzoneEventHandlers}
+                className={cx('dropzone', 'dropzoneLocal')}>
+                <div className="dz-message">
+                  <i className="fa fa-cloud-upload" />
+                  Upload new picture
+                </div>
+              </DropzoneComponent>
             </div>
-          </DropzoneComponent>
+          </div>
+          <div className={cx('col-sm-9')}>
+            <form onSubmit={handleSubmit(this.save)}>
+              <Input object={email} label="Email" type="email" size="lg" focus />
+              <Input object={name} label="Name" type="text" size="lg" />
+              <Input object={password} label="Current Password" type="password" size="lg" />
+
+              <label>Change Password</label>
+              <Input object={newPassword} label="New Password" type="password" size="lg" />
+              <Input object={verifyNewPassword} label="Verify New Password" type="password" size="lg" />
+
+              <button type="submit" className="btn btn-success" disabled={pristine || (invalid && !submitFailed) || submitting}>
+                {submitting ? ' Saving...' : ' Save'}
+              </button>
+            </form>
+          </div>
         </div>
-
-        <form onSubmit={handleSubmit(this.save)}>
-          <Input object={email} label="Email" type="email" size="lg" focus />
-          <Input object={name} label="Name" type="text" size="lg" />
-          <Input object={password} label="Current Password" type="password" size="lg" />
-
-          <label>Change Password</label>
-          <Input object={newPassword} label="New Password" type="password" size="lg" />
-          <Input object={verifyNewPassword} label="Verify New Password" type="password" size="lg" />
-
-          <button type="submit" className="btn btn-success" disabled={pristine || (invalid && !submitFailed) || submitting}>
-            {submitting ? ' Saving...' : ' Save'}
-          </button>
-        </form>
       </div>
     )
   }

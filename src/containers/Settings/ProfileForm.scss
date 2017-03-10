@@ -4,18 +4,15 @@
   margin-top: 0;
 }
 .profilePicBox {
-  overflow: auto;
+  margin: 0 0 10px;
 }
 .profilePic {
-  float: left;
-  margin: 0 10px 0 0;
-  height: 100px;
-  width: 100px;
+  margin: 0 0 10px 0;
+  width: 100%;
   border-radius: 3px;
 }
 .dropzone {
-  float: left;
-  width: calc(100% - 110px);
+  width: 100%;
   border: 1px dashed $box-border-color;
   padding: 26px 10px;
   height: 100px;
