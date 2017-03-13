@@ -5,8 +5,8 @@
 
 $screen-md: 992px;
 
-.item {
-  border-top: 1px solid $history-payment-separator-color;
+.payment {
+  border-top: 1px solid $activity-payment-separator-color;
   padding: 12px;
 }
 .link, .link:hover, .link:active, .link:visited {
@@ -45,7 +45,7 @@ $screen-md: 992px;
   margin-top: -5px;
   font-size: 10px;
 
-  @include singleLinkColor($history-date-text-color);
+  @include singleLinkColor($activity-date-text-color);
 }
 .message {
   font-size: 15px;
@@ -54,7 +54,7 @@ $screen-md: 992px;
 .date {
   font-size: 13px;
   line-height: 15px;
-  color: $history-date-text-color;
+  color: $activity-date-text-color;
 }
 .amount {
   font-size: 22px;
@@ -66,13 +66,13 @@ $screen-md: 992px;
   }
 }
 .outgoing {
-  color: $history-negative;
+  color: $activity-negative;
 }
 .outgoing:before {
   content: "– ";
 }
 .incoming {
-  color: $history-positive;
+  color: $activity-positive;
 }
 .incoming:before {
   content: "+ ";
@@ -84,8 +84,8 @@ $screen-md: 992px;
     margin: 0 0 0 -20px;
     line-height: 40px;
     font-size: 22px;
-    color: $history-expand-text-color;
-    background: $history-expand-background-color;
+    color: $activity-expand-text-color;
+    background: $activity-expand-background-color;
     text-align: center;
     border-radius: 3px;
   }
@@ -101,10 +101,10 @@ $screen-md: 992px;
 .transfersCount {
   display: block;
   text-align: right;
-  color: $history-date-text-color;
+  color: $activity-date-text-color;
 
   a {
-    color: $history-date-text-color !important;
+    color: $activity-date-text-color !important;
   }
 
   a:hover {

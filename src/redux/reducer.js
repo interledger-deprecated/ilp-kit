@@ -6,7 +6,7 @@ import { loadingBarReducer } from 'react-redux-loading-bar'
 
 import auth from './reducers/auth'
 import send from './reducers/send'
-import history from './reducers/history'
+import activity from './reducers/activity'
 import stats from './reducers/stats'
 import invite from './reducers/invite'
 import peer from './reducers/peer'
@@ -19,7 +19,7 @@ export default combineReducers({
   reduxAsyncConnect,
   auth,
   send,
-  history,
+  activity,
   stats,
   invite,
   peer,

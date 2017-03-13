@@ -1,4 +1,4 @@
-"use strict"
+'use strict'
 
 const Container = require('constitute').Container
 const makeRouter = require('koa-router')
@@ -13,15 +13,16 @@ const InviteController = require('../controllers/invites')
 const PeerController = require('../controllers/peers')
 const SettlementsController = require('../controllers/settlements')
 const SettlementMethodsController = require('../controllers/settlement_methods')
+const ActivityLogsController = require('../controllers/activity_logs')
 
 module.exports = class Router {
-  static constitute() { return [ Container ] }
-  constructor(container) {
+  static constitute () { return [ Container ] }
+  constructor (container) {
     this.container = container
     this.router = makeRouter()
   }
 
-  setupDefaultRoutes() {
+  setupDefaultRoutes () {
     const health = this.container.constitute(HealthController)
     health.init(this.router)
 
@@ -51,9 +52,12 @@ module.exports = class Router {
 
     const settlements = this.container.constitute(SettlementsController)
     settlements.init(this.router)
+
+    const activityLogs = this.container.constitute(ActivityLogsController)
+    activityLogs.init(this.router)
   }
 
-  attach(app) {
+  attach (app) {
     app.use(this.router.middleware())
     app.use(this.router.routes())
   }

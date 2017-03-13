@@ -4,22 +4,6 @@ import moment from 'moment-timezone'
 import paginate from 'redux-pagination'
 
 function reducer (state = {}, action = {}) {
-  function updateInHistory (timeSlot, message, update) {
-    return {
-      ...state,
-      list: state.list.map(payment => {
-        if (payment.time_slot === timeSlot && payment.message === message) {
-          return {
-            ...payment,
-            ...update
-          }
-        }
-
-        return payment
-      })
-    }
-  }
-
   switch (action.type) {
     case types.WS_PAYMENT:
       // Only do these things when the user is on the first page
@@ -35,6 +19,7 @@ function reducer (state = {}, action = {}) {
       // Go thru the existing groups
       let newList = state.list.map((item) => {
         // Is this group in the same time slot as the new payment?
+        // TODO:BEFORE_DEPLOY handle this
         if (timeSlot !== item.time_slot) return item
 
         // Are the source and destination identifiers the same with the new payment?
@@ -86,19 +71,6 @@ function reducer (state = {}, action = {}) {
       }
     case types.LOGOUT_SUCCESS:
       return {}
-    case types.LOAD_TRANSFERS:
-      return updateInHistory(action.timeSlot, action.message, {
-        transfersLoading: true
-      })
-    case types.LOAD_TRANSFERS_SUCCESS:
-      return updateInHistory(action.timeSlot, action.message, {
-        transfers: action.result,
-        transfersLoading: false
-      })
-    case types.LOAD_TRANSFERS_FAIL:
-      return updateInHistory(action.timeSlot, action.message, {
-        transfersLoading: false
-      })
     default:
       return state
   }

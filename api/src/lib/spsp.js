@@ -190,7 +190,7 @@ module.exports = class SPSP {
         yield dbPayment.save()
 
         // Notify the clients
-        // TODO should probably have the same format as the payment in history
+        // TODO should probably have the same format as the payment in activity log
         self.socket.payment(username, dbPayment)
       }))
 

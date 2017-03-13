@@ -7,24 +7,24 @@ import createStore from 'redux/store'
 import ApiClient from 'helpers/ApiClient'
 const client = new ApiClient()
 
-import HistoryItem from './HistoryItem'
+import ActivityPayment from './ActivityPayment'
 import mockStore from '../../../test/data/store'
 
 import classNames from 'classnames/bind'
-import styles from './HistoryItem.scss'
-const cx = classNames.bind(styles);
+import styles from './ActivityPayment.scss'
+const cx = classNames.bind(styles)
 
-describe('(component) HistoryItem', () => {
+describe('(component) ActivityPayment', () => {
   let store, rendered
 
-  const historyItemMock = mockStore.history.history[0]
-  const historyItemViewMock = mockStore.history.historyView[0]
+  const ActivityPaymentMock = mockStore.activity.activity[0]
+  const ActivityPaymentViewMock = mockStore.activity.activityView[0]
   const userMock = mockStore.auth.user
 
   store = createStore(browserHistory, client, mockStore)
   rendered = TestUtils.renderIntoDocument(
     <Provider store={store} key='provider'>
-      <HistoryItem item={historyItemMock} user={userMock}/>
+      <ActivityPayment item={ActivityPaymentMock} user={userMock}/>
     </Provider>
   )
 
@@ -36,6 +36,6 @@ describe('(component) HistoryItem', () => {
     const element = TestUtils.findRenderedDOMComponentWithClass(rendered, cx('counterparty'))
 
     expect(element).to.exist
-    expect(element.textContent).to.equal(historyItemViewMock.source_identifier)
+    expect(element.textContent).to.equal(ActivityPaymentViewMock.source_identifier)
   })
 })

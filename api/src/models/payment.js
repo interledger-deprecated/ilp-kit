@@ -11,6 +11,8 @@ const Database = require('../lib/db')
 const Validator = require('five-bells-shared/lib/validator')
 const Sequelize = require('sequelize')
 const UserFactory = require('./user')
+const ActivityLogFactory = require('./activity_log')
+const ActivityLogsItemFactory = require('./activity_logs_item')
 
 PaymentFactory.constitute = [Database, Validator, Container, UserFactory]
 function PaymentFactory (sequelize, validator, container, User) {
@@ -58,7 +60,8 @@ function PaymentFactory (sequelize, validator, container, User) {
       }
     }
 
-    static * getUserPayments(user, page, limit) {
+    // TODO:BEFORE_DEPLOY remove this
+    static * getUserPayments (user, page, limit) {
       page = page > 0 ? Number(page) : 1
       limit = Number(limit)
 
@@ -68,7 +71,6 @@ function PaymentFactory (sequelize, validator, container, User) {
       //  appear in the same row
 
       // TODO switch to a legit sequalize format
-
       if (sequelize.options.dialect === 'sqlite') {
         return {
           list: yield sequelize.query(
@@ -278,7 +280,7 @@ function PaymentFactory (sequelize, validator, container, User) {
     ]
   })
 
-  container.schedulePostConstructor((User) => {
+  container.schedulePostConstructor(User => {
     Payment.DbModel.belongsTo(User.DbModel, {
       foreignKey: 'source_user',
       as: 'SourceUser'
@@ -288,6 +290,22 @@ function PaymentFactory (sequelize, validator, container, User) {
       as: 'DestinationUser'
     })
   }, [ UserFactory ])
+
+  container.schedulePostConstructor(ActivityLog => {
+    container.schedulePostConstructor(ActivityLogsItem => {
+      Payment.DbModel.belongsToMany(ActivityLog.DbModel, {
+        through: {
+          model: ActivityLogsItem.DbModel,
+          unique: false,
+          scope: {
+            item_type: 'payment'
+          }
+        },
+        foreignKey: 'item_id',
+        constraints: false
+      })
+    }, [ ActivityLogsItemFactory ])
+  }, [ ActivityLogFactory ])
 
   return Payment
 }

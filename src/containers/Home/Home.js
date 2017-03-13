@@ -12,7 +12,7 @@ import Amount from 'components/Amount/Amount'
 
 import Onboarding from 'containers/Onboarding/Onboarding'
 import SendForm from 'containers/SendForm/SendForm'
-import History from 'containers/History/History'
+import Activity from 'containers/Activity/Activity'
 import Stats from 'containers/Stats/Stats'
 
 import classNames from 'classnames/bind'
@@ -98,16 +98,16 @@ export default class Home extends Component {
     if (!user) return null
     return (
       <div className="row">
-        <div className={cx('col-sm-8', 'historyBox')}>
+        <div className={cx('col-sm-8', 'activityBox')}>
           {/* Onboarding */}
           <Onboarding />
 
-          {/* History */}
+          {/* Activity */}
           {/* <div>
             {showStats &&
-            <a href="" onClick={this.toggleStats}>Payment History</a>}
+            <a href="" onClick={this.toggleStats}>Payment Activity</a>}
             {!showStats &&
-            <span>Payment History</span>}
+            <span>Payment Activity</span>}
           </div>
           <div className="pull-right">
             {showStats &&
@@ -117,10 +117,10 @@ export default class Home extends Component {
           </div> */}
 
           <div className={cx('header')}>
-            <h3>Payment history</h3>
+            <h3>Activity</h3>
           </div>
 
-          {!showStats && <History />}
+          {!showStats && <Activity />}
           {showStats && <Stats />}
         </div>
         <div className="col-sm-4">

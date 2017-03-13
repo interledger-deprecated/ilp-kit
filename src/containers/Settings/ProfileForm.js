@@ -152,7 +152,7 @@ export default class ProfileForm extends Component {
         <div className={cx('row', 'row-sm')}>
           <div className={cx('col-sm-3')}>
             <div className={cx('profilePicBox')}>
-              <img src={user.profile_picture || require('../../components/HistoryItem/placeholder.png')} className={cx('profilePic')} />
+              <img src={user.profile_picture || require('../../components/ActivityPayment/placeholder.png')} className={cx('profilePic')} />
               <DropzoneComponent
                 config={this.dropzoneConfig}
                 eventHandlers={this.dropzoneEventHandlers}

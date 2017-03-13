@@ -1,4 +1,4 @@
-export function contextualizePayment(payment, user) {
+export function contextualizePayment (payment, user) {
   if (payment.source_identifier === user.identifier) {
     payment.counterpartyIdentifier = payment.destination_identifier
     payment.counterpartyName = payment.destination_name

@@ -2,33 +2,33 @@ import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import ReactPaginate from 'react-paginate'
-import { getPage } from 'redux/actions/history'
+import { getPage } from 'redux/actions/activity'
 
 import { initActionCreators } from 'redux-pagination'
 
-import HistoryItem from 'components/HistoryItem/HistoryItem'
+import ActivityPayment from 'components/ActivityPayment/ActivityPayment'
 
 import classNames from 'classnames/bind'
-import styles from './History.scss'
+import styles from './Activity.scss'
 const cx = classNames.bind(styles)
 
 // TODO not sure the component is the best place for this
 const paginationActionCreators = initActionCreators({
   limit: 20,
-  path: '/payments'
+  path: '/activity_logs'
 })
 
 @connect(
   state => ({
-    history: state.history.list,
-    totalPages: state.history.totalPages,
-    loadingPage: state.history.loadingPage,
-    initialLoad: state.history.initialLoad
+    activity: state.activity.list,
+    totalPages: state.activity.totalPages,
+    loadingPage: state.activity.loadingPage,
+    initialLoad: state.activity.initialLoad
   }),
   {getPage, ...paginationActionCreators})
 export default class Home extends Component {
   static propTypes = {
-    history: PropTypes.array,
+    activity: PropTypes.array,
     totalPages: PropTypes.number,
     loadingPage: PropTypes.bool,
     initialLoad: PropTypes.bool,
@@ -40,15 +40,15 @@ export default class Home extends Component {
     list: []
   }
 
-  // Load the history
+  // Load the activity
   componentWillMount() {
     if (!this.props.initialLoad) {
       this.props.getPage(1)
     }
 
-    if (this.props.history.length) {
+    if (this.props.activity.length) {
       this.setState({
-        list: this.props.history
+        list: this.props.activity
       })
     }
   }
@@ -64,10 +64,10 @@ export default class Home extends Component {
   }
 
   componentDidUpdate() {
-    if (this.state.list === this.props.history) return
+    if (this.state.list === this.props.activity) return
 
     this.setState({
-      list: this.props.history
+      list: this.props.activity
     })
 
     window.scrollTo(0, 0)
@@ -75,11 +75,11 @@ export default class Home extends Component {
 
   handlePageClick = data => {
     this.props.getPage(data.selected + 1)
-    tracker.track('History paginate')
+    tracker.track('Activity paginate')
   }
 
   render() {
-    const {history, totalPages, loadingPage, initialLoad} = this.props
+    const {activity, totalPages, loadingPage, initialLoad} = this.props
     const {list} = this.state
 
     return (
@@ -93,9 +93,10 @@ export default class Home extends Component {
             leave: cx('leave'),
             leaveActive: cx('leave-active')
           }} transitionAppearTimeout={1000} transitionEnterTimeout={1000} transitionLeaveTimeout={50}>
-          {list.map(item => (
-            <li key={item.time_slot + item.source_identifier + item.destination_identifier + item.message}>
-              <HistoryItem item={item} />
+          {list.map(activity => (
+            <li key={activity.id}>
+              {activity.Payments.length > 0 &&
+              <ActivityPayment activity={activity} />}
             </li>
           ))}
           </ReactCSSTransitionGroup>}
@@ -103,7 +104,7 @@ export default class Home extends Component {
           {initialLoad && list.length === 0 && <li className={cx('loading')}>No payments to show</li>}
         </ul>
 
-        {history && history.length > 0 &&
+        {activity && activity.length > 0 &&
           <div className={cx('pagination')}>
             <ReactPaginate
               pageCount={totalPages || 1}

@@ -1,4 +1,4 @@
-"use strict"
+'use strict'
 
 module.exports = SettlementFactory
 
@@ -12,6 +12,8 @@ const Sequelize = require('sequelize')
 const PeerFactory = require('./peer')
 const UserFactory = require('./user')
 const SettlementMethodFactory = require('./settlement_method')
+const ActivityLogFactory = require('./activity_log')
+const ActivityLogsItemFactory = require('./activity_logs_item')
 
 SettlementFactory.constitute = [Database, Validator, Container]
 function SettlementFactory (sequelize, validator, container) {
@@ -60,6 +62,22 @@ function SettlementFactory (sequelize, validator, container) {
   container.schedulePostConstructor(SettlementMethod => {
     Settlement.DbModel.belongsTo(SettlementMethod.DbModel)
   }, [ SettlementMethodFactory ])
+
+  container.schedulePostConstructor(ActivityLog => {
+    container.schedulePostConstructor(ActivityLogsItem => {
+      Settlement.DbModel.belongsToMany(ActivityLog.DbModel, {
+        through: {
+          model: ActivityLogsItem.DbModel,
+          unique: false,
+          scope: {
+            item_type: 'settlement'
+          }
+        },
+        foreignKey: 'item_id',
+        constraints: false
+      })
+    }, [ ActivityLogsItemFactory ])
+  }, [ ActivityLogFactory ])
 
   return Settlement
 }

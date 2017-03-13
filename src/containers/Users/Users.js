@@ -30,7 +30,7 @@ export default class Invites extends Component {
 
   renderProfilePic = (cell, row) => {
     return <img
-      src={cell ? `/api/users/${row.username}/profilepic` : require('components/HistoryItem/placeholder.png')}
+      src={cell ? `/api/users/${row.username}/profilepic` : require('components/ActivityPayment/placeholder.png')}
       className={cx('profilePic')} />
   }
 

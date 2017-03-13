@@ -3,8 +3,8 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import {connect} from 'react-redux'
 import moment from 'moment'
 import TimeAgo from 'react-timeago'
+import _ from 'lodash'
 
-import { loadTransfers } from 'redux/actions/history'
 import { destinationChange, amountsChange } from 'redux/actions/send'
 
 import Amount from '../Amount/Amount'
@@ -13,7 +13,7 @@ import { contextualizePayment } from '../../utils/api'
 import { getAccountName } from '../../utils/account'
 
 import classNames from 'classnames/bind'
-import styles from './HistoryItem.scss'
+import styles from './ActivityPayment.scss'
 const cx = classNames.bind(styles)
 
 @connect(
@@ -21,12 +21,11 @@ const cx = classNames.bind(styles)
     user: state.auth.user,
     config: state.auth.config,
     advancedMode: state.auth.advancedMode
-  }), { loadTransfers, destinationChange, amountsChange })
-export default class HistoryItem extends Component {
+  }), { destinationChange, amountsChange })
+export default class ActivityPayment extends Component {
   static propTypes = {
-    item: PropTypes.object.isRequired,
+    activity: PropTypes.object.isRequired,
     user: PropTypes.object.isRequired,
-    loadTransfers: PropTypes.func.isRequired,
     config: PropTypes.object,
     advancedMode: PropTypes.bool,
     destinationChange: PropTypes.func.isRequired,
@@ -42,38 +41,54 @@ export default class HistoryItem extends Component {
   }
 
   componentWillMount() {
-    const item = contextualizePayment(this.props.item, this.props.user)
-
-    this.setState({
-      ...this.state,
-      item,
-      type: item.counterpartyIdentifier === item.destination_identifier ? 'outgoing' : 'incoming'
-    })
+    this.processActivity()
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.item === nextProps.item) return
+    if (this.props.activity === nextProps.activity) return
 
-    const item = contextualizePayment(nextProps.item, nextProps.user)
+    this.processActivity(nextProps)
+  }
+
+  processActivity = (props = this.props) => {
+    const firstPayment = props.activity.Payments[0]
+
+    const sourceAmount = _.reduce(props.activity.Payments, (sum, payment) => {
+      return sum + payment.source_amount
+    }, 0)
+
+    const destinationAmount = _.reduce(props.activity.Payments, (sum, payment) => {
+      return sum + payment.destination_amount
+    }, 0)
+
+    const payment = contextualizePayment({
+      source_identifier: firstPayment.source_identifier,
+      destination_identifier: firstPayment.destination_identifier,
+      source_amount: sourceAmount,
+      source_name: firstPayment.source_name,
+      source_image_url: firstPayment.source_image_url,
+      destination_amount: destinationAmount,
+      destination_name: firstPayment.destination_name,
+      destination_image_url: firstPayment.destination_image_url,
+      message: firstPayment.message,
+      // time_slot: "2017-03-10T20:00:00.000Z",
+      // TODO:BEFORE_DEPLOY should this be first payment or last payment
+      recent_date: firstPayment.created_at,
+      transfers: props.activity.Payments
+    }, props.user)
 
     this.setState({
       ...this.state,
-      item,
-      type: item.counterpartyIdentifier === item.destination_identifier ? 'outgoing' : 'incoming',
+      payment,
+      type: payment.counterpartyIdentifier === payment.destination_identifier ? 'outgoing' : 'incoming'
     })
   }
 
   toggleTransfers = event => {
-    if (!this.props.item.transfers) {
-      this.props.loadTransfers(this.props.item)
-    }
-
-    setTimeout(() => { // because componentWillReceiveProps also calls setState and overrides this
-      this.setState({
-        ...this.state,
-        showTransfers: !this.state.showTransfers
-      })
-    }, 50)
+    this.setState({
+      ...this.state,
+      showTransfers: !this.state.showTransfers
+    })
 
     event.preventDefault()
   }
@@ -81,13 +96,13 @@ export default class HistoryItem extends Component {
   handleCounterpartyClick = e => {
     e.preventDefault()
 
-    this.props.destinationChange(this.state.item.counterpartyIdentifier)
+    this.props.destinationChange(this.state.payment.counterpartyIdentifier)
   }
 
   handleAmountClick = e => {
     e.preventDefault()
 
-    this.props.amountsChange(this.state.type === 'outgoing' ? this.state.item.source_amount : this.state.item.destination_amount, null)
+    this.props.amountsChange(this.state.type === 'outgoing' ? this.state.payment.source_amount : this.state.payment.destination_amount, null)
   }
 
   timeAgoFormatter = (value, unit, suffix) => {
@@ -106,15 +121,15 @@ export default class HistoryItem extends Component {
 
   render() {
     const config = this.props.config
-    const { showTransfers, item, type } = this.state
+    const { showTransfers, payment, type } = this.state
     const advancedMode = this.props.advancedMode
 
-    const profilePic = (type === 'outgoing' ? item.destination_image_url : item.source_image_url) || require('./placeholder.png')
-    const paymentAmount = type === 'outgoing' ? item.source_amount : item.destination_amount
+    const profilePic = (type === 'outgoing' ? payment.destination_image_url : payment.source_image_url) || require('./placeholder.png')
+    const paymentAmount = type === 'outgoing' ? payment.source_amount : payment.destination_amount
 
     // TODO payments grouping / message
     return (
-      <div className={cx('item')} key={item.time_slot}>
+      <div className={cx('payment')}>
         <div className="row">
           <div className="col-xs-8">
             <img src={profilePic} className={cx('profilePic')} />
@@ -123,30 +138,30 @@ export default class HistoryItem extends Component {
                 {type === 'outgoing' &&
                 <span>
                   You paid <a href=""
-                              className={cx('counterparty')} title={item.counterpartyIdentifier}
+                              className={cx('counterparty')} title={payment.counterpartyIdentifier}
                               onClick={this.handleCounterpartyClick}>
-                    {item.counterpartyName || getAccountName(item.counterpartyIdentifier) || 'someone'}
+                    {payment.counterpartyName || getAccountName(payment.counterpartyIdentifier) || 'someone'}
                   </a>
                 </span>}
 
                 {type === 'incoming' &&
                 <span>
                   <a href="" className={cx('counterparty')}
-                     title={item.counterpartyIdentifier}
+                     title={payment.counterpartyIdentifier}
                      onClick={this.handleCounterpartyClick}>
-                    {item.counterpartyName || getAccountName(item.counterpartyIdentifier) || 'someone'}
+                    {payment.counterpartyName || getAccountName(payment.counterpartyIdentifier) || 'someone'}
                   </a> paid you
                 </span>}
               </div>
               {advancedMode &&
-              <span className={cx('counterpartyIdentifier')}>{item.counterpartyIdentifier}</span>}
-              {item.message &&
+              <span className={cx('counterpartyIdentifier')}>{payment.counterpartyIdentifier}</span>}
+              {payment.message &&
               <div className={cx('message')}>
-                {item.message}
+                {payment.message}
               </div>}
-              <div className={cx('date')} title={moment(item.recent_date).format('LLL')}>
-                {advancedMode && <span>{moment(item.recent_date || item.created_at).format('MMM D, YYYY LTS')} - </span>}
-                <TimeAgo date={item.recent_date || item.created_at} formatter={this.timeAgoFormatter} />
+              <div className={cx('date')} title={moment(payment.recent_date).format('LLL')}>
+                {advancedMode && <span>{moment(payment.recent_date || payment.created_at).format('MMM D, YYYY LTS')} - </span>}
+                <TimeAgo date={payment.recent_date || payment.created_at} formatter={this.timeAgoFormatter} />
               </div>
             </div>
           </div>
@@ -157,13 +172,9 @@ export default class HistoryItem extends Component {
             </div>
 
             <div className={cx('transfersCount')}>
-              {!item.transfersLoading &&
               <a href="" onClick={this.toggleTransfers}>
-                {item.transfers_count > 1 ? item.transfers_count + ' transfers' : '1 transfer'}
-              </a>}
-
-              {item.transfersLoading &&
-              <span>Loading...</span>}
+                {payment.transfers.length > 1 ? payment.transfers.length + ' transfers' : '1 transfer'}
+              </a>
             </div>
           </div>
         </div>
@@ -184,8 +195,8 @@ export default class HistoryItem extends Component {
           component="div"
           className={cx('row', 'transfersContainer')}>
           {showTransfers &&
-          <div className={cx('col-sm-12')} key={item.time_slot + 'transfers'}>
-            {item.transfers && item.transfers.map(transfer => {
+          <div className={cx('col-sm-12')}>
+            {payment.transfers && payment.transfers.map(transfer => {
               return (
                 <div className={cx('row', 'transfer')} key={transfer.source_identifier + transfer.created_at}>
                   {advancedMode &&
