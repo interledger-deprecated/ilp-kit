@@ -1,9 +1,12 @@
 > Guide to setting up your very own ILP Kit.
 > Estimated time: a couple of hours.
 
-> **NOTE**: These instructions use DigitalOcean's Node 6.9.1 image on Ubuntu in
-> order to be as simple as possible. You can run ILP Kit on any other OS and
-> hosting provider, but there might be a couple additional steps.
+> These instructions use **DigitalOcean's Node 6.9.1 image on Ubuntu**.
+> You can run ILP Kit on any other OS and hosting provider, but there 
+> might be additional or different steps.
+
+> Alternative instructions for setup on **Google Cloud Platform** (Not Google AppEngine) are available here:
+> https://github.com/sappenin/ilpkit-google-cloud/tree/master/ilpkit-gce-single
 
 > _Don't hesitate to open issues or ask for help._
 
