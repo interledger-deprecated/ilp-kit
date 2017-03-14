@@ -12,12 +12,13 @@ const Sequelize = require('sequelize')
 
 const debug = require('debug')('ilp-kit:payment-model')
 const Database = require('../lib/db')
+const Activity = require('../lib/activity')
 const UserFactory = require('./user')
 const ActivityLogFactory = require('./activity_log')
 const ActivityLogsItemFactory = require('./activity_logs_item')
 
-PaymentFactory.constitute = [Database, Validator, Container, UserFactory]
-function PaymentFactory (sequelize, validator, container, User) {
+PaymentFactory.constitute = [Database, Validator, Container, UserFactory, Activity]
+function PaymentFactory (sequelize, validator, container, User, activity) {
   let ActivityLog
 
   class Payment extends Model {
@@ -246,8 +247,8 @@ function PaymentFactory (sequelize, validator, container, User) {
       return result[0]
     }
 
-    static * createOrUpdate (payment, activity) {
-      debug('createOrUpdate', payment, activity)
+    static * createOrUpdate (payment, activitySide) {
+      debug('createOrUpdate', payment, activitySide)
 
       // Get the db entry
       let dbPayment = yield Payment.findOne({
@@ -267,16 +268,12 @@ function PaymentFactory (sequelize, validator, container, User) {
       dbPayment = yield dbPayment.save()
 
       // TODO:BEFORE_DEPLOY grouping
-      // TODO can you figure if an activity needs to be created without passing it to this method?
+      // TODO figure out if an activity needs to be created without explicitly telling it to this method?
       // create the activity
-      if (activity) {
-        let activityLog = new ActivityLog()
-        activityLog.user_id = dbPayment[activity === 'source' ? 'source_user' : 'destination_user']
-        activityLog = yield activityLog.save()
-
-        dbPayment.addActivityLog(activityLog)
-
-        debug('createOrUpdate adding activity', activity)
+      if (activitySide) {
+        // TODO potentially we could process payments by listening to the ledger transfers
+        // instead of explicitly calling activity.processPayment
+        yield activity.processPayment(dbPayment, activitySide)
       }
 
       return Payment.fromDatabaseModel(dbPayment)
