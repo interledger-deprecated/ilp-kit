@@ -24,7 +24,7 @@ describe('(component) ActivityPayment', () => {
   store = createStore(browserHistory, client, mockStore)
   rendered = TestUtils.renderIntoDocument(
     <Provider store={store} key='provider'>
-      <ActivityPayment item={ActivityPaymentMock} user={userMock}/>
+      <ActivityPayment activity={ActivityPaymentMock} user={userMock}/>
     </Provider>
   )
 
