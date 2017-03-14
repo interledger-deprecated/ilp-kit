@@ -40,7 +40,9 @@
     "test-mocha": "NODE_ENV=test ./node_modules/.bin/mocha api/test",
     "integration": "integration-loader && integration all",
     "apidoc": "apidoc -i api/src/controllers/ -o apidoc-out",
-    "configure": "./node_modules/ilp-kit-cli/bin/configure.js"
+    "configure": "./node_modules/ilp-kit-cli/bin/configure.js",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "betterScripts": {
     "start-prod": {
@@ -233,7 +235,8 @@
     "uuid4": "^1.0.0",
     "webfinger.js": "^2.6.2",
     "webpack": "^1.13.2",
-    "webpack-isomorphic-tools": "^2.5.7"
+    "webpack-isomorphic-tools": "^2.5.7",
+    "snyk": "^1.25.0"
   },
   "devDependencies": {
     "chai": "^3.3.0",
@@ -270,5 +273,6 @@
       "module": "five-bells-integration-test",
       "repo": "interledgerjs/five-bells-integration-test"
     }
-  }
+  },
+  "snyk": true
 }
