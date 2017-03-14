@@ -17,8 +17,8 @@ const Utils = require('./utils')
 
 // TODO exception handling
 module.exports = class SPSP {
-  static constitute() { return [Config, PaymentFactory, Socket, Ledger, Utils] }
-  constructor(config, Payment, socket, ledger, utils) {
+  static constitute () { return [Config, PaymentFactory, Socket, Ledger, Utils] }
+  constructor (config, Payment, socket, ledger, utils) {
     this.Payment = Payment
     this.socket = socket
     this.config = config
@@ -40,7 +40,7 @@ module.exports = class SPSP {
     this.connect()
   }
 
-  connect() {
+  connect () {
     if (!this.connection) {
       this.connection = new Promise((resolve, reject) => {
         // Waiting for the ledger to start
@@ -57,7 +57,7 @@ module.exports = class SPSP {
    */
 
   // Get or create a sender instance
-  * getSender(username) {
+  * getSender (username) {
     yield this.connect()
 
     if (!this.senders[username]) {
@@ -75,7 +75,7 @@ module.exports = class SPSP {
   }
 
   // Destroy the sender
-  scheduleSenderDestroy(username) {
+  scheduleSenderDestroy (username) {
     const self = this
     const sender = self.senders[username]
 
@@ -93,7 +93,7 @@ module.exports = class SPSP {
     }), 15000)
   }
 
-  * quote(params) {
+  * quote (params) {
     const username = params.source.username
     const sender = yield this.getSender(username)
 
@@ -114,7 +114,7 @@ module.exports = class SPSP {
     }
   }
 
-  * setup(options) {
+  * setup (options) {
     return (yield superagent.post(options.paymentUri, {
       amount: options.amount,
       source_identifier: options.source_identifier,
@@ -124,7 +124,7 @@ module.exports = class SPSP {
     })).body
   }
 
-  * pay(params) {
+  * pay (params) {
     const sender = yield this.getSender(params.source.username)
 
     const quote = yield this.setup({
@@ -148,7 +148,7 @@ module.exports = class SPSP {
     const difference = parseFloat(paymentParams.destinationAmount) / parseFloat(params.destinationAmount)
 
     if (difference > 1.01 || difference < 0.99) {
-      throw new Error("The quote difference is too big: " + difference)
+      throw new Error(`The quote difference is too big: ${difference}`)
     }
 
     yield sender.payRequest(paymentParams)
@@ -160,7 +160,7 @@ module.exports = class SPSP {
    * Receiver
    */
   // Get a receiver instance
-  * getReceiver(username) {
+  * getReceiver (username) {
     const self = this
 
     yield self.connect()
@@ -174,20 +174,11 @@ module.exports = class SPSP {
       // TODO remove the listener?
       instance.on('incoming', co.wrap(function *(transfer) {
         debug('incoming payment', transfer)
-
-        // Get the db payment
-        const dbPayment = yield self.Payment.findOne({
-          where: {
-            // TODO should it really be referenced by a condition?
-            execution_condition: transfer.executionCondition
-          }
-        })
-
-        // Update the db payment
-        dbPayment.transfer = transfer.id
-        dbPayment.state = 'success'
-
-        yield dbPayment.save()
+        const dbPayment = yield self.Payment.createOrUpdate({
+          execution_condition: transfer.executionCondition,
+          transfer: transfer.id,
+          state: 'success'
+        }, 'destination')
 
         // Notify the clients
         // TODO should probably have the same format as the payment in activity log
@@ -209,7 +200,7 @@ module.exports = class SPSP {
   }
 
   // Destroy the receiver object
-  scheduleReceiverDestroy(username) {
+  scheduleReceiverDestroy (username) {
     const self = this
     const receiver = self.receivers[username]
 
@@ -228,7 +219,7 @@ module.exports = class SPSP {
     }), 15000)
   }
 
-  * createRequest(destinationUser, destinationAmount) {
+  * createRequest (destinationUser, destinationAmount) {
     const precisionAndScale = yield this.ledger.getInfo()
     // TODO Turn all of the numbers to bignumber
     const bnAmount = new BigNumber(destinationAmount + '')

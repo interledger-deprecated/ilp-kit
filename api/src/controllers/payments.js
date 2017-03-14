@@ -1,4 +1,4 @@
-"use strict"
+'use strict'
 
 module.exports = PaymentsControllerFactory
 
@@ -23,7 +23,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
   log = log('payments')
 
   return class PaymentsController {
-    static init(router) {
+    static init (router) {
       router.get('/payments', Auth.checkAuth, this.getHistory)
       router.get('/payments/transfers/:timeSlot', Auth.checkAuth, this.getTransfers)
       router.post('/payments/quote', Auth.checkAuth, this.quote)
@@ -89,7 +89,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
      *      "totalPages": 5
      *    }
      */
-    static * getHistory() {
+    static * getHistory () {
       const page = this.query.page || 1
       const limit = this.query.limit || 10
 
@@ -102,7 +102,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
     }
 
     // TODO document this
-    static * getTransfers() {
+    static * getTransfers () {
       const timeSlot = this.params.timeSlot
       const sourceIdentifier = this.query.sourceIdentifier
       const destinationIdentifier = this.query.destinationIdentifier
@@ -213,7 +213,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
      */
 
     // TODO handle not supplied params
-    static * quote() {
+    static * quote () {
       const destination = yield utils.parseDestination({
         destination: this.body.destination
       })
@@ -261,7 +261,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
      *      "condition": "cc:0:3:XcJRQrVJQKsXrXnpHIk1Nm7PBm5JfnFgmd8ocsexjO4:32"
      *    }
      */
-    static * setup() {
+    static * setup () {
       const sourceIdentifier = this.body.source_identifier
       const name = this.body.sender_name
       const image_url = this.body.sender_image_url
@@ -283,24 +283,19 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
 
       const paymentParams = yield spsp.createRequest(destinationUser, destinationAmount)
 
-      const paymentObj = {
-        state: 'pending',
-        source_name: name,
-        source_image_url: image_url,
-        source_identifier: sourceIdentifier,
-        destination_user: destinationUser.id,
-        destination_identifier: utils.getWebfingerAddress(destinationUser.username),
-        destination_amount: parseFloat(destinationAmount),
-        message: memo || null,
-        execution_condition: paymentParams.condition
-      }
-
       // Create the payment object
-      const payment = new Payment()
-      payment.setDataExternal(paymentObj)
-
       try {
-        yield payment.create()
+        yield Payment.createOrUpdate({
+          state: 'pending',
+          source_name: name,
+          source_image_url: image_url,
+          source_identifier: sourceIdentifier,
+          destination_user: destinationUser.id,
+          destination_identifier: utils.getWebfingerAddress(destinationUser.username),
+          destination_amount: parseFloat(destinationAmount),
+          message: memo || null,
+          execution_condition: paymentParams.condition
+        })
 
         this.body = paymentParams
       } catch (e) {
@@ -309,7 +304,7 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
       }
     }
 
-    static * getStats() {
+    static * getStats () {
       this.body = yield Payment.getUserStats(this.req.user)
     }
   }

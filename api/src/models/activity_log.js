@@ -9,6 +9,7 @@ const PersistentModelMixin = require('five-bells-shared').PersistentModelMixin
 const Database = require('../lib/db')
 const Validator = require('five-bells-shared/lib/validator')
 const Sequelize = require('sequelize')
+const UserFactory = require('./user')
 const PaymentFactory = require('./payment')
 const SettlementFactory = require('./settlement')
 const ActivityLogsItemFactory = require('./activity_logs_item')
@@ -67,6 +68,10 @@ function ActivityLogFactory (sequelize, validator, container) {
     }
     // TODO:BEFORE_DEPLOY update migration
   })
+
+  container.schedulePostConstructor(User => {
+    ActivityLog.DbModel.belongsTo(User.DbModel)
+  }, [ UserFactory ])
 
   container.schedulePostConstructor(ActivityLogsItem => {
     container.schedulePostConstructor(model => {
