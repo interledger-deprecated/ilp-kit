@@ -16,6 +16,7 @@ const ActivityLogsItemFactory = require('./activity_logs_item')
 
 ActivityLogFactory.constitute = [Database, Validator, Container]
 function ActivityLogFactory (sequelize, validator, container) {
+  let ActivityLogsItem
   let Payment
   let Settlement
 
@@ -46,12 +47,13 @@ function ActivityLogFactory (sequelize, validator, container) {
 
       // TODO:BEFORE_DEPLOY don't include all of the fields
       return ActivityLog.DbModel.findAndCountAll({
+        distinct: true,
         where: { user_id: userId },
         include: [
           { model: Payment.DbModel },
           { model: Settlement.DbModel }
         ],
-        order: ['created_at'],
+        order: [['created_at', 'DESC']],
         limit,
         offset: limit * (page - 1)
       })
@@ -73,7 +75,9 @@ function ActivityLogFactory (sequelize, validator, container) {
     ActivityLog.DbModel.belongsTo(User.DbModel)
   }, [ UserFactory ])
 
-  container.schedulePostConstructor(ActivityLogsItem => {
+  container.schedulePostConstructor(model => {
+    ActivityLogsItem = model
+
     container.schedulePostConstructor(model => {
       Payment = model
 
