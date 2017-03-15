@@ -1,16 +1,15 @@
-"use strict"
+'use strict'
 
 const co = require('co')
 const _ = require('lodash')
 
-const Config = require('./config')
 const Log = require('./log')
 const PaymentFactory = require('../models/payment')
 const Ledger = require('./ledger')
 
 module.exports = class Socket {
-  static constitute () { return [Config, Log, PaymentFactory, Ledger] }
-  constructor (config, log, Payment, ledger) {
+  static constitute () { return [Log, PaymentFactory, Ledger] }
+  constructor (log, Payment, ledger) {
     this.log = log('socket')
     this.ledger = ledger
     this.Payment = Payment
@@ -36,7 +35,7 @@ module.exports = class Socket {
   }
 
   // Add a subscribed user
-  addUser(username) {
+  addUser (username) {
     const self = this
 
     // TODO should socket be aware of the ledger? may need to move this somewhere else
@@ -48,7 +47,7 @@ module.exports = class Socket {
   }
 
   // Remove the user if it doesn't have subscriptions
-  cleanup(username) {
+  cleanup (username) {
     const self = this
 
     if (self.users[username] && _.isEmpty(self.users[username].subscriptions)) {
@@ -59,7 +58,7 @@ module.exports = class Socket {
   }
 
   // Add a subscription under the user
-  addSubscription(username, socket) {
+  addSubscription (username, socket) {
     const self = this
 
     self.log.info('Subscribe ' + username)
@@ -71,7 +70,7 @@ module.exports = class Socket {
   }
 
   // Remove the subscription
-  removeSubscription(id) {
+  removeSubscription (id) {
     const self = this
 
     _.map(self.users, (s, key) => {
@@ -82,7 +81,7 @@ module.exports = class Socket {
     })
   }
 
-  emitToUser(username, event, data) {
+  emitToUser (username, event, data) {
     if (!this.users[username]) return
 
     _.map(this.users[username].subscriptions, (subscription) => {
@@ -100,47 +99,28 @@ module.exports = class Socket {
 
     app.io.use(function* (next) {
       self.log.info('Connected ' + this.socket.id)
-      yield* next
+      yield * next
       self.log.info('Disconnected ' + this.socket.id)
       self.removeSubscription(this.socket.id)
     })
   }
 
-  transfer(username, transfer) {
+  activity (username, activityLog) {
     const self = this
 
-    // TODO move this logic somewhere else?
-    self.Payment.findOne({where: {transfer: transfer.id}})
-      .then((data) => {
-        self.log.info('payment for ' + username)
-
-        self.emitToUser(username, 'payment', data)
-      })
-
-    // Fire a balance update event
-    // TODO move somewhere else
-    co(function *() {
-      var account = yield self.ledger.getAccount({username: username}, true)
-      self.updateBalance(username, account.balance)
-    }).catch((err) => {
-      // TODO handle
-    })
-  }
-
-  payment(username, payment) {
-    const self = this
-
-    self.emitToUser(username, 'payment', payment)
+    self.emitToUser(username, 'activity', activityLog)
 
     co(function *() {
-      const account = yield self.ledger.getAccount({username: username}, true)
+      const account = yield self.ledger.getAccount({ username }, true)
       self.updateBalance(username, account.balance)
-    }).catch((err) => {
-      // TODO handle
+    }).catch(err => {
+      console.log('socket:152', err)
     })
+
+    this.log.info(`activity for ${username}`)
   }
 
-  updateBalance(username, balance) {
+  updateBalance (username, balance) {
     const self = this
 
     self.log.info('balance update for ' + username)

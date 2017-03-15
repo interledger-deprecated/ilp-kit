@@ -12,13 +12,12 @@ const Sequelize = require('sequelize')
 
 const debug = require('debug')('ilp-kit:payment-model')
 const Database = require('../lib/db')
-const Activity = require('../lib/activity')
 const UserFactory = require('./user')
 const ActivityLogFactory = require('./activity_log')
 const ActivityLogsItemFactory = require('./activity_logs_item')
 
-PaymentFactory.constitute = [Database, Validator, Container, UserFactory, Activity]
-function PaymentFactory (sequelize, validator, container, User, activity) {
+PaymentFactory.constitute = [Database, Validator, Container, UserFactory]
+function PaymentFactory (sequelize, validator, container, User) {
   let ActivityLog
 
   class Payment extends Model {
@@ -247,8 +246,8 @@ function PaymentFactory (sequelize, validator, container, User, activity) {
       return result[0]
     }
 
-    static * createOrUpdate (payment, activitySide) {
-      debug('createOrUpdate', payment, activitySide)
+    static * createOrUpdate (payment) {
+      debug('createOrUpdate', payment)
 
       // Get the db entry
       let dbPayment = yield Payment.findOne({
@@ -265,18 +264,8 @@ function PaymentFactory (sequelize, validator, container, User, activity) {
       }
 
       dbPayment.setDataExternal(payment)
-      dbPayment = yield dbPayment.save()
 
-      // TODO:BEFORE_DEPLOY grouping
-      // TODO figure out if an activity needs to be created without explicitly telling it to this method?
-      // create the activity
-      if (activitySide) {
-        // TODO potentially we could process payments by listening to the ledger transfers
-        // instead of explicitly calling activity.processPayment
-        yield activity.processPayment(dbPayment, activitySide)
-      }
-
-      return Payment.fromDatabaseModel(dbPayment)
+      return dbPayment.save()
     }
   }
 

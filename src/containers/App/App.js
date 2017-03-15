@@ -17,7 +17,7 @@ import hotkeys from 'decorators/hotkeys'
 
 import { isLoaded as isAuthLoaded, load as loadAuth, loadConfig, logout, updateBalance, verify, resendVerificationEmail } from 'redux/actions/auth'
 import { routeActions } from 'react-router-redux'
-import { addPayment as activityAddPayment } from 'redux/actions/activity'
+import { addActivity } from 'redux/actions/activity'
 import { asyncConnect } from 'redux-async-connect'
 
 import classNames from 'classnames/bind'
@@ -43,7 +43,7 @@ const cx = classNames.bind(styles)
     advancedMode: state.auth.advancedMode,
     verificationEmailSent: state.auth.verificationEmailSent
   }),
-  {logout, pushState: routeActions.push, activityAddPayment, updateBalance, verify, loadConfig, resendVerificationEmail})
+  {logout, pushState: routeActions.push, addActivity, updateBalance, verify, loadConfig, resendVerificationEmail})
 @hotkeys()
 export default class App extends Component {
   static propTypes = {
@@ -51,7 +51,7 @@ export default class App extends Component {
     user: PropTypes.object,
     config: PropTypes.object,
     logout: PropTypes.func.isRequired,
-    activityAddPayment: PropTypes.func.isRequired,
+    addActivity: PropTypes.func.isRequired,
     updateBalance: PropTypes.func.isRequired,
     pushState: PropTypes.func.isRequired,
     params: PropTypes.object,
@@ -88,12 +88,8 @@ export default class App extends Component {
     // TODO socket stuff needs work
     if (socket) {
       socket.connect()
-      socket.on('payment', (payment) => {
-        this.props.activityAddPayment(payment)
-      })
-      socket.on('balance', (balance) => {
-        this.props.updateBalance(balance)
-      })
+      socket.on('activity', this.props.addActivity)
+      socket.on('balance', this.props.updateBalance)
 
       if (this.props.user && this.props.user.username) {
         socket.emit('subscribe', this.props.user.username)

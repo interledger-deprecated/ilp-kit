@@ -57,7 +57,7 @@ export const PAYMENT_JSON_FAIL = 'PAYMENT_JSON_FAIL'
 export const PAYMENT_JSON_SHOW = 'PAYMENT_JSON_SHOW'
 export const PAYMENT_JSON_HIDE = 'PAYMENT_JSON_HIDE'
 
-export const WS_PAYMENT = 'WS_PAYMENT'
+export const WS_ACTIVITY = 'WS_ACTIVITY'
 
 export const SEND = 'SEND_PENDING'
 export const SEND_SUCCESS = 'SEND_SUCCESS'

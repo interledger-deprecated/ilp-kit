@@ -28,9 +28,9 @@ export const toggleJson = (id, transfer) => (dispatch, getState) => {
 }
 
 // TODO separate module for WS stuff?
-export const addPayment = (data) => (dispatch) => {
+export const addActivity = result => dispatch => {
   return dispatch({
-    type: types.WS_PAYMENT,
-    result: data
+    type: types.WS_ACTIVITY,
+    result
   })
 }

@@ -58,6 +58,17 @@ function ActivityLogFactory (sequelize, validator, container) {
         offset: limit * (page - 1)
       })
     }
+
+    static * getActivityLog (id) {
+      // TODO:BEFORE_DEPLOY don't include all of the fields
+      return ActivityLog.findOne({
+        where: { id },
+        include: [
+          { model: Payment.DbModel },
+          { model: Settlement.DbModel }
+        ]
+      })
+    }
   }
 
   ActivityLog.validateExternal = validator.create('ActivityLog')

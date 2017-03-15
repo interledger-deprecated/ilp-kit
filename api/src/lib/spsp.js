@@ -57,21 +57,21 @@ module.exports = class SPSP {
    */
 
   // Get or create a sender instance
-  * getSender (username) {
+  * getSender (user) {
     yield this.connect()
 
-    if (!this.senders[username]) {
-      this.senders[username] = {
-        instance: ILP.createSender(yield this.factory.create({ username }))
+    if (!this.senders[user.username]) {
+      this.senders[user.username] = {
+        instance: ILP.createSender(yield this.factory.create({ username: user.username }))
       }
 
       debug('created a sender object')
     }
 
     // Destroy the sender if it hasn't been used for 15 seconds
-    this.scheduleSenderDestroy(username)
+    this.scheduleSenderDestroy(user.username)
 
-    return this.senders[username].instance
+    return this.senders[user.username].instance
   }
 
   // Destroy the sender
@@ -94,8 +94,7 @@ module.exports = class SPSP {
   }
 
   * quote (params) {
-    const username = params.source.username
-    const sender = yield this.getSender(username)
+    const sender = yield this.getSender(params.source)
 
     // One of the amounts should be supplied to get a quote for the other one
     const sourceAmount = params.sourceAmount || (
@@ -125,7 +124,7 @@ module.exports = class SPSP {
   }
 
   * pay (params) {
-    const sender = yield this.getSender(params.source.username)
+    const sender = yield this.getSender(params.source)
 
     const quote = yield this.setup({
       paymentUri: params.destination.paymentUri,
@@ -160,13 +159,13 @@ module.exports = class SPSP {
    * Receiver
    */
   // Get a receiver instance
-  * getReceiver (username) {
+  * getReceiver (user) {
     const self = this
 
     yield self.connect()
 
-    if (!this.receivers[username]) {
-      const instance = ILP.createReceiver(yield this.factory.create({ username }))
+    if (!this.receivers[user.username]) {
+      const instance = ILP.createReceiver(yield this.factory.create({ username: user.username }))
 
       yield instance.listen()
 
@@ -174,19 +173,18 @@ module.exports = class SPSP {
       // TODO remove the listener?
       instance.on('incoming', co.wrap(function *(transfer) {
         debug('incoming payment', transfer)
-        const dbPayment = yield self.Payment.createOrUpdate({
+
+        const payment = yield self.Payment.createOrUpdate({
           execution_condition: transfer.executionCondition,
           transfer: transfer.id,
           state: 'success'
-        }, 'destination')
+        })
 
-        // Notify the clients
-        // TODO should probably have the same format as the payment in activity log
-        self.socket.payment(username, dbPayment)
+        yield this.activity.processPayment(payment, user)
       }))
 
       // Add the receiver to the list
-      this.receivers[username] = {
+      this.receivers[user.username] = {
         instance
       }
 
@@ -194,9 +192,9 @@ module.exports = class SPSP {
     }
 
     // Destroy the receiver if it hasn't been used for 15 seconds
-    self.scheduleReceiverDestroy(username)
+    self.scheduleReceiverDestroy(user.username)
 
-    return this.receivers[username].instance
+    return this.receivers[user.username].instance
   }
 
   // Destroy the receiver object
@@ -231,9 +229,7 @@ module.exports = class SPSP {
         ? bnAmount.toPrecision(precisionAndScale.precision, BigNumber.ROUND_UP)
         : bnAmount.toFixed(precisionAndScale.scale, BigNumber.ROUND_UP)
 
-    const username = destinationUser.username
-
-    const receiver = yield this.getReceiver(username)
+    const receiver = yield this.getReceiver(destinationUser)
 
     const request = receiver.createRequest({
       amount: roundedAmount

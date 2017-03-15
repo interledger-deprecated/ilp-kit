@@ -1,3 +1,5 @@
+/* globals __CLIENT__, socket, tracker */
+
 import * as types from '../actionTypes'
 
 export const isLoaded = globalState => globalState.auth && globalState.auth.loaded
