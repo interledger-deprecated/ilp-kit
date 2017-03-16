@@ -96,7 +96,10 @@ function ActivityLogFactory (sequelize, validator, container) {
       ActivityLog.DbModel.belongsToMany(Payment.DbModel, {
         through: {
           model: ActivityLogsItem.DbModel,
-          unique: false
+          unique: false,
+          scope: {
+            item_type: 'payment'
+          }
         },
         foreignKey: 'activity_log_id',
         constraints: false
@@ -110,7 +113,10 @@ function ActivityLogFactory (sequelize, validator, container) {
       ActivityLog.DbModel.belongsToMany(Settlement.DbModel, {
         through: {
           model: ActivityLogsItem.DbModel,
-          unique: false
+          unique: false,
+          scope: {
+            item_type: 'settlement'
+          }
         },
         foreignKey: 'activity_log_id',
         constraints: false
