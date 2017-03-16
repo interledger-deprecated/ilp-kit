@@ -8,7 +8,7 @@ module.exports = {
     let prevActivityLogIds = {}
 
     const createActivityLog = (activityLogId, payment, side) => {
-      return sequelize.query(`INSERT INTO "ActivityLogs" VALUES ('${activityLogId}', '${moment(payment.created_at).utc()}', '${moment(payment.updated_at).utc()}', ${payment[side + '_user']})`, { type: sequelize.QueryTypes.INSERT })
+      return sequelize.query(`INSERT INTO "ActivityLogs" VALUES ('${activityLogId}', ${payment[side + '_user']}, '${moment(payment.created_at).utc()}', '${moment(payment.updated_at).utc()}')`, { type: sequelize.QueryTypes.INSERT })
     }
 
     const createActivityLogItem = (activityLogId, payment) => {
