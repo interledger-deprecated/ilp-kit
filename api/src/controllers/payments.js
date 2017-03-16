@@ -6,10 +6,7 @@ const _ = require('lodash')
 const request = require('five-bells-shared/utils/request')
 const Auth = require('../lib/auth')
 const Log = require('../lib/log')
-const Ledger = require('../lib/ledger')
 const SPSP = require('../lib/spsp')
-const Config = require('../lib/config')
-const Socket = require('../lib/socket')
 const Pay = require('../lib/pay')
 const Utils = require('../lib/utils')
 const UserFactory = require('../models/user')
@@ -18,8 +15,8 @@ const InvalidBodyError = require('../errors/invalid-body-error')
 const ServerError = require('../errors/server-error')
 const NoQuote = require('../errors/no-quote-error')
 
-PaymentsControllerFactory.constitute = [Auth, PaymentFactory, Log, Ledger, Config, Utils, SPSP, Socket, UserFactory, Pay]
-function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, spsp, socket, User, pay) {
+PaymentsControllerFactory.constitute = [Auth, PaymentFactory, Log, Utils, SPSP, UserFactory, Pay]
+function PaymentsControllerFactory (Auth, Payment, log, utils, spsp, User, pay) {
   log = log('payments')
 
   return class PaymentsController {

@@ -7,7 +7,7 @@ import _ from 'lodash'
 
 import { destinationChange, amountsChange } from 'redux/actions/send'
 
-import Amount from '../Amount/Amount'
+import Amount from 'components/Amount/Amount'
 
 import { contextualizePayment } from '../../utils/api'
 import { getAccountName } from '../../utils/account'
@@ -129,7 +129,7 @@ export default class ActivityPayment extends Component {
 
     // TODO payments grouping / message
     return (
-      <div className={cx('payment')}>
+      <div className={cx('ActivityPayment')}>
         <div className="row">
           <div className="col-xs-8">
             <img src={profilePic} className={cx('profilePic')} />

@@ -6,16 +6,18 @@ const Log = require('../lib/log')
 const Config = require('../lib/config')
 const Socket = require('../lib/socket')
 const ActivityLogFactory = require('../models/activity_log')
+const UserFactory = require('../models/user')
 
 const cacheLifetime = 30 * 60 // seconds
 
 module.exports = class Activity {
-  static constitute () { return [ Log, Config, ActivityLogFactory, Socket ] }
-  constructor (log, config, ActivityLog, socket) {
+  static constitute () { return [ Log, Config, Socket, ActivityLogFactory, UserFactory ] }
+  constructor (log, config, socket, ActivityLog, User) {
     this.log = log('activity')
     this.config = config
     this.socket = socket
     this.ActivityLog = ActivityLog
+    this.User = User
 
     // TODO:PERFORMANCE use Redis
     this.paymentGroupCache = {}
@@ -47,7 +49,7 @@ module.exports = class Activity {
       activityLog = cache.activityLog
     }
 
-    // Add the activity to the payment
+    // Add the payment to the activity
     yield activityLog.addPayment(payment)
 
     // Add the payment to the recent payments cache (used for grouping)
@@ -59,6 +61,28 @@ module.exports = class Activity {
 
     // TODO:PERFORMANCE figure out a way to send a socket message for a single payment
     // instead of the whole activity (if the client already has a track of this activity)
+    activityLog = yield this.ActivityLog.getActivityLog(activityLog.id)
+
+    // Notify the clients
+    this.socket.activity(user.username, activityLog)
+  }
+
+  * processSettlement (settlement) {
+    this.log.info(`Processing settlement ${settlement.id}`)
+
+    // TODO handle peer settlement
+    if (!settlement.user_id) return
+
+    // TODO:PERFORMANCE avoid this call, we only do it to get the username
+    const user = yield this.User.findOne({ where: { id: settlement.user_id } })
+
+    let activityLog = new this.ActivityLog()
+    activityLog.user_id = settlement.user_id
+    activityLog = yield activityLog.save()
+
+    // Add the settlement to the activity
+    yield activityLog.addSettlement(settlement)
+
     activityLog = yield this.ActivityLog.getActivityLog(activityLog.id)
 
     // Notify the clients

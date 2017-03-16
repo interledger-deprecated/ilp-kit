@@ -6,7 +6,8 @@ import { getPage } from 'redux/actions/activity'
 
 import { initActionCreators } from 'redux-pagination'
 
-import ActivityPayment from 'components/ActivityPayment/ActivityPayment'
+import ActivityPayment from 'containers/ActivityPayment/ActivityPayment'
+import ActivitySettlement from 'containers/ActivitySettlement/ActivitySettlement'
 
 import classNames from 'classnames/bind'
 import styles from './Activity.scss'
@@ -97,6 +98,9 @@ export default class Home extends Component {
             <li key={activity.id}>
               {activity.Payments.length > 0 &&
               <ActivityPayment activity={activity} />}
+
+              {activity.Settlements.length > 0 &&
+              <ActivitySettlement activity={activity} />}
             </li>
           ))}
           </ReactCSSTransitionGroup>}

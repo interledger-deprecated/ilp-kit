@@ -9,6 +9,7 @@ const Log = require('../lib/log')
 const Config = require('../lib/config')
 const Connector = require('../lib/connector')
 const Paypal = require('../lib/paypal')
+const Activity = require('../lib/activity')
 const SettlementFactory = require('../models/settlement')
 const SettlementMethodFactory = require('../models/settlement_method')
 const UserFactory = require('../models/user')
@@ -17,8 +18,8 @@ const PeerFactory = require('../models/peer')
 const NotFoundError = require('../errors/not-found-error')
 const InvalidBodyError = require('../errors/invalid-body-error')
 
-SettlementsControllerFactory.constitute = [Auth, Config, Log, SettlementFactory, SettlementMethodFactory, UserFactory, PeerFactory, Connector, Paypal]
-function SettlementsControllerFactory (auth, config, log, Settlement, SettlementMethod, User, Peer, connector, paypal) {
+SettlementsControllerFactory.constitute = [Auth, Config, Log, SettlementFactory, SettlementMethodFactory, UserFactory, PeerFactory, Connector, Paypal, Activity]
+function SettlementsControllerFactory (auth, config, log, Settlement, SettlementMethod, User, Peer, connector, paypal, activity) {
   log = log('settlements')
 
   const getDestination = function * (destination) {
@@ -96,7 +97,7 @@ function SettlementsControllerFactory (auth, config, log, Settlement, Settlement
       yield connector.instance.removePlugin(prefix)
 
       // Store the settlement in the database
-      const settlement = new Settlement()
+      let settlement = new Settlement()
       settlement.settlement_method_id = params.settlementMethod.id
 
       if (destination.hostname) {
@@ -108,7 +109,11 @@ function SettlementsControllerFactory (auth, config, log, Settlement, Settlement
       settlement.amount = amount
       settlement.currency = currency
 
-      return settlement.save()
+      settlement = yield settlement.save()
+
+      yield activity.processSettlement(settlement)
+
+      return settlement
     }
 
     static * custom () {
