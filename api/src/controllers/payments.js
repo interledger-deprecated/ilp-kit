@@ -24,98 +24,12 @@ function PaymentsControllerFactory (Auth, Payment, log, ledger, config, utils, s
 
   return class PaymentsController {
     static init (router) {
-      router.get('/payments', Auth.checkAuth, this.getHistory)
-      router.get('/payments/transfers/:timeSlot', Auth.checkAuth, this.getTransfers)
       router.post('/payments/quote', Auth.checkAuth, this.quote)
       router.put('/payments/:id', Auth.checkAuth, Payment.createBodyParser(), this.putResource)
 
       router.post('/receivers/:username', this.setup)
 
       router.get('/payments/stats', Auth.checkAuth, this.getStats)
-    }
-
-    /**
-     * @api {get} /payments User payments history
-     * @apiName GetPayments
-     * @apiGroup Payment
-     * @apiVersion 1.0.0
-     *
-     * @apiDescription Get user payments history
-     *
-     * @apiParam {String} page Current page number
-     * @apiParam {String} limit Number of payments
-     *
-     * @apiExample {shell} Get last 2 payments
-     *    curl -X GET -H "Authorization: Basic YWxpY2U6YWxpY2U="
-     *    https://wallet.example/payments?page=1&limit=2
-     *
-     * @apiSuccessExample {json} 200 Response:
-     *    HTTP/1.1 200 OK
-     *    {
-     *      "list": [
-     *        {
-     *          "id": "15a3cbb8-d0f3-410e-8a59-14e8dee14abd",
-     *          "source_user": 1,
-		 *          "source_identifier": "alice@wallet.example"
-     *          "destination_user": 2,
-     *          "destination_identifier": "bob@wallet.example",
-     *          "transfer": "https://wallet.example/ledger/transfers/3d4c9c8e-204a-4213-9e91-88b64dad8604",
-     *          "state": null,
-     *          "source_amount": "12",
-     *          "destination_amount": "12",
-     *          "created_at": "2016-04-19T20:18:18.040Z",
-     *          "completed_at": null,
-     *          "updated_at": "2016-04-19T20:18:18.040Z",
-     *          "sourceUserUsername": "alice",
-     *          "destinationUserUsername": "bob"
-     *        },
-     *        {
-     *          "id": "e1d3c588-807c-4d4f-b25c-61842b5ead6d",
-     *          "source_user": 1,
-		 *          "source_identifier": "alice@wallet.example"
-     *          "destination_user": 2,
-     *          "destination_identifier": "bob@wallet.example",
-     *          "transfer": "https://wallet.example/ledger/transfers/d1fa49d3-c955-4833-803a-df0c43eab044",
-     *          "state": null,
-     *          "source_amount": "1",
-     *          "destination_amount": "1",
-     *          "created_at": "2016-04-19T20:15:57.055Z",
-     *          "completed_at": null,
-     *          "updated_at": "2016-04-19T20:15:57.055Z",
-     *          "sourceUserUsername": "alice",
-     *          "destinationUserUsername": "bob"
-     *        }
-     *      ],
-     *      "totalPages": 5
-     *    }
-     */
-    static * getHistory () {
-      const page = this.query.page || 1
-      const limit = this.query.limit || 10
-
-      const payments = yield Payment.getUserPayments(this.req.user, page, limit)
-
-      this.body = {
-        list: payments.list,
-        totalPages: Math.ceil(payments.count / limit)
-      }
-    }
-
-    // TODO document this
-    static * getTransfers () {
-      const timeSlot = this.params.timeSlot
-      const sourceIdentifier = this.query.sourceIdentifier
-      const destinationIdentifier = this.query.destinationIdentifier
-      const message = this.query.message
-
-      if (sourceIdentifier !== this.req.user.identifier && destinationIdentifier !== this.req.user.identifier) {
-        // TODO throw an exception
-        return this.status = 404
-      }
-
-      this.body = yield Payment.getTransfers({
-        sourceIdentifier, destinationIdentifier, timeSlot, message
-      })
     }
 
     /**

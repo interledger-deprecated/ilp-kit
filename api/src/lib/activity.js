@@ -68,7 +68,5 @@ module.exports = class Activity {
   paymentGroupCacheCleanup () {
     this.paymentGroupCache = _.pickBy(this.paymentGroupCache,
       group => moment(group.recentDate).add(cacheLifetime, 'seconds') > moment())
-
-    this.log.info(`Cleaning up the payment cache. ${this.paymentGroupCache.length} items left.`)
   }
 }
