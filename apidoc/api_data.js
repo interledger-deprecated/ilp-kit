@@ -251,53 +251,6 @@ define({ "api": [
     "groupTitle": "Misc"
   },
   {
-    "type": "get",
-    "url": "/payments",
-    "title": "User payments history",
-    "name": "GetPayments",
-    "group": "Payment",
-    "version": "1.0.0",
-    "description": "<p>Get user payments history</p>",
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "page",
-            "description": "<p>Current page number</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "limit",
-            "description": "<p>Number of payments</p>"
-          }
-        ]
-      }
-    },
-    "examples": [
-      {
-        "title": "Get last 2 payments",
-        "content": "curl -X GET -H \"Authorization: Basic YWxpY2U6YWxpY2U=\"\nhttps://wallet.example/payments?page=1&limit=2",
-        "type": "shell"
-      }
-    ],
-    "success": {
-      "examples": [
-        {
-          "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"list\": [\n    {\n      \"id\": \"15a3cbb8-d0f3-410e-8a59-14e8dee14abd\",\n      \"source_user\": 1,\n      \"source_identifier\": \"alice@wallet.example\"\n      \"destination_user\": 2,\n      \"destination_identifier\": \"bob@wallet.example\",\n      \"transfer\": \"https://wallet.example/ledger/transfers/3d4c9c8e-204a-4213-9e91-88b64dad8604\",\n      \"state\": null,\n      \"source_amount\": \"12\",\n      \"destination_amount\": \"12\",\n      \"created_at\": \"2016-04-19T20:18:18.040Z\",\n      \"completed_at\": null,\n      \"updated_at\": \"2016-04-19T20:18:18.040Z\",\n      \"sourceUserUsername\": \"alice\",\n      \"destinationUserUsername\": \"bob\"\n    },\n    {\n      \"id\": \"e1d3c588-807c-4d4f-b25c-61842b5ead6d\",\n      \"source_user\": 1,\n      \"source_identifier\": \"alice@wallet.example\"\n      \"destination_user\": 2,\n      \"destination_identifier\": \"bob@wallet.example\",\n      \"transfer\": \"https://wallet.example/ledger/transfers/d1fa49d3-c955-4833-803a-df0c43eab044\",\n      \"state\": null,\n      \"source_amount\": \"1\",\n      \"destination_amount\": \"1\",\n      \"created_at\": \"2016-04-19T20:15:57.055Z\",\n      \"completed_at\": null,\n      \"updated_at\": \"2016-04-19T20:15:57.055Z\",\n      \"sourceUserUsername\": \"alice\",\n      \"destinationUserUsername\": \"bob\"\n    }\n  ],\n  \"totalPages\": 5\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "filename": "api/src/controllers/payments.js",
-    "groupTitle": "Payment"
-  },
-  {
     "type": "put",
     "url": "/payments/:id",
     "title": "Make payment",
