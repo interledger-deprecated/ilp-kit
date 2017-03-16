@@ -449,7 +449,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Setup a payment",
-        "content": "curl -X POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"amount\": \"10\",\n    \"source_identifier\": \"alice@wallet1.example\"\n    \"memo\": \"Some money for you!\"\n}'\nhttps://wallet2.example/payments/alice",
+        "content": "curl -X POST -H \"Content-Type: application/json\" -d\n'{\n    \"amount\": \"10\",\n    \"source_identifier\": \"alice@wallet1.example\"\n    \"memo\": \"Some money for you!\"\n}'\nhttps://wallet2.example/api/receivers/alice",
         "type": "shell"
       }
     ],
@@ -457,7 +457,7 @@ define({ "api": [
       "examples": [
         {
           "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"address\": \"wallet2.alice.ae09e9c0-c4f9-423f-91de-fa1733640b2f\",\n  \"amount\": \"10.00\",\n  \"expires_at\": \"2016-09-06T22:47:01.668Z\",\n  \"condition\": \"cc:0:3:XcJRQrVJQKsXrXnpHIk1Nm7PBm5JfnFgmd8ocsexjO4:32\"\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"address\": \"wallet2.alice.~ipr.csWIkAxOSfo.3c51a836-6a2a-40b4-8905-a57e9806a1ac\",\n  \"amount\": \"10.00\",\n  \"expires_at\": \"2016-09-06T22:47:01.668Z\",\n  \"condition\": \"cc:0:3:XcJRQrVJQKsXrXnpHIk1Nm7PBm5JfnFgmd8ocsexjO4:32\"\n}",
           "type": "json"
         }
       ]
