@@ -73,6 +73,12 @@ function UserFactory (sequelize, validator, ledger, config, utils) {
       }
     }
 
+    static * getAvailableUsername (username) {
+      const user = yield User.findOne({ where: { username } })
+
+      return user ? username + Math.floor((Math.random() * 1000) + 1) : username
+    }
+
     static getVerificationCode (email) {
       return config.generateSecret('verify' + email).toString('hex')
     }

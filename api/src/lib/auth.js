@@ -14,8 +14,8 @@ const Config = require('./config')
 const Ledger = require('./ledger')
 
 module.exports = class Auth {
-  static constitute() { return [ UserFactory, Config, Ledger ] }
-  constructor(User, config, ledger) {
+  static constitute () { return [ UserFactory, Config, Ledger ] }
+  constructor (User, config, ledger) {
     const self = this
     self.config = config
     self.ledger = ledger
@@ -37,6 +37,7 @@ module.exports = class Auth {
         co.wrap(function * (accessToken, refreshToken, profile, done) {
           const email = profile.emails[0] && profile.emails[0].value
           const name = profile.displayName
+          const profilePic = profile.photos[0].value
 
           // Find a user by github id or email address
           let dbUser = yield User.findOne({
@@ -51,21 +52,31 @@ module.exports = class Auth {
           // User exists
           if (dbUser) {
             dbUser.password = self.generateGithubPassword(profile.id)
-            // TODO Update the user with changed profile data
+            dbUser.github_id = profile.id
+
+            if (!dbUser.name) {
+              dbUser.name = name
+            }
+
+            if (!dbUser.profile_picture) {
+              dbUser.profile_picture = profilePic
+            }
+
             return done(null, dbUser)
           }
 
+          const username = yield self.User.getAvailableUsername(profile.username)
+
           // User doesn't exist
-          // TODO custom username
-          // TODO what if the username already exists
           const userObj = {
-            username: profile.username,
+            // TODO:UX users should be able to change their username
+            username,
             password: self.generateGithubPassword(profile.id),
             email: email,
             email_verified: true,
             name: name,
             github_id: profile.id,
-            profile_picture: profile.photos[0].value
+            profile_picture: profilePic
           }
 
           // Create the ledger account
@@ -117,13 +128,13 @@ module.exports = class Auth {
     })
   }
 
-  attach(app) {
+  attach (app) {
     // Authentication
     app.use(passport.initialize())
     app.use(passport.session())
   }
 
-  * checkAuth(next) {
+  * checkAuth (next) {
     // Local Strategy
     if (this.isAuthenticated()) {
       return yield next
@@ -133,7 +144,7 @@ module.exports = class Auth {
     yield passport.authenticate(['basic'], { session: false }).call(this, next)
   }
 
-  commonSetup(Strategy) {
+  commonSetup (Strategy) {
     const self = this
 
     passport.use(new Strategy(co.wrap(
@@ -177,7 +188,7 @@ module.exports = class Auth {
     )))
   }
 
-  generateGithubPassword(userId) {
+  generateGithubPassword (userId) {
     return crypto.createHmac('sha256', this.config.data.getIn(['github', 'secret'])).update(userId).digest('base64')
   }
 }
