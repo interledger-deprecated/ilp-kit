@@ -122,7 +122,7 @@ dependencies with the following commands:
 $ cd # start in your home folder
 $ git clone https://github.com/interledgerjs/ilp-kit
 $ cd ilp-kit
-$ npm install
+$ yarn install # npm install also works, if you don't have yarn installed
 ```
 
 # Domain setup
