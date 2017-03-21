@@ -127,6 +127,8 @@ function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, soc
 
     // Only supports create
     static * postResource () {
+      const self = this
+
       // check if registration is enabled
       if (!config.data.get('registration') && !userObj.inviteCode) {
         throw new InvalidBodyError('Registration is disabled without an invite code')
@@ -143,7 +145,7 @@ function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, soc
 
       let dbUser
       let invite
-      yield sequelize.transaction(sequelize.Promise.coroutine(function * (t) {
+      yield sequelize.transaction(co.wrap(function * (t) {
         const opts = {transaction: t}
 
         userObj.username = username
@@ -193,9 +195,9 @@ function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, soc
           // Sanity check: Verify that a ledger account with that name does not exist yet
           // Otherwise an attacker could take over a ledger account
           // for which no ILP kit account exits
-          const exists = yield co(ledger.existsAccount.bind(ledger, userObj))
+          const exists = yield ledger.existsAccount(userObj)
           if (!exists) {
-            yield co(ledger.createAccount.bind(ledger, userObj))
+            yield ledger.createAccount(userObj)
           } else {
             throw new Error(`Username ${userObj.username} already exists on the ledger` +
               ', but not in the ILP kit.')
@@ -206,8 +208,8 @@ function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, soc
         }
       })).then(co.wrap(function * (result) {
         // transaction was commited
-        yield co(UsersController._onboardUser.bind(this, invite, dbUser))
-      }).bind(this)).catch(function (e) {
+        yield UsersController._onboardUser.call(self, invite, dbUser)
+      })).catch(function (e) {
         // transaction was rolled back
         log.debug(e)
         throw e
@@ -246,20 +248,20 @@ function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, soc
 
     static * _onboardUser (invite, dbUser) {
       if (invite) {
-        yield co(UsersController._handleInvite(invite, dbUser.username))
+        yield UsersController._handleInvite(invite, dbUser.username)
       }
 
       // Fund the newly created account
-      yield co(UsersController.reload(dbUser))
+      yield UsersController.reload(dbUser)
 
       // Send a welcome email
-      yield co(mailer.sendWelcome({
+      yield mailer.sendWelcome({
         name: dbUser.username,
         to: dbUser.email,
         link: User.getVerificationLink(dbUser.username, dbUser.email)
-      }))
+      })
 
-      const user = yield co(dbUser.appendLedgerAccount())
+      const user = yield dbUser.appendLedgerAccount()
 
       // TODO callbacks?
       this.req.logIn(user, err => {})
