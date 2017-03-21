@@ -159,3 +159,8 @@ export const SETTLE_FAIL = 'SETTLE_FAIL'
 export const LOAD_USERS = 'LOAD_USERS_PENDING'
 export const LOAD_USERS_SUCCESS = 'LOAD_USERS_SUCCESS'
 export const LOAD_USERS_FAIL = 'LOAD_USERS_FAIL'
+
+// Withdraw
+export const WITHDRAW = 'WITHDRAW'
+export const WITHDRAW_SUCCESS = 'WITHDRAW_SUCCESS'
+export const WITHDRAW_FAIL = 'WITHDRAW_FAIL'

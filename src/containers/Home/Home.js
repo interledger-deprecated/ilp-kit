@@ -1,7 +1,9 @@
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
 import ReactTooltip from 'react-tooltip'
-import * as authActions from 'redux/actions/auth'
+
+import { reload } from 'redux/actions/auth'
+import { withdraw } from 'redux/actions/withdrawal'
 
 import Dropdown from 'react-bootstrap/lib/Dropdown'
 import MenuItem from 'react-bootstrap/lib/MenuItem'
@@ -26,12 +28,13 @@ const cx = classNames.bind(styles)
     verified: state.auth.verified,
     config: state.auth.config
   }),
-  authActions)
+  {reload, withdraw})
 export default class Home extends Component {
   static propTypes = {
     user: PropTypes.object,
-    reload: PropTypes.func,
+    reload: PropTypes.func.isRequired,
     config: PropTypes.object,
+    withdraw: PropTypes.func.isRequired
   }
 
   state = {}
@@ -90,6 +93,11 @@ export default class Home extends Component {
     )
   }
 
+  handleWithdraw = () => {
+    // TODO:BEFORE_DEPLOY don't hardcode
+    this.props.withdraw(100)
+  }
+
   render() {
     const { user, config } = this.props
     const { showStats, reloading } = this.state
@@ -132,16 +140,24 @@ export default class Home extends Component {
               {config.reload && <span className={cx('but')}>*</span>}
             </div>
             {!config.reload && config.settlementMethods && config.settlementMethods.length > 0 &&
-            <div className={cx('settlementButtonBox')}>
-              <Dropdown id="settlementButton" pullRight>
-                <Dropdown.Toggle bsStyle="success" bsSize="large">
-                  Deposit
-                </Dropdown.Toggle>
-                <Dropdown.Menu className={cx('options')}>
-                  {config.settlementMethods.map(this.renderDepositLink)}
-                </Dropdown.Menu>
-              </Dropdown>
-            </div>}
+              <div className={cx('row', 'row-sm')}>
+                <div className={cx('settlementButtonBox', 'col-xs-6')}>
+                  <Dropdown id="settlementButton" pullRight>
+                    <Dropdown.Toggle bsStyle="default" bsSize="large" block>
+                      Deposit
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu className={cx('options')}>
+                      {config.settlementMethods.map(this.renderDepositLink)}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </div>
+                <div className={cx('col-xs-6')}>
+                  <button className={cx('btn', 'btn-default', 'btn-lg', 'btn-block')}
+                    onClick={this.handleWithdraw}>
+                    Withdraw
+                  </button>
+                </div>
+              </div>}
             {config.reload &&
             <div>
               <a className="btn btn-success btn-lg"

@@ -31,12 +31,15 @@
   margin: 10px 0;
 }
 .settlementButtonBox {
+  div {
+    width: 100%;
+  }
+
   .options {
     padding: 0;
 
     a {
       padding: 10px 20px;
-      width: 212px;
 
       &:hover {
         background: $success-background;

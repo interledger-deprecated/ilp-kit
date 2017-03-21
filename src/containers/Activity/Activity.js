@@ -8,6 +8,7 @@ import { initActionCreators } from 'redux-pagination'
 
 import ActivityPayment from 'containers/ActivityPayment/ActivityPayment'
 import ActivitySettlement from 'containers/ActivitySettlement/ActivitySettlement'
+import ActivityWithdrawal from 'containers/ActivityWithdrawal/ActivityWithdrawal'
 
 import classNames from 'classnames/bind'
 import styles from './Activity.scss'
@@ -101,6 +102,9 @@ export default class Home extends Component {
 
               {activity.Settlements.length > 0 &&
               <ActivitySettlement activity={activity} />}
+
+              {activity.Withdrawals.length > 0 &&
+              <ActivityWithdrawal activity={activity} />}
             </li>
           ))}
           </ReactCSSTransitionGroup>}

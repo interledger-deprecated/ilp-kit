@@ -1,5 +1,6 @@
-"use strict"
+'use strict'
 
+const uuid = require('uuid4')
 const superagent = require('superagent-promise')(require('superagent'), Promise)
 const Container = require('constitute').Container
 const EventEmitter = require('events').EventEmitter
@@ -14,8 +15,8 @@ const NotFoundError = require('../errors/not-found-error')
 
 // TODO exception handling
 module.exports = class Ledger extends EventEmitter {
-  static constitute() { return [Config, Log, Container] }
-  constructor(config, log, container) {
+  static constitute () { return [Config, Log, Container] }
+  constructor (config, log, container) {
     super()
 
     const self = this
@@ -32,7 +33,7 @@ module.exports = class Ledger extends EventEmitter {
   }
 
   // TODO caching
-  * getInfo(uri) {
+  * getInfo (uri) {
     const ledgerUri = uri || this.ledgerUri
     let response
 
@@ -99,7 +100,7 @@ module.exports = class Ledger extends EventEmitter {
     return response.body
   }
 
-  * putAccount(auth, data) {
+  * putAccount (auth, data) {
     const response = yield superagent
       .put(this.ledgerUri + '/accounts/' + data.name)
       .send(data)
@@ -109,7 +110,7 @@ module.exports = class Ledger extends EventEmitter {
   }
 
   // Make sure admin minimum allowed balance is negative infinity
-  * setupAdminAccount() {
+  * setupAdminAccount () {
     const username = this.config.data.getIn(['ledger', 'admin', 'user'])
     const password = this.config.data.getIn(['ledger', 'admin', 'pass'])
 
@@ -154,7 +155,7 @@ module.exports = class Ledger extends EventEmitter {
     return this.putAccount(user, data)
   }
 
-  * createAccount(user) {
+  * createAccount (user) {
     const data = {
       name: user.username,
       balance: '0'

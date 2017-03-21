@@ -89,6 +89,25 @@ module.exports = class Activity {
     this.socket.activity(user.username, activityLog)
   }
 
+  * processWithdrawal (withdrawal) {
+    this.log.info(`Processing withdrawal. ${withdrawal.id}`)
+
+    // TODO:PERFORMANCE avoid this call, we only do it to get the username
+    const user = yield this.User.findOne({ where: { id: withdrawal.user_id } })
+
+    let activityLog = new this.ActivityLog()
+    activityLog.user_id = withdrawal.user_id
+    activityLog = yield activityLog.save()
+
+    // Add the withdrawal to the activity
+    yield activityLog.addWithdrawal(withdrawal)
+
+    activityLog = yield this.ActivityLog.getActivityLog(activityLog.id)
+
+    // Notify the clients
+    this.socket.activity(user.username, activityLog)
+  }
+
   paymentGroupCacheCleanup () {
     this.paymentGroupCache = _.pickBy(this.paymentGroupCache,
       group => moment(group.recentDate).add(cacheLifetime, 'seconds') > moment())

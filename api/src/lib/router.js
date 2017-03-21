@@ -13,6 +13,7 @@ const InviteController = require('../controllers/invites')
 const PeerController = require('../controllers/peers')
 const SettlementsController = require('../controllers/settlements')
 const SettlementMethodsController = require('../controllers/settlement_methods')
+const WithdrawalsController = require('../controllers/withdrawals')
 const ActivityLogsController = require('../controllers/activity_logs')
 
 module.exports = class Router {
@@ -52,6 +53,9 @@ module.exports = class Router {
 
     const settlements = this.container.constitute(SettlementsController)
     settlements.init(this.router)
+
+    const withdrawals = this.container.constitute(WithdrawalsController)
+    withdrawals.init(this.router)
 
     const activityLogs = this.container.constitute(ActivityLogsController)
     activityLogs.init(this.router)

@@ -1,6 +1,6 @@
 'use strict'
 
-module.exports = SettlementFactory
+module.exports = WithdrawalFactory
 
 const _ = require('lodash')
 const Container = require('constitute').Container
@@ -9,15 +9,13 @@ const PersistentModelMixin = require('five-bells-shared').PersistentModelMixin
 const Database = require('../lib/db')
 const Validator = require('five-bells-shared/lib/validator')
 const Sequelize = require('sequelize')
-const PeerFactory = require('./peer')
 const UserFactory = require('./user')
-const SettlementMethodFactory = require('./settlement_method')
 const ActivityLogFactory = require('./activity_log')
 const ActivityLogsItemFactory = require('./activity_logs_item')
 
-SettlementFactory.constitute = [Database, Validator, Container]
-function SettlementFactory (sequelize, validator, container) {
-  class Settlement extends Model {
+WithdrawalFactory.constitute = [Database, Validator, Container]
+function WithdrawalFactory (sequelize, validator, container) {
+  class Withdrawal extends Model {
     static convertFromExternal (data) {
       return data
     }
@@ -39,39 +37,31 @@ function SettlementFactory (sequelize, validator, container) {
     }
   }
 
-  Settlement.validateExternal = validator.create('Settlement')
+  Withdrawal.validateExternal = validator.create('Withdrawal')
 
-  PersistentModelMixin(Settlement, sequelize, {
+  PersistentModelMixin(Withdrawal, sequelize, {
     id: {
       type: Sequelize.UUID,
       primaryKey: true,
       defaultValue: Sequelize.UUIDV4
     },
     amount: Sequelize.FLOAT,
-    currency: Sequelize.STRING
+    status: Sequelize.STRING,
+    transfer_id: Sequelize.UUID
   })
 
-  container.schedulePostConstructor(Peer => {
-    Settlement.DbModel.belongsTo(Peer.DbModel)
-  }, [ PeerFactory ])
-
   container.schedulePostConstructor(User => {
-    Settlement.DbModel.belongsTo(User.DbModel)
+    Withdrawal.DbModel.belongsTo(User.DbModel)
   }, [ UserFactory ])
-
-  // TODO:BEFORE_DEPLOY add ledger transfer_id
-  container.schedulePostConstructor(SettlementMethod => {
-    Settlement.DbModel.belongsTo(SettlementMethod.DbModel)
-  }, [ SettlementMethodFactory ])
 
   container.schedulePostConstructor(ActivityLog => {
     container.schedulePostConstructor(ActivityLogsItem => {
-      Settlement.DbModel.belongsToMany(ActivityLog.DbModel, {
+      Withdrawal.DbModel.belongsToMany(ActivityLog.DbModel, {
         through: {
           model: ActivityLogsItem.DbModel,
           unique: false,
           scope: {
-            item_type: 'settlement'
+            item_type: 'withdrawal'
           }
         },
         foreignKey: 'item_id',
@@ -80,5 +70,5 @@ function SettlementFactory (sequelize, validator, container) {
     }, [ ActivityLogsItemFactory ])
   }, [ ActivityLogFactory ])
 
-  return Settlement
+  return Withdrawal
 }

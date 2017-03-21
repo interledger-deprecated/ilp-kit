@@ -4,7 +4,7 @@ import {connect} from 'react-redux'
 import Amount from 'components/Amount/Amount'
 
 import classNames from 'classnames/bind'
-import styles from './ActivitySettlement.scss'
+import styles from './ActivityWithdrawal.scss'
 const cx = classNames.bind(styles)
 
 @connect(
@@ -13,7 +13,7 @@ const cx = classNames.bind(styles)
     config: state.auth.config,
     advancedMode: state.auth.advancedMode
   }))
-export default class ActivitySettlement extends Component {
+export default class ActivityWithdrawal extends Component {
   static propTypes = {
     activity: PropTypes.object.isRequired,
     user: PropTypes.object.isRequired,
@@ -23,10 +23,6 @@ export default class ActivitySettlement extends Component {
 
   static defaultProps = {
     config: {}
-  }
-
-  state = {
-    showTransfers: false
   }
 
   componentWillMount() {
@@ -40,12 +36,21 @@ export default class ActivitySettlement extends Component {
   }
 
   processActivity = (props = this.props) => {
-    const settlement = props.activity.Settlements[0]
+    const withdrawal = props.activity.Withdrawals[0]
 
     this.setState({
       ...this.state,
-      settlement
+      withdrawal
     })
+  }
+
+  toggleTransfers = event => {
+    this.setState({
+      ...this.state,
+      showTransfers: !this.state.showTransfers
+    })
+
+    event.preventDefault()
   }
 
   timeAgoFormatter = (value, unit, suffix) => {
@@ -64,23 +69,23 @@ export default class ActivitySettlement extends Component {
 
   render() {
     const { config } = this.props
-    const { settlement } = this.state
+    const { withdrawal } = this.state
     const advancedMode = this.props.advancedMode
 
     // TODO payments grouping / message
     return (
-      <div className={cx('ActivitySettlement')}>
+      <div className={cx('ActivityWithdrawal')}>
         <div className="row">
           <div className="col-xs-8">
-            <i className={cx('fa', 'fa-plus', 'icon')} />
+            <i className={cx('fa', 'fa-minus', 'icon')} />
             <div className={cx('description')}>
-              {/* TODO:UX include the deposit method */}
-              Deposit
+              {/* TODO:UX include the withdrawal method */}
+              Withdrawal
             </div>
           </div>
           <div className="col-xs-4">
             <div className={cx('amount')}>
-              <Amount amount={settlement.amount} currencySymbol={config.currencySymbol} />
+              <Amount amount={withdrawal.amount} currencySymbol={config.currencySymbol} />
             </div>
           </div>
         </div>

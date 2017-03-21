@@ -11,6 +11,7 @@ const Validator = require('five-bells-shared/lib/validator')
 const Sequelize = require('sequelize')
 const UserFactory = require('./user')
 const PaymentFactory = require('./payment')
+const WithdrawalFactory = require('./withdrawal')
 const SettlementFactory = require('./settlement')
 const ActivityLogsItemFactory = require('./activity_logs_item')
 
@@ -19,6 +20,7 @@ function ActivityLogFactory (sequelize, validator, container) {
   let ActivityLogsItem
   let Payment
   let Settlement
+  let Withdrawal
 
   class ActivityLog extends Model {
     static convertFromExternal (data) {
@@ -51,7 +53,8 @@ function ActivityLogFactory (sequelize, validator, container) {
         where: { user_id: userId },
         include: [
           { model: Payment.DbModel },
-          { model: Settlement.DbModel }
+          { model: Settlement.DbModel },
+          { model: Withdrawal.DbModel }
         ],
         order: [['created_at', 'DESC']],
         limit,
@@ -65,7 +68,8 @@ function ActivityLogFactory (sequelize, validator, container) {
         where: { id },
         include: [
           { model: Payment.DbModel },
-          { model: Settlement.DbModel }
+          { model: Settlement.DbModel },
+          { model: Withdrawal.DbModel }
         ]
       })
     }
@@ -122,6 +126,23 @@ function ActivityLogFactory (sequelize, validator, container) {
         constraints: false
       })
     }, [ SettlementFactory ])
+
+    // Withdrawal
+    container.schedulePostConstructor(model => {
+      Withdrawal = model
+
+      ActivityLog.DbModel.belongsToMany(Withdrawal.DbModel, {
+        through: {
+          model: ActivityLogsItem.DbModel,
+          unique: false,
+          scope: {
+            item_type: 'withdrawal'
+          }
+        },
+        foreignKey: 'activity_log_id',
+        constraints: false
+      })
+    }, [ WithdrawalFactory ])
   }, [ ActivityLogsItemFactory ])
 
   return ActivityLog

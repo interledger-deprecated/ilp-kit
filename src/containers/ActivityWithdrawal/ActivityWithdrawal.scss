@@ -1,0 +1,34 @@
+// TODO:UX include only one var file
+@import 'variables';
+@import 'pages/scss/var';
+@import 'mixins';
+
+$screen-md: 992px;
+
+.ActivityWithdrawal {
+  border-top: 1px solid $activity-payment-separator-color;
+  padding: 12px;
+}
+.icon {
+  float: left;
+  width: 15%;
+  font-size: 55px;
+  text-align: center;
+}
+.description {
+  float: left;
+  width: 85%;
+  padding-left: 15px;
+  font-size: 18px;
+  line-height: 53px;
+}
+.amount {
+  font-size: 22px;
+  text-align: right;
+  line-height: 53px;
+  color: $activity-negative;
+
+  @media (max-width: $screen-md) {
+    font-size: 20px;
+  }
+}

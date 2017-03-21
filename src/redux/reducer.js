@@ -12,6 +12,7 @@ import invite from './reducers/invite'
 import peer from './reducers/peer'
 import settlementMethod from './reducers/settlement_method'
 import settlement from './reducers/settlement'
+import withdrawal from './reducers/withdrawal'
 import user from './reducers/user'
 
 export default combineReducers({
@@ -25,6 +26,7 @@ export default combineReducers({
   peer,
   settlementMethod,
   settlement,
+  withdrawal,
   user,
   form: form.normalize({
     peerAdd: {
