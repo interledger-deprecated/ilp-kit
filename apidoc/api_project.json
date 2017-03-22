@@ -1,6 +1,6 @@
 {
   "name": "ilp-kit",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "ILP kit",
   "title": "ILP kit",
   "url": "https://wallet.example",
@@ -14,7 +14,7 @@
   "apidoc": "0.2.0",
   "generator": {
     "name": "apidoc",
-    "time": "2017-03-17T17:08:14.136Z",
+    "time": "2017-03-22T11:27:53.086Z",
     "url": "http://apidocjs.com",
     "version": "0.16.1"
   }
