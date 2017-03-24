@@ -42,6 +42,7 @@ function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, soc
       router.put('/users/:username/verify', this.verify)
       router.post('/users/:username/resend-verification', this.resendVerification)
 
+      // TODO:BEFORE_DEPLOY remove
       router.get('/receivers/:username', this.getReceiver)
 
       // Admin

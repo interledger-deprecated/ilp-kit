@@ -21,21 +21,15 @@ module.exports = class Pay {
   * pay (opts) {
     let transfer
 
-    const destination = yield this.utils.parseDestination({
+    /*const destination = yield this.utils.parseDestination({
       destination: opts.destination
-    })
+    })*/
 
     /**
      * Ledger payment
      */
     try {
-      transfer = yield this.spsp.pay({
-        source: opts.source,
-        destination: destination,
-        sourceAmount: opts.sourceAmount,
-        destinationAmount: opts.destinationAmount,
-        memo: opts.message
-      })
+      transfer = yield this.spsp.pay(opts.username, opts.payment)
     } catch (e) {
       if (e.response && e.response.body && e.response.body.id && e.response.body.id === 'InsufficientFundsError') {
         throw new InsufficientFundsError()
