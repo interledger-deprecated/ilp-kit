@@ -9,6 +9,7 @@ const Config = require('../lib/config')
 const Ledger = require('../lib/ledger')
 const Utils = require('../lib/utils')
 const Connector = require('../lib/connector')
+const InvalidBodyError = require('../errors/invalid-body-error')
 
 MiscControllerFactory.constitute = [Auth, Log, Config, Ledger, Utils, Connector]
 function MiscControllerFactory (Auth, log, config, ledger, utils, connector) {
@@ -38,7 +39,7 @@ function MiscControllerFactory (Auth, log, config, ledger, utils, connector) {
      *      {
      *        "type": "local",
      *        "ledgerUri": "http://wallet.example/ledger",
-     *        "paymentUri": "http://wallet.example/api/receivers/alice",
+     *        "paymentUri": "http://wallet.example/api/spsp/alice",
      *        "ilpAddress": "wallet.alice",
      *        "currencyCode": "USD",
      *        "currencySymbol": "$",
@@ -47,12 +48,14 @@ function MiscControllerFactory (Auth, log, config, ledger, utils, connector) {
      *      }
      *    }
      */
-    static * destination() {
-      if (!this.query.destination) return this.status = 400
+    static * destination () {
+      const destination = this.query.destination
 
-      this.body = yield utils.parseDestination({
-        destination: this.query.destination
-      })
+      if (!destination) {
+        throw new InvalidBodyError('No destination specified')
+      }
+
+      this.body = yield utils.parseDestination({ destination })
     }
 
     /**

@@ -57,8 +57,8 @@ function WebfingerControllerFactory(log, config, ledger) {
      *          "href": "https://wallet.example/payments/quote"
      *        },
      *        {
-     *          "rel": "https://interledger.org/rel/receiver",
-     *          "href": "https://wallet.example/receivers/alice"
+     *          "rel": "https://interledger.org/rel/spsp/v2",
+     *          "href": "https://wallet.example/spsp/alice"
      *        }
      *      ]
      *    }
@@ -122,8 +122,8 @@ function WebfingerControllerFactory(log, config, ledger) {
               'href': config.data.getIn(['server', 'base_uri']) + '/payments/quote'
             },
             {
-              'rel': 'https://interledger.org/rel/receiver',
-              'href': config.data.getIn(['server', 'base_uri']) + '/receivers/' + ledgerUser.name
+              'rel': 'https://interledger.org/rel/spsp/v2',
+              'href': config.data.getIn(['server', 'base_uri']) + '/spsp/' + ledgerUser.name
             }
           ]
         }
