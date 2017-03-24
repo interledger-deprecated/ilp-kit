@@ -23,6 +23,7 @@ module.exports = class SPSP {
     this.socket = socket
     this.config = config
     this.ledger = ledger
+    this.prefix = config.data.getIn(['ledger', 'prefix'])
     this.utils = utils
 
     this.senders = {}
@@ -57,7 +58,7 @@ module.exports = class SPSP {
    */
 
   // Get or create a sender instance
-  * getSender (user) {
+  /** getSender (user) {
     yield this.connect()
 
     if (!this.senders[user.username]) {
@@ -91,26 +92,19 @@ module.exports = class SPSP {
 
       debug('destroyed the sender object')
     }), 15000)
-  }
+  }*/
+
+
 
   * quote (params) {
-    const sender = yield this.getSender(params.source)
-
-    // One of the amounts should be supplied to get a quote for the other one
-    const sourceAmount = params.sourceAmount || (
-      yield sender.quoteDestinationAmount(
-        params.destination.ilpAddress,
-        params.destinationAmount))
-
-    const destinationAmount = params.destinationAmount || (
-      yield sender.quoteSourceAmount(
-        params.destination.ilpAddress,
-        params.sourceAmount))
-
-    return {
-      sourceAmount: parseFloat(sourceAmount),
-      destinationAmount: parseFloat(destinationAmount)
-    }
+    return ILP.SPSP.quote(
+      yield this.factory.create({ username: params.source.username }),
+      {
+        receiver: params.destination,
+        sourceAmount: params.sourceAmount,
+        destinationAmount: params.destinationAmount
+      }
+    )
   }
 
   * setup (options) {
@@ -123,43 +117,15 @@ module.exports = class SPSP {
     })).body
   }
 
-  * pay (params) {
-    const sender = yield this.getSender(params.source)
-
-    const quote = yield this.setup({
-      paymentUri: params.destination.paymentUri,
-      amount: params.destinationAmount,
-      source_identifier: this.utils.getWebfingerAddress(params.source.username),
-      sender_name: params.source.name,
-      sender_image_url: params.source.profile_picture,
-      memo: params.memo
-    })
-
-    const paymentParams = yield sender.quoteRequest(quote)
-
-    // Sometimes 'paymentParams' comes with a (slightly) different sourceAmount.
-    // TODO Need to make sure it's not too different
-    // paymentParams.sourceAmount = params.sourceAmount
-    paymentParams.uuid = uuid()
-
-    // TODO any rounding stuff here?
-    // Make sure the deliverable amount is what the user agreed with (1% slippage is allowed)
-    const difference = parseFloat(paymentParams.destinationAmount) / parseFloat(params.destinationAmount)
-
-    if (difference > 1.01 || difference < 0.99) {
-      throw new Error(`The quote difference is too big: ${difference}`)
-    }
-
-    yield sender.payRequest(paymentParams)
-
-    return paymentParams
+  * pay (username, payment) {
+    return ILP.SPSP.sendPayment(yield this.factory.create({ username }), payment)
   }
 
   /**
    * Receiver
    */
   // Get a receiver instance
-  * getReceiver (user) {
+  /** getReceiver (user) {
     const self = this
 
     yield self.connect()
@@ -215,26 +181,40 @@ module.exports = class SPSP {
 
       debug('destroyed the receiver object')
     }), 15000)
-  }
+  }*/
 
-  * createRequest (destinationUser, destinationAmount) {
-    const precisionAndScale = yield this.ledger.getInfo()
-    // TODO Turn all of the numbers to bignumber
-    const bnAmount = new BigNumber(destinationAmount + '')
-    const requiredPrecisionRounding = bnAmount.precision() - precisionAndScale.precision
-    const requiredScaleRounding = bnAmount.decimalPlaces() - precisionAndScale.scale
+  * query (username) {
+    const destinationAccount = this.prefix + username
+    const receiverSecret = this.config.generateSecret(destinationAccount)
 
-    const roundedAmount =
-      (requiredPrecisionRounding > requiredScaleRounding)
-        ? bnAmount.toPrecision(precisionAndScale.precision, BigNumber.ROUND_UP)
-        : bnAmount.toFixed(precisionAndScale.scale, BigNumber.ROUND_UP)
+    const receiver = yield this.factory.create({ username })
 
-    const receiver = yield this.getReceiver(destinationUser)
+    const psk = ILP.PSK.generateParams({
+      destinationAccount,
+      receiverSecret
+    })
+    const ledgerInfo = yield this.ledger.getInfo()
 
-    const request = receiver.createRequest({
-      amount: roundedAmount
+    const stopListening = yield ILP.PSK.listen(receiver, { receiverSecret }, params => {
+      // TODO:BEFORE_DEPLOY uncomment
+      // stopListening()
+      return params.fulfill()
     })
 
-    return request
+    return {
+      destination_account: destinationAccount,
+      shared_secret: psk.sharedSecret,
+      maximum_destination_amount: '10000000000000000000000000',
+      minimum_destination_amount: '0.001',
+      ledger_info: {
+        currency_code: ledgerInfo.currency_code,
+        currency_symbol: ledgerInfo.currency_symbol,
+        precision: ledgerInfo.precision,
+        scale: ledgerInfo.scale
+      },
+      receiver_info: {
+         // TODO:BEFORE_DEPLOY fill
+      }
+    }
   }
 }

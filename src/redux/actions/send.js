@@ -44,13 +44,11 @@ export const requestQuote = values => ({
 })
 
 // TODO confirm findPath instead of using the sender.default
-export const transfer = values => (dispatch, getState) => dispatch({
+export const transfer = () => (dispatch, getState) => dispatch({
   types: [types.SEND, types.SEND_SUCCESS, types.SEND_FAIL],
   promise: client => client.put('/payments/' + uuid4(), {
     data: {
-      ...getState().send.quote,
-      destination: values.destination,
-      message: values.message
+      ...getState().send.quote
     }
   })
 })

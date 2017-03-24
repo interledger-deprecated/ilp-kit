@@ -14,8 +14,8 @@ const NotFoundError = require('../errors/not-found-error')
 
 // TODO exception handling
 module.exports = class Ledger extends EventEmitter {
-  static constitute() { return [Config, Log, Container] }
-  constructor(config, log, container) {
+  static constitute () { return [Config, Log, Container] }
+  constructor (config, log, container) {
     super()
 
     const self = this
@@ -32,7 +32,7 @@ module.exports = class Ledger extends EventEmitter {
   }
 
   // TODO caching
-  * getInfo(uri) {
+  * getInfo (uri) {
     const ledgerUri = uri || this.ledgerUri
     let response
 

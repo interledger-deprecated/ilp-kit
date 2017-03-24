@@ -74,7 +74,7 @@ function nockHostEmpty() {
 
 function nockDestinationLocal() {
   nock('https://localhost:80')
-    .get('/api/receivers/alice')
+    .get('/api/spsp/alice')
     .reply(200, {
       name: 'alice',
       imageUrl: 'picture',
@@ -153,7 +153,7 @@ describe('Utils', () => {
     beforeEach(function() {
       this.destinationLocal = {
         ledgerUri: 'https://red.ilpdemo.org/ledger',
-        paymentUri: 'https://localhost:80/api/receivers/alice',
+        paymentUri: 'https://localhost:80/api/spsp/alice',
         ilpAddress: 'us.usd.red.alice',
         currencyCode: 'XDG',
         currencySymbol: 'D',
@@ -236,13 +236,13 @@ describe('Utils', () => {
         assert(nock.isDone(), 'nock should be called')
       }
     })
- 
+
     it('gets a destination from non-foreign ID', function * () {
       nockDestinationLocal()
       assert.deepEqual(yield this.utils.parseDestination({
         destination: 'alice'
       }), this.destinationLocal)
- 
+
       assert(nock.isDone(), 'nock should be called')
     })
 

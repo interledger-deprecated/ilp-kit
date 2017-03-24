@@ -22,11 +22,10 @@ function PaymentsControllerFactory (Auth, Payment, log, utils, spsp, User, pay) 
   return class PaymentsController {
     static init (router) {
       router.post('/payments/quote', Auth.checkAuth, this.quote)
-      router.put('/payments/:id', Auth.checkAuth, Payment.createBodyParser(), this.putResource)
-
-      router.post('/receivers/:username', this.setup)
-
+      router.put('/payments/:id', Auth.checkAuth, this.putResource)
       router.get('/payments/stats', Auth.checkAuth, this.getStats)
+
+      router.get('/spsp/:username', this.query)
     }
 
     /**
@@ -69,22 +68,18 @@ function PaymentsControllerFactory (Auth, Payment, log, utils, spsp, User, pay) 
       const id = this.params.id && this.params.id.toLowerCase()
       const payment = this.body
 
-      try {
+      /*try {
         request.validateUriParameter('id', id, 'Uuid')
         request.validateBody(this, 'Payment')
       } catch (e) {
         // TODO more info on what exactly is wrong
         throw new InvalidBodyError()
-      }
+      }*/
 
       try {
-        yield pay.pay({
-          source: this.req.user.getDataExternal(),
-          destination: payment.destination,
-          sourceAmount: payment.sourceAmount,
-          destinationAmount: payment.destinationAmount,
-          message: payment.message
-        })
+        // TODO:BEFORE_DEPLOY handle message
+        // message: payment.message
+        yield pay.pay({ username: this.req.user.username, payment })
       } catch (e) {
         console.error(e)
 
@@ -125,20 +120,16 @@ function PaymentsControllerFactory (Auth, Payment, log, utils, spsp, User, pay) 
 
     // TODO handle not supplied params
     static * quote () {
-      const destination = yield utils.parseDestination({
-        destination: this.body.destination
-      })
-
       try {
         this.body = yield spsp.quote({
           source: this.req.user,
-          destination: destination,
+          destination: this.body.destination,
           sourceAmount: this.body.sourceAmount,
           destinationAmount: this.body.destinationAmount
         })
       } catch (e) {
         console.error(e)
-        throw new NoQuote('No quote for a specified destination/amount has been found')
+        throw new NoQuote('No quote for the specified destination/amount has been found')
       }
     }
 
@@ -172,7 +163,9 @@ function PaymentsControllerFactory (Auth, Payment, log, utils, spsp, User, pay) 
      *      "condition": "cc:0:3:XcJRQrVJQKsXrXnpHIk1Nm7PBm5JfnFgmd8ocsexjO4:32"
      *    }
      */
-    static * setup () {
+    static * query () {
+      return this.body = yield spsp.query(this.params.username)
+
       const sourceIdentifier = this.body.source_identifier
       const name = this.body.sender_name
       const image_url = this.body.sender_image_url
