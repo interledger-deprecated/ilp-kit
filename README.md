@@ -171,8 +171,8 @@ HTTP/1.1 200 OK
       "href": "https://red.ilpdemo.org/api/payments/findPath"
     },
     {
-      "rel": "https://interledger.org/rel/receiver",
-      "href": "https://red.ilpdemo.org/api/receivers/alice"
+      "rel": "https://interledger.org/rel/spsp/v2",
+      "href": "https://red.ilpdemo.org/api/spsp/alice"
     }
   ]
 }
