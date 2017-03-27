@@ -177,6 +177,10 @@ export default class App extends Component {
                 <NavItem onClick={this.onNavItemClick}>Users</NavItem>
               </LinkContainer>}
               {user.isAdmin &&
+              <LinkContainer to="/withdrawals">
+                <NavItem onClick={this.onNavItemClick}>Withdrawals</NavItem>
+              </LinkContainer>}
+              {user.isAdmin &&
               <LinkContainer to="/invites">
                 <NavItem onClick={this.onNavItemClick}>Invites</NavItem>
               </LinkContainer>}

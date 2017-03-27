@@ -52,7 +52,7 @@ export default (store) => {
   }
 
   const getHome = (nextState, cb) => {
-    require.ensure(['./containers/Home/Home'], (require) => {
+    require.ensure(['./containers/Home/Home'], require => {
       cb(null, require('./containers/Home/Home'))
 
       store.dispatch(locationUpdate())
@@ -60,7 +60,7 @@ export default (store) => {
   }
 
   const getAuth = (nextState, cb) => {
-    require.ensure(['./containers/Auth/Auth'], (require) => {
+    require.ensure(['./containers/Auth/Auth'], require => {
       cb(null, require('./containers/Auth/Auth'))
 
       store.dispatch(locationUpdate())
@@ -72,7 +72,7 @@ export default (store) => {
   }
 
   const getButton = (nextState, cb) => {
-    require.ensure(['./containers/Button/Button'], (require) => {
+    require.ensure(['./containers/Button/Button'], require => {
       cb(null, require('./containers/Button/Button'))
 
       store.dispatch(locationUpdate())
@@ -80,7 +80,7 @@ export default (store) => {
   }
 
   const getSettings = (nextState, cb) => {
-    require.ensure(['./containers/Settings/Settings'], (require) => {
+    require.ensure(['./containers/Settings/Settings'], require => {
       cb(null, require('./containers/Settings/Settings'))
 
       store.dispatch(locationUpdate())
@@ -88,7 +88,7 @@ export default (store) => {
   }
 
   const getInvites = (nextState, cb) => {
-    require.ensure(['./containers/Invites/Invites'], (require) => {
+    require.ensure(['./containers/Invites/Invites'], require => {
       cb(null, require('./containers/Invites/Invites'))
 
       store.dispatch(locationUpdate())
@@ -96,15 +96,23 @@ export default (store) => {
   }
 
   const getUsers = (nextState, cb) => {
-    require.ensure(['./containers/Users/Users'], (require) => {
+    require.ensure(['./containers/Users/Users'], require => {
       cb(null, require('./containers/Users/Users'))
 
       store.dispatch(locationUpdate())
     }, 'users')
   }
 
+  const getWithdrawals = (nextState, cb) => {
+    require.ensure(['./containers/Withdrawals/Withdrawals'], require => {
+      cb(null, require('./containers/Withdrawals/Withdrawals'))
+
+      store.dispatch(locationUpdate())
+    }, 'withdrawals')
+  }
+
   const getPeers = (nextState, cb) => {
-    require.ensure(['./containers/Peers/Peers'], (require) => {
+    require.ensure(['./containers/Peers/Peers'], require => {
       cb(null, require('./containers/Peers/Peers'))
 
       store.dispatch(locationUpdate())
@@ -112,7 +120,7 @@ export default (store) => {
   }
 
   const getSettlement = (nextState, cb) => {
-    require.ensure(['./containers/Settlement/Settlement'], (require) => {
+    require.ensure(['./containers/Settlement/Settlement'], require => {
       cb(null, require('./containers/Settlement/Settlement'))
 
       store.dispatch(locationUpdate())
@@ -120,7 +128,7 @@ export default (store) => {
   }
 
   const getSettle = (nextState, cb) => {
-    require.ensure(['./containers/Settle/Settle'], (require) => {
+    require.ensure(['./containers/Settle/Settle'], require => {
       cb(null, require('./containers/Settle/Settle'))
 
       store.dispatch(locationUpdate())
@@ -128,7 +136,7 @@ export default (store) => {
   }
 
   const getSettlementInfo = (nextState, cb) => {
-    require.ensure(['./containers/SettlementInfo/SettlementInfo'], (require) => {
+    require.ensure(['./containers/SettlementInfo/SettlementInfo'], require => {
       cb(null, require('./containers/SettlementInfo/SettlementInfo'))
 
       store.dispatch(locationUpdate())
@@ -136,7 +144,7 @@ export default (store) => {
   }
 
   const getSettlementCancel = (nextState, cb) => {
-    require.ensure(['./containers/SettlementCancel/SettlementCancel'], (require) => {
+    require.ensure(['./containers/SettlementCancel/SettlementCancel'], require => {
       cb(null, require('./containers/SettlementCancel/SettlementCancel'))
 
       store.dispatch(locationUpdate())
@@ -171,6 +179,7 @@ export default (store) => {
         <Route onEnter={requireAdmin}>
           <Route path="invites" getComponent={getInvites} />
           <Route path="users" getComponent={getUsers} />
+          <Route path="withdrawals" getComponent={getWithdrawals} />
           <Route path="peers" getComponent={getPeers} />
           <Route path="settlement" getComponent={getSettlement} />
         </Route>

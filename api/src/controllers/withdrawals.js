@@ -8,16 +8,55 @@ const Log = require('../lib/log')
 const Utils = require('../lib/utils')
 const Ledger = require('../lib/ledger')
 const Activity = require('../lib/activity')
+const Config = require('../lib/config')
 const UserFactory = require('../models/user')
 const WithdrawalFactory = require('../models/withdrawal')
+const NotFoundError = require('../errors/not-found-error')
 
-WithdrawalsControllerFactory.constitute = [Auth, Activity, Log, Utils, Ledger, UserFactory, WithdrawalFactory]
-function WithdrawalsControllerFactory (Auth, activity, log, utils, ledger, User, Withdrawal) {
-  log = log('activity_logs')
+WithdrawalsControllerFactory.constitute = [Auth, Config, Activity, Log, Utils, Ledger, UserFactory, WithdrawalFactory]
+function WithdrawalsControllerFactory (auth, config, activity, log, utils, ledger, User, Withdrawal) {
+  log = log('withdrawals')
 
   return class ActivityLogsController {
     static init (router) {
-      router.post('/withdrawals/:id', Auth.checkAuth, this.postResource)
+      router.post('/withdrawals/:id', auth.checkAuth, this.postResource)
+
+      // Admin
+      router.get('/withdrawals', auth.checkAuth, this.checkAdmin, this.getAll)
+      router.put('/withdrawals/:id', auth.checkAuth, this.checkAdmin, this.putResource)
+    }
+
+    // TODO move to auth
+    static * checkAdmin (next) {
+      if (this.req.user.username === config.data.getIn(['ledger', 'admin', 'user'])) {
+        return yield next
+      }
+
+      throw new NotFoundError()
+    }
+
+    static * getAll () {
+      // TODO pagination
+      // TODO don't return all of the fields / associations
+      this.body = yield Withdrawal.findAll({
+        include: [{ all: true }],
+        order: [['created_at', 'DESC']]
+      })
+    }
+
+    static * putResource () {
+      const id = this.params.id
+      const data = this.body
+
+      const withdrawal = yield Withdrawal.findOne({ where: { id } })
+
+      if (!withdrawal) throw new NotFoundError()
+
+      if (data.status !== undefined) {
+        withdrawal.status = data.status
+      }
+
+      this.body = yield withdrawal.save()
     }
 
     static * postResource () {
