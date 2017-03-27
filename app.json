@@ -110,13 +110,13 @@
       "description": "[YOUR CHOICE] Set the desired currency code",
       "value": "USD"
     },
-    "LEDGER_CURRENCY_SYMBOL": {
-      "description": "[YOUR CHOICE] Set the desired currency symbol",
-      "value": "$"
+    "LEDGER_CURRENCY_SCALE": {
+      "description": "[YOUR CHOICE] Set how many digits behind the decimal point should be the ledger base unit",
+      "value": "9"
     },
     "LEDGER_ILP_PREFIX": {
       "description": "[NEEDS CHANGE] Change to your appname (no spaces, alltogether)",
-      "value": "us.usd.<APPNAME>."
+      "value": "us.9.usd.<APPNAME>."
     },
     "LEDGER_PRECISION": {
       "value": "10"

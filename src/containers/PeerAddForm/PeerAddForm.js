@@ -18,7 +18,7 @@ import Input from 'components/Input/Input'
 
 @reduxForm({
   form: 'peerAdd',
-  fields: ['hostname', 'limit', 'currency'],
+  fields: ['hostname', 'limit', 'currencyCode', 'currencyScale'],
   validate
 }, null, { add })
 @successable()
@@ -57,7 +57,7 @@ export default class PeerAddForm extends Component {
   }
 
   render() {
-    const { invalid, handleSubmit, submitting, success, fail, fields: { hostname, limit, currency } } = this.props
+    const { invalid, handleSubmit, submitting, success, fail, fields: { hostname, limit, currencyCode, currencyScale } } = this.props
 
     return (
       <div className={cx('PeerAddForm')}>
@@ -81,8 +81,11 @@ export default class PeerAddForm extends Component {
                 <Input object={limit} label="Limit" size="lg" />
               </div>
               <div className={cx('col-sm-2')}>
-                <Input object={currency} label="Currency" size="lg" />
+                <Input object={currencyCode} label="Currency" size="lg" />
               </div>
+
+              <Input object={currencyScale} value="9" type="hidden" />
+
               <div className={cx('col-sm-3')}>
                 <button type="submit" className={cx('btn', 'btn-lg', 'btn-success', 'btn-block', 'btn-submit')}
                         disabled={invalid || submitting}>

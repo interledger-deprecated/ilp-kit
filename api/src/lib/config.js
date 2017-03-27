@@ -23,7 +23,7 @@ module.exports = class WalletConfig {
       prefix: Config.getEnv('LEDGER_ILP_PREFIX'),
       currency: {
         code: Config.getEnv('LEDGER_CURRENCY_CODE'),
-        symbol: Config.getEnv('LEDGER_CURRENCY_SYMBOL')
+        scale: Config.getEnv('LEDGER_CURRENCY_SCALE')
       }
     }
 
