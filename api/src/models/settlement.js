@@ -47,7 +47,7 @@ function SettlementFactory (sequelize, validator, container) {
       primaryKey: true,
       defaultValue: Sequelize.UUIDV4
     },
-    amount: Sequelize.FLOAT,
+    amount: Sequelize.INTEGER,
     currency: Sequelize.STRING
   })
 

@@ -25,6 +25,9 @@ Note: development server assumes you have `bunyan` installed globally.
 npm run dev
 ```
 
+You can also use `cp dev.env.list env.list` to create an env.list that uses http://localhost:3010/ledger as its ledger URL.
+Using `npm start` may work better than `npm run dev`, depending on what you're trying to do.
+
 ## Hosts file
 
 Edit your hosts file (`/private/etc/hosts` on OSX). Add these two lines
@@ -164,3 +167,11 @@ In development, Redux Devtools are enabled by default. You can toggle visibility
 - <kbd>Ctrl+H</kbd> Toggle DevTools Dock
 - <kbd>Ctrl+Q</kbd> Move Dock Position
 - see [redux-devtools-dock-monitor](https://github.com/gaearon/redux-devtools-dock-monitor) for more detail information.
+
+## Note
+
+It seems you may need to run:
+```
+psql ilpkit -f node_modules/five-bells-ledger/src/sql/pg/1-2.sql
+```
+but that's unconfirmed

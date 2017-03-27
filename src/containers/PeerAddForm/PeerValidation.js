@@ -4,6 +4,6 @@ export const validate = (values, props) => {
   return createValidator({
     hostname: [required, hostname, hostnameNotSelf, peerHostname(props.peerState.list)],
     limit: [required, integer],
-    currency: [required]
+    currencyCode: [required]
   })(values, props)
 }

@@ -79,7 +79,7 @@ function nockDestinationLocal() {
       name: 'alice',
       imageUrl: 'picture',
       currency_code: 'XDG',
-      currency_symbol: 'D'
+      currency_scale: 3
     })
 }
 function nockDestinationRemote() {
@@ -89,7 +89,7 @@ function nockDestinationRemote() {
       name: 'alice',
       imageUrl: 'picture',
       currency_code: 'XDG',
-      currency_symbol: 'D'
+      currency_scale: 3
     })
 }
 function nockMalformed() {
@@ -156,7 +156,7 @@ describe('Utils', () => {
         paymentUri: 'https://localhost:80/api/spsp/alice',
         ilpAddress: 'us.usd.red.alice',
         currencyCode: 'XDG',
-        currencySymbol: 'D',
+        currencyScale: 3,
         identifier: 'alice@localhost:80',
         name: 'alice',
         imageUrl: undefined
@@ -168,7 +168,7 @@ describe('Utils', () => {
         identifier: 'alice@example.com',
         ilpAddress: 'address',
         currencyCode: 'XDG',
-        currencySymbol: 'D',
+        currencyScale: 3,
         name: 'alice',
         imageUrl: undefined
       }
