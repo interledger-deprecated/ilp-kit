@@ -3,11 +3,11 @@ import {connect} from 'react-redux'
 import ReactTooltip from 'react-tooltip'
 
 import { reload } from 'redux/actions/auth'
-import { withdraw } from 'redux/actions/withdrawal'
 
 import Dropdown from 'react-bootstrap/lib/Dropdown'
 import MenuItem from 'react-bootstrap/lib/MenuItem'
 
+import { Link } from 'react-router'
 import { LinkContainer } from 'react-router-bootstrap'
 
 import Amount from 'components/Amount/Amount'
@@ -28,13 +28,12 @@ const cx = classNames.bind(styles)
     verified: state.auth.verified,
     config: state.auth.config
   }),
-  {reload, withdraw})
+  { reload })
 export default class Home extends Component {
   static propTypes = {
     user: PropTypes.object,
     reload: PropTypes.func.isRequired,
-    config: PropTypes.object,
-    withdraw: PropTypes.func.isRequired
+    config: PropTypes.object
   }
 
   state = {}
@@ -91,11 +90,6 @@ export default class Home extends Component {
         </MenuItem>
       </LinkContainer>
     )
-  }
-
-  handleWithdraw = () => {
-    // TODO:BEFORE_DEPLOY don't hardcode
-    this.props.withdraw(100)
   }
 
   render() {
@@ -157,10 +151,9 @@ export default class Home extends Component {
                   </Dropdown>
                 </div>
                 <div className={cx('col-xs-6')}>
-                  <button className={cx('btn', 'btn-default', 'btn-lg', 'btn-block')}
-                    onClick={this.handleWithdraw}>
+                  <Link to="withdraw" className={cx('btn', 'btn-default', 'btn-lg', 'btn-block')}>
                     Withdraw
-                  </button>
+                  </Link>
                 </div>
               </div>}
             {config.reload &&

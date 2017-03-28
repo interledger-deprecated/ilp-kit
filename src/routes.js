@@ -151,6 +151,14 @@ export default (store) => {
     }, 'settlementCancel')
   }
 
+  const getWithdraw = (nextState, cb) => {
+    require.ensure(['./containers/Withdraw/Withdraw'], require => {
+      cb(null, require('./containers/Withdraw/Withdraw'))
+
+      store.dispatch(locationUpdate())
+    }, 'withdraw')
+  }
+
   /**
    * Please keep routes in alphabetical order
    */
@@ -188,6 +196,7 @@ export default (store) => {
         <Route path="settle/:method/:destination" getComponent={getSettle} />
         <Route path="settlement/cancel" getComponent={getSettlementCancel} />
         <Route path="settlement/:id" getComponent={getSettlementInfo} />
+        <Route path="withdraw" getComponent={getWithdraw} />
         <Route path="verify/:username/:verifyCode" getComponent={rootComponent} />
 
         { /* Catch all route */ }
