@@ -102,6 +102,11 @@ export default class Home extends Component {
     const { user, config } = this.props
     const { showStats, reloading } = this.state
 
+    const showDepositWithdraw = !config.reload
+      && config.settlementMethods
+      && config.settlementMethods.length > 0
+      && !user.isAdmin
+
     // For some reason dynamic routers have problems with that state
     if (!user) return null
     return (
@@ -139,7 +144,7 @@ export default class Home extends Component {
               <Amount amount={user.balance} currencySymbol={config.currencySymbol} />
               {config.reload && <span className={cx('but')}>*</span>}
             </div>
-            {!config.reload && config.settlementMethods && config.settlementMethods.length > 0 &&
+            {showDepositWithdraw &&
               <div className={cx('row', 'row-sm')}>
                 <div className={cx('settlementButtonBox', 'col-xs-6')}>
                   <Dropdown id="settlementButton" pullRight>
