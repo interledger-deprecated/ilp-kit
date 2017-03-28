@@ -1,5 +1,7 @@
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
+import moment from 'moment'
+import TimeAgo from 'react-timeago'
 
 import Amount from 'components/Amount/Amount'
 
@@ -80,7 +82,11 @@ export default class ActivityWithdrawal extends Component {
             <i className={cx('fa', 'fa-minus', 'icon')} />
             <div className={cx('description')}>
               {/* TODO:UX include the withdrawal method */}
-              Withdrawal
+              <span className={cx('message')}>Withdrawal ({withdrawal.status})</span>
+              <div className={cx('date')} title={moment(withdrawal.recent_date).format('LLL')}>
+                {advancedMode && <span>{moment(withdrawal.recent_date || withdrawal.created_at).format('MMM D, YYYY LTS')} - </span>}
+                <TimeAgo date={withdrawal.recent_date || withdrawal.created_at} formatter={this.timeAgoFormatter} />
+              </div>
             </div>
           </div>
           <div className="col-xs-4">

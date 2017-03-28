@@ -19,8 +19,16 @@ $screen-md: 992px;
   float: left;
   width: 85%;
   padding-left: 15px;
-  font-size: 18px;
-  line-height: 53px;
+
+  .message {
+    font-size: 18px;
+    line-height: 35px;
+  }
+  .date {
+    font-size: 13px;
+    line-height: 15px;
+    color: $activity-date-text-color;
+  }
 }
 .amount {
   font-size: 22px;
