@@ -18,7 +18,7 @@ function nockAcct() {
         rel: 'https://interledger.org/rel/ledgerUri',
         href: 'ledger'
       }, {
-        rel: 'https://interledger.org/rel/receiver',
+        rel: 'https://interledger.org/rel/spsp/v2',
         href: 'http://receiver/'
       }, {
         rel: 'https://interledger.org/rel/ilpAddress',
@@ -38,7 +38,7 @@ function nockUri() {
         rel: 'https://interledger.org/rel/ledgerUri',
         href: 'ledger'
       }, {
-        rel: 'https://interledger.org/rel/receiver',
+        rel: 'https://interledger.org/rel/spsp/v2',
         href: 'http://receiver/'
       }, {
         rel: 'https://interledger.org/rel/ilpAddress',
