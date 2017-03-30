@@ -78,14 +78,18 @@ function PaymentFactory (sequelize, validator, container, User) {
         + ' FROM "Payments"'
         + ' WHERE state = \'success\' '
         + ' AND ('
-          + ' source_user = ' + user.id
-          + " OR source_identifier = '" + user.identifier + "'"
-          + ' OR destination_user = ' + user.id
-          + " OR destination_identifier = '" + user.identifier + "'"
+          + ' source_user = :id' +
+          + " OR source_identifier = ':identifier'" +
+          + ' OR destination_user = :id' +
+          + " OR destination_identifier = ':identifier'" +
         + ' )'
         + ' GROUP BY source_identifier, source_name, source_image_url, '
         + 'destination_identifier, destination_name, destination_image_url'
-        + ' ORDER BY recent_date DESC'
+        + ' ORDER BY recent_date DESC',
+        {
+          replacements: {id: user.id, identifier: user.identifier},
+          type: sequelize.QueryTypes.SELECT
+        }
       )
 
       return result[0]
