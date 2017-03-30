@@ -1,4 +1,4 @@
-"use strict"
+'use strict'
 
 module.exports = PaymentFactory
 
@@ -66,26 +66,26 @@ function PaymentFactory (sequelize, validator, container, User) {
 
     static * getUserStats (user) {
       const result = yield sequelize.query(
-        'SELECT source_identifier, destination_identifier,'
-          + ' sum(source_amount) as source_amount,'
-          + ' source_name,'
-          + ' source_image_url,'
-          + ' sum(destination_amount) as destination_amount,'
-          + ' destination_name,'
-          + ' destination_image_url,'
-          + ' count(*) as transfers_count,'
-          + ' max(created_at) AS recent_date'
-        + ' FROM "Payments"'
-        + ' WHERE state = \'success\' '
-        + ' AND ('
-          + ' source_user = :id' +
-          + " OR source_identifier = ':identifier'" +
-          + ' OR destination_user = :id' +
-          + " OR destination_identifier = ':identifier'" +
-        + ' )'
-        + ' GROUP BY source_identifier, source_name, source_image_url, '
-        + 'destination_identifier, destination_name, destination_image_url'
-        + ' ORDER BY recent_date DESC',
+        'SELECT source_identifier, destination_identifier,' +
+          ' sum(source_amount) as source_amount,' +
+          ' source_name,' +
+          ' source_image_url,' +
+          ' sum(destination_amount) as destination_amount,' +
+          ' destination_name,' +
+          ' destination_image_url,' +
+          ' count(*) as transfers_count,' +
+          ' max(created_at) AS recent_date' +
+        ' FROM "Payments"' +
+        ' WHERE state = \'success\' ' +
+        ' AND (' +
+          ' source_user = :id ' +
+          ' OR source_identifier = :identifier ' +
+          ' OR destination_user = :id ' +
+          ' OR destination_identifier = :identifier ' +
+        ' )' +
+        ' GROUP BY source_identifier, source_name, source_image_url, ' +
+        'destination_identifier, destination_name, destination_image_url' +
+        ' ORDER BY recent_date DESC',
         {
           replacements: {id: user.id, identifier: user.identifier},
           type: sequelize.QueryTypes.SELECT
