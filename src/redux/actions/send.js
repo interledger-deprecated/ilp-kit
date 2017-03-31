@@ -1,4 +1,3 @@
-import uuid from 'uuid4'
 import * as types from '../actionTypes'
 
 const destinationCache = {}
@@ -46,9 +45,10 @@ export const requestQuote = values => ({
 // TODO confirm findPath instead of using the sender.default
 export const transfer = () => (dispatch, getState) => dispatch({
   types: [types.SEND, types.SEND_SUCCESS, types.SEND_FAIL],
-  promise: client => client.put('/payments/' + uuid(), {
+  promise: client => client.put('/payments/' + getState().send.quote.id, {
     data: {
-      ...getState().send.quote
+      quote: getState().send.quote,
+      destination: getState().send.destinationInfo
     }
   })
 })

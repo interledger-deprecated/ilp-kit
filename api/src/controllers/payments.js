@@ -66,20 +66,13 @@ function PaymentsControllerFactory (Auth, Payment, log, utils, spsp, User, pay) 
     // TODO don't allow payments to self
     static * putResource () {
       const id = this.params.id && this.params.id.toLowerCase()
-      const payment = this.body
-
-      /*try {
-        request.validateUriParameter('id', id, 'Uuid')
-        request.validateBody(this, 'Payment')
-      } catch (e) {
-        // TODO more info on what exactly is wrong
-        throw new InvalidBodyError()
-      }*/
+      const quote = this.body.quote
+      const destination = this.body.destination
 
       try {
         // TODO:BEFORE_DEPLOY handle message
         // message: payment.message
-        yield pay.pay({ username: this.req.user.username, payment })
+        yield pay.pay({ user: this.req.user, quote, destination })
       } catch (e) {
         console.error(e)
 
@@ -164,48 +157,7 @@ function PaymentsControllerFactory (Auth, Payment, log, utils, spsp, User, pay) 
      *    }
      */
     static * query () {
-      return this.body = yield spsp.query(this.params.username)
-
-      const sourceIdentifier = this.body.source_identifier
-      const name = this.body.sender_name
-      const image_url = this.body.sender_image_url
-      const memo = this.body.memo
-      const destinationAmount = this.body.amount
-
-      if (!destinationAmount) throw new InvalidBodyError('destinationAmount is missing')
-
-      // Get the user from the db. We need the id in the payment
-      // TODO cache
-      const destinationUser = yield User.findOne({
-        where: {username: this.params.username}
-      })
-
-      // Requested user doesn't exist
-      if (!destinationUser) {
-        return this.status = 404
-      }
-
-      const paymentParams = yield spsp.createRequest(destinationUser, destinationAmount)
-
-      // Create the payment object
-      try {
-        yield Payment.createOrUpdate({
-          state: 'pending',
-          source_name: name,
-          source_image_url: image_url,
-          source_identifier: sourceIdentifier,
-          destination_user: destinationUser.id,
-          destination_identifier: utils.getWebfingerAddress(destinationUser.username),
-          destination_amount: parseFloat(destinationAmount),
-          message: memo || null,
-          execution_condition: paymentParams.condition
-        })
-
-        this.body = paymentParams
-      } catch (e) {
-        console.log('payments:299', 'woops', e)
-        // TODO handle
-      }
+      this.body = yield spsp.query(this.params.username)
     }
 
     static * getStats () {
