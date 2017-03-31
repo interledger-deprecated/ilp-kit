@@ -202,7 +202,7 @@ module.exports = class SPSP {
     })
 
     return {
-      destination_account: destinationAccount,
+      destination_account: psk.destinationAccount,
       shared_secret: psk.sharedSecret,
       maximum_destination_amount: Math.pow(2,64).toString(),
       minimum_destination_amount: '1',
