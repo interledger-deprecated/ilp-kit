@@ -122,6 +122,7 @@ dependencies with the following commands:
 $ cd # start in your home folder
 $ git clone https://github.com/interledgerjs/ilp-kit
 $ cd ilp-kit
+$ git checkout latest # the 'master' branch is not always stable, safer to use the 'latest' branch
 $ yarn install --production # npm install also works, if you don't have yarn installed
 ```
 
