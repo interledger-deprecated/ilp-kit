@@ -14,17 +14,19 @@ const Config = require('./config')
 const Socket = require('./socket')
 const Ledger = require('./ledger')
 const Utils = require('./utils')
+const Activity = require('./activity')
 
 // TODO exception handling
 module.exports = class SPSP {
-  static constitute () { return [Config, PaymentFactory, Socket, Ledger, Utils] }
-  constructor (config, Payment, socket, ledger, utils) {
+  static constitute () { return [Config, PaymentFactory, Socket, Ledger, Utils, Activity] }
+  constructor (config, Payment, socket, ledger, utils, activity) {
     this.Payment = Payment
     this.socket = socket
     this.config = config
     this.ledger = ledger
     this.prefix = config.data.getIn(['ledger', 'prefix'])
     this.utils = utils
+    this.activity = activity
 
     this.senders = {}
     this.receivers = {}
@@ -93,8 +95,6 @@ module.exports = class SPSP {
       debug('destroyed the sender object')
     }), 15000)
   }*/
-
-
 
   * quote (params) {
     return ILP.SPSP.quote(
@@ -200,11 +200,12 @@ module.exports = class SPSP {
       stopListening()
 
       // Store the payment in the wallet db
-      yield self.Payment.createOrUpdate({
+      const payment = yield self.Payment.createOrUpdate({
         // TODO:BEFORE_DEPLOY source_identifier
         // source_identifier: user.identifier,
         // TODO source_amount ?
         // source_amount: parseFloat(params.transfer.sourceAmount),
+        destination_user: user.id,
         destination_identifier: user.identifier,
         destination_amount: parseFloat(params.transfer.amount),
         // destination_name: destination.name,
@@ -215,6 +216,8 @@ module.exports = class SPSP {
         execution_condition: params.transfer.executionCondition,
         state: 'success'
       })
+
+      yield self.activity.processPayment(payment, user)
 
       return params.fulfill()
     }))
