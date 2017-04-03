@@ -21,7 +21,7 @@ test:
 
 deployment:
   production:
-    branch: master
+    branch: latest
     commands:
       # Push Docker image tagged latest and tagged with commit descriptor
       - sed "s/<AUTH>/${DOCKER_TOKEN}/" < "dockercfg-template" > ~/.dockercfg
