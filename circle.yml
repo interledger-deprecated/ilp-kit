@@ -26,7 +26,7 @@ deployment:
       # Push Docker image tagged latest and tagged with commit descriptor
       - sed "s/<AUTH>/${DOCKER_TOKEN}/" < "dockercfg-template" > ~/.dockercfg
       - docker push interledgerjs/ilp-kit:latest
-      - docker push interledgerjs/ilp-kit:"$(git describe)"
+      - docker push interledgerjs/ilp-kit:"$(git describe --tags)"
       # Publish spec
       - git config --global user.email "info@circleci.com"
       - git config --global user.name "CircleCI"
