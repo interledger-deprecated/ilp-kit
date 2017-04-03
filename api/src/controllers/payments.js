@@ -12,6 +12,7 @@ const Utils = require('../lib/utils')
 const UserFactory = require('../models/user')
 const PaymentFactory = require('../models/payment')
 const InvalidBodyError = require('../errors/invalid-body-error')
+const NotFoundError = require('../errors/not-found-error')
 const ServerError = require('../errors/server-error')
 const NoQuote = require('../errors/no-quote-error')
 
@@ -157,7 +158,11 @@ function PaymentsControllerFactory (Auth, Payment, log, utils, spsp, User, pay) 
      *    }
      */
     static * query () {
-      this.body = yield spsp.query(this.params.username)
+      const user = yield User.findOne({ where: { username: this.params.username }})
+
+      if (!user) throw new NotFoundError()
+
+      this.body = yield spsp.query(user)
     }
 
     static * getStats () {

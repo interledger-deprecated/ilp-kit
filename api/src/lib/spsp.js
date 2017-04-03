@@ -183,11 +183,12 @@ module.exports = class SPSP {
     }), 15000)
   }*/
 
-  * query (username) {
-    const destinationAccount = this.prefix + username
+  * query (user) {
+    const self = this
+    const destinationAccount = this.prefix + user.username
     const receiverSecret = this.config.generateSecret(destinationAccount)
 
-    const receiver = yield this.factory.create({ username })
+    const receiver = yield this.factory.create({ username: user.username })
 
     const psk = ILP.PSK.generateParams({
       destinationAccount,
@@ -195,11 +196,28 @@ module.exports = class SPSP {
     })
     const ledgerInfo = yield this.ledger.getInfo()
 
-    const stopListening = yield ILP.PSK.listen(receiver, { receiverSecret }, params => {
-      // TODO:BEFORE_DEPLOY uncomment
-      // stopListening()
+    const stopListening = yield ILP.PSK.listen(receiver, { receiverSecret }, co.wrap(function * (params) {
+      stopListening()
+
+      // Store the payment in the wallet db
+      yield self.Payment.createOrUpdate({
+        // TODO:BEFORE_DEPLOY source_identifier
+        // source_identifier: user.identifier,
+        // TODO source_amount ?
+        // source_amount: parseFloat(params.transfer.sourceAmount),
+        destination_identifier: user.identifier,
+        destination_amount: parseFloat(params.transfer.amount),
+        // destination_name: destination.name,
+        // destination_image_url: destination.imageUrl,
+        transfer: params.transfer.id,
+        // TODO:BEFORE_DEPLOY message
+        // message: opts.message || null,
+        execution_condition: params.transfer.executionCondition,
+        state: 'success'
+      })
+
       return params.fulfill()
-    })
+    }))
 
     return {
       destination_account: psk.destinationAccount,

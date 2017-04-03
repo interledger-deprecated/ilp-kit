@@ -100,7 +100,7 @@ function PaymentFactory (sequelize, validator, container, User) {
 
       // Get the db entry
       let dbPayment = yield Payment.findOne({
-        where: { execution_condition: payment.execution_condition }
+        where: { transfer: payment.transfer }
       })
 
       debug('createOrUpdate payment', dbPayment)
