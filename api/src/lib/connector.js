@@ -8,7 +8,7 @@ const Config = require('./config')
 const Utils = require('./utils')
 const PeerFactory = require('../models/peer')
 const SettlementMethodFactory = require('../models/settlement_method')
-const getPrefix = require('ilp-plugin-virtual/src/util/token').prefix
+const { generatePrefix } = require('ilp-plugin-virtual')
 
 const InvalidBodyError = require('../errors/invalid-body-error')
 
@@ -87,7 +87,7 @@ module.exports = class Conncetor {
 
       //this calls the function in ilp-plugin-virtual src/utils/token.js, which looks like:
       //const prefix = ({ secretKey, peerPublicKey, currencyScale, currencyCode }) => {
-      ledgerName = getPrefix({
+      ledgerName = generatePrefix({
         secretKey: this.config.data.getIn(['connector', 'ed25519_secret_key']),
         peerPublicKey: publicKey,
         currencyScale: peer.currencyScale || 9,

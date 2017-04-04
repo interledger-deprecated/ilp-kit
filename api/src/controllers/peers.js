@@ -25,8 +25,28 @@ function PeersControllerFactory (auth, config, log, Peer, connector) {
       router.get('/peers/:id/settlement_methods', auth.checkAuth, this.checkAdmin, this.getSettlementMethods)
       router.delete('/peers/:id', auth.checkAuth, this.checkAdmin, this.deleteResource)
 
-      // Public
-      router.post('/peers/rpc', this.rpc)
+      // authenticated by the plugin being connected
+      router.post('/peers/rpc', this.checkPeerAuth, this.rpc)
+    }
+
+    static * checkPeerAuth (next) {
+      const prefix = this.query.prefix
+      const auth = this.request.headers.authorization
+
+      if (typeof prefix !== 'string' || typeof auth !== 'string') {
+        this.status = 401
+        return
+      }
+
+      const [ , authToken ] = auth.match(/^Bearer (.+)$/) || []
+      const plugin = connector.getPlugin(prefix)
+
+      if (!authToken || !plugin || !plugin.isAuthorized || !plugin.isAuthorized(authToken)) {
+        this.status = 401
+        return
+      }
+
+      yield next
     }
 
     // TODO move to auth
