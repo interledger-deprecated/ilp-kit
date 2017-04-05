@@ -1,4 +1,4 @@
-"use strict"
+'use strict'
 
 const co = require('co')
 const uuid = require('uuid4')
@@ -41,6 +41,7 @@ module.exports = class SPSP {
     })
 
     this.connect()
+    this.listenerCache = {}
   }
 
   connect () {
@@ -94,9 +95,10 @@ module.exports = class SPSP {
 
       debug('destroyed the sender object')
     }), 15000)
-  }*/
+  } */
 
   * quote (params) {
+    yield this.factory.connect()
     return ILP.SPSP.quote(
       yield this.factory.create({ username: params.source.username }),
       {
@@ -118,6 +120,7 @@ module.exports = class SPSP {
   }
 
   * pay (username, payment) {
+    yield this.factory.connect()
     return ILP.SPSP.sendPayment(yield this.factory.create({ username }), payment)
   }
 
@@ -181,13 +184,14 @@ module.exports = class SPSP {
 
       debug('destroyed the receiver object')
     }), 15000)
-  }*/
+  } */
 
   * query (user) {
     const self = this
     const destinationAccount = this.prefix + user.username
     const receiverSecret = this.config.generateSecret(destinationAccount)
 
+    yield this.factory.connect()
     const receiver = yield this.factory.create({ username: user.username })
 
     const psk = ILP.PSK.generateParams({
@@ -196,36 +200,42 @@ module.exports = class SPSP {
     })
     const ledgerInfo = yield this.ledger.getInfo()
 
-    const stopListening = yield ILP.PSK.listen(receiver, { receiverSecret }, co.wrap(function * (params) {
-      stopListening()
+    if (!this.listenerCache[user.username]) {
+      this.listenerCache[user.username] = true
+      yield ILP.PSK.listen(receiver, { receiverSecret }, co.wrap(function * (params) {
+        try {
+            // Store the payment in the wallet db
+          const payment = yield self.Payment.createOrUpdate({
+              // TODO:BEFORE_DEPLOY source_identifier
+              // source_identifier: user.identifier,
+              // TODO source_amount ?
+              // source_amount: parseFloat(params.transfer.sourceAmount),
+            destination_user: user.id,
+            destination_identifier: user.identifier,
+            destination_amount: parseFloat(params.transfer.amount),
+              // destination_name: destination.name,
+              // destination_image_url: destination.imageUrl,
+            transfer: params.transfer.id,
+              // TODO:BEFORE_DEPLOY message
+              // message: opts.message || null,
+            execution_condition: params.transfer.executionCondition,
+            state: 'success'
+          })
 
-      // Store the payment in the wallet db
-      const payment = yield self.Payment.createOrUpdate({
-        // TODO:BEFORE_DEPLOY source_identifier
-        // source_identifier: user.identifier,
-        // TODO source_amount ?
-        // source_amount: parseFloat(params.transfer.sourceAmount),
-        destination_user: user.id,
-        destination_identifier: user.identifier,
-        destination_amount: parseFloat(params.transfer.amount),
-        // destination_name: destination.name,
-        // destination_image_url: destination.imageUrl,
-        transfer: params.transfer.id,
-        // TODO:BEFORE_DEPLOY message
-        // message: opts.message || null,
-        execution_condition: params.transfer.executionCondition,
-        state: 'success'
-      })
+          yield self.activity.processPayment(payment, user)
 
-      yield self.activity.processPayment(payment, user)
-
-      return params.fulfill()
-    }))
+          return params.fulfill()
+        } catch (e) {
+          debug('Error fulfilling SPSP payment', e)
+          throw e
+        }
+      }))
+    }
 
     return {
       destination_account: psk.destinationAccount,
       shared_secret: psk.sharedSecret,
-      maximum_destination_amount: Math.pow(2,64).toString(),
+      maximum_destination_amount: Math.pow(2, 64).toString(),
       minimum_destination_amount: '1',
       ledger_info: {
         currency_code: ledgerInfo.currency_code,
