@@ -71,26 +71,33 @@ function nockHostEmpty() {
     })
 }
 
+function spspResponse(currencyCode) {
+  return {
+    destination_account: 'example.ilpdemo.red.alice',
+    shared_secret: '6jR5iNIVRvqeasJeCty6C-YB5X9FhSOUPCL_5nha5Vs',
+    maximum_destination_amount: '18000000000000000000', // slightly under 2^64
+    minimum_destination_amount: '1',
+    ledger_info: {
+      currency_code: currencyCode,
+      currency_scale: 9,
+      precision: 19
+    },
+    receiver_info: {
+      name: 'Alice in Wonderland',
+      image_url: 'https://red.ilpdemo.org/api/spsp/alic/profile_pic.jpg'
+    }
+  }
+}
 
 function nockDestinationLocal() {
   nock('https://localhost:80')
     .get('/api/spsp/alice')
-    .reply(200, {
-      name: 'alice',
-      imageUrl: 'picture',
-      currency_code: 'XDG',
-      currency_scale: 3
-    })
+    .reply(200, spspResponse('JPY'))
 }
 function nockDestinationRemote() {
   nock('http://receiver')
     .get('/')
-    .reply(200, {
-      name: 'alice',
-      imageUrl: 'picture',
-      currency_code: 'XDG',
-      currency_scale: 3
-    })
+    .reply(200, spspResponse('XDG'))
 }
 function nockMalformed() {
   nock('https://mal.formed')
@@ -155,11 +162,11 @@ describe('Utils', () => {
         ledgerUri: 'https://red.ilpdemo.org/ledger',
         paymentUri: 'https://localhost:80/api/spsp/alice',
         ilpAddress: 'us.usd.red.alice',
-        currencyCode: 'XDG',
-        currencyScale: 3,
+        currencyCode: 'JPY',
+        currencySymbol: '¥',
         identifier: 'alice@localhost:80',
-        name: 'alice',
-        imageUrl: undefined
+        name: 'Alice in Wonderland',
+        imageUrl: 'https://red.ilpdemo.org/api/spsp/alic/profile_pic.jpg'
       }
 
       this.destinationRemote = {
@@ -168,9 +175,9 @@ describe('Utils', () => {
         identifier: 'alice@example.com',
         ilpAddress: 'address',
         currencyCode: 'XDG',
-        currencyScale: 3,
-        name: 'alice',
-        imageUrl: undefined
+        currencySymbol: undefined,
+        name: 'Alice in Wonderland',
+        imageUrl: 'https://red.ilpdemo.org/api/spsp/alic/profile_pic.jpg'
       }
 
       this.webfinger = {

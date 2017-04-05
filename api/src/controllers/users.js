@@ -43,9 +43,6 @@ function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, soc
       router.put('/users/:username/verify', this.verify)
       router.post('/users/:username/resend-verification', this.resendVerification)
 
-      // TODO:BEFORE_DEPLOY remove
-      router.get('/receivers/:username', this.getReceiver)
-
       // Admin
       router.get('/users', this.checkAdmin, this.getAll)
     }
@@ -230,7 +227,7 @@ function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, soc
             })
             const destination = username + '@' + config.data.getIn(['server', 'public_host'])
             const quoteReq = {
-              source: admin.getDataExternal(),
+              user: admin.getDataExternal(),
               destination: destination,
               sourceAmount: invite.amount
             }
@@ -382,11 +379,13 @@ function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, soc
 
       // Send the money
       yield pay.pay({
-        source: source.getDataExternal(),
+        user: source.getDataExternal(),
         destination: user.username,
-        sourceAmount: 1000,
-        destinationAmount: 1000,
-        message: 'Free money'
+        quote: {
+          sourceAmount: 1000,
+          destinationAmount: 1000,
+          memo: 'Free money'
+        }
       })
 
       this.status = 200

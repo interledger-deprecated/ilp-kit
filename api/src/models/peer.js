@@ -9,6 +9,8 @@ const Database = require('../lib/db')
 const Validator = require('five-bells-shared/lib/validator')
 const Sequelize = require('sequelize')
 
+module.exports.DEFAULT_CURRENCY_SCALE = 9
+
 PeerFactory.constitute = [Database, Validator]
 function PeerFactory(sequelize, validator) {
   class Peer extends Model {

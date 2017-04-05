@@ -56,51 +56,14 @@ module.exports = class SPSP {
     return this.connection
   }
 
-  /**
-   * Sender
-   */
-
-  // Get or create a sender instance
-  /** getSender (user) {
-    yield this.connect()
-
-    if (!this.senders[user.username]) {
-      this.senders[user.username] = {
-        instance: ILP.createSender(yield this.factory.create({ username: user.username }))
-      }
-
-      debug('created a sender object')
-    }
-
-    // Destroy the sender if it hasn't been used for 15 seconds
-    this.scheduleSenderDestroy(user.username)
-
-    return this.senders[user.username].instance
-  }
-
-  // Destroy the sender
-  scheduleSenderDestroy (username) {
-    const self = this
-    const sender = self.senders[username]
-
-    if (!sender) return
-
-    // Keep the listeners alive for 15 more seconds
-    clearTimeout(sender.timeout)
-    sender.timeout = setTimeout(co.wrap(function *() {
-      // TODO destroy the plugin
-      yield sender.instance.stopListening()
-
-      delete self.senders[username]
-
-      debug('destroyed the sender object')
-    }), 15000)
-  } */
-
+  // params should contain:
+  // .user.username
+  // .destination
+  // .sourceAmount XOR .destinationAmount
   * quote (params) {
     yield this.factory.connect()
     return ILP.SPSP.quote(
-      yield this.factory.create({ username: params.source.username }),
+      yield this.factory.create({ username: params.user.username }),
       {
         receiver: params.destination,
         sourceAmount: params.sourceAmount,
@@ -123,68 +86,6 @@ module.exports = class SPSP {
     yield this.factory.connect()
     return ILP.SPSP.sendPayment(yield this.factory.create({ username }), payment)
   }
-
-  /**
-   * Receiver
-   */
-  // Get a receiver instance
-  /** getReceiver (user) {
-    const self = this
-
-    yield self.connect()
-
-    if (!this.receivers[user.username]) {
-      const instance = ILP.createReceiver(yield this.factory.create({ username: user.username }))
-
-      yield instance.listen()
-
-      // Handle incoming payments
-      // TODO remove the listener?
-      instance.on('incoming', co.wrap(function *(transfer) {
-        debug('incoming payment', transfer)
-
-        const payment = yield self.Payment.createOrUpdate({
-          execution_condition: transfer.executionCondition,
-          transfer: transfer.id,
-          state: 'success'
-        })
-
-        yield this.activity.processPayment(payment, user)
-      }))
-
-      // Add the receiver to the list
-      this.receivers[user.username] = {
-        instance
-      }
-
-      debug('created a receiver object')
-    }
-
-    // Destroy the receiver if it hasn't been used for 15 seconds
-    self.scheduleReceiverDestroy(user.username)
-
-    return this.receivers[user.username].instance
-  }
-
-  // Destroy the receiver object
-  scheduleReceiverDestroy (username) {
-    const self = this
-    const receiver = self.receivers[username]
-
-    if (!receiver) return
-
-    // Keep the listeners alive for 15 seconds
-    clearTimeout(receiver.timeout)
-
-    receiver.timeout = setTimeout(co.wrap(function *() {
-      // TODO destroy the plugin
-      yield receiver.instance.stopListening()
-
-      delete self.receivers[username]
-
-      debug('destroyed the receiver object')
-    }), 15000)
-  } */
 
   * query (user) {
     const self = this

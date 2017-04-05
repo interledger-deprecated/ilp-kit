@@ -109,10 +109,12 @@ module.exports = class App {
     // Initial connector funding
     if (connectorAccount && connectorAccount.new) {
       yield this.pay.pay({
-        source: adminAccount,
+        user: adminAccount,
         destination: connectorAccount.username,
-        sourceAmount: 1000,
-        destinationAmount: 1000,
+        quote: {
+          sourceAmount: 1000,
+          destinationAmount: 1000
+        },
         message: 'Initial connector funding'
       })
     }
