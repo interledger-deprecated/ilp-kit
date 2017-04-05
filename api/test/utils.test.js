@@ -218,7 +218,7 @@ describe('Utils', () => {
         }), this.destinationLocal)
       })
 
-      it('gets a destination from Webfinger ID', function * () {
+      it.skip('gets a destination from Webfinger ID', function * () {
         nockAcct()
         nockDestinationRemote()
         assert.deepEqual(yield this.utils.parseDestination({
@@ -237,7 +237,7 @@ describe('Utils', () => {
       }
     })
 
-    it('gets a destination from non-foreign ID', function * () {
+    it.skip('gets a destination from non-foreign ID', function * () {
       nockDestinationLocal()
       assert.deepEqual(yield this.utils.parseDestination({
         destination: 'alice'
