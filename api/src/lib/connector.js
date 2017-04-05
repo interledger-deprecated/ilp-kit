@@ -90,8 +90,8 @@ module.exports = class Conncetor {
       ledgerName = getPrefix({
         secretKey: this.config.data.getIn(['connector', 'ed25519_secret_key']),
         peerPublicKey: publicKey,
-        currencyScale: peer.currencyScale || 9,
-        currencyCode: peer.currencyCode
+        currencyCode: peer.currencyCode,
+        currencyScale: peer.currencyScale || PeerFactory.DEFAULT_CURRENCY_SCALE
       })
     }
 
@@ -122,8 +122,8 @@ module.exports = class Conncetor {
         prefix: hostInfo.ledgerName,
         rpcUri: hostInfo.rpcUri,
         maxBalance: '' + peer.limit,
-        currencyScale: peer.currencyScale || 9,
         currencyCode: peer.currencyCode,
+        currencyScale: peer.currencyScale || PeerFactory.DEFAULT_CURRENCY_SCALE,
         info: {
           connectors: [hostInfo.ledgerName + hostInfo.publicKey]
         }

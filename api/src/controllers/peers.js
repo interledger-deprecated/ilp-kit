@@ -76,9 +76,9 @@ function PeersControllerFactory (auth, config, log, Peer, connector) {
       }
 
       peer.hostname = this.body.hostname.replace(/.*?:\/\//g, '')
-      peer.currencyScale = parseInt(this.body.currencyScale) || 9
-      peer.limit = this.body.limit * Math.pow(10, peer.currencyScale)
       peer.currencyCode = this.body.currencyCode.toUpperCase()
+      peer.currencyScale = parseInt(this.body.currencyScale) || PeerFactory.DEFAULT_CURRENCY_SCALE
+      peer.limit = this.body.limit * Math.pow(10, peer.currencyScale)
       peer.destination = parseInt(Math.random() * 1000000)
 
       yield connector.connectPeer(peer)
