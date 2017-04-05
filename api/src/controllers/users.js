@@ -16,6 +16,7 @@ const UserFactory = require('../models/user')
 const InviteFactory = require('../models/invite')
 const Database = require('../lib/db')
 const co = require('co')
+const SPSP = require('../lib/spsp')
 
 const UsernameTakenError = require('../errors/username-taken-error')
 const EmailTakenError = require('../errors/email-taken-error')
@@ -26,8 +27,8 @@ const InvalidBodyError = require('../errors/invalid-body-error')
 
 const USERNAME_REGEX = /^[a-z0-9]([a-z0-9]|[-](?!-)){0,18}[a-z0-9]$/
 
-UsersControllerFactory.constitute = [Database, Auth, UserFactory, InviteFactory, Log, Ledger, Socket, Config, Mailer, Pay, Antifraud]
-function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, socket, config, mailer, pay, antifraud) {
+UsersControllerFactory.constitute = [Database, Auth, UserFactory, InviteFactory, Log, Ledger, Socket, Config, Mailer, Pay, SPSP, Antifraud]
+function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, socket, config, mailer, pay, spsp, antifraud) {
   log = log('users')
 
   return class UsersController {
@@ -222,19 +223,26 @@ function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, soc
         if (invite) {
           if (invite.amount) {
             // Admin account funding the new account
-            const source = yield User.findOne({
+            const admin = yield User.findOne({
               where: {
                 username: config.data.getIn(['ledger', 'admin', 'user'])
               }
             })
+            const destination = username + '@' + config.data.getIn(['server', 'public_host'])
+            const quoteReq = {
+              source: admin.getDataExternal(),
+              destination: destination,
+              sourceAmount: invite.amount
+            }
+
+            // Get a quote
+            const quote = yield spsp.quote(quoteReq)
 
             // Send the invite money
             yield pay.pay({
-              source: source.getDataExternal(),
-              destination: username,
-              sourceAmount: invite.amount,
-              destinationAmount: invite.amount,
-              message: 'Claimed invite code: ' + invite.code
+              user: admin.getDataExternal(),
+              destination: destination,
+              quote: quote
             })
             invite.claimed = true
             invite.save()
