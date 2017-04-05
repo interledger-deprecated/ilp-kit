@@ -13,7 +13,11 @@ test:
 #   - npm run lint
     - npm test
     - npm run test-mocha
-    - npm run integration
+    - ./node_modules/.bin/integration-loader && ./node_modules/.bin/integration setup
+    - ./node_modules/.bin/integration test index
+    - ./node_modules/.bin/integration test advanced
+    - ./node_modules/.bin/integration test connector_first
+    - ./node_modules/.bin/integration test ilp-kit
   post:
     - docker build -t interledgerjs/ilp-kit:latest .
     - docker tag interledgerjs/ilp-kit:latest interledgerjs/ilp-kit:"$(git describe --tags)"

@@ -17,7 +17,45 @@ Build the vendor files (run this every time package dependencies change)
 npm run build-dlls
 ```
 
-Run a development server
+## Run the integration tests with Docker
+We have a docker image which is useful for running the integration tests. The following command (when run from the
+ilp-kit repo root) mounts your code into the container (in its currenct state, so changes made inside the container will be available for committing them after you exit) and lets you run the integration tests inside a container:
+
+```sh
+mv node_modules node_modules-host
+docker pull michielbdejong/five-bells-integration-test # check for updates
+docker run -it -v `pwd`:/app/integration-test/ilp-kit michielbdejong/five-bells-integration-test /bin/bash
+```
+
+Once you're inside the container (unless your host system also runs ubuntu), rebuild the dependencies:
+```sh
+$ cd integration-test/ilp-kit
+$ ls
+$ npm install
+$ npm rebuild node-sass && npm run build # this postinstall hook is skipped when npm install is run as root
+$ cd /app ; ls # /app contains https://github.com/interledgerjs/five-bells-integration-test
+$ ls integration-test/ilp-kit # this is mounted from `pwd` by the `docker run` command above
+$ ls integration-test/node_modules # master branch of various modules from when this Dockerfile was last built
+```
+
+Now, you can run a test suite:
+```sh
+$ src/bin/integration test index
+```
+
+Or run multiple:
+```sh
+$ killall node # in case earlier suite runs didn't stop properly
+$ src/bin/integration test connector_first ilp-kit
+```
+
+Or run all integration test suites:
+```sh
+$ killall node # in case earlier suite runs didn't stop properly
+$ src/bin/integration test
+```
+
+## Run a development server without Docker
 
 Note: development server assumes you have `bunyan` installed globally.
 
@@ -25,7 +63,7 @@ Note: development server assumes you have `bunyan` installed globally.
 npm run dev
 ```
 
-## Hosts file
+### Hosts file
 
 Edit your hosts file (`/private/etc/hosts` on OSX). Add these two lines
 
@@ -34,7 +72,7 @@ Edit your hosts file (`/private/etc/hosts` on OSX). Add these two lines
 127.0.0.1   wallet2.com
 ```
 
-## Port forwarding (simple)
+### Port forwarding (simple)
 
 > NOTE: Current webfinger implementation will not work if the public ports 443 and 80 don't point to the development server.
 
@@ -42,7 +80,7 @@ Edit your hosts file (`/private/etc/hosts` on OSX). Add these two lines
 npm run dev-with-proxy
 ```
 
-## Port forwarding (two ILP Kits)
+### Port forwarding (two ILP Kits)
 
 If you would like to set up two ILP Kits on the same host, it's a good idea to use Apache for the virtual host handling.
 
@@ -93,7 +131,7 @@ Listen 443
 </VirtualHost>
 ```
 
-## Apache Virtual Hosts
+### Apache Virtual Hosts
 
 > Note: The wallet instances are running on port 80, but we also need to setup virtual hosts on port 443 for the webfinger lookups (issue mentioned above).
 
