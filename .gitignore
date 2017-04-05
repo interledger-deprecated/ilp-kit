@@ -12,3 +12,4 @@ src/theme/variables-custom.scss
 uploads/
 env.list
 keys/
+integration-test/
