@@ -44,7 +44,7 @@ module.exports = class Utils {
 
       return {
         ledgerUri: _.filter(response.links, {rel: 'https://interledger.org/rel/ledgerUri'})[0].href,
-        paymentUri: _.filter(response.links, {rel: 'https://interledger.org/rel/receiver'})[0].href,
+        paymentUri: _.filter(response.links, {rel: 'https://interledger.org/rel/spsp/v2'})[0].href,
         ilpAddress: _.filter(response.links, {rel: 'https://interledger.org/rel/ilpAddress'})[0].href
       }
     } catch (e) {
@@ -75,7 +75,7 @@ module.exports = class Utils {
     } else {
       // Local account
       ledgerUri = self.ledgerUriPublic
-      paymentUri = self.localUri + '/receivers/' + destination
+      paymentUri = self.localUri + '/spsp/' + destination
       ilpAddress = self.ledgerPrefix + destination
     }
 
@@ -88,9 +88,9 @@ module.exports = class Utils {
     }
 
     return {
-      ledgerUri: ledgerUri,
-      paymentUri: paymentUri,
-      ilpAddress: ilpAddress,
+      ledgerUri,
+      paymentUri,
+      ilpAddress,
       identifier: self.isWebfinger(destination) ? destination : this.getWebfingerAddress(destination),
       currencyCode: receiver.currency_code,
       currencySymbol: receiver.currency_symbol,

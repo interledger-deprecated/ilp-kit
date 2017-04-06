@@ -122,7 +122,7 @@ describe('Users', () => {
 
   it.skip('should get receiver', function * () {
     yield this.agent
-      .get('/receivers/alice')
+      .get('/spsp/alice')
       .expect({
         type: 'payee',
         account: 'localhost.alice',
@@ -135,7 +135,7 @@ describe('Users', () => {
 
   it.skip('should fail to get nonexistant receiver', function * () {
     yield this.agent
-      .get('/receivers/bob')
+      .get('/spsp/bob')
       .expect(404)
   })
 })
