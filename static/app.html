@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Pay with MichielPay</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+    </head>
+    <body>
+        <h2>Pay with MichielPay!</h2>
+        <p><i>A very primitive payment app that shows the entire payment request passed
+            to it as JSON.</i></p>
+
+        <pre id="paymentView"></pre>
+
+        <input id="username">
+        <input id="password" type="password">
+        <button id="paymentButton">Pay</button>
+
+        <script>
+            var paymentView = document.getElementById("paymentView");
+            var paymentButton = document.getElementById("paymentButton");
+
+            navigator.serviceWorker.addEventListener('message', function(event) {
+                console.log("Page got message from SW");
+                paymentView.textContent = JSON.stringify(event.data, null, '  ');
+                paymentButton.onclick = function() {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', 'https://ilp-kit.michielbdejong.com:20000/pay', true);
+                    xhr.responseType = 'json';
+                    xhr.send(JSON.stringify({
+                      username: document.getElementById('username').value,
+                      password: document.getElementById('password').value,
+                      ipr: event.data.methodData[0].data,
+                    }));
+                    xhr.onload = function() {
+                      console.log(xhr.status, xhr.response);
+                    
+                      console.log("Page passing response back to SW");
+                      event.source.postMessage({
+                          methodName: "https://interledger.org/webpayments/spsp",
+                          details: {
+                              result: xhr.response
+                          }
+                      });
+                      window.close();
+                    };
+                }
+            });
+        </script>
+    </body>
+</html>
