@@ -66,6 +66,7 @@ module.exports = class Utils {
     let paymentUri
     let ilpAddress
     let ledgerInfo = {}
+    let receiverInfo = {}
 
     if (self.isWebfinger(destination)) {
       // Webfinger lookup
@@ -82,12 +83,14 @@ module.exports = class Utils {
     }
 
     // Get SPSP receiver info
-    let receiver
+    let spspResponse
     try {
-      receiver = (yield superagent.get(paymentUri).end()).body
-      ledgerInfo = receiver.ledger_info
+      spspResponse = (yield superagent.get(paymentUri).end()).body
+
+      ledgerInfo = spspResponse.ledger_info
+      receiverInfo = spspResponse.receiver_info
     } catch (e) {
-      throw new NotFoundError('Unknown receiver')
+      throw new NotFoundError('Unknown spsp receiver')
     }
 
     return {
@@ -97,8 +100,8 @@ module.exports = class Utils {
       identifier: self.isWebfinger(destination) ? destination : this.getWebfingerAddress(destination),
       currencyCode: ledgerInfo.currency_code,
       currencySymbol: currencySymbolMap[ledgerInfo.currency_code],
-      name: receiver.name,
-      imageUrl: receiver.image_url
+      name: receiverInfo.name,
+      imageUrl: receiverInfo.image_url
     }
   }
 
