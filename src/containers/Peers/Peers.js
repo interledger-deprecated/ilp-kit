@@ -48,9 +48,10 @@ export default class Peers extends Component {
 
   // TODO shouldn't be less then the balance
   handleUpdate = (peer, value) => {
-    if (Number(value.limit) === peer.limit) return
+console.log('handleUpdate', peer, value)
+    if (Number(value.limit) === this.toCurrency(peer.limit, peer)) return
 
-    this.props.update(peer.id, value)
+    this.props.update(peer.id, fromCurrency(value, peer))
   }
 
   handleRemove = (peer, e) => {
@@ -58,6 +59,16 @@ export default class Peers extends Component {
 
     // TODO:UX Show an are you sure message
     this.props.remove(peer.id)
+  }
+
+  fromCurrency = (amount, peer) => {
+console.log('fromCurrency', amount, peer)
+    return Math.floor((amount * Math.pow(10, peer.currencyScale)) + .5)
+  }
+
+  toCurrency = (amount, peer) => {
+console.log('toCurrency', amount, peer)
+    return amount / Math.pow(10, peer.currencyScale)
   }
 
   renderPeer = peer => {
@@ -69,24 +80,24 @@ export default class Peers extends Component {
           <div className={cx('col', 'hostnameBox')}>
             {peer.online && <i className={cx('online', 'fa', 'fa-circle', 'icon')} data-tip="Online" />}
             {!peer.online && <i className={cx('offline', 'fa', 'fa-circle', 'icon')} data-tip="Offline" />}
-            <span className={cx('label')}>{peer.currency}</span> <a href={'http://' + peer.hostname}>{peer.hostname}</a>
+            <span className={cx('label')}>{peer.currencyCode}</span> <a href={'http://' + peer.hostname}>{peer.hostname}</a>
             {/* <div className={cx('destination')}>
               <HelpIcon text="Destination number is used for settlement" />{peer.destination}
             </div> */}
           </div>
           <div className={cx('col', 'balanceBox')}>
-            <span className={cx('minBalance')}>{peer.minBalance || 0} <HelpIcon text="The minimum allowed balance (set by the peer)" /></span>
+            <span className={cx('minBalance')}>{this.toCurrency(peer.minBalance, peer) || 0} <HelpIcon text="The minimum allowed balance (set by the peer)" /></span>
             <div className={cx('graph')}>
               <span className={cx('min')} />
               <span className={cx('current')} style={{left: `calc(${currentPercent}% - 0.5px)`}} />
               <span className={cx('max')} />
 
-              <div className={cx('balance')}>{peer.balance || 0}</div>
+              <div className={cx('balance')}>{this.toCurrency(peer.balance, peer) || 0}</div>
             </div>
             <span className={cx('maxBalance')}>
               {/* limit is converted to a string because of how <RIENumber> didValueChange works */}
               <HelpIcon text="The maximum allowed balance (set by you)" /> <RIENumber
-                value={peer.limit.toString()}
+                value={this.toCurrency(peer.limit, peer).toString()}
                 propName="limit"
                 change={this.handleUpdate.bind(null, peer)}
                 className={cx('limit')}

@@ -127,7 +127,7 @@ describe('Users', () => {
         type: 'payee',
         account: 'localhost.alice',
         currency_code: 'USD',
-        currency_symbol: '$',
+        currency_scale: 9,
         name: null,
         image_url: null
       })

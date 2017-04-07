@@ -478,7 +478,7 @@ function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, soc
      *      "type": "payee",
      *      "account": "wallet.alice",
      *      "currency_code": "USD",
-     *      "currency_symbol": "$",
+     *      "currency_scale": 2,
      *      "name": "Alice Faye",
      *      "image_url": "http://server.example/picture.jpg"
      *    }
@@ -500,9 +500,7 @@ function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, soc
         'type': 'payee',
         'account': ledgerPrefix + user.username,
         'currency_code': config.data.getIn(['ledger', 'currency', 'code']),
-        'currency_symbol': config.data.getIn(['ledger', 'currency', 'symbol']),
-        'precision': ledgerInfo.precision,
-        'scale': ledgerInfo.scale,
+        'currency_scale': config.data.getIn(['ledger', 'currency', 'scale']),
         'name': user.name,
         'image_url': user.profile_picture
       }
