@@ -8,19 +8,11 @@ const Config = require('./config')
 const Utils = require('./utils')
 const PeerFactory = require('../models/peer')
 const SettlementMethodFactory = require('../models/settlement_method')
-const getToken = require('ilp-plugin-virtual/src/util/token').token
+const getPrefix = require('ilp-plugin-virtual/src/util/token').prefix
 
 const InvalidBodyError = require('../errors/invalid-body-error')
 
-const currencies = {
-  USD: '$',
-  GBP: '£',
-  EUR: '€',
-  CNY: '¥',
-  JPY: '¥',
-  CAD: '$',
-  AUD: '$'
-}
+const currencies = require('currency-symbol-map').currencySymbolMap
 
 module.exports = class Conncetor {
   static constitute () { return [ Config, PeerFactory, Utils, Log, SettlementMethodFactory ] }
@@ -87,14 +79,20 @@ module.exports = class Conncetor {
     const hostInfo = yield this.utils.hostLookup('https://' + peer.hostname)
 
     let publicKey
-    let token
     let rpcUri
     let ledgerName
     if (hostInfo.publicKey) {
       publicKey = hostInfo.publicKey
-      token = getToken(this.config.data.getIn(['connector', 'ed25519_secret_key']), publicKey)
       rpcUri = hostInfo.peersRpcUri
-      ledgerName = 'peer.' + token.substring(0, 5) + '.' + peer.currency.toLowerCase() + '.'
+
+      //this calls the function in ilp-plugin-virtual src/utils/token.js, which looks like:
+      //const prefix = ({ secretKey, peerPublicKey, currencyScale, currencyCode }) => {
+      ledgerName = getPrefix({
+        secretKey: this.config.data.getIn(['connector', 'ed25519_secret_key']),
+        peerPublicKey: publicKey,
+        currencyScale: peer.currencyScale || 9,
+        currencyCode: peer.currencyCode
+      })
     }
 
     this.peers[peer.destination] = {
@@ -117,26 +115,24 @@ module.exports = class Conncetor {
     const hostInfo = yield this.getPeerInfo(peer)
 
     try {
+      let options = {
+        name: peer.hostname,
+        secret: this.config.data.getIn(['connector', 'ed25519_secret_key']),
+        peerPublicKey: hostInfo.publicKey,
+        prefix: hostInfo.ledgerName,
+        rpcUri: hostInfo.rpcUri,
+        maxBalance: '' + peer.limit,
+        currencyScale: peer.currencyScale || 9,
+        currencyCode: peer.currencyCode,
+        info: {
+          connectors: [hostInfo.ledgerName + hostInfo.publicKey]
+        }
+      }
       yield connector.addPlugin(hostInfo.ledgerName, {
-        currency: peer.currency,
+        currency: options.currencyCode, // connectors have this option to contradict the ledgerInfo's currencyCode, but we don't use that.
         plugin: 'ilp-plugin-virtual',
         store: true,
-        options: {
-          name: peer.hostname,
-          secret: this.config.data.getIn(['connector', 'ed25519_secret_key']),
-          peerPublicKey: hostInfo.publicKey,
-          prefix: hostInfo.ledgerName,
-          rpcUri: hostInfo.rpcUri,
-          maxBalance: '' + peer.limit,
-          currency: peer.currency,
-          info: {
-            currencyCode: peer.currency,
-            currencySymbol: currencies[peer.currency] || peer.currency,
-            precision: 10,
-            scale: 10,
-            connectors: [hostInfo.ledgerName + hostInfo.publicKey]
-          }
-        }
+        options
       })
     } catch (e) {
       if (e.message.indexOf('No rate available') > -1) {
@@ -165,7 +161,6 @@ module.exports = class Conncetor {
 
       // Settlement Methods
       yield plugin.sendMessage({
-        account: message.from,
         from: message.to,
         to: message.from,
         ledger: message.ledger,
@@ -259,7 +254,6 @@ module.exports = class Conncetor {
     })
 
     yield plugin.sendMessage({
-      account: peerInfo.ledgerName + peerInfo.publicKey,
       from: peerInfo.ledgerName + this.config.data.getIn(['connector', 'public_key']),
       to: peerInfo.ledgerName + peerInfo.publicKey,
       ledger: peerInfo.ledgerName,

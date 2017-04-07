@@ -42,8 +42,9 @@ function PeerFactory(sequelize, validator) {
       defaultValue: Sequelize.UUIDV4
     },
     hostname: Sequelize.STRING,
-    limit: Sequelize.FLOAT,
-    currency: Sequelize.STRING,
+    limit: Sequelize.INTEGER,
+    currencyCode: Sequelize.STRING,
+    currencyScale: Sequelize.INTEGER,
     destination: Sequelize.STRING
   })
 

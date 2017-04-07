@@ -204,13 +204,11 @@ module.exports = class SPSP {
     return {
       destination_account: destinationAccount,
       shared_secret: psk.sharedSecret,
-      maximum_destination_amount: '10000000000000000000000000',
-      minimum_destination_amount: '0.001',
+      maximum_destination_amount: Math.pow(2,64).toString(),
+      minimum_destination_amount: '1',
       ledger_info: {
         currency_code: ledgerInfo.currency_code,
-        currency_symbol: ledgerInfo.currency_symbol,
-        precision: ledgerInfo.precision,
-        scale: ledgerInfo.scale
+        currency_scale: ledgerInfo.scale // See https://github.com/interledgerjs/ilp-kit/issues/284
       },
       receiver_info: {
          // TODO:BEFORE_DEPLOY fill
