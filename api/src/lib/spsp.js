@@ -97,10 +97,14 @@ module.exports = class SPSP {
     }), 15000)
   } */
 
+  // params should contain:
+  // .user.username
+  // .destination
+  // .sourceAmount XOR .destinationAmount
   * quote (params) {
     yield this.factory.connect()
     return ILP.SPSP.quote(
-      yield this.factory.create({ username: params.source.username }),
+      yield this.factory.create({ username: params.user.username }),
       {
         receiver: params.destination,
         sourceAmount: params.sourceAmount,

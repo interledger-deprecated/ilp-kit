@@ -116,7 +116,7 @@ function PaymentsControllerFactory (Auth, Payment, log, utils, spsp, User, pay) 
     static * quote () {
       try {
         this.body = yield spsp.quote({
-          source: this.req.user,
+          user: this.req.user,
           destination: this.body.destination,
           sourceAmount: this.body.sourceAmount,
           destinationAmount: this.body.destinationAmount

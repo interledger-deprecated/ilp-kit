@@ -230,7 +230,7 @@ function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, soc
             })
             const destination = username + '@' + config.data.getIn(['server', 'public_host'])
             const quoteReq = {
-              source: admin.getDataExternal(),
+              user: admin.getDataExternal(),
               destination: destination,
               sourceAmount: invite.amount
             }
@@ -382,11 +382,13 @@ function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, soc
 
       // Send the money
       yield pay.pay({
-        source: source.getDataExternal(),
+        user: source.getDataExternal(),
         destination: user.username,
-        sourceAmount: 1000,
-        destinationAmount: 1000,
-        message: 'Free money'
+        quote: {
+          sourceAmount: 1000,
+          destinationAmount: 1000,
+          message: 'Free money'
+        }
       })
 
       this.status = 200
