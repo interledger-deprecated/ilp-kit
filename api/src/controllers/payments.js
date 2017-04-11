@@ -41,7 +41,7 @@ function PaymentsControllerFactory (Auth, Payment, log, utils, spsp, User, pay) 
      * @apiParam {String} destination destination
      * @apiParam {String} sourceAmount source amount
      * @apiParam {String} destinationAmount destination amount
-     * @apiParam {String} message text message for the destination
+     * @apiParam {String} memo text message for the destination
      *
      * @apiExample {shell} Make a payment
      *    curl -X PUT -H "Authorization: Basic YWxpY2U6YWxpY2U=" -H "Content-Type: application/json" -d
@@ -49,7 +49,7 @@ function PaymentsControllerFactory (Auth, Payment, log, utils, spsp, User, pay) 
      *        "destination": "bob@wallet.example",
      *        "sourceAmount": "5",
      *        "destinationAmount": "5",
-     *        "message": "Some money for you!"
+     *        "memo": "Some money for you!"
      *    }'
      *    https://wallet.example/payments/9efa70ec-08b9-11e6-b512-3e1d05defe78
      *
@@ -60,7 +60,7 @@ function PaymentsControllerFactory (Auth, Payment, log, utils, spsp, User, pay) 
      *      "destination": "bob@wallet.example",
      *      "sourceAmount": "5",
      *      "destinationAmount": "5",
-     *      "message": "Some money for you!",
+     *      "memo": "Some money for you!",
      *    }
      */
 
@@ -71,8 +71,6 @@ function PaymentsControllerFactory (Auth, Payment, log, utils, spsp, User, pay) 
       const destination = this.body.destination
 
       try {
-        // TODO:BEFORE_DEPLOY handle message
-        // message: payment.message
         yield pay.pay({ user: this.req.user, quote, destination })
       } catch (e) {
         console.error(e)

@@ -384,7 +384,7 @@ function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, soc
         quote: {
           sourceAmount: 1000,
           destinationAmount: 1000,
-          message: 'Free money'
+          memo: 'Free money'
         }
       })
 
