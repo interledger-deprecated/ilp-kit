@@ -107,7 +107,7 @@ ILP kit UI comes with an "advanced mode" for developers and advanced users. You 
 ILP kit consists of:
 * a connector
 * a Five Bells ledger
-* a [Node.js](https://github.com/nodejs/node) (developed on v6.9.1) backend (REST API)
+* a [Node.js](https://github.com/nodejs/node) (developed on v7.7.1) backend (REST API)
 * a proxy in front of that API, known as the 'wallet'.
 * a client built using [React](https://github.com/facebook/react).
 
