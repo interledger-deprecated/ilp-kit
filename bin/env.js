@@ -89,20 +89,22 @@ function normalizeEnv () {
     envVars.LEDGER_DB_URI = getVar('LEDGER_DB_URI') || getVar('DB_URI')
     envVars.LEDGER_HOSTNAME = getVar('LEDGER_HOSTNAME') || getVar('API_HOSTNAME', 'localhost')
     envVars.LEDGER_PORT = getVar('LEDGER_PORT') || Number(getVar('API_PORT')) + 1
-    envVars.LEDGER_PUBLIC_PORT = getVar('LEDGER_PUBLIC_PORT', clientPublicPort)
-    envVars.LEDGER_PUBLIC_PATH = getVar('LEDGER_PUBLIC_PATH', 'ledger')
     envVars.API_LEDGER_ADMIN_USER = getVar('LEDGER_ADMIN_USER') || getVar('LEDGER_ADMIN_USER', 'admin')
     envVars.API_LEDGER_ADMIN_PASS = getVar('LEDGER_ADMIN_PASS') || getVar('LEDGER_ADMIN_PASS', 'admin')
     envVars.LEDGER_SECRET = generateSecret(secret, 'LEDGER_SECRET')
     envVars.LEDGER_ENABLE = true
 
     // is the API/LEDGER callable via http or https?
-    const API_PUBLIC_HTTPS = Config.castBool(getVar('API_PUBLIC_HTTPS'), true)
-    const LEDGER_PUBLIC_HTTPS = Config.castBool(getVar('LEDGER_PUBLIC_HTTPS'), API_PUBLIC_HTTPS)
-    envVars.LEDGER_PUBLIC_HTTPS = LEDGER_PUBLIC_HTTPS
-    const protocol = API_PUBLIC_HTTPS ? 'https:' : 'http:'
+    const LEDGER_PUBLIC_HTTPS = Config.castBool(getVar('LEDGER_PUBLIC_HTTPS'), true)
+    const protocol = LEDGER_PUBLIC_HTTPS ? 'https:' : 'http:'
     envVars.API_LEDGER_URI = 'http://' + (getVar('API_PRIVATE_HOSTNAME') || getVar('LEDGER_HOSTNAME')) + ':' + getVar('LEDGER_PORT')
-    envVars.API_LEDGER_PUBLIC_URI = protocol + '//' + getVar('LEDGER_HOSTNAME') + ledgerPublicPort + '/' + getVar('LEDGER_PUBLIC_PATH')
+    envVars.API_LEDGER_PUBLIC_URI = protocol + '//' + getVar('LEDGER_HOSTNAME') + ledgerPublicPort + '/' + getVar('LEDGER_PUBLIC_PATH', 'ledger')
+
+    // The following values are used by https://github.com/interledgerjs/five-bells-shared/blob/v22.0.1/lib/config.js#L163-L185:
+    envVars.LEDGER_PUBLIC_SECURE = LEDGER_PUBLIC_HTTPS
+    envVars.LEDGER_PUBLIC_HOST = getVar('LEDGER_HOSTNAME')
+    envVars.LEDGER_PUBLIC_PORT = ledgerPublicPort
+    envVars.LEDGER_PUBLIC_PATH = getVar('LEDGER_PUBLIC_PATH', 'ledger')
   }
 
   // Set envVars in environment

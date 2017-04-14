@@ -52,14 +52,8 @@
     "API_PRIVATE_HOSTNAME": {
       "value": "localhost"
     },
-    "API_PUBLIC_HTTPS": {
-      "value": "true"
-    },
-    "API_PUBLIC_PATH": {
-      "value": "/api"
-    },
-    "API_PUBLIC_PORT": {
-      "value": "443"
+    "API_PUBLIC_URI": {
+      "value": "https://localhost/api"
     },
     "API_SECRET": {
       "generator": "secret"
