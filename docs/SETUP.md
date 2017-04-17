@@ -1,75 +1,10 @@
-> Guide to setting up your very own ILP Kit.
-> Estimated time: a couple of hours.
+### ILP Kit installation
 
-> These instructions use **DigitalOcean's Node 6.9.1 image on Ubuntu**.
-> You can run ILP Kit on any other OS and hosting provider, but there 
-> might be additional or different steps.
+Login to a hosted remote Linux server.
 
-> Alternative instructions for setup on **Google Cloud Platform** (Not Google AppEngine) are available here:
-> https://github.com/sappenin/ilpkit-google-cloud/tree/master/ilpkit-gce-single
-
-> _Don't hesitate to open issues or ask for help._
-
-### Table of Contents
-- [ILP Kit installation](#ilp-kit-setup)
-  - [Get a server instance](#get-a-server-instance)
-  - [Server setup](#server-setup)
-  - [Postgresql setup](#postgresql-setup)
-  - [ILP Kit setup](#ilp-kit-setup)
-- [Domain Setup](#domain-setup)
-  - [Subdomain setup](#subdomain-setup)
-  - [Set up SSL](#set-up-ssl)
-  - [Set up proxy for ILP Kit](#set-up-proxy-for-ilp-kit)
-- [ILP Kit configuration](#ilp-kit-configuration)
-  - [Configure environment](#configure-environment)
-  - [Launch ILP Kit](#launch-ilp-kit)
-  - [Issue some money](#issue-some-money)
-- [Enjoy](#enjoy)
-- [Appendix: Advanced Options](#appendix-advanced-options)
-  - [Mailgun setup](#mailgun-setup)
-  - [Github setup](#github-setup)
-  - [Issuing Money](#issuing-money)
-  - [systemd setup](#systemd-setup)
-
-# ILP Kit installation
-
-## Get a server instance
-
-### Buy server
-
-- On [DigitalOcean](https://cloud.digitalocean.com/droplets), click `Create Droplet`.
-- Select the option with 2 Gb of RAM (the $20 one).
-- For the operating system, go to `One-Click Apps` and select `Node 6.9.1`.
-- Select your ssh keys, and then confirm the purchase.
-
-I've named my server instance 'Niles', so that's the name I'll be using for the
-rest of the instructions.
-
-### Set up SSH host
-
-- Edit ~/.ssh/config
-- Add the lines:
-
-``` conf
-Host niles
-  Hostname 45.55.4.124 # IP from DigitalOcean
-  User root
-  Port 22
-```
-
-## Server setup
-
-### Log into your server
-
-``` sh
-$ ssh niles
-```
-
-### Install necessary packages
-
-``` sh
-root$ apt-get update && apt-get upgrade
-root$ apt-get install libssl-dev python build-essential libpq-dev postgresql postgresql-contrib
+``` 
+$ sudo apt-get update && sudo apt-get upgrade
+$ sudo apt-get install node libssl-dev python build-essential libpq-dev postgresql postgresql-contrib nginx letsencrypt
 ```
 
 Make sure your postgres version is at least 9.5 by running `postgres --version`.
@@ -77,43 +12,36 @@ Make sure your postgres version is at least 9.5 by running `postgres --version`.
 ### Add a non-root user
 
 ```
-# you don't want to stay logged in as root
-root$ adduser sharafian
-root$ usermod -aG sudo sharafian
+$ adduser sharafian
+$ usermod -aG sudo sharafian
 ```
 
 Do the rest of this guide while logged in as your new user.
 
-## Postgresql setup
+### Postgresql setup
 
 In order to use postgresql, you'll need a user/password on postgres, as well as
 a database named `ilpkit`. First, use `su` to become the `postgres` user, and
-make a user on `postgres` with your username:
-
-```sh
-$ sudo su - postgres
-postgres$ createuser sharafian
-```
+make a user on `postgres` with your username.
 
 `psql` launches the postgres prompt, which you'll use in order to set your
 password. `\q` quits the postgres prompt, returning you to the bash command
 line.
 
-``` sh
-postgres$ psql
-postgres=> ALTER USER sharafian WITH PASSWORD 'PASSWORD';
-# outputs: ALTER USER
-postgres=> \q
-```
-
 Finally, create the `ilpkit` database while logged in as the `postgres` user.
 
 ```sh
+$ sudo su - postgres
+postgres$ createuser sharafian
+postgres$ psql
+postgres=> ALTER USER sharafian WITH PASSWORD 'create_your_password_here';
+# outputs: ALTER USER
+postgres=> \q
 postgres$ createdb ilpkit
 postgres$ exit
 ```
 
-## ILP Kit setup
+### ILP Kit setup
 
 Perform these steps as your user, not as `postgres`. Clone `ilp-kit` and install
 dependencies with the following commands:
@@ -123,25 +51,17 @@ $ cd # start in your home folder
 $ git clone https://github.com/interledgerjs/ilp-kit
 $ cd ilp-kit
 $ git checkout latest # the 'master' branch is not always stable, safer to use the 'latest' branch
-$ yarn install --production # npm install also works, if you don't have yarn installed
+$ npm install 
+# $ yarn install --production # npm install also works, if you don't have yarn installed
 ```
 
-# Domain setup
+### Domain setup
 
-## Subdomain setup
+Go to your name server provider of choice. I'm using cloudflare on my domain.
+Go to the DNS settings, and add an A record.
+I want my ilp kit on `niles.sharafian.com`, so I'll create an A record pointing `niles` to my DigitalOcean machine's IP, `45.55.4.124`
 
-- Go to your name server provider of choice. I'm using cloudflare on my domain.
-- Go to the DNS settings, and add an A record.
-- I want my ilp kit on `niles.sharafian.com`, so I'll create an A record pointing `niles` to my DigitalOcean machine's IP, `45.55.4.124`
-
-## Set up SSL
-
-Before you get SSL enabled, you'll want to have an actual webserver running.
-Because we're on Ubuntu, letsencrypt provides a package that does most of the set up for us on `nginx`.
-
-```
-$ sudo apt-get install nginx letsencrypt
-```
+### Set up SSL
 
 Now follow DigitalOcean's letsencrypt instructions,
 [here](https://www.digitalocean.com/community/tutorials/how-to-secure-nginx-with-let-s-encrypt-on-ubuntu-16-04)
@@ -150,7 +70,7 @@ in order to get SSL set up.
 After following these instructions, you should go to your site (eg. `niles.sharafian.com`), and it should show the
 nginx example page over an `https` connection.
 
-## Set up proxy for ILP Kit
+### Set up proxy for ILP Kit
 
 In your `/etc/nginx/sites-enabled/default`, remove the `location /` block, and add these two blocks in its place:
 
@@ -176,27 +96,19 @@ In your `/etc/nginx/sites-enabled/default`, remove the `location /` block, and a
 
 In order to make sure you didn't mess anything up, run:
 
-```sh
-$ sudo nginx -t
-```
-
-If that ran OK, then restart your nginx daemon with:
-
-```sh
-$ sudo systemctl restart nginx`
-```
+``
+$ sudo service restart nginx
+``
 
 This is all the domain setup that you have to do. Note that nothing will appear on the site until you're running your ILP Kit.
 
-# ILP Kit configuration
-
-## Configure environment
+### Configure environment
 
 Start the configuration tool by running:
 
-```sh
-npm run configure
-```
+``
+$ npm run configure
+``
 
 The CLI provides example values, but I'll also put the configuration I'm using.
 
@@ -212,7 +124,7 @@ The CLI provides example values, but I'll also put the configuration I'm using.
 
 **That's all you need for a functioning ILP Kit!** To start your ILP Kit, run:
 
-```sh
+```
 $ npm install -g pm2
 $ pm2 start pm2.config.js
 $ pm2 list # you should see three apps running: ledger, api, and web.
@@ -222,7 +134,18 @@ $ pm2 logs
 Your connector's account will be automatically created and given $1000, so you can
 open up your domain and log into it.
 
-## Connecting your ledger
+### Launch ILP Kit
+
+Now when you want to modify or restart your ILP Kit, you can just run:
+
+```
+$ chmod +x ./scripts/start.sh
+$ ./scripts/start.sh
+```
+
+You'll see your connector connect successfully.
+
+### Connecting your ledger
 
 Of course, it's not
 very useful to have a ledger that's not connected to any others. That's why
@@ -278,40 +201,6 @@ When you add your trustline, an entry will appear in your peers list
 red circle right now. Once your peer adds a matching trustline (a trustline
 with your ILP Kit as the hostname and the same currency), the status will turn
 green. Now you can send payments between each other's ledgers.
-
-## Launch ILP Kit
-
-You can [create a systemd](#systemd-setup) config for ILP Kit, but I'm just going to use [`nohup`](https://en.wikipedia.org/wiki/Nohup) to
-run ILP Kit independent of our SSH session.
-
-Create a file called `start.sh`, and put the following lines into it:
-
-```sh
-#!/bin/bash
-
-killall -9 node
-nohup npm start &
-tail -f nohup.out
-```
-
-To make this script executable, run:
-
-```sh
-$ chmod +x ./start.sh
-```
-
-Now when you want to modify or restart your ILP Kit, you can just run:
-
-```
-$ ./start.sh
-# ... ILP Kit Logs
-```
-
-You'll see your connector connect successfully.
-
-# Enjoy
-
-![Sherry, Niles?](http://i.imgur.com/Xh5VCvv.jpg)
 
 # Appendix: Additional Options
 
@@ -416,3 +305,7 @@ One easy way to make sure your ilp-kit is started again after a reboot, is
 running `pm2 startup`, and then following the instructions of what you have
 to run as root. So type `exit` and run the recommended command as root.
 You can restart your server after this, and check that it worked.
+
+> Alternative instructions for setup on **Google Cloud Platform** (Not Google AppEngine) are available here:
+> https://github.com/sappenin/ilpkit-google-cloud/tree/master/ilpkit-gce-single
+
