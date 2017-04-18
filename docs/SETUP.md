@@ -2,7 +2,7 @@
 > Estimated time: a couple of hours.
 
 > These instructions use **DigitalOcean's Node 6.9.1 image on Ubuntu**.
-> You can run ILP Kit on any other OS and hosting provider, but there 
+> You can run ILP Kit on any other OS and hosting provider, but there
 > might be additional or different steps.
 
 > Alternative instructions for setup on **Google Cloud Platform** (Not Google AppEngine) are available here:
@@ -198,7 +198,7 @@ Start the configuration tool by running:
 npm run configure
 ```
 
-The CLI provides example values, but I'll also put the configuration I'm using.
+The CLI provides example values, but I'll also put the configuration I'm using (instead of `sharafian` and `PASSWORD`, put the postgres username/password you created previously in the [Postgresql setup](#postgresql-setup) step).
 
 - Posgres DB URI: `postgres://sharafian:PASSWORD@localhost/ilpkit`
 - Hostname: `niles.sharafian.com`
