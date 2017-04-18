@@ -3,7 +3,7 @@
 const Config = require('five-bells-shared').Config
 const envPrefix = 'api'
 const crypto = require('crypto')
-const getPublicKey = require('ilp-plugin-virtual/src/util/token').publicKey
+const generatePublicKey = require('ilp-plugin-virtual').generatePublicKey
 const changeAdminPass = require('../../../bin/env').changeAdminPass
 
 module.exports = class WalletConfig {
@@ -71,7 +71,7 @@ module.exports = class WalletConfig {
     localConfig.connector = {
       ed25519_secret_key: Config.getEnv('CONNECTOR_ED25519_SECRET_KEY'),
       ledgers: Config.getEnv('CONNECTOR_LEDGERS'),
-      public_key: getPublicKey(Config.getEnv('CONNECTOR_ED25519_SECRET_KEY'))
+      public_key: generatePublicKey(Config.getEnv('CONNECTOR_ED25519_SECRET_KEY'))
     }
 
     localConfig.reload = Config.getEnv(envPrefix, 'RELOAD')
