@@ -19,6 +19,9 @@ import Input from 'components/Input/Input'
 @reduxForm({
   form: 'peerAdd',
   fields: ['hostname', 'limit', 'currencyCode', 'currencyScale'],
+  normalize: {
+    currency: value => value && value.toUpperCase()
+  },
   validate
 }, null, { add })
 @successable()
