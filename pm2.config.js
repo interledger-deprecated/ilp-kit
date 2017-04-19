@@ -9,7 +9,6 @@ module.exports = {
       script    : './bin/ledger.js',
       env: {
         COMMON_VARIABLE: 'true',
-        NODE_PATH: './src',
         NODE_ENV: 'production'
       }
     },
@@ -27,6 +26,7 @@ module.exports = {
       script    : './bin/server.js',
       env: {
         COMMON_VARIABLE: 'true',
+        NODE_PATH: './src',
         NODE_ENV: 'production'
       }
     }
