@@ -28,10 +28,6 @@ export default combineReducers({
   settlement,
   withdrawal,
   user,
-  form: form.normalize({
-    peerAdd: {
-      currency: value => value && value.toUpperCase()
-    }
-  }),
+  form,
   loadingBar: loadingBarReducer
 })
