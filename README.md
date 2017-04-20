@@ -49,7 +49,7 @@ Note: Most of the variables can either be set as environment variable or in a co
 Name | Example | Description |
 ---- | ------- | ----------- |
 `API_HOSTNAME` | `wallet.com` | API public hostname.
-`API_PORT` | `3000` | API private port (used as both public and private port if `API_PUBLIC_PORT` is not specified).
+`API_PORT` | `3000` | API private port.
 `DB_URI` | `postgres://localhost/wallet` | URI for connecting to a database.
 `API_LEDGER_ADMIN_USER` | `admin` | Ledger admin username.
 `API_LEDGER_ADMIN_PASS` | `pass` | Ledger admin pass.
@@ -63,7 +63,6 @@ Name | Example | Description |
 ---- | ------- | ----------- |
 `API_CONFIG_FILE` | custom-env.list | Specifies the path from which to load the config file. **Needs to be defined as environment variable**.
 `API_PRIVATE_HOSTNAME` | `localhost` | Private API hostname.
-`API_PUBLIC_PORT` |  | Api public port.
 `API_SECRET` | `qO2UX+fdl+tg0a1bYt` | Api secret. Used to generate the session, oauth and condition secrets.
 `API_RELOAD` | `true` | Turn on/off the reload endpoint.
 `API_LEDGER_URI` | `http://wallet.com:2000` | Ledger URI: requests go to this uri (a ledger instance will be started by the wallet if this is not specified).

@@ -86,7 +86,7 @@ If you would like to set up two ILP Kits on the same host, it's a good idea to u
 
 > NOTE: This is an apache server config for developers. If you want to setup a production environment check out [this guide](https://github.com/interledgerjs/ilp-kit/blob/master/docs/SETUP.md).
 
-In most cases it makes sense to expose the wallet through 443 (or 80) port, in which case you need to setup a port forwarding that will forward `API_PORT` requests to `API_PUBLIC_PORT` (443 or 80). Note that the port forwarding should work for both http(s) and websocket connections.
+In most cases it makes sense to expose the wallet through 443 (or 80) port, in which case you need to setup a port forwarding that will forward `API_PORT` requests to the port used in `API_PUBLIC_URI` (443 or 80). Note that the port forwarding should work for both http(s) and websocket connections.
 
 Here's an example of an Apache 2.4 virtual host with enabled port forwarding.
 
