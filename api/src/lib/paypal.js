@@ -6,10 +6,9 @@ const SettlementMethodFactory = require('../models/settlement_method')
 const debug = require('debug')('ilp-kit:paypal')
 
 module.exports = class Paypal {
-  static constitute () { return [Config, SettlementMethodFactory] }
-  constructor (config, SettlementMethod) {
-    this.config = config
-    this.SettlementMethod = SettlementMethod
+  constructor (deps) {
+    this.config = deps(Config)
+    this.SettlementMethod = deps(SettlementMethodFactory)
   }
 
   * getOptions () {

@@ -12,14 +12,13 @@ const { generatePrefix } = require('ilp-plugin-virtual')
 
 const InvalidBodyError = require('../errors/invalid-body-error')
 
-module.exports = class Conncetor {
-  static constitute () { return [ Config, PeerFactory, Utils, Log, SettlementMethodFactory ] }
-  constructor (config, Peer, utils, log, SettlementMethod) {
-    this.config = config
-    this.utils = utils
-    this.Peer = Peer
-    this.SettlementMethod = SettlementMethod
-    this.log = log('connector')
+module.exports = class Connector {
+  constructor (deps) {
+    this.config = deps(Config)
+    this.utils = deps(Utils)
+    this.Peer = deps(PeerFactory)
+    this.SettlementMethod = deps(SettlementMethodFactory)
+    this.log = deps(Log)('connector')
     this.peers = {}
     this.instance = connector
   }

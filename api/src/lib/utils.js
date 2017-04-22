@@ -12,10 +12,9 @@ const NotFoundError = require('../errors/not-found-error')
 
 // TODO implement caching
 module.exports = class Utils {
-  static constitute () { return [ Config, Ledger ] }
-  constructor (config, ledger) {
-    this.ledger = ledger
-    this.config = config
+  constructor (deps) {
+    const config = this.config = deps(Config)
+    this.ledger = deps(Ledger)
     this.ledgerUriPublic = config.data.getIn(['ledger', 'public_uri'])
     this.ledgerPrefix = config.data.getIn(['ledger', 'prefix'])
     this.localUri = config.data.getIn(['server', 'base_uri'])

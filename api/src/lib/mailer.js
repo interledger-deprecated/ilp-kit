@@ -11,10 +11,9 @@ const EmailTemplate = require('email-templates').EmailTemplate
 const templatesDir = path.resolve(__dirname, '..', 'email')
 
 module.exports = class Mailer {
-  static constitute () { return [ Log, Config ] }
-  constructor (log, config) {
-    this.log = log('mailer')
-    this.config = config
+  constructor (deps) {
+    this.log = deps(Log)('mailer')
+    const config = this.config = deps(Config)
 
     const auth = {
       auth: {

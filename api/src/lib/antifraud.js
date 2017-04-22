@@ -7,10 +7,9 @@ const Config = require('../lib/config')
 const ServerError = require('../errors/server-error')
 
 module.exports = class Antifraud {
-  static constitute () { return [Config, Log] }
-  constructor (config, log) {
-    this.config = config
-    this.log = log('antifraud')
+  constructor (deps) {
+    this.config = deps(Config)
+    this.log = deps(Log)('antifraud')
   }
 
   * checkRisk (userObj) {

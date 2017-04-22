@@ -14,12 +14,11 @@ const Config = require('./config')
 const Ledger = require('./ledger')
 
 module.exports = class Auth {
-  static constitute () { return [ UserFactory, Config, Ledger ] }
-  constructor (User, config, ledger) {
+  constructor (deps) {
     const self = this
-    self.config = config
-    self.ledger = ledger
-    self.User = User
+    const User = self.User = deps(UserFactory)
+    const config = self.config = deps(Config)
+    const ledger = self.ledger = deps(Ledger)
 
     self.commonSetup(BasicStrategy)
     self.commonSetup(LocalStrategy)

@@ -11,13 +11,12 @@ const UserFactory = require('../models/user')
 const cacheLifetime = 30 * 60 // seconds
 
 module.exports = class Activity {
-  static constitute () { return [ Log, Config, Socket, ActivityLogFactory, UserFactory ] }
-  constructor (log, config, socket, ActivityLog, User) {
-    this.log = log('activity')
-    this.config = config
-    this.socket = socket
-    this.ActivityLog = ActivityLog
-    this.User = User
+  constructor (deps) {
+    this.log = deps(Log)('activity')
+    this.config = deps(Config)
+    this.socket = deps(Socket)
+    this.ActivityLog = deps(ActivityLogFactory)
+    this.User = deps(UserFactory)
 
     // TODO:PERFORMANCE use Redis
     this.paymentGroupCache = {}

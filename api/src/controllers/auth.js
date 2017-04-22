@@ -16,9 +16,12 @@ const NotFoundError = require('../errors/not-found-error')
 const PasswordsDontMatchError = require('../errors/passwords-dont-match-error')
 const InvalidBodyError = require('../errors/invalid-body-error')
 
-AuthControllerFactory.constitute = [UserFactory, Log, Ledger, Mailer, Auth]
-function AuthControllerFactory (User, log, ledger, mailer, auth) {
-  log = log('auth')
+function AuthControllerFactory (deps) {
+  const log = deps(Log)('auth')
+  const User = deps(UserFactory)
+  const ledger = deps(Ledger)
+  const mailer = deps(Mailer)
+  const auth = deps(Auth)
 
   return class AuthController {
     static init (router) {

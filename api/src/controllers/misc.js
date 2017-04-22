@@ -3,8 +3,6 @@
 module.exports = MiscControllerFactory
 
 const exec = require('child_process').exec
-const Auth = require('../lib/auth')
-const Log = require('../lib/log')
 const Config = require('../lib/config')
 const Ledger = require('../lib/ledger')
 const Utils = require('../lib/utils')
@@ -12,9 +10,11 @@ const currencySymbolMap = require('currency-symbol-map').currencySymbolMap
 const Connector = require('../lib/connector')
 const InvalidBodyError = require('../errors/invalid-body-error')
 
-MiscControllerFactory.constitute = [Auth, Log, Config, Ledger, Utils, Connector]
-function MiscControllerFactory (Auth, log, config, ledger, utils, connector) {
-  log = log('misc')
+function MiscControllerFactory (deps) {
+  const config = deps(Config)
+  const ledger = deps(Ledger)
+  const utils = deps(Utils)
+  const connector = deps(Connector)
 
   return class MiscController {
     static init (router) {

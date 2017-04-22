@@ -7,15 +7,14 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 module.exports = WebfingerControllerFactory
 
 const url = require('url')
-const Log = require('../lib/log')
 const Config = require('../lib/config')
 const Ledger = require('../lib/ledger')
 
 const NotFoundError = require('../errors/not-found-error')
 
-WebfingerControllerFactory.constitute = [Log, Config, Ledger]
-function WebfingerControllerFactory (log, config, ledger) {
-  log = log('auth')
+function WebfingerControllerFactory (deps) {
+  const config = deps(Config)
+  const ledger = deps(Ledger)
 
   return class WebfingerController {
     static init (router) {

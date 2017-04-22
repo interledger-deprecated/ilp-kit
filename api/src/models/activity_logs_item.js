@@ -2,15 +2,16 @@
 
 module.exports = ActivityLogsItemFactory
 
-const Container = require('constitute').Container
 const Model = require('five-bells-shared').Model
 const PersistentModelMixin = require('five-bells-shared').PersistentModelMixin
 const Database = require('../lib/db')
 const Validator = require('five-bells-shared/lib/validator')
 const Sequelize = require('sequelize')
 
-ActivityLogsItemFactory.constitute = [Database, Validator, Container]
-function ActivityLogsItemFactory (sequelize, validator, container) {
+function ActivityLogsItemFactory (deps) {
+  const sequelize = deps(Database)
+  const validator = deps(Validator)
+
   class ActivityLogsItem extends Model {
     static convertFromExternal (data) {
       return data

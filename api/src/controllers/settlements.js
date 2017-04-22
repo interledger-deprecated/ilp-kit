@@ -5,7 +5,6 @@ module.exports = SettlementsControllerFactory
 // const co = require('co')
 const uuid = require('uuid4')
 const Auth = require('../lib/auth')
-const Log = require('../lib/log')
 const Config = require('../lib/config')
 const Connector = require('../lib/connector')
 const Paypal = require('../lib/paypal')
@@ -18,9 +17,16 @@ const PeerFactory = require('../models/peer')
 const NotFoundError = require('../errors/not-found-error')
 const InvalidBodyError = require('../errors/invalid-body-error')
 
-SettlementsControllerFactory.constitute = [Auth, Config, Log, SettlementFactory, SettlementMethodFactory, UserFactory, PeerFactory, Connector, Paypal, Activity]
-function SettlementsControllerFactory (auth, config, log, Settlement, SettlementMethod, User, Peer, connector, paypal, activity) {
-  log = log('settlements')
+function SettlementsControllerFactory (deps) {
+  const auth = deps(Auth)
+  const config = deps(Config)
+  const Settlement = deps(SettlementFactory)
+  const SettlementMethod = deps(SettlementMethodFactory)
+  const User = deps(UserFactory)
+  const Peer = deps(PeerFactory)
+  const connector = deps(Connector)
+  const paypal = deps(Paypal)
+  const activity = deps(Activity)
 
   const getDestination = function * (destination) {
     return (yield User.findOne({ where: { destination } })) || (yield Peer.findOne({ where: { destination } }))

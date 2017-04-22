@@ -23,22 +23,22 @@ const Pay = require('./pay')
 const Connector = require('./connector')
 
 module.exports = class App {
-  static constitute () { return [ Config, Auth, Router, Validator, Ledger, SPSP, DB, Log, Socket, User, Pay, Connector ] }
-  constructor (config, auth, router, validator, ledger, spsp, db, log, socket, user, pay, connector) {
-    this.config = config
-    this.auth = auth
-    this.router = router
-    this.socket = socket
-    this.validator = validator
-    this.ledger = ledger
-    this.spsp = spsp
-    this.user = user
-    this.db = db
-    this.pay = pay
+  constructor (deps) {
+    this.auth = deps(Auth)
+    this.config = deps(Config)
+    this.router = deps(Router)
+    this.socket = deps(Socket)
+    this.validator = deps(Validator)
+    this.ledger = deps(Ledger)
+    this.spsp = deps(SPSP)
+    this.user = deps(User)
+    this.db = deps(DB)
+    this.pay = deps(Pay)
+    const log = deps(Log)
     this.log = log('app')
-    this.connector = connector
+    this.connector = deps(Connector)
 
-    validator.loadSchemasFromDirectory(path.resolve(__dirname, '../../schemas'))
+    this.validator.loadSchemasFromDirectory(path.resolve(__dirname, '../../schemas'))
 
     const app = this.app = new Koa()
 
@@ -79,11 +79,11 @@ module.exports = class App {
 
     app.use(require('koa-static')(path.resolve(__dirname, '../../../uploads')))
 
-    socket.attach(app)
-    auth.attach(app)
+    this.socket.attach(app)
+    this.auth.attach(app)
 
-    router.setupDefaultRoutes()
-    router.attach(app)
+    this.router.setupDefaultRoutes()
+    this.router.attach(app)
   }
 
   start () {

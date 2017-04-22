@@ -3,7 +3,6 @@
 module.exports = PaymentFactory
 
 const _ = require('lodash')
-const Container = require('constitute').Container
 const Model = require('five-bells-shared').Model
 const InvalidBodyError = require('five-bells-shared/errors/invalid-body-error')
 const PersistentModelMixin = require('five-bells-shared').PersistentModelMixin
@@ -16,9 +15,9 @@ const UserFactory = require('./user')
 const ActivityLogFactory = require('./activity_log')
 const ActivityLogsItemFactory = require('./activity_logs_item')
 
-PaymentFactory.constitute = [Database, Validator, Container, UserFactory]
-function PaymentFactory (sequelize, validator, container, User) {
-  let ActivityLog
+function PaymentFactory (deps) {
+  const sequelize = deps(Database)
+  const validator = deps(Validator)
 
   class Payment extends Model {
     static convertFromExternal (data) {
@@ -155,34 +154,33 @@ function PaymentFactory (sequelize, validator, container, User) {
     ]
   })
 
-  container.schedulePostConstructor(User => {
+  deps.later(() => {
+    const User = deps(UserFactory)
+    const ActivityLog = deps(ActivityLogFactory)
+    const ActivityLogsItem = deps(ActivityLogsItemFactory)
+
     Payment.DbModel.belongsTo(User.DbModel, {
       foreignKey: 'source_user',
       as: 'SourceUser'
     })
+
     Payment.DbModel.belongsTo(User.DbModel, {
       foreignKey: 'destination_user',
       as: 'DestinationUser'
     })
-  }, [ UserFactory ])
 
-  container.schedulePostConstructor(model => {
-    ActivityLog = model
-
-    container.schedulePostConstructor(ActivityLogsItem => {
-      Payment.DbModel.belongsToMany(ActivityLog.DbModel, {
-        through: {
-          model: ActivityLogsItem.DbModel,
-          unique: false,
-          scope: {
-            item_type: 'payment'
-          }
-        },
-        foreignKey: 'item_id',
-        constraints: false
-      })
-    }, [ ActivityLogsItemFactory ])
-  }, [ ActivityLogFactory ])
+    Payment.DbModel.belongsToMany(ActivityLog.DbModel, {
+      through: {
+        model: ActivityLogsItem.DbModel,
+        unique: false,
+        scope: {
+          item_type: 'payment'
+        }
+      },
+      foreignKey: 'item_id',
+      constraints: false
+    })
+  })
 
   return Payment
 }

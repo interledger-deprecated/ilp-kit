@@ -3,7 +3,6 @@
 module.exports = UserFactory
 
 const _ = require('lodash')
-const Container = require('constitute').Container
 const Model = require('five-bells-shared').Model
 const PersistentModelMixin = require('five-bells-shared').PersistentModelMixin
 const Database = require('../lib/db')
@@ -18,8 +17,13 @@ const ServerError = require('../errors/server-error')
 const InvalidBodyError = require('../errors/invalid-body-error')
 const EmailTakenError = require('../errors/email-taken-error')
 
-UserFactory.constitute = [Database, Validator, Container, Ledger, Config, Utils]
-function UserFactory (sequelize, validator, container, ledger, config, utils) {
+function UserFactory (deps) {
+  const sequelize = deps(Database)
+  const validator = deps(Validator)
+  const config = deps(Config)
+  let ledger
+  let utils
+
   class User extends Model {
     static convertFromExternal (data) {
       return data
@@ -270,14 +274,18 @@ function UserFactory (sequelize, validator, container, ledger, config, utils) {
     zip_code: Sequelize.STRING
   })
 
-  container.schedulePostConstructor((Invite) => {
+  deps.later(() => {
+    ledger = deps(Ledger)
+    utils = deps(Utils)
+    const Invite = deps(InviteFactory)
+
     User.DbModel.belongsTo(Invite.DbModel, {
       foreignKey: {
         name: 'invite_code'
       },
       constraints: false
     })
-  }, [ InviteFactory ])
+  })
 
   return User
 }
