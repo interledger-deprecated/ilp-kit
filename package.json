@@ -235,12 +235,17 @@
     "webpack-isomorphic-tools": "^2.5.7"
   },
   "devDependencies": {
+    "babel-eslint": "^7.2.3",
     "chai": "^3.3.0",
     "co-mocha": "^1.1.2",
     "eslint": "^3.11.0",
-    "eslint-config-standard": "^6.2.1",
-    "eslint-plugin-promise": "^3.4.0",
-    "eslint-plugin-standard": "^2.0.1",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-config-standard-react": "^4.3.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-node": "^4.2.2",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-react": "^6.10.3",
+    "eslint-plugin-standard": "^3.0.1",
     "five-bells-integration-test-loader": "^1.3.0",
     "ghooks": "^2.0.0",
     "karma": "^0.13.22",
@@ -272,5 +277,8 @@
       "module": "five-bells-integration-test",
       "repo": "interledgerjs/five-bells-integration-test"
     }
+  },
+  "standard": {
+    "parser": "babel-eslint"
   }
 }
