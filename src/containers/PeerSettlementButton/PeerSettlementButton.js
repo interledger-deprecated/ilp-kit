@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { DropdownButton, MenuItem } from 'react-bootstrap'
-import { LinkContainer } from 'react-router-bootstrap'
 
 import { getSettlementMethods } from 'redux/actions/peer'
 
@@ -39,11 +38,11 @@ export default class Peers extends Component {
     )
   }
 
-  render() {
+  render () {
     const { methods } = this.state
 
     return (
-      <DropdownButton bsStyle="default" title="Settle" onToggle={this.handleToggle} id="settlement">
+      <DropdownButton bsStyle='default' title='Settle' onToggle={this.handleToggle} id='settlement'>
         {!methods && <MenuItem>Loading...</MenuItem>}
         {methods && methods.length === 0 && <MenuItem>No settlement options available</MenuItem>}
         {methods && methods.map(this.renderMethod)}

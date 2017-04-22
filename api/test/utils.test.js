@@ -1,4 +1,4 @@
-"use strict"
+'use strict'
 
 const constitute = require('constitute')
 const Ledger = require('../src/lib/ledger')
@@ -7,7 +7,7 @@ const Utils = require('../src/lib/utils')
 const assert = require('chai').assert
 const nock = require('nock')
 
-function nockAcct() {
+function nockAcct () {
   nock('https://example.com')
     .get('/.well-known/webfinger?resource=acct:alice@example.com')
     .reply(200, {
@@ -27,7 +27,7 @@ function nockAcct() {
     })
 }
 
-function nockUri() {
+function nockUri () {
   nock('https://example.com')
     .get('/.well-known/webfinger?resource=https://example.com/accounts/alice')
     .reply(200, {
@@ -47,8 +47,7 @@ function nockUri() {
     })
 }
 
-
-function nockHost() {
+function nockHost () {
   nock('https://ilp-kit.somebody.com')
     .get('/.well-known/webfinger?resource=https://ilp-kit.somebody.com')
     .reply(200, {
@@ -62,7 +61,7 @@ function nockHost() {
     })
 }
 
-function nockHostEmpty() {
+function nockHostEmpty () {
   nock('https://ilp-kit.somebody.com')
     .get('/.well-known/webfinger?resource=https://ilp-kit.somebody.com')
     .reply(200, {
@@ -71,7 +70,7 @@ function nockHostEmpty() {
     })
 }
 
-function spspResponse(currencyCode) {
+function spspResponse (currencyCode) {
   return {
     destination_account: 'example.ilpdemo.red.alice',
     shared_secret: '6jR5iNIVRvqeasJeCty6C-YB5X9FhSOUPCL_5nha5Vs',
@@ -89,25 +88,15 @@ function spspResponse(currencyCode) {
   }
 }
 
-function nockDestinationLocal() {
+function nockDestinationLocal () {
   nock('https://localhost:80')
     .get('/api/spsp/alice')
     .reply(200, spspResponse('JPY'))
 }
-function nockDestinationRemote() {
+function nockDestinationRemote () {
   nock('http://receiver')
     .get('/')
     .reply(200, spspResponse('XDG'))
-}
-function nockMalformed() {
-  nock('https://mal.formed')
-    .get('/.well-known/webfinger?resource=acct:alice@mal.formed')
-    .reply(200, {
-      links: {
-        rel: 'https://interledger.org/rel/ledgerAccount',
-        href: 'account'
-      }
-    })
 }
 
 describe('Utils', () => {
@@ -118,7 +107,7 @@ describe('Utils', () => {
     this.utils = container.constitute(Utils)
   })
 
-  describe('isWebfinger', function() {
+  describe('isWebfinger', function () {
     it('detects a webfinger identifier', function () {
       assert.isTrue(this.utils.isWebfinger('alice@example.com'))
       assert.isFalse(this.utils.isWebfinger('https://example.com'))
@@ -127,7 +116,7 @@ describe('Utils', () => {
     })
   })
 
-  describe('getWebfingerAccount', function() {
+  describe('getWebfingerAccount', function () {
     it('doesn\'t get an account that doesn\'t exist', function * () {
       try {
         yield this.utils.getWebfingerAccount('https://example.com/accounts/nonentity')
@@ -148,16 +137,16 @@ describe('Utils', () => {
     })
   })
 
-  describe('getWebfingerAddress', function() {
+  describe('getWebfingerAddress', function () {
     // tested below in 'gets a webfinger account
   })
-  describe('webfingerLookup', function() {
+  describe('webfingerLookup', function () {
     // called from getWebfingerAccount, so it's also
     // tested below in 'gets a webfinger account'
   })
 
   describe('Webfinger', () => {
-    beforeEach(function() {
+    beforeEach(function () {
       this.destinationLocal = {
         ledgerUri: 'https://red.ilpdemo.org/ledger',
         paymentUri: 'https://localhost:80/api/spsp/alice',
@@ -212,7 +201,7 @@ describe('Utils', () => {
     })
 
     describe('parseDestination', () => {
-      beforeEach(function() {
+      beforeEach(function () {
       })
 
       // SPSP addresses of the form https://example.com/accounts/alice
@@ -253,7 +242,7 @@ describe('Utils', () => {
       assert(nock.isDone(), 'nock should be called')
     })
 
-    describe('hostLookup', function() {
+    describe('hostLookup', function () {
       it('gets host data from webfinger', function * () {
         nockHost()
         assert.deepEqual(yield this.utils.hostLookup(
@@ -274,7 +263,5 @@ describe('Utils', () => {
         }
       })
     })
-
   })
-
 })

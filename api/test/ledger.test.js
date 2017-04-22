@@ -1,4 +1,4 @@
-"use strict"
+'use strict'
 
 // Due to https://github.com/interledgerjs/ilp-kit/blob/master/bin/normalizeEnv.js#L24
 // this will end up loading ../../test.env.list if process.env.NODE_ENV === 'test':
@@ -52,21 +52,21 @@ describe('Ledger', () => {
       })
 
     assert.deepEqual(
-      yield this.ledger.getAccount({ username: 'alice', password: 'alice'}),
+      yield this.ledger.getAccount({ username: 'alice', password: 'alice' }),
       { info: 'some stuff' })
   })
 
   it('uses admin credentials in getAccount', function * () {
     nock('http://localhost:3101', {
-        reqheaders: { 'authorization': 'Basic Auth' }
-      })
+      reqheaders: { 'authorization': 'Basic Auth' }
+    })
       .get('/accounts/alice')
       .reply(200, {
         info: 'some stuff'
       })
 
     assert.deepEqual(
-      yield this.ledger.getAccount({ username: 'alice'}, true),
+      yield this.ledger.getAccount({ username: 'alice' }, true),
       { info: 'some stuff' })
   })
 
@@ -79,7 +79,7 @@ describe('Ledger', () => {
       })
 
     try {
-      yield this.ledger.getAccount({ username: 'alice', password: 'alice'}),
+      yield this.ledger.getAccount({ username: 'alice', password: 'alice' })
       assert(false, 'getAccount should fail')
     } catch (e) {
       assert.equal(e.name, 'NotFoundError')
@@ -96,7 +96,7 @@ describe('Ledger', () => {
       })
 
     try {
-      yield this.ledger.getAccount({ username: 'alice', password: 'alice'}),
+      yield this.ledger.getAccount({ username: 'alice', password: 'alice' })
       assert(false, 'getAccount should fail')
     } catch (e) {
       assert.equal(e.name, 'NotFoundError')
@@ -113,7 +113,7 @@ describe('Ledger', () => {
       })
 
     try {
-      yield this.ledger.getAccount({ username: 'alice', password: 'alice'}),
+      yield this.ledger.getAccount({ username: 'alice', password: 'alice' })
       assert(false, 'getAccount should fail')
     } catch (e) {
       assert(true)

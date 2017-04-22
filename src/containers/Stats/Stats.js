@@ -17,12 +17,11 @@ const cx = classNames.bind(styles)
   {loadStats})
 export default class Home extends Component {
   static propTypes = {
-    user: PropTypes.object,
     loadStats: PropTypes.func,
     stats: PropTypes.array
   }
 
-  componentDidMount() {
+  componentDidMount () {
     this.props.loadStats()
   }
 
@@ -39,7 +38,7 @@ export default class Home extends Component {
     )
   }
 
-  render() {
+  render () {
     const { stats } = this.props
 
     return (

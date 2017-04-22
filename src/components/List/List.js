@@ -8,7 +8,7 @@ export default class List extends Component {
     children: PropTypes.any.isRequired
   }
 
-  render() {
+  render () {
     const { state, loadingScreen, emptyScreen, children } = this.props
 
     return (

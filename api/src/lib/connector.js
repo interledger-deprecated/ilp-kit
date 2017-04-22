@@ -1,4 +1,4 @@
-"use strict"
+'use strict'
 
 const request = require('superagent')
 const co = require('co')
@@ -11,8 +11,6 @@ const SettlementMethodFactory = require('../models/settlement_method')
 const { generatePrefix } = require('ilp-plugin-virtual')
 
 const InvalidBodyError = require('../errors/invalid-body-error')
-
-const currencies = require('currency-symbol-map').currencySymbolMap
 
 module.exports = class Conncetor {
   static constitute () { return [ Config, PeerFactory, Utils, Log, SettlementMethodFactory ] }
@@ -85,8 +83,8 @@ module.exports = class Conncetor {
       publicKey = hostInfo.publicKey
       rpcUri = hostInfo.peersRpcUri
 
-      //this calls the function in ilp-plugin-virtual src/utils/token.js, which looks like:
-      //const prefix = ({ secretKey, peerPublicKey, currencyScale, currencyCode }) => {
+      // this calls the function in ilp-plugin-virtual src/utils/token.js, which looks like:
+      // const prefix = ({ secretKey, peerPublicKey, currencyScale, currencyCode }) => {
       ledgerName = generatePrefix({
         secretKey: this.config.data.getIn(['connector', 'ed25519_secret_key']),
         peerPublicKey: publicKey,
@@ -152,7 +150,7 @@ module.exports = class Conncetor {
       this.log.info("Can't get the peer limit")
     }
 
-    plugin.on('incoming_message', co.wrap(function *(message) {
+    plugin.on('incoming_message', co.wrap(function * (message) {
       if (message.data.method !== 'settlement_methods_request') return
 
       const peerStatus = yield self.getPeer(peer)
@@ -239,7 +237,7 @@ module.exports = class Conncetor {
     const peerInfo = this.peers[peer.destination]
     const plugin = connector.getPlugin(peerInfo.ledgerName)
 
-    if (!peerInfo.online) return Promise.reject()
+    if (!peerInfo.online) return Promise.reject(new Error('Peer not online'))
 
     const promise = new Promise(resolve => {
       const handler = message => {

@@ -7,12 +7,12 @@ export default class HelpIcon extends Component {
     text: PropTypes.string
   }
 
-  render() {
+  render () {
     const { text } = this.props
 
     return (
       <span>
-        <i className="fa fa-question-circle" data-tip={this.props.text} />
+        <i className='fa fa-question-circle' data-tip={text} />
 
         <ReactTooltip />
       </span>

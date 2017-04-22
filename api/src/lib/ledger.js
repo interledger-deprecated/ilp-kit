@@ -1,6 +1,5 @@
 'use strict'
 
-const uuid = require('uuid4')
 const superagent = require('superagent-promise')(require('superagent'), Promise)
 const Container = require('constitute').Container
 const EventEmitter = require('events').EventEmitter

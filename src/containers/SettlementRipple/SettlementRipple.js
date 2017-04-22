@@ -16,10 +16,12 @@ const cx = classNames.bind(styles)
 }))
 export default class SettlementRipple extends Component {
   static propTypes = {
-
+    pristine: PropTypes.boolean,
+    invalid: PropTypes.boolean,
+    submitting: PropTypes.boolean
   }
 
-  render() {
+  render () {
     const { pristine, invalid, submitting } = this.props
 
     return (
@@ -27,12 +29,12 @@ export default class SettlementRipple extends Component {
         <Helmet title={'Ripple - Settlement'} />
 
         <Field
-          name="destination"
+          name='destination'
           component={Input}
-          label="Destination"
-          size="lg"
+          label='Destination'
+          size='lg'
           focus />
-        <button type="submit" className="btn btn-success" disabled={pristine || invalid || submitting}>
+        <button type='submit' className='btn btn-success' disabled={pristine || invalid || submitting}>
           {submitting ? ' Saving...' : ' Save'}
         </button>
       </div>

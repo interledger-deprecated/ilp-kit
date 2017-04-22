@@ -4,9 +4,10 @@ import { destinationChange, destinationReset } from 'redux/actions/send'
 
 import classNames from 'classnames/bind'
 import styles from './DestinationBox.scss'
-const cx = classNames.bind(styles)
 
 import Input from 'components/Input/Input'
+
+const cx = classNames.bind(styles)
 
 @connect(
   state => ({
@@ -16,9 +17,9 @@ import Input from 'components/Input/Input'
   { destinationChange, destinationReset })
 export default class DestinationBox extends Component {
   static propTypes = {
-    user: PropTypes.object.isRequired,
-    destinationChange: PropTypes.func.isRequired,
-    destinationInfo: PropTypes.object
+    meta: PropTypes.object.isRequired,
+    destinationInfo: PropTypes.object,
+    destinationReset: PropTypes.func
   }
 
   componentWillReceiveProps ({ meta, input, destinationInfo }) {
@@ -50,8 +51,8 @@ export default class DestinationBox extends Component {
           meta.dirty && meta.error && 'hasError')}>
           <Input
             {...this.props}
-            label="Recipient"
-            size="lg"
+            label='Recipient'
+            size='lg'
             validText={!meta.active && destinationInfo.name}
             onChange={this.onChange}
             focus

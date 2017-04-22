@@ -1,8 +1,8 @@
-"use strict"
+'use strict'
 
 const appHelper = require('./helpers/app')
 
-describe('Health', function(){
+describe('Health', function () {
   beforeEach(function * () {
     this.agent = yield appHelper.create()
   })
@@ -11,7 +11,7 @@ describe('Health', function(){
     it('respond with ok', function * () {
       yield this.agent
         .get('/health')
-        .expect(200);
+        .expect(200)
     })
   })
-}) 
+})

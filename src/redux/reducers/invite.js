@@ -7,7 +7,7 @@ const initialState = {
   invite: {}
 }
 
-export default function reducer(state = initialState, action = {}) {
+export default function reducer (state = initialState, action = {}) {
   switch (action.type) {
     case types.LOAD_INVITES:
       return {

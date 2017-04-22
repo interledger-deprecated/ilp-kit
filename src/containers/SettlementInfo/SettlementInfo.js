@@ -5,32 +5,34 @@ import { Link } from 'react-router'
 
 import classNames from 'classnames/bind'
 import styles from './SettlementInfo.scss'
-const cx = classNames.bind(styles)
 
 import { get } from 'redux/actions/settlement'
+
+const cx = classNames.bind(styles)
 
 @connect(state => ({
   info: state.settlement.info
 }), { get })
 export default class SettlementInfo extends Component {
   static propTypes = {
+    params: PropTypes.object,
     get: PropTypes.func.isRequired,
     info: PropTypes.object
   }
 
   state = {}
 
-  componentWillMount() {
+  componentWillMount () {
     this.props.get(this.props.params.id)
   }
 
-  componentDidMount() {
+  componentDidMount () {
     this.setState({
       hostname: location.hostname
     })
   }
 
-  renderUser() {
+  renderUser () {
     const { info } = this.props
 
     return (
@@ -39,14 +41,14 @@ export default class SettlementInfo extends Component {
           You've successfully deposited <b>{info.amount} {info.currency}</b> into your account.
         </h3>
 
-        <Link to="/" className={cx('goBack')}>
+        <Link to='/' className={cx('goBack')}>
           Back to home
         </Link>
       </div>
     )
   }
 
-  renderPeer() {
+  renderPeer () {
     const { info } = this.props
     const { hostname } = this.state
 
@@ -63,7 +65,7 @@ export default class SettlementInfo extends Component {
     )
   }
 
-  render() {
+  render () {
     const { info } = this.props
 
     return (

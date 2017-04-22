@@ -43,7 +43,8 @@ module.exports = class Socket {
       self.transfer(username, transfer)
     })
 
-    return self.users[username] = self.users[username] || { subscriptions: {} }
+    self.users[username] = self.users[username] || { subscriptions: {} }
+    return self.users[username]
   }
 
   // Remove the user if it doesn't have subscriptions
@@ -97,7 +98,7 @@ module.exports = class Socket {
       self.addSubscription(username, this.socket)
     })
 
-    app.io.use(function* (next) {
+    app.io.use(function * (next) {
       self.log.info('Connected ' + this.socket.id)
       yield * next
       self.log.info('Disconnected ' + this.socket.id)
@@ -110,7 +111,7 @@ module.exports = class Socket {
 
     self.emitToUser(username, 'activity', activityLog)
 
-    co(function *() {
+    co(function * () {
       const account = yield self.ledger.getAccount({ username }, true)
       self.updateBalance(username, account.balance)
     }).catch(err => {

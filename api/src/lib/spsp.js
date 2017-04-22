@@ -1,9 +1,7 @@
 'use strict'
 
 const co = require('co')
-const uuid = require('uuid4')
 const superagent = require('superagent-promise')(require('superagent'), Promise)
-const BigNumber = require('bignumber.js')
 const debug = require('debug')('ilp-kit:spsp')
 
 const ILP = require('ilp')

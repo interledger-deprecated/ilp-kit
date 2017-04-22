@@ -38,39 +38,15 @@ export default class Home extends Component {
     getPage: PropTypes.func
   }
 
-  state = {
-    list: []
-  }
-
   // Load the activity
-  componentWillMount() {
+  componentWillMount () {
     if (!this.props.initialLoad) {
       this.props.getPage(1)
     }
-
-    if (this.props.activity.length) {
-      this.setState({
-        list: this.props.activity
-      })
-    }
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.loadingPage === nextProps.loadingPage) return
-
-    // This whole list thing is just for the ReactCSSTransitionGroup to work properly
-    // to not animate on initial load
-    this.setState({
-      list: []
-    })
-  }
-
-  componentDidUpdate() {
-    if (this.state.list === this.props.activity) return
-
-    this.setState({
-      list: this.props.activity
-    })
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.activity === this.props.activity) return
 
     window.scrollTo(0, 0)
   }
@@ -80,14 +56,16 @@ export default class Home extends Component {
     tracker.track('Activity paginate')
   }
 
-  render() {
+  render () {
     const {activity, totalPages, loadingPage, initialLoad} = this.props
-    const {list} = this.state
 
+    // TODO: Removed some ugly hacks related to the CSS transitions - probably
+    //       need to go back later to fix transitions, hopefully with a cleaner
+    //       method.
     return (
       <div className={cx('container')}>
         <ul className={cx('list')}>
-          {list.length > 0 && <ReactCSSTransitionGroup transitionName={{
+          {activity.length > 0 && <ReactCSSTransitionGroup transitionName={{
             appear: cx('enter'),
             appearActive: cx('enter-active'),
             enter: cx('enter'),
@@ -95,21 +73,21 @@ export default class Home extends Component {
             leave: cx('leave'),
             leaveActive: cx('leave-active')
           }} transitionAppearTimeout={1000} transitionEnterTimeout={1000} transitionLeaveTimeout={50}>
-          {list.map(activity => (
-            <li key={activity.id}>
-              {activity.Payments.length > 0 &&
-              <ActivityPayment activity={activity} />}
+            {activity.map(activity => (
+              <li key={activity.id}>
+                {activity.Payments.length > 0 &&
+                <ActivityPayment activity={activity} />}
 
-              {activity.Settlements.length > 0 &&
-              <ActivitySettlement activity={activity} />}
+                {activity.Settlements.length > 0 &&
+                <ActivitySettlement activity={activity} />}
 
-              {activity.Withdrawals.length > 0 &&
-              <ActivityWithdrawal activity={activity} />}
-            </li>
-          ))}
+                {activity.Withdrawals.length > 0 &&
+                <ActivityWithdrawal activity={activity} />}
+              </li>
+            ))}
           </ReactCSSTransitionGroup>}
 
-          {initialLoad && list.length === 0 && <li className={cx('loading')}>No payments to show</li>}
+          {initialLoad && activity.length === 0 && <li className={cx('loading')}>No payments to show</li>}
         </ul>
 
         {activity && activity.length > 0 &&
@@ -118,12 +96,12 @@ export default class Home extends Component {
               pageCount={totalPages || 1}
               pageRangeDisplayed={5}
               marginPagesDisplayed={1}
-              previousLabel="&laquo;"
-              nextLabel="&raquo;"
+              previousLabel='&laquo;'
+              nextLabel='&raquo;'
               onPageChange={this.handlePageClick}
               breakLabel={<span>...</span>}
-              containerClassName="pagination"
-              activeClassName="active"
+              containerClassName='pagination'
+              activeClassName='active'
             />
             {loadingPage && <span className={cx('loading')}>Loading...</span>}
           </div>}

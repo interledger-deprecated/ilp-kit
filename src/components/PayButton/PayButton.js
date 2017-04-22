@@ -11,7 +11,7 @@ export default class PayButton extends Component {
   }
 
   // TODO look for a specific message
-  componentDidMount() {
+  componentDidMount () {
     window.addEventListener('message', () => {
       if (document.getElementsByName('payments_polyfill')[0]) {
         document.getElementsByName('payments_polyfill')[0].remove()
@@ -35,13 +35,13 @@ export default class PayButton extends Component {
     tracker.track('PayButton click')
   }
 
-  render() {
+  render () {
     const { children } = this.props
 
     return (
       <div>
-        <script src="https://web-payments.net/polyfill.js"></script>
-        <button className="btn btn-success btn-lg" onClick={this.makePayment}>{children}</button>
+        <script src='https://web-payments.net/polyfill.js' />
+        <button className='btn btn-success btn-lg' onClick={this.makePayment}>{children}</button>
       </div>
     )
   }

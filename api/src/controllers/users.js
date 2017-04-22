@@ -1,8 +1,9 @@
-"use strict"
+'use strict'
 
 module.exports = UsersControllerFactory
 
 const fs = require('fs')
+const path = require('path')
 const request = require('five-bells-shared/utils/request')
 const Auth = require('../lib/auth')
 const Log = require('../lib/log')
@@ -48,7 +49,7 @@ function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, soc
     }
 
     // TODO move to auth
-    static * checkAdmin(next) {
+    static * checkAdmin (next) {
       if (this.req.user.username === config.data.getIn(['ledger', 'admin', 'user'])) {
         return yield next
       }
@@ -83,14 +84,15 @@ function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, soc
      *      "id": 1
      *    }
      */
-    static * getResource() {
+    static * getResource () {
       let username = this.params.username
       request.validateUriParameter('username', username, 'Identifier')
       username = username.toLowerCase()
 
       if (this.req.user.username !== username) {
         // TODO throw exception
-        return this.status = 404
+        this.status = 404
+        return
       }
 
       const dbUser = yield User.findOne({where: {username: username}})
@@ -127,6 +129,7 @@ function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, soc
     // Only supports create
     static * postResource () {
       const self = this
+      const userObj = this.body
 
       // check if registration is enabled
       if (!config.data.get('registration') && !userObj.inviteCode) {
@@ -137,8 +140,6 @@ function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, soc
       if (!USERNAME_REGEX.test(username)) {
         throw new InvalidBodyError('Username must be 2-20 characters, lowercase letters, numbers and hyphens ("-") only, with no two or more consecutive hyphens.')
       }
-
-      const userObj = this.body
 
       yield antifraud.checkRisk(userObj) // throws if fraud risk is too high
 
@@ -270,7 +271,11 @@ function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, soc
       const user = yield dbUser.appendLedgerAccount()
 
       // TODO callbacks?
-      this.req.logIn(user, err => {})
+      this.req.logIn(user, err => {
+        if (err) {
+          log.error('error while logging in: %s', err)
+        }
+      })
 
       log.debug('created user ' + dbUser.username)
 
@@ -351,9 +356,13 @@ function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, soc
       try {
         yield user.save()
 
-        this.req.logIn(yield user.appendLedgerAccount(), err => {})
+        this.req.logIn(yield user.appendLedgerAccount(), err => {
+          if (err) {
+            log.error('error while logging in: %s', err)
+          }
+        })
         this.body = user.getDataExternal()
-      } catch(e) {
+      } catch (e) {
         // TODO throw an exception
         this.status = 500
         log.warn(e)
@@ -361,9 +370,10 @@ function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, soc
     }
 
     // This will only reload if the "reload" env var is true
-    static * reload(user) {
+    static * reload (user) {
       if (!config.data.get('reload')) {
-        return this.status = 404
+        this.status = 404
+        return
       }
 
       if (!user.username) {
@@ -420,7 +430,7 @@ function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, soc
      *      "email_verified": true
      *    }
      */
-    static * verify() {
+    static * verify () {
       let username = this.params.username
       request.validateUriParameter('username', username, 'Identifier')
       username = username.toLowerCase()
@@ -494,18 +504,17 @@ function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, soc
      *      "image_url": "http://server.example/picture.jpg"
      *    }
      */
-    static * getReceiver() {
+    static * getReceiver () {
       const ledgerPrefix = config.data.getIn(['ledger', 'prefix'])
       let user = yield User.findOne({where: {username: this.params.username}})
 
       if (!user) {
         // TODO throw exception
-        return this.status = 404
+        this.status = 404
+        return
       }
 
       user = user.getDataExternal()
-
-      const ledgerInfo = ledger.getInfo()
 
       this.body = {
         'type': 'payee',
@@ -517,18 +526,20 @@ function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, soc
       }
     }
 
-    static * getProfilePicture() {
+    static * getProfilePicture () {
       const user = yield User.findOne({where: {username: this.params.username}})
 
       if (!user) {
         // TODO throw exception
-        return this.status = 404
+        this.status = 404
+        return
       }
 
-      const file = __dirname + '/../../../uploads/' + user.profile_picture
+      const file = path.resolve(__dirname, '../../../uploads/', user.profile_picture)
 
       if (!fs.existsSync(file)) {
-        return this.status = 422
+        this.status = 422
+        return
       }
 
       const img = fs.readFileSync(file)
