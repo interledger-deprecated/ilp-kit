@@ -3,7 +3,6 @@
 module.exports = SettlementFactory
 
 const _ = require('lodash')
-const Container = require('constitute').Container
 const Model = require('five-bells-shared').Model
 const PersistentModelMixin = require('five-bells-shared').PersistentModelMixin
 const Database = require('../lib/db')
@@ -15,8 +14,10 @@ const SettlementMethodFactory = require('./settlement_method')
 const ActivityLogFactory = require('./activity_log')
 const ActivityLogsItemFactory = require('./activity_logs_item')
 
-SettlementFactory.constitute = [Database, Validator, Container]
-function SettlementFactory (sequelize, validator, container) {
+function SettlementFactory (deps) {
+  const sequelize = deps(Database)
+  const validator = deps(Validator)
+
   class Settlement extends Model {
     static convertFromExternal (data) {
       return data
@@ -51,34 +52,28 @@ function SettlementFactory (sequelize, validator, container) {
     currency: Sequelize.STRING
   })
 
-  container.schedulePostConstructor(Peer => {
+  deps.later(() => {
+    const Peer = deps(PeerFactory)
+    const User = deps(UserFactory)
+    const SettlementMethod = deps(SettlementMethodFactory)
+    const ActivityLog = deps(ActivityLogFactory)
+    const ActivityLogsItem = deps(ActivityLogsItemFactory)
+
     Settlement.DbModel.belongsTo(Peer.DbModel)
-  }, [ PeerFactory ])
-
-  container.schedulePostConstructor(User => {
     Settlement.DbModel.belongsTo(User.DbModel)
-  }, [ UserFactory ])
-
-  // TODO:BEFORE_DEPLOY add ledger transfer_id
-  container.schedulePostConstructor(SettlementMethod => {
     Settlement.DbModel.belongsTo(SettlementMethod.DbModel)
-  }, [ SettlementMethodFactory ])
-
-  container.schedulePostConstructor(ActivityLog => {
-    container.schedulePostConstructor(ActivityLogsItem => {
-      Settlement.DbModel.belongsToMany(ActivityLog.DbModel, {
-        through: {
-          model: ActivityLogsItem.DbModel,
-          unique: false,
-          scope: {
-            item_type: 'settlement'
-          }
-        },
-        foreignKey: 'item_id',
-        constraints: false
-      })
-    }, [ ActivityLogsItemFactory ])
-  }, [ ActivityLogFactory ])
+    Settlement.DbModel.belongsToMany(ActivityLog.DbModel, {
+      through: {
+        model: ActivityLogsItem.DbModel,
+        unique: false,
+        scope: {
+          item_type: 'settlement'
+        }
+      },
+      foreignKey: 'item_id',
+      constraints: false
+    })
+  })
 
   return Settlement
 }

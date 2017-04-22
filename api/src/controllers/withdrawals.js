@@ -3,18 +3,16 @@
 module.exports = WithdrawalsControllerFactory
 
 const Auth = require('../lib/auth')
-const Log = require('../lib/log')
-const Utils = require('../lib/utils')
-const Ledger = require('../lib/ledger')
 const Activity = require('../lib/activity')
 const Config = require('../lib/config')
-const UserFactory = require('../models/user')
 const WithdrawalFactory = require('../models/withdrawal')
 const NotFoundError = require('../errors/not-found-error')
 
-WithdrawalsControllerFactory.constitute = [Auth, Config, Activity, Log, Utils, Ledger, UserFactory, WithdrawalFactory]
-function WithdrawalsControllerFactory (auth, config, activity, log, utils, ledger, User, Withdrawal) {
-  log = log('withdrawals')
+function WithdrawalsControllerFactory (deps) {
+  const auth = deps(Auth)
+  const config = deps(Config)
+  const activity = deps(Activity)
+  const Withdrawal = deps(WithdrawalFactory)
 
   return class ActivityLogsController {
     static init (router) {

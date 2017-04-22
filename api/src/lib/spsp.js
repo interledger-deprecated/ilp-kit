@@ -16,15 +16,14 @@ const Activity = require('./activity')
 
 // TODO exception handling
 module.exports = class SPSP {
-  static constitute () { return [Config, PaymentFactory, Socket, Ledger, Utils, Activity] }
-  constructor (config, Payment, socket, ledger, utils, activity) {
-    this.Payment = Payment
-    this.socket = socket
-    this.config = config
-    this.ledger = ledger
-    this.prefix = config.data.getIn(['ledger', 'prefix'])
-    this.utils = utils
-    this.activity = activity
+  constructor (deps) {
+    this.Payment = deps(PaymentFactory)
+    this.socket = deps(Socket)
+    this.config = deps(Config)
+    this.ledger = deps(Ledger)
+    this.prefix = this.config.data.getIn(['ledger', 'prefix'])
+    this.utils = deps(Utils)
+    this.activity = deps(Activity)
 
     this.senders = {}
     this.receivers = {}

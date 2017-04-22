@@ -1,7 +1,6 @@
 'use strict'
 
 const superagent = require('superagent-promise')(require('superagent'), Promise)
-const Container = require('constitute').Container
 const EventEmitter = require('events').EventEmitter
 
 const PaymentFactory = require('../models/payment')
@@ -14,21 +13,21 @@ const NotFoundError = require('../errors/not-found-error')
 
 // TODO exception handling
 module.exports = class Ledger extends EventEmitter {
-  static constitute () { return [Config, Log, Container] }
-  constructor (config, log, container) {
+  constructor (deps) {
     super()
 
     const self = this
 
-    this.config = config
+    this.config = deps(Config)
+    const log = deps(Log)
     this.log = log('ledger')
     this.ledgerUri = this.config.data.getIn(['ledger', 'uri'])
     this.ledgerUriPublic = this.config.data.getIn(['ledger', 'public_uri'])
 
-    container.schedulePostConstructor((User, Payment) => {
-      self.User = User
-      self.Payment = Payment
-    }, [ UserFactory, PaymentFactory ])
+    deps.later(() => {
+      self.User = deps(UserFactory)
+      self.Payment = deps(PaymentFactory)
+    })
   }
 
   // TODO caching

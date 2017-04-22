@@ -10,8 +10,11 @@ const Validator = require('five-bells-shared/lib/validator')
 const Sequelize = require('sequelize')
 const Config = require('../lib/config')
 
-SettlementMethodFactory.constitute = [Database, Validator, Config]
-function SettlementMethodFactory (sequelize, validator, config) {
+function SettlementMethodFactory (deps) {
+  const sequelize = deps(Database)
+  const validator = deps(Validator)
+  const config = deps(Config)
+
   class SettlementMethod extends Model {
     static convertFromExternal (data) {
       return data

@@ -3,25 +3,26 @@
 module.exports = PaymentsControllerFactory
 
 const Auth = require('../lib/auth')
-const Log = require('../lib/log')
 const SPSP = require('../lib/spsp')
 const Pay = require('../lib/pay')
-const Utils = require('../lib/utils')
 const UserFactory = require('../models/user')
 const PaymentFactory = require('../models/payment')
 const NotFoundError = require('../errors/not-found-error')
 const ServerError = require('../errors/server-error')
 const NoQuote = require('../errors/no-quote-error')
 
-PaymentsControllerFactory.constitute = [Auth, PaymentFactory, Log, Utils, SPSP, UserFactory, Pay]
-function PaymentsControllerFactory (Auth, Payment, log, utils, spsp, User, pay) {
-  log = log('payments')
+function PaymentsControllerFactory (deps) {
+  const auth = deps(Auth)
+  const Payment = deps(PaymentFactory)
+  const spsp = deps(SPSP)
+  const User = deps(UserFactory)
+  const pay = deps(Pay)
 
   return class PaymentsController {
     static init (router) {
-      router.post('/payments/quote', Auth.checkAuth, this.quote)
-      router.put('/payments/:id', Auth.checkAuth, this.putResource)
-      router.get('/payments/stats', Auth.checkAuth, this.getStats)
+      router.post('/payments/quote', auth.checkAuth, this.quote)
+      router.put('/payments/:id', auth.checkAuth, this.putResource)
+      router.get('/payments/stats', auth.checkAuth, this.getStats)
 
       router.get('/spsp/:username', this.query)
     }

@@ -4,15 +4,15 @@
 // this will end up loading ../../test.env.list if process.env.NODE_ENV === 'test':
 require('../../bin/env').normalizeEnv()
 
-const constitute = require('constitute')
+const reduct = require('reduct')
 const Ledger = require('../src/lib/ledger')
 const assert = require('chai').assert
 const nock = require('nock')
 
 describe('Ledger', () => {
   beforeEach(function () {
-    const container = new constitute.Container()
-    this.ledger = container.constitute(Ledger)
+    const deps = reduct()
+    this.ledger = deps(Ledger)
   })
 
   afterEach(function () {

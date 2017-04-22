@@ -3,7 +3,6 @@
 module.exports = WithdrawalFactory
 
 const _ = require('lodash')
-const Container = require('constitute').Container
 const Model = require('five-bells-shared').Model
 const PersistentModelMixin = require('five-bells-shared').PersistentModelMixin
 const Database = require('../lib/db')
@@ -13,8 +12,10 @@ const UserFactory = require('./user')
 const ActivityLogFactory = require('./activity_log')
 const ActivityLogsItemFactory = require('./activity_logs_item')
 
-WithdrawalFactory.constitute = [Database, Validator, Container]
-function WithdrawalFactory (sequelize, validator, container) {
+function WithdrawalFactory (deps) {
+  const sequelize = deps(Database)
+  const validator = deps(Validator)
+
   class Withdrawal extends Model {
     static convertFromExternal (data) {
       return data
@@ -50,25 +51,24 @@ function WithdrawalFactory (sequelize, validator, container) {
     transfer_id: Sequelize.UUID
   })
 
-  container.schedulePostConstructor(User => {
-    Withdrawal.DbModel.belongsTo(User.DbModel)
-  }, [ UserFactory ])
+  deps.later(() => {
+    const User = deps(UserFactory)
+    const ActivityLog = deps(ActivityLogFactory)
+    const ActivityLogsItem = deps(ActivityLogsItemFactory)
 
-  container.schedulePostConstructor(ActivityLog => {
-    container.schedulePostConstructor(ActivityLogsItem => {
-      Withdrawal.DbModel.belongsToMany(ActivityLog.DbModel, {
-        through: {
-          model: ActivityLogsItem.DbModel,
-          unique: false,
-          scope: {
-            item_type: 'withdrawal'
-          }
-        },
-        foreignKey: 'item_id',
-        constraints: false
-      })
-    }, [ ActivityLogsItemFactory ])
-  }, [ ActivityLogFactory ])
+    Withdrawal.DbModel.belongsTo(User.DbModel)
+    Withdrawal.DbModel.belongsToMany(ActivityLog.DbModel, {
+      through: {
+        model: ActivityLogsItem.DbModel,
+        unique: false,
+        scope: {
+          item_type: 'withdrawal'
+        }
+      },
+      foreignKey: 'item_id',
+      constraints: false
+    })
+  })
 
   return Withdrawal
 }

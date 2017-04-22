@@ -9,13 +9,12 @@ const PaymentFactory = require('../models/payment')
 const InsufficientFundsError = require('../errors/ledger-insufficient-funds-error')
 
 module.exports = class Pay {
-  static constitute () { return [Socket, SPSP, PaymentFactory, Utils, Activity] }
-  constructor (socket, spsp, Payment, utils, activity) {
-    this.socket = socket
-    this.spsp = spsp
-    this.utils = utils
-    this.activity = activity
-    this.Payment = Payment
+  constructor (deps) {
+    this.socket = deps(Socket)
+    this.spsp = deps(SPSP)
+    this.utils = deps(Utils)
+    this.activity = deps(Activity)
+    this.Payment = deps(PaymentFactory)
   }
 
   * pay (opts) {

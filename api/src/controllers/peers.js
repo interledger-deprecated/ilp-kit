@@ -13,9 +13,12 @@ const PeerFactory = require('../models/peer')
 const NotFoundError = require('../errors/not-found-error')
 const InvalidBodyError = require('../errors/invalid-body-error')
 
-PeersControllerFactory.constitute = [Auth, Config, Log, PeerFactory, Connector]
-function PeersControllerFactory (auth, config, log, Peer, connector) {
-  log = log('peers')
+function PeersControllerFactory (deps) {
+  const auth = deps(Auth)
+  const config = deps(Config)
+  const log = deps(Log)('peers')
+  const Peer = deps(PeerFactory)
+  const connector = deps(Connector)
 
   return class PeersController {
     static init (router) {

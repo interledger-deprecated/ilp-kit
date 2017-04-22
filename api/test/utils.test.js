@@ -1,6 +1,6 @@
 'use strict'
 
-const constitute = require('constitute')
+const reduct = require('reduct')
 const Ledger = require('../src/lib/ledger')
 const LedgerMock = require('./helpers/ledgerMock')
 const Utils = require('../src/lib/utils')
@@ -101,10 +101,10 @@ function nockDestinationRemote () {
 
 describe('Utils', () => {
   beforeEach(function * () {
-    const container = new constitute.Container()
-    container.bindClass(Ledger, LedgerMock)
+    const deps = reduct()
+    deps.setOverride(Ledger, LedgerMock)
 
-    this.utils = container.constitute(Utils)
+    this.utils = deps(Utils)
   })
 
   describe('isWebfinger', function () {

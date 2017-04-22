@@ -9,8 +9,11 @@ const InviteFactory = require('../models/invite')
 
 const NotFoundError = require('../errors/not-found-error')
 
-InvitesControllerFactory.constitute = [Auth, Config, InviteFactory]
-function InvitesControllerFactory (auth, config, Invite) {
+function InvitesControllerFactory (deps) {
+  const auth = deps(Auth)
+  const config = deps(Config)
+  const Invite = deps(InviteFactory)
+
   return class InvitesController {
     static init (router) {
       router.get('/invites', auth.checkAuth, this.checkAdmin, this.getAll)

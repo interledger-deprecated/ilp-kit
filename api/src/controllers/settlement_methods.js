@@ -4,18 +4,16 @@ module.exports = SettlementMethodsControllerFactory
 
 const path = require('path')
 const Auth = require('../lib/auth')
-const Log = require('../lib/log')
 const Config = require('../lib/config')
-const SettlementFactory = require('../models/settlement')
 const SettlementMethodFactory = require('../models/settlement_method')
-const PeerFactory = require('../models/peer')
 
 const NotFoundError = require('../errors/not-found-error')
 const InvalidBodyError = require('../errors/invalid-body-error')
 
-SettlementMethodsControllerFactory.constitute = [Auth, Config, Log, SettlementFactory, SettlementMethodFactory, PeerFactory]
-function SettlementMethodsControllerFactory (auth, config, log, Settlement, SettlementMethod, Peer) {
-  log = log('settlement_methods')
+function SettlementMethodsControllerFactory (deps) {
+  const auth = deps(Auth)
+  const config = deps(Config)
+  const SettlementMethod = deps(SettlementMethodFactory)
 
   return class SettlementMethodsController {
     static init (router) {
