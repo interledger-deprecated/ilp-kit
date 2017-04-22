@@ -18,18 +18,16 @@ export default class DestinationBox extends Component {
   static propTypes = {
     user: PropTypes.object.isRequired,
     destinationChange: PropTypes.func.isRequired,
-    destinationInfo: PropTypes.object,
-    destinationField: PropTypes.object
+    destinationInfo: PropTypes.object
   }
 
-  componentWillReceiveProps(nextProps) {
-    const input = nextProps.destinationField
-    const identifier = nextProps.destinationInfo.identifier
+  componentWillReceiveProps ({ meta, input, destinationInfo }) {
+    const identifier = destinationInfo.identifier
 
     // Destination change
     if (identifier && this.props.destinationInfo.identifier !== identifier) {
       // Update the input if it's not what caused the change (not focused)
-      if (!input.active) {
+      if (!meta.active) {
         input.onChange(identifier)
       }
     }
@@ -41,24 +39,25 @@ export default class DestinationBox extends Component {
     }
   }
 
-  render() {
-    const { destinationInfo, destinationField } = this.props
+  render () {
+    const { destinationInfo, meta } = this.props
 
     return (
       <div className={cx('DestinationBox')}>
         <div className={cx('form-group', 'inputBox',
-          !destinationField.active && destinationInfo.name && 'hasName',
-          !destinationField.active && destinationInfo.imageUrl && 'hasImage',
-          destinationField.dirty && destinationField.error && 'hasError')}>
-          <Input object={destinationField}
-                 label="Recipient"
-                 size="lg"
-                 validText={!destinationField.active && destinationInfo.name}
-                 onChange={this.onChange}
-                 focus
-                 debounce />
+          !meta.active && destinationInfo.name && 'hasName',
+          !meta.active && destinationInfo.imageUrl && 'hasImage',
+          meta.dirty && meta.error && 'hasError')}>
+          <Input
+            {...this.props}
+            label="Recipient"
+            size="lg"
+            validText={!meta.active && destinationInfo.name}
+            onChange={this.onChange}
+            focus
+            debounce />
 
-          {!destinationField.active && destinationInfo.imageUrl &&
+          {!meta.active && destinationInfo.imageUrl &&
           <img src={destinationInfo.imageUrl || require('../../containers/ActivityPayment/placeholder.png')} />}
         </div>
       </div>

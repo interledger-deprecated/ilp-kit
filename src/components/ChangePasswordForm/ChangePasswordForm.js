@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react'
-import {reduxForm} from 'redux-form'
+import { reduxForm, Field, SubmissionError } from 'redux-form'
 import Validation from './Validation'
 
 import Alert from 'react-bootstrap/lib/Alert'
@@ -10,7 +10,6 @@ import { successable } from 'decorators'
 
 @reduxForm({
   form: 'changePassword',
-  fields: ['password', 'repeatPassword'],
   validate: Validation
 })
 @successable()
@@ -19,12 +18,11 @@ export default class ChangePasswordForm extends Component {
     username: PropTypes.string.isRequired,
     code: PropTypes.string.isRequired,
 
-    fields: PropTypes.object.isRequired,
     invalid: PropTypes.bool.isRequired,
     pristine: PropTypes.bool.isRequired,
     submitting: PropTypes.bool.isRequired,
     handleSubmit: PropTypes.func.isRequired,
-    submit: PropTypes.func.isRequired,
+    submitAction: PropTypes.func.isRequired,
     submitFailed: PropTypes.bool,
     error: PropTypes.object,
 
@@ -40,19 +38,19 @@ export default class ChangePasswordForm extends Component {
       code: this.props.code
     }
 
-    return this.props.submit(data)
+    return this.props.submitAction(data)
       .then(() => {
         this.props.permSuccess()
 
         tracker.track('Change password')
       })
       .catch((error) => {
-        throw {_error: error}
+        throw new SubmissionError({_error: error})
       })
   }
 
-  render() {
-    const { handleSubmit, error, success, fields: {password, repeatPassword}, pristine, invalid, submitting, submitFailed } = this.props
+  render () {
+    const { handleSubmit, error, success, pristine, invalid, submitting, submitFailed } = this.props
 
     return (
       <form onSubmit={handleSubmit(this.handleSubmit)}>
@@ -76,8 +74,19 @@ export default class ChangePasswordForm extends Component {
         {!success &&
         <div>
           <div>
-            <Input object={password} type="password" label="Password" size="lg" focus />
-            <Input object={repeatPassword} type="password" label="Repeat Password" size="lg" />
+            <Field
+              name="password"
+              component={Input}
+              type="password"
+              label="Password"
+              size="lg"
+              focus />
+            <Field
+              name="repeatPassword"
+              component={Input}
+              type="password"
+              label="Repeat Password"
+              size="lg" />
           </div>
           <div className="row">
             <button type="submit" className="btn btn-success" disabled={pristine || (invalid && !submitFailed) || submitting}>

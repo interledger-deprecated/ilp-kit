@@ -70,7 +70,7 @@ export default class Home extends Component {
     this.props.pushState('/')
   }
 
-  render() {
+  render () {
     const {authFail, login, register, forgot, changePassword, verified, params, config} = this.props
     const {currentView} = this.state
 
@@ -93,9 +93,9 @@ export default class Home extends Component {
             {currentView === 'register' &&
             <RegisterForm register={register} fail={authFail} params={params} />}
             {currentView === 'forgot-password' &&
-            <ForgotPasswordForm submit={forgot} fail={authFail} />}
+            <ForgotPasswordForm submitAction={forgot} fail={authFail} />}
             {currentView === 'change-password' &&
-            <ChangePasswordForm submit={changePassword} username={params.username} code={params.passwordChangeCode} fail={authFail} />}
+            <ChangePasswordForm submitAction={changePassword} username={params.username} code={params.passwordChangeCode} fail={authFail} />}
           </div>
           {currentView === 'login' && config.githubAuth &&
           <div className={cx('oauthBox', 'clearfix')}>

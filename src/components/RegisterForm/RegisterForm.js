@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react'
-import {reduxForm} from 'redux-form'
+import { connect } from 'react-redux'
+import { reduxForm, Field } from 'redux-form'
 import registerValidation from './RegisterValidation'
 
 import Alert from 'react-bootstrap/lib/Alert'
@@ -14,16 +15,17 @@ import styles from './RegisterForm.scss'
 const cx = classNames.bind(styles)
 
 // TODO async validation on username
+@connect(state => ({
+  invite: state.invite.invite,
+  config: state.auth.config
+}), {loadCode})
 @reduxForm({
   form: 'register',
   fields: ['username', 'email', 'password', 'inviteCode',
     'name', 'phone', 'address1', 'address2', 'city',
     'region', 'country', 'zip_code', 'fingerprint'],
   validate: registerValidation
-}, state => ({
-  invite: state.invite.invite,
-  config: state.auth.config
-}), {loadCode})
+})
 @successable()
 export default class RegisterForm extends Component {
   static propTypes = {
@@ -33,7 +35,6 @@ export default class RegisterForm extends Component {
     config: PropTypes.object,
 
     // Form
-    fields: PropTypes.object.isRequired,
     invalid: PropTypes.bool.isRequired,
     pristine: PropTypes.bool.isRequired,
     submitting: PropTypes.bool.isRequired,
@@ -129,10 +130,7 @@ export default class RegisterForm extends Component {
   }
 
   render() {
-    const { invite, handleSubmit, fail,
-      fields: { username, email, password, inviteCode, name, phone,
-        address1, address2, city, region, country, zip_code },
-      pristine, invalid, submitting, config } = this.props
+    const { invite, handleSubmit, fail, pristine, invalid, submitting, config } = this.props
     const hideFakes = this.state && this.state.hideFakes
     const { showInviteInput } = this.state
 
@@ -158,9 +156,25 @@ export default class RegisterForm extends Component {
               <input type="password" name="fakepasswordremembered" ref="fakepass" />
             </div>}
 
-          <Input object={username} label="Username" size="lg" focus autoCapitalize="off" />
-          <Input object={email} label="Email" size="lg" autoCapitalize="off" />
-          <Input object={password} label="Password" size="lg" type="password" />
+          <Field
+            name="username"
+            component={Input}
+            label="Username"
+            size="lg"
+            focus
+            autoCapitalize="off" />
+          <Field
+            name="email"
+            component={Input}
+            label="Email"
+            size="lg"
+            autoCapitalize="off" />
+          <Field
+            name="password"
+            component={Input}
+            label="Password"
+            size="lg"
+            type="password" />
 
           {config.antiFraud &&
           <div>
