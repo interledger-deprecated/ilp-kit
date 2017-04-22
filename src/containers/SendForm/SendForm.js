@@ -1,10 +1,10 @@
-import React, {Component, PropTypes} from 'react'
-import {reduxForm} from 'redux-form'
+import React, { Component, PropTypes } from 'react'
+import { connect } from 'react-redux'
+import { reduxForm, Field } from 'redux-form'
 import { validate, asyncValidate } from './SendValidation'
 import * as sendActions from 'redux/actions/send'
 
-import { successable } from 'decorators'
-import { resetFormOnSuccess } from 'decorators'
+import { successable, resetFormOnSuccess } from 'decorators'
 
 import Alert from 'react-bootstrap/lib/Alert'
 
@@ -17,13 +17,7 @@ const cx = classNames.bind(styles)
 
 import Input from 'components/Input/Input'
 
-@reduxForm({
-  form: 'send',
-  fields: ['destination', 'sourceAmount', 'destinationAmount', 'message', 'repeats', 'interval'],
-  validate,
-  asyncValidate,
-  asyncBlurFields: ['destination'],
-}, state => ({
+@connect(state => ({
   user: state.auth.user,
   destinationInfo: state.send.destinationInfo,
   sourceAmount: state.send.sourceAmount,
@@ -34,9 +28,15 @@ import Input from 'components/Input/Input'
   quoteError: state.send.quoteError,
   quoting: state.send.quoting,
   advancedMode: state.auth.advancedMode,
-  config: state.auth.config,
+  config: state.auth.config
 }),
 {...sendActions, resetData: sendActions.reset})
+@reduxForm({
+  form: 'send',
+  validate,
+  asyncValidate,
+  asyncBlurFields: ['destination']
+})
 @successable()
 @resetFormOnSuccess('send')
 export default class SendForm extends Component {
@@ -58,7 +58,6 @@ export default class SendForm extends Component {
     config: PropTypes.object,
 
     // Form
-    fields: PropTypes.object.isRequired,
     invalid: PropTypes.bool.isRequired,
     pristine: PropTypes.bool.isRequired,
     submitting: PropTypes.bool.isRequired,
@@ -74,7 +73,7 @@ export default class SendForm extends Component {
 
   state = {}
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     this.props.unmount()
   }
 
@@ -141,12 +140,11 @@ export default class SendForm extends Component {
     event.preventDefault()
   }
 
-  render() {
+  render () {
     if (!this.props.user) return null
 
     const { pristine, invalid, handleSubmit, submitting, success,
-      advancedMode, quoting, data, fields: { destination, sourceAmount,
-      destinationAmount, message, repeats, interval }, err, quoteError } = this.props
+      advancedMode, quoting, data, err, quoteError } = this.props
     const { showAdvanced } = this.state
 
     // TODO initial render should show a currency
@@ -169,11 +167,30 @@ export default class SendForm extends Component {
           </Alert>}
 
           <form onSubmit={handleSubmit(this.handleSubmit)}>
-            <DestinationBox destinationField={destination} />
+            <Field
+              name="destination"
+              component={DestinationBox} />
             <div>
-              <Input object={message} label="Message" size="lg" />
+              <Field
+                name="message"
+                component={Input}
+                label="Message"
+                size="lg" />
             </div>
-            <AmountsBox sourceAmountField={sourceAmount} destinationAmountField={destinationAmount} />
+            <div className={cx('amounts')}>
+              <div className={cx('row')}>
+                <Field
+                  name="sourceAmount"
+                  component={AmountsBox}
+                  type="source" />
+                <Field
+                  name="destinationAmount"
+                  component={AmountsBox}
+                  type="destination" />
+              </div>
+
+              {quoteError && quoteError.id && <div className="text-danger">No quote for the specified recipient or amount</div>}
+            </div>
 
             {showAdvanced && advancedMode &&
             <div className={cx('advanced')}>
@@ -183,11 +200,15 @@ export default class SendForm extends Component {
               <div className="row">
                 <div className="col-sm-6 form-group">
                   <label>Repeats</label>
-                  <Input object={repeats} />
+                  <Field
+                    name="repeats"
+                    component={Input} />
                 </div>
                 <div className="col-sm-6 form-group">
                   <label>Interval</label>
-                  <Input object={interval} />
+                  <Field
+                    name="interval"
+                    component={Input} />
                 </div>
               </div>
             </div>}

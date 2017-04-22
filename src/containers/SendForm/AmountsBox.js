@@ -1,11 +1,9 @@
 import React, {Component, PropTypes} from 'react'
 import { connect } from 'react-redux'
+import { Field } from 'redux-form'
 import { amountsChange, requestQuote } from 'redux/actions/send'
 
-import classNames from 'classnames/bind'
-import styles from './AmountsBox.scss'
-const cx = classNames.bind(styles)
-
+import cx from 'classnames'
 import Input from 'components/Input/Input'
 
 @connect(
@@ -16,8 +14,7 @@ import Input from 'components/Input/Input'
     destinationInfo: state.send.destinationInfo,
     config: state.auth.config,
     quoting: state.send.quoting,
-    quote: state.send.quote,
-    quoteError: state.send.quoteError
+    quote: state.send.quote
   }),
   { amountsChange, requestQuote })
 export default class AmountsBox extends Component {
@@ -31,26 +28,25 @@ export default class AmountsBox extends Component {
     amountsChange: PropTypes.func,
     requestQuote: PropTypes.func.isRequired,
     quote: PropTypes.object,
-    quoteError: PropTypes.object,
     quoting: PropTypes.bool,
 
     // Props
-    sourceAmountField: PropTypes.object,
-    destinationAmountField: PropTypes.object,
+    type: PropTypes.oneOf(['source', 'destination']).isRequired
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps (nextProps) {
     // Amounts didn't change, ignore the rest
-    if (this.props.sourceAmount === nextProps.sourceAmount
-      && this.props.destinationAmount === nextProps.destinationAmount) {
-
+    if (
+      this.props.sourceAmount === nextProps.sourceAmount &&
+      this.props.destinationAmount === nextProps.destinationAmount
+    ) {
       if (!nextProps.quoting) return
 
-      if (nextProps.sourceAmountField.value !== nextProps.sourceAmount) {
+      if (this.props.type === 'source' && nextProps.input.value !== nextProps.sourceAmount) {
         this.updateSourceInput(nextProps)
       }
 
-      if (nextProps.destinationAmountField.value !== nextProps.destinationAmount) {
+      if (this.props.type === 'destination' && nextProps.input.value !== nextProps.destinationAmount) {
         this.updateDestinationInput(nextProps)
       }
 
@@ -81,19 +77,19 @@ export default class AmountsBox extends Component {
   }
 
   updateSourceInput = (props = this.props) => {
-    if (!props.sourceAmountField.active) {
-      props.sourceAmountField.onChange(props.sourceAmount || '') // null values don't work with redux-form
+    if (!props.meta.active) {
+      props.input.onChange(props.sourceAmount || '') // null values don't work with redux-form
     }
   }
 
   updateDestinationInput = (props = this.props) => {
-    if (!props.destinationAmountField.active) {
-      props.destinationAmountField.onChange(props.destinationAmount || '') // null values don't work with redux-form
+    if (!props.meta.active) {
+      props.input.onChange(props.destinationAmount || '') // null values don't work with redux-form
     }
   }
 
   handleInputChange = (type, target) => {
-    if (this.props[type + 'AmountField'].invalid) return
+    if (this.props.meta.invalid) return
 
     const value = parseFloat(target.value)
 
@@ -103,54 +99,40 @@ export default class AmountsBox extends Component {
     this.props.amountsChange(sourceValue, destinationValue)
   }
 
-  render() {
-    const { destinationInfo, quoting, config,
-      sourceAmountField, destinationAmountField, quoteError } = this.props
+  render () {
+    const { type, meta, destinationInfo, quoting, config } = this.props
 
-    const isSendingAmountDisabled = !destinationInfo.identifier
-      || destinationInfo.error
-      || (quoting && this.lastQuotingField === 'destination')
-    const isReceivingAmountDisabled = !destinationInfo.identifier
-      || destinationInfo.error
-      || (quoting && this.lastQuotingField === 'source')
+    const isAmountDisabled = !destinationInfo.identifier ||
+      destinationInfo.error ||
+      (quoting && this.lastQuotingField !== type)
 
     const sourceCurrency = config.currencySymbol
     const destinationCurrency = (destinationInfo && destinationInfo.currencySymbol) || config.currencySymbol
 
     return (
-      <div className={cx('AmountsBox')}>
-        <div className={cx('row')}>
-          <div className="col-sm-6 form-group">
-            <label>You Send</label>
-            <div className={cx('input-group',
-              {disabled: isSendingAmountDisabled},
-              {focused: sourceAmountField.active})}>
-              <span className="input-group-addon">{sourceCurrency}</span>
-              <Input object={sourceAmountField} size="lg"
-                     disabled={isSendingAmountDisabled} noErrors debounce
-                     onChange={this.handleInputChange.bind(this, 'source')} />
-            </div>
+      <div className="col-sm-6 form-group">
+        {
+          type === 'source'
+          ? <label>You Send</label>
+          : <label>They Receive</label>
+        }
 
-            {sourceAmountField.dirty && sourceAmountField.error &&
-            <div className="text-danger">{sourceAmountField.error}</div>}
-          </div>
-          <div className="col-sm-6 form-group">
-            <label>They Receive</label>
-            <div className={cx('input-group',
-              {disabled: isReceivingAmountDisabled},
-              {focused: destinationAmountField.active})}>
-              <span className="input-group-addon">{destinationCurrency}</span>
-              <Input object={destinationAmountField} size="lg"
-                     disabled={isReceivingAmountDisabled} noErrors debounce
-                     onChange={this.handleInputChange.bind(this, 'destination')} />
-            </div>
-
-            {destinationAmountField.dirty && destinationAmountField.error &&
-            <div className="text-danger">{destinationAmountField.error}</div>}
-          </div>
+        <div className={cx('input-group',
+          { disabled: isAmountDisabled },
+          { focused: meta.active }
+        )}>
+          <span className="input-group-addon">{ type === 'source' ? sourceCurrency : destinationCurrency }</span>
+          <Input
+            {...this.props}
+            size="lg"
+            disabled={isAmountDisabled}
+            noErrors
+            debounce
+            onChange={this.handleInputChange.bind(this, type)} />
         </div>
 
-        {quoteError && quoteError.id && <div className="text-danger">No quote for the specified recipient or amount</div>}
+        {meta.dirty && meta.error &&
+        <div className="text-danger">{meta.error}</div>}
       </div>
     )
   }
