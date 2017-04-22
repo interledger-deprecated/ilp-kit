@@ -382,15 +382,19 @@ function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, soc
         }
       })
 
+      const quote = yield spsp.quote({
+        user: source.getDataExternal(),
+        destination: user.username + '@' + config.data.getIn(['server', 'public_host']),
+        destinationAmount: 1000
+      })
+
+      quote.memo = 'Free money'
+
       // Send the money
       yield pay.pay({
         user: source.getDataExternal(),
         destination: user.username,
-        quote: {
-          sourceAmount: 1000,
-          destinationAmount: 1000,
-          memo: 'Free money'
-        }
+        quote
       })
 
       this.status = 200
