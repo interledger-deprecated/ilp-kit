@@ -1,3 +1,5 @@
+/* globals webpackIsomorphicTools */
+
 import Express from 'express'
 import React from 'react'
 import ReactDOM from 'react-dom/server'
@@ -119,9 +121,9 @@ app.use((req, res) => {
 
   const store = createStore(history, client)
 
-  function hydrateOnClient() {
+  function hydrateOnClient () {
     res.send('<!doctype html>\n' +
-      ReactDOM.renderToString(<Html assets={webpackIsomorphicTools.assets()} store={store}/>))
+      ReactDOM.renderToString(<Html assets={webpackIsomorphicTools.assets()} store={store} />))
   }
 
   if (__DISABLE_SSR__) {
@@ -139,7 +141,7 @@ app.use((req, res) => {
     } else if (renderProps) {
       loadOnServer({...renderProps, store, helpers: {client}}).then(() => {
         const component = (
-          <Provider store={store} key="provider">
+          <Provider store={store} key='provider'>
             <ReduxAsyncConnect {...renderProps} />
           </Provider>
         )
@@ -149,7 +151,7 @@ app.use((req, res) => {
         global.navigator = {userAgent: req.headers['user-agent']}
 
         res.send('<!doctype html>\n' +
-          ReactDOM.renderToString(<Html assets={webpackIsomorphicTools.assets()} component={component} store={store}/>))
+          ReactDOM.renderToString(<Html assets={webpackIsomorphicTools.assets()} component={component} store={store} />))
       })
     } else {
       res.status(404).send('Not found')

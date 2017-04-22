@@ -133,12 +133,12 @@ export default class ProfileForm extends Component {
         </div>
 
         {success &&
-        <Alert bsStyle="success">
+        <Alert bsStyle='success'>
           Your profile has been successfully updated!
         </Alert>}
 
         {error && error.id &&
-        <Alert bsStyle="danger">
+        <Alert bsStyle='danger'>
           {(() => {
             switch (error.id) {
               case 'EmailTakenError': return 'Email is already taken'
@@ -157,8 +157,8 @@ export default class ProfileForm extends Component {
                 config={this.dropzoneConfig}
                 eventHandlers={this.dropzoneEventHandlers}
                 className={cx('dropzone', 'dropzoneLocal')}>
-                <div className="dz-message">
-                  <i className="fa fa-cloud-upload" />
+                <div className='dz-message'>
+                  <i className='fa fa-cloud-upload' />
                   Upload new picture
                 </div>
               </DropzoneComponent>
@@ -167,40 +167,40 @@ export default class ProfileForm extends Component {
           <div className={cx('col-sm-9')}>
             <form onSubmit={handleSubmit(this.save)}>
               <Field
-                name="email"
+                name='email'
                 component={Input}
-                label="Email"
-                type="email"
-                size="lg"
+                label='Email'
+                type='email'
+                size='lg'
                 focus />
               <Field
-                name="name"
+                name='name'
                 component={Input}
-                label="Name"
-                type="text"
-                size="lg" />
+                label='Name'
+                type='text'
+                size='lg' />
               <Field
-                name="password"
+                name='password'
                 component={Input}
-                label="Current Password"
-                type="password"
-                size="lg" />
+                label='Current Password'
+                type='password'
+                size='lg' />
 
               <label>Change Password</label>
               <Field
-                name="newPassword"
+                name='newPassword'
                 component={Input}
-                label="New Password"
-                type="password"
-                size="lg" />
+                label='New Password'
+                type='password'
+                size='lg' />
               <Field
-                name="verifyNewPassword"
+                name='verifyNewPassword'
                 component={Input}
-                label="Verify New Password"
-                type="password"
-                size="lg" />
+                label='Verify New Password'
+                type='password'
+                size='lg' />
 
-              <button type="submit" className="btn btn-success" disabled={pristine || (invalid && !submitFailed) || submitting}>
+              <button type='submit' className='btn btn-success' disabled={pristine || (invalid && !submitFailed) || submitting}>
                 {submitting ? ' Saving...' : ' Save'}
               </button>
             </form>

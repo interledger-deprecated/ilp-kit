@@ -25,13 +25,13 @@ export default class Onboarding extends Component {
 
   state = {}
 
-  componentWillMount() {
+  componentWillMount () {
     if (!this.props.peersLoaded) {
       this.props.loadPeers()
     }
   }
 
-  render() {
+  render () {
     const { user, peers, peersLoaded } = this.props
 
     if (!user.isAdmin) return null
@@ -39,7 +39,7 @@ export default class Onboarding extends Component {
 
     return (
       <div className={cx('panel', 'panel-default', 'Onboarding')}>
-        <div className="panel-body">
+        <div className='panel-body'>
           <h1>Welcome to ILP Kit</h1>
 
           <ul className={cx('list')}>
@@ -51,7 +51,7 @@ export default class Onboarding extends Component {
             <li>
               <i className={cx('fa', 'fa-times', 'todo')} />
               <h3 className={cx('title')}>
-                <Link to="/peers">Connect with other ledgers</Link>
+                <Link to='/peers'>Connect with other ledgers</Link>
               </h3>
               <div className={cx('description')}>Set up connections with other participants, allocate credit lines and the settlement currency</div>
             </li>

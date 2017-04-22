@@ -1,4 +1,4 @@
-"use strict"
+'use strict'
 
 const assert = require('chai').assert
 
@@ -68,4 +68,4 @@ describe('Errors', () => {
     assert.equal(this.ctx.status, 422)
     assert.equal(this.ctx.body.message, 'test')
   })
-}) 
+})

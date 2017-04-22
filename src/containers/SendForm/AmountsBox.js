@@ -1,6 +1,5 @@
 import React, {Component, PropTypes} from 'react'
 import { connect } from 'react-redux'
-import { Field } from 'redux-form'
 import { amountsChange, requestQuote } from 'redux/actions/send'
 
 import cx from 'classnames'
@@ -19,15 +18,19 @@ import Input from 'components/Input/Input'
   { amountsChange, requestQuote })
 export default class AmountsBox extends Component {
   static propTypes = {
+    // Form
+    // eslint-disable-next-line react/no-unused-prop-types
+    input: PropTypes.object.isRequired,
+    meta: PropTypes.object.isRequired,
+
     // State
-    user: PropTypes.object.isRequired,
     config: PropTypes.object,
-    sourceAmount: PropTypes.number,
-    destinationAmount: PropTypes.number,
+    sourceAmount: PropTypes.string,
+    destinationAmount: PropTypes.string,
     destinationInfo: PropTypes.object,
     amountsChange: PropTypes.func,
+    // eslint-disable-next-line react/no-unused-prop-types
     requestQuote: PropTypes.func.isRequired,
-    quote: PropTypes.object,
     quoting: PropTypes.bool,
 
     // Props
@@ -88,10 +91,11 @@ export default class AmountsBox extends Component {
     }
   }
 
-  handleInputChange = (type, target) => {
+  handleInputChange = type => target => {
     if (this.props.meta.invalid) return
 
-    const value = parseFloat(target.value)
+    // TODO: This breaks for very high precision numbers
+    const value = String(parseFloat(target.value))
 
     const sourceValue = type === 'source' ? value : null
     const destinationValue = type === 'destination' ? value : null
@@ -110,7 +114,7 @@ export default class AmountsBox extends Component {
     const destinationCurrency = (destinationInfo && destinationInfo.currencySymbol) || config.currencySymbol
 
     return (
-      <div className="col-sm-6 form-group">
+      <div className='col-sm-6 form-group'>
         {
           type === 'source'
           ? <label>You Send</label>
@@ -121,18 +125,18 @@ export default class AmountsBox extends Component {
           { disabled: isAmountDisabled },
           { focused: meta.active }
         )}>
-          <span className="input-group-addon">{ type === 'source' ? sourceCurrency : destinationCurrency }</span>
+          <span className='input-group-addon'>{ type === 'source' ? sourceCurrency : destinationCurrency }</span>
           <Input
             {...this.props}
-            size="lg"
+            size='lg'
             disabled={isAmountDisabled}
             noErrors
             debounce
-            onChange={this.handleInputChange.bind(this, type)} />
+            onChange={this.handleInputChange(type)} />
         </div>
 
         {meta.dirty && meta.error &&
-        <div className="text-danger">{meta.error}</div>}
+        <div className='text-danger'>{meta.error}</div>}
       </div>
     )
   }

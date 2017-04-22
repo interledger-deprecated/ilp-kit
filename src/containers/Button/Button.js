@@ -1,10 +1,10 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component, PropTypes} from 'react'
 
-import PayButton from 'components/PayButton/PayButton';
+import PayButton from 'components/PayButton/PayButton'
 
-import classNames from 'classnames/bind';
-import styles from './Button.scss';
-const cx = classNames.bind(styles);
+import classNames from 'classnames/bind'
+import styles from './Button.scss'
+const cx = classNames.bind(styles)
 
 export default class Button extends Component {
   // TODO config is not in the context anymore
@@ -12,30 +12,30 @@ export default class Button extends Component {
     config: PropTypes.object
   };
 
-  render() {
+  render () {
     const config = this.context.config
 
     return (
-      <div className="panel panel-default">
-          <div className="panel-body">
+      <div className='panel panel-default'>
+        <div className='panel-body'>
           <h2>Pay Button</h2>
           <div>
             Pay Button is the best payment flow, on web and mobile.
             Pay Button builds on top of ILP to provide your users with a streamlined,
             payment experience that is constantly improving.
           </div>
-          <div className="row">
-            <div className="col-sm-6">
+          <div className='row'>
+            <div className='col-sm-6'>
               <h3>Demo</h3>
               <p>Try the demo below</p>
               <div>
-                <PayButton destination={config.ledgerUri + '/accounts/bob'} amount="10"
-                  currencyCode="USD" countryCode="US">Make Payment</PayButton>
+                <PayButton destination={config.ledgerUri + '/accounts/bob'} amount='10'
+                  currencyCode='USD' countryCode='US'>Make Payment</PayButton>
               </div>
             </div>
           </div>
-          <div className="row">
-            <div className="col-sm-12">
+          <div className='row'>
+            <div className='col-sm-12'>
               <h3>Integration</h3>
               <p>You can integrate Pay Button using the code below.</p>
               <p>As we release new Pay Button features, we'll automatically roll
@@ -92,6 +92,6 @@ export default class Button extends Component {
           </div>
         </div>
       </div>
-    );
+    )
   }
 }

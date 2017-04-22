@@ -26,7 +26,6 @@ const cx = classNames.bind(styles)
 export default class SettlementMethod extends Component {
   static propTypes = {
     method: PropTypes.object.isRequired,
-    get: PropTypes.func.isRequired,
     update: PropTypes.func.isRequired,
     updateLogo: PropTypes.func.isRequired,
     remove: PropTypes.func.isRequired,
@@ -77,10 +76,10 @@ export default class SettlementMethod extends Component {
   }
 
   renderLogo = method => {
-    if (method.type === 'paypal') return <img src="/paypal.png" />
-    if (method.type === 'bitcoin') return <img src="/bitcoin.png" />
-    if (method.type === 'ripple') return <img src="/ripple.png" />
-    if (method.type === 'etherium') return <img src="/etherium.png" />
+    if (method.type === 'paypal') return <img src='/paypal.png' />
+    if (method.type === 'bitcoin') return <img src='/bitcoin.png' />
+    if (method.type === 'ripple') return <img src='/ripple.png' />
+    if (method.type === 'etherium') return <img src='/etherium.png' />
 
     if (!method.logo) {
       return method.name || 'Unnamed'
@@ -122,7 +121,7 @@ export default class SettlementMethod extends Component {
     )
   }
 
-  render() {
+  render () {
     const { method } = this.props
     const { showEditForm } = this.state
 

@@ -1,10 +1,8 @@
-"use strict"
+'use strict'
 
 const appHelper = require('./helpers/app')
-const assert = require('chai').assert
 
 describe('Users', () => {
-
   beforeEach(function * () {
     this.agent = yield appHelper.create()
 
@@ -45,7 +43,7 @@ describe('Users', () => {
       .post('/users/alice')
       .send({
         username: 'alice',
-        password: 'alice',
+        password: 'alice'
       })
       .expect(422)
   })
@@ -75,7 +73,7 @@ describe('Users', () => {
       .put('/users/alice')
       .send({
         password: 'alice',
-        verifyPassword: 'alice',
+        verifyPassword: 'alice'
       })
       .expect(200)
   })
@@ -85,7 +83,7 @@ describe('Users', () => {
       .put('/users/alice')
       .send({
         password: 'alice',
-        verifyPassword: 'qwertyuiop',
+        verifyPassword: 'qwertyuiop'
       })
       .expect(422)
   })

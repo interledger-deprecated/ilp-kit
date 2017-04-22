@@ -1,4 +1,4 @@
-"use strict"
+'use strict'
 
 module.exports = SettlementMethodFactory
 
@@ -11,13 +11,13 @@ const Sequelize = require('sequelize')
 const Config = require('../lib/config')
 
 SettlementMethodFactory.constitute = [Database, Validator, Config]
-function SettlementMethodFactory(sequelize, validator, config) {
+function SettlementMethodFactory (sequelize, validator, config) {
   class SettlementMethod extends Model {
-    static convertFromExternal(data) {
+    static convertFromExternal (data) {
       return data
     }
 
-    static convertToExternal(data) {
+    static convertToExternal (data) {
       delete data.password
       delete data.created_at
       delete data.updated_at
@@ -25,7 +25,7 @@ function SettlementMethodFactory(sequelize, validator, config) {
       return data
     }
 
-    static convertFromPersistent(data) {
+    static convertFromPersistent (data) {
       data = _.omit(data, _.isNull)
       data.logoUrl = data.logo && `/api/${data.logo}`
 
@@ -36,7 +36,7 @@ function SettlementMethodFactory(sequelize, validator, config) {
       return data
     }
 
-    static convertToPersistent(data) {
+    static convertToPersistent (data) {
       return data
     }
   }

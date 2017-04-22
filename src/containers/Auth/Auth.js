@@ -25,14 +25,10 @@ const cx = classNames.bind(styles)
   {...authActions, pushState: routeActions.push})
 export default class Home extends Component {
   static propTypes = {
-    user: PropTypes.object,
     authFail: PropTypes.object,
     login: PropTypes.func,
     register: PropTypes.func,
     forgot: PropTypes.func,
-    reload: PropTypes.func,
-    changeTab: PropTypes.func,
-    route: PropTypes.object,
     config: PropTypes.object,
     pushState: PropTypes.func.isRequired,
 
@@ -44,15 +40,15 @@ export default class Home extends Component {
     changePassword: PropTypes.func
   }
 
-  componentWillMount() {
+  componentWillMount () {
     this.setCurrentView()
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps (nextProps) {
     this.setCurrentView(nextProps)
   }
 
-  setCurrentView(props) {
+  setCurrentView (props) {
     const prps = props || this.props
     const fullPath = prps.route.path
     let currentView = fullPath && fullPath.match(/[a-zA-Z-]*/i)[0]
@@ -84,7 +80,7 @@ export default class Home extends Component {
           </div>
           <div className={cx('window')}>
             {verified &&
-            <Alert bsStyle="success">
+            <Alert bsStyle='success'>
               Your email has been verified!
             </Alert>}
 
@@ -99,25 +95,25 @@ export default class Home extends Component {
           </div>
           {currentView === 'login' && config.githubAuth &&
           <div className={cx('oauthBox', 'clearfix')}>
-            <div className="pull-right">
-              <a href="/api/auth/github" className="btn btn-default">Github</a>
+            <div className='pull-right'>
+              <a href='/api/auth/github' className='btn btn-default'>Github</a>
             </div>
-            <div className="pull-right">Or login using</div>
+            <div className='pull-right'>Or login using</div>
           </div>}
           {currentView === 'login' &&
           <div className={cx('switchBox')}>
             <span className={cx('label')}>Don't have an account?</span>
-            <Link to="/register" data-toggle="tab" role="tab" aria-expanded="true" className={cx('btnSwitch', 'btn', 'btn-default')}>Sign Up</Link>
+            <Link to='/register' data-toggle='tab' role='tab' aria-expanded='true' className={cx('btnSwitch', 'btn', 'btn-default')}>Sign Up</Link>
           </div>}
           {currentView === 'register' &&
           <div className={cx('switchBox')}>
             <span className={cx('label')}>Already have an account?</span>
-            <Link to="/login" data-toggle="tab" role="tab" aria-expanded="true" className={cx('btnSwitch', 'btn', 'btn-default')}>Login</Link>
+            <Link to='/login' data-toggle='tab' role='tab' aria-expanded='true' className={cx('btnSwitch', 'btn', 'btn-default')}>Login</Link>
           </div>}
         </div>
 
         {(currentView === 'forgot-password' || currentView === 'change-password') &&
-        <a href="" onClick={this.goBack} className={cx('closeButton')}>✕</a>}
+        <a href='' onClick={this.goBack} className={cx('closeButton')}>✕</a>}
       </div>
     )
   }

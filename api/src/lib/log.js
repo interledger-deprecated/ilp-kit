@@ -1,4 +1,4 @@
-"use strict"
+'use strict'
 
 const hub = require('mag-hub')
 const mag = require('mag')

@@ -1,4 +1,4 @@
-"use strict"
+'use strict'
 
 const request = require('supertest-as-promised')
 const constitute = require('constitute')
@@ -18,7 +18,6 @@ const sleep = function (delay) {
 }
 
 exports.create = function * () {
-
   const container = new constitute.Container()
   container.bindClass(Ledger, LedgerMock)
   const app = container.constitute(App)

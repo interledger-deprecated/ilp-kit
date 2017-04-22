@@ -2,7 +2,6 @@ import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import { routeActions } from 'react-router-redux'
-import { HotKeys } from 'react-hotkeys'
 
 import { AnimateEnterLeave } from 'napo'
 
@@ -19,36 +18,30 @@ const cx = classNames.bind(styles)
 
 @connect(state => ({
   list: state.settlementMethod.list,
-  settlementState: state.settlementMethod,
-  loading: state.settlementMethod.loading,
   loaded: state.settlementMethod.loaded
 }), { load, add, pushState: routeActions.push })
 export default class Settlement extends Component {
   static propTypes = {
-    children: PropTypes.object,
+    add: PropTypes.func,
     load: PropTypes.func.isRequired,
-    params: PropTypes.object,
-    pushState: PropTypes.func,
     list: PropTypes.array,
-    settlementState: PropTypes.object,
-    loading: PropTypes.bool,
     loaded: PropTypes.bool
   }
 
-  componentWillMount() {
+  componentWillMount () {
     if (!this.props.loaded) {
       this.props.load()
     }
   }
 
-  handleAdd = (type, e) => {
+  handleAdd = type => e => {
     e && e.preventDefault()
 
     this.props.add({ type })
   }
 
-  render() {
-    const { children, list, loading, settlementState } = this.props
+  render () {
+    const { list } = this.props
 
     return (
       <div className={cx('Settlement')}>
@@ -60,15 +53,15 @@ export default class Settlement extends Component {
             <h3>Settlement Methods</h3>
           </div>
           <div className={cx('col-sm-3', 'addButtonBox')}>
-            <Dropdown id="settlementAddButton" pullRight>
-              <Dropdown.Toggle bsStyle="success">
+            <Dropdown id='settlementAddButton' pullRight>
+              <Dropdown.Toggle bsStyle='success'>
                 Add a Settlement Method
               </Dropdown.Toggle>
               <Dropdown.Menu className={cx('options')}>
-                <MenuItem onClick={this.handleAdd.bind(this, 'paypal')}>
-                  <img src="/paypal.png" className={cx('logo')}/>
+                <MenuItem onClick={this.handleAdd('paypal')}>
+                  <img src='/paypal.png' className={cx('logo')} />
                 </MenuItem>
-                <MenuItem onClick={this.handleAdd.bind(this, 'custom')}>
+                <MenuItem onClick={this.handleAdd('custom')}>
                   Custom
                 </MenuItem>
               </Dropdown.Menu>
@@ -86,7 +79,7 @@ export default class Settlement extends Component {
             )}
           </AnimateEnterLeave>}
 
-          {/*<div className={cx('col-sm-8')}>
+          {/* <div className={cx('col-sm-8')}>
             {list && list.length > 0 && children}
 
             {!loading && list && list.length < 1 &&
@@ -95,7 +88,7 @@ export default class Settlement extends Component {
               <h1>No Settlement Methods</h1>
               <div>Use the button on the left to add your first settlement method</div>
             </div>}
-          </div>*/}
+          </div> */}
         </div>
       </div>
     )

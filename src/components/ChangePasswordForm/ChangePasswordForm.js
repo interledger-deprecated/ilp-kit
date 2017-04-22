@@ -55,12 +55,12 @@ export default class ChangePasswordForm extends Component {
     return (
       <form onSubmit={handleSubmit(this.handleSubmit)}>
         {success &&
-        <Alert bsStyle="success">
+        <Alert bsStyle='success'>
           Your password has been updated successfully
         </Alert>}
 
         {error && error.id &&
-        <Alert bsStyle="danger">
+        <Alert bsStyle='danger'>
           {(() => {
             switch (error.id) {
               case 'NotFoundError': return 'Couldn\'t find the user with provided username'
@@ -75,21 +75,21 @@ export default class ChangePasswordForm extends Component {
         <div>
           <div>
             <Field
-              name="password"
+              name='password'
               component={Input}
-              type="password"
-              label="Password"
-              size="lg"
+              type='password'
+              label='Password'
+              size='lg'
               focus />
             <Field
-              name="repeatPassword"
+              name='repeatPassword'
               component={Input}
-              type="password"
-              label="Repeat Password"
-              size="lg" />
+              type='password'
+              label='Repeat Password'
+              size='lg' />
           </div>
-          <div className="row">
-            <button type="submit" className="btn btn-success" disabled={pristine || (invalid && !submitFailed) || submitting}>
+          <div className='row'>
+            <button type='submit' className='btn btn-success' disabled={pristine || (invalid && !submitFailed) || submitting}>
               {submitting ? ' Submitting...' : ' Submit'}
             </button>
           </div>

@@ -9,28 +9,26 @@ const PaymentFactory = require('../models/payment')
 const InsufficientFundsError = require('../errors/ledger-insufficient-funds-error')
 
 module.exports = class Pay {
-  static constitute () { return [Socket, SPSP, PaymentFactory, Utils, Activity] }
-  constructor (socket, spsp, Payment, utils, activity) {
-    this.socket = socket
-    this.spsp = spsp
-    this.utils = utils
-    this.activity = activity
-    this.Payment = Payment
+  constructor (deps) {
+    this.socket = deps(Socket)
+    this.spsp = deps(SPSP)
+    this.utils = deps(Utils)
+    this.activity = deps(Activity)
+    this.Payment = deps(PaymentFactory)
   }
 
   * pay (opts) {
-    let transfer
     /**
      * Ledger payment
      */
     try {
-      transfer = yield this.spsp.pay(
+      yield this.spsp.pay(
         opts.user.username,
         Object.assign({}, opts.quote, { headers: {
           'Source-Identifier': opts.user.identifier,
           'Source-Name': opts.user.name,
           'Source-Image-Url': this.utils.userToImageUrl(opts.user),
-          'Message': opts.message || '',
+          'Message': opts.message || ''
         }}))
     } catch (e) {
       if (e.response && e.response.body && e.response.body.id && e.response.body.id === 'InsufficientFundsError') {

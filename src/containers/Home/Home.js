@@ -76,7 +76,7 @@ export default class Home extends Component {
     if (settlementMethod.type === 'custom') {
       return (
         <MenuItem href={`${settlementMethod.uri}?destination=${destination}`} key={settlementMethod.name}>
-          {settlementMethod.logo && <img src={settlementMethod.logo} className={cx('logo')}/>}
+          {settlementMethod.logo && <img src={settlementMethod.logo} className={cx('logo')} />}
           {!settlementMethod.logo && settlementMethod.name}
         </MenuItem>
       )
@@ -85,26 +85,26 @@ export default class Home extends Component {
     return (
       <LinkContainer to={`/settle/${settlementMethod.type}/${destination}`} key={settlementMethod.name}>
         <MenuItem>
-          {settlementMethod.logo && <img src={settlementMethod.logo} className={cx('logo')}/>}
+          {settlementMethod.logo && <img src={settlementMethod.logo} className={cx('logo')} />}
           {!settlementMethod.logo && settlementMethod.name}
         </MenuItem>
       </LinkContainer>
     )
   }
 
-  render() {
+  render () {
     const { user, config } = this.props
     const { showStats, reloading } = this.state
 
-    const showDepositWithdraw = !config.reload
-      && config.settlementMethods
-      && config.settlementMethods.length > 0
-      && !user.isAdmin
+    const showDepositWithdraw = !config.reload &&
+      config.settlementMethods &&
+      config.settlementMethods.length > 0 &&
+      !user.isAdmin
 
     // For some reason dynamic routers have problems with that state
     if (!user) return null
     return (
-      <div className="row">
+      <div className='row'>
         <div className={cx('col-sm-8', 'activityBox')}>
           {/* Onboarding */}
           <Onboarding />
@@ -130,7 +130,7 @@ export default class Home extends Component {
           {!showStats && <Activity />}
           {showStats && <Stats />}
         </div>
-        <div className="col-sm-4">
+        <div className='col-sm-4'>
           {/* Balance */}
           <div className={cx('balanceContainer')}>
             <h4 className={cx('balanceDescription')}>Your Balance</h4>
@@ -141,8 +141,8 @@ export default class Home extends Component {
             {showDepositWithdraw &&
               <div className={cx('row', 'row-sm')}>
                 <div className={cx('settlementButtonBox', 'col-xs-6')}>
-                  <Dropdown id="settlementButton" pullRight>
-                    <Dropdown.Toggle bsStyle="default" bsSize="large" block>
+                  <Dropdown id='settlementButton' pullRight>
+                    <Dropdown.Toggle bsStyle='default' bsSize='large' block>
                       Deposit
                     </Dropdown.Toggle>
                     <Dropdown.Menu className={cx('options')}>
@@ -151,16 +151,16 @@ export default class Home extends Component {
                   </Dropdown>
                 </div>
                 <div className={cx('col-xs-6')}>
-                  <Link to="withdraw" className={cx('btn', 'btn-default', 'btn-lg', 'btn-block')}>
+                  <Link to='withdraw' className={cx('btn', 'btn-default', 'btn-lg', 'btn-block')}>
                     Withdraw
                   </Link>
                 </div>
               </div>}
             {config.reload &&
             <div>
-              <a className="btn btn-success btn-lg"
-                 onClick={!user.isAdmin && this.reload} disabled={user.isAdmin}
-                 data-tip={user.isAdmin && "You have enough, you're the admin"}>
+              <a className='btn btn-success btn-lg'
+                onClick={!user.isAdmin && this.reload} disabled={user.isAdmin}
+                data-tip={user.isAdmin && 'You have enough, you\'re the admin'}>
                 {!reloading && 'Get More'}
                 {reloading && 'Getting...'}
               </a>
@@ -169,11 +169,11 @@ export default class Home extends Component {
           </div>
 
           {/* Send Form */}
-          <div className="panel panel-default">
-            <div className="panel-heading">
-              <div className="panel-title">Send Money</div>
+          <div className='panel panel-default'>
+            <div className='panel-heading'>
+              <div className='panel-title'>Send Money</div>
             </div>
-            <div className="panel-body">
+            <div className='panel-body'>
               <SendForm />
             </div>
           </div>
@@ -182,6 +182,5 @@ export default class Home extends Component {
         <ReactTooltip />
       </div>
     )
-
   }
 }

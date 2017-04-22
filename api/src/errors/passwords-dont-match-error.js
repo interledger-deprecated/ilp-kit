@@ -3,10 +3,6 @@
 const BaseError = require('five-bells-shared/errors/base-error')
 
 class PasswordsDontMatchError extends BaseError {
-  constructor (message) {
-    super(message)
-  }
-
   * handler (ctx, log) {
     log.warn('Passwords don\'t match: ' + this.message)
     ctx.status = 422

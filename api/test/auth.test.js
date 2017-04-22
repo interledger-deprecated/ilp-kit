@@ -1,10 +1,9 @@
-"use strict"
+'use strict'
 
 const appHelper = require('./helpers/app')
 const exampleApiData = require('./data/api')
 
 describe('Auth', () => {
-
   beforeEach(function * () {
     this.agent = yield appHelper.create()
 
@@ -40,10 +39,10 @@ describe('Auth', () => {
       // auth load gets currently logged in user
       yield this.agent
         .get('/auth/load')
-        .send() 
+        .send()
         .expect({
           id: 'NotFoundError',
-          message: 'No active user session' 
+          message: 'No active user session'
         })
     })
 
@@ -57,7 +56,7 @@ describe('Auth', () => {
         })
         .expect({
           id: 'NotFoundError',
-          message: 'Wrong username/email' 
+          message: 'Wrong username/email'
         })
     })
 
@@ -75,7 +74,7 @@ describe('Auth', () => {
         .post('/auth/forgot-password')
         .send({
           resource: 'alice'
-        }) 
+        })
         .expect(200)
         .expect({})
     })
@@ -120,7 +119,7 @@ describe('Auth', () => {
           // missing 'code' field
           username: 'alice',
           password: 'alice1',
-          repeatPassword: 'alice1',
+          repeatPassword: 'alice1'
         })
         .expect({
           id: 'InvalidBodyError',
@@ -193,12 +192,12 @@ describe('Auth', () => {
         })
 
       // send the new profile picture
-      const response = yield this.agent
+      yield this.agent
         .post('/auth/profilepic')
         .send({
           files: {
             file: {
-              path: 'a.png'  
+              path: 'a.png'
             }
           }
         })

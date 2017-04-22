@@ -2,7 +2,7 @@ const Sequelize = require('sequelize')
 
 module.exports = {
   up: (sequelize) => {
-    //create the new currencyScale column; previously, currencyScale was always zero
+    // create the new currencyScale column; previously, currencyScale was always zero
     return sequelize.queryInterface.addColumn('Peers', 'currencyScale', {
       type: Sequelize.INTEGER,
       defaultValue: 9
@@ -25,7 +25,7 @@ module.exports = {
       // now change limit back from integer to float, using <currencyScale>
       return sequelize.query('UPDATE "Peers" SET "limit" = "limit" / POWER(10, "currencyScale");')
     }).then(() => {
-      //now we can safely remove the currencyScale column; previously, currencyScale was always zero
+      // now we can safely remove the currencyScale column; previously, currencyScale was always zero
       return sequelize.queryInterface.removeColumn('Peers', 'currencyScale')
     }).then(() => {
       // rename currencyCode back to currency

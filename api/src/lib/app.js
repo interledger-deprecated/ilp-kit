@@ -1,6 +1,7 @@
-"use strict"
+'use strict'
 
 const fs = require('fs')
+const path = require('path')
 const co = require('co')
 const Koa = require('koa.io')
 const body = require('koa-better-body')
@@ -37,11 +38,11 @@ module.exports = class App {
     this.log = log('app')
     this.connector = connector
 
-    validator.loadSchemasFromDirectory(__dirname + '/../../schemas')
+    validator.loadSchemasFromDirectory(path.resolve(__dirname, '../../schemas'))
 
     const app = this.app = new Koa()
 
-    const uploadDir = __dirname + '/../../../uploads'
+    const uploadDir = path.resolve(__dirname, '../../../uploads')
 
     // Create uploads folder
     try {
@@ -56,7 +57,7 @@ module.exports = class App {
       strict: false
     }))
 
-    app.use(function *(next) {
+    app.use(function * (next) {
       if (this.request.method === 'POST' || this.request.method === 'PUT') {
         // the parsed body will store in this.request.body
         // if nothing was parsed, body will be an empty object {}
@@ -76,7 +77,7 @@ module.exports = class App {
       maxAge: 2592000000
     }, app))
 
-    app.use(require('koa-static')(__dirname + '/../../../uploads'))
+    app.use(require('koa-static')(path.resolve(__dirname, '../../../uploads')))
 
     socket.attach(app)
     auth.attach(app)
@@ -85,13 +86,13 @@ module.exports = class App {
     router.attach(app)
   }
 
-  start() {
+  start () {
     co(this._start.bind(this)).catch(err => {
       this.log.critical(err)
     })
   }
 
-  * _start() {
+  * _start () {
     if (this.db.options.dialect === 'sqlite') {
       yield this.db.sync()
     } else {
@@ -120,7 +121,7 @@ module.exports = class App {
     }
   }
 
-  listen() {
+  listen () {
     this.app.listen(this.config.data.getIn(['server', 'port']))
     this.log.info('wallet listening on ' + this.config.data.getIn(['server', 'bind_ip']) +
       ':' + this.config.data.getIn(['server', 'port']))

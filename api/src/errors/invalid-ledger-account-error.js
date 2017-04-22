@@ -3,10 +3,6 @@
 const BaseError = require('five-bells-shared/errors/base-error')
 
 class InvalidLedgerAccountError extends BaseError {
-  constructor (message) {
-    super(message)
-  }
-
   * handler (ctx, log) {
     log.warn('Invalid ledger account: ' + this.message)
     ctx.status = 422

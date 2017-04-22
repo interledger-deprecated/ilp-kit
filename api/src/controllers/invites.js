@@ -10,9 +10,9 @@ const InviteFactory = require('../models/invite')
 const NotFoundError = require('../errors/not-found-error')
 
 InvitesControllerFactory.constitute = [Auth, Config, InviteFactory]
-function InvitesControllerFactory(auth, config, Invite) {
+function InvitesControllerFactory (auth, config, Invite) {
   return class InvitesController {
-    static init(router) {
+    static init (router) {
       router.get('/invites', auth.checkAuth, this.checkAdmin, this.getAll)
       router.post('/invites', auth.checkAuth, this.checkAdmin, this.postResource)
       router.put('/invites/:code', auth.checkAuth, this.checkAdmin, this.putResource)
@@ -23,7 +23,7 @@ function InvitesControllerFactory(auth, config, Invite) {
     }
 
     // TODO move to auth
-    static * checkAdmin(next) {
+    static * checkAdmin (next) {
       if (this.req.user.username === config.data.getIn(['ledger', 'admin', 'user'])) {
         return yield next
       }
@@ -32,7 +32,7 @@ function InvitesControllerFactory(auth, config, Invite) {
       this.status = 404
     }
 
-    static * getAll() {
+    static * getAll () {
       // TODO list could get too big
       this.body = yield Invite.findAll({
         include: [{ all: true }],
@@ -40,13 +40,16 @@ function InvitesControllerFactory(auth, config, Invite) {
       })
     }
 
-    static * getResource() {
+    static * getResource () {
       const code = this.params.code
 
       const invite = yield Invite.findOne({ where: {code} })
 
       // TODO throw exception
-      if (!invite) return this.status = 404
+      if (!invite) {
+        this.status = 404
+        return
+      }
 
       this.body = {
         code: invite.code,
@@ -55,7 +58,7 @@ function InvitesControllerFactory(auth, config, Invite) {
       }
     }
 
-    static * postResource() {
+    static * postResource () {
       const code = new Invite()
       code.amount = this.body.amount
       code.code = uuid()
@@ -65,11 +68,11 @@ function InvitesControllerFactory(auth, config, Invite) {
       this.body = code
     }
 
-    static * putResource() {
+    static * putResource () {
       this.status = 200
     }
 
-    static * deleteResource() {
+    static * deleteResource () {
       const code = yield Invite.findOne({where: {
         code: this.params.code
       }})

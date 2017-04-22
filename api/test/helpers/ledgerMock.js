@@ -1,13 +1,13 @@
-"use strict"
+'use strict'
 
 const exampleLedgerData = require('../data/ledger')
 
 module.exports = class LedgerMock {
-  * createAccount(user) {
+  * createAccount (user) {
     return exampleLedgerData.accounts[user.username]
   }
 
-  * updateAccount(user) {
+  * updateAccount (user) {
     return Object.assign(exampleLedgerData.accounts[user.username], user)
   }
 
