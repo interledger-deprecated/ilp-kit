@@ -1,4 +1,4 @@
-"use strict"
+'use strict'
 
 module.exports = MiscControllerFactory
 
@@ -83,9 +83,13 @@ function MiscControllerFactory (Auth, log, config, ledger, utils, connector) {
       const ledgerInfo = yield ledger.getInfo()
 
       const packageVersion = require('../../../package.json').version
-      const gitCommit = yield new Promise(resolve => {
+      const gitCommit = yield new Promise((resolve, reject) => {
         exec('git rev-parse --short HEAD', { cwd: __dirname }, (err, stdout) => {
-          resolve(stdout.split('\n').join(''))
+          if (err) {
+            reject(err)
+          } else {
+            resolve(stdout.split('\n').join(''))
+          }
         })
       })
 

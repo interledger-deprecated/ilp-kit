@@ -2,7 +2,7 @@
 import rga from 'react-ga'
 
 export default class Tracker {
-  init(config) {
+  init (config) {
     // Google analytics
     if (config.ga) {
       rga.initialize(config.ga)
@@ -21,11 +21,11 @@ export default class Tracker {
     }
   }
 
-  pageview(location) {
+  pageview (location) {
     return this.rga && this.rga.pageview(location)
   }
 
-  track(name, props) {
+  track (name, props) {
     if (this.rga) {
       this.rga.event({
         category: 'General',
@@ -38,7 +38,7 @@ export default class Tracker {
     }
   }
 
-  identify(name) {
+  identify (name) {
     if (this.mixpanel) {
       mixpanel.identify(name)
       mixpanel.people.set({
@@ -48,7 +48,7 @@ export default class Tracker {
     }
   }
 
-  clearIdentity() {
+  clearIdentity () {
     if (this.mixpanel && mixpanel.cookie && mixpanel.cookie.clear) {
       mixpanel.cookie.clear()
     }

@@ -30,19 +30,11 @@ export default class InviteCreateForm extends Component {
 
     // Form
     invalid: PropTypes.bool.isRequired,
-    pristine: PropTypes.bool.isRequired,
     submitting: PropTypes.bool.isRequired,
     handleSubmit: PropTypes.func.isRequired,
-    values: PropTypes.object,
-
-    resetData: PropTypes.func,
 
     // Successable
-    permSuccess: PropTypes.func,
     tempSuccess: PropTypes.func,
-    success: PropTypes.bool,
-    permFail: PropTypes.func,
-    tempFail: PropTypes.func,
     fail: PropTypes.any,
     reset: PropTypes.func
   }
@@ -55,29 +47,29 @@ export default class InviteCreateForm extends Component {
   }
 
   render () {
-    const { invalid, handleSubmit, submitting, success, fail } = this.props
+    const { invalid, handleSubmit, submitting, fail } = this.props
 
     return (
       <div>
         {fail && fail.id &&
-        <Alert bsStyle="danger">
+        <Alert bsStyle='danger'>
           Something went wrong
         </Alert>}
 
         <form onSubmit={handleSubmit(this.handleSubmit)}>
-          <div className="form-group">
-            <div className="row">
+          <div className='form-group'>
+            <div className='row'>
               <div className={cx('col-sm-offset-7', 'col-sm-3')}>
                 <Field
-                  name="amount"
+                  name='amount'
                   component={Input}
-                  label="Amount"
-                  size="lg"
+                  label='Amount'
+                  size='lg'
                   focus />
               </div>
               <div className={cx('col-sm-2')}>
-                <button type="submit" className={cx('btn', 'btn-lg', 'btn-success', 'btn-block', 'btn-submit')}
-                        disabled={invalid || submitting}>
+                <button type='submit' className={cx('btn', 'btn-lg', 'btn-success', 'btn-block', 'btn-submit')}
+                  disabled={invalid || submitting}>
                   {submitting ? 'Generating...' : 'Generate'}
                 </button>
               </div>

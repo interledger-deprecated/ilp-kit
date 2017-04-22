@@ -45,6 +45,7 @@ export const asyncValidate = (values, dispatch) => {
       // promise should resolve without a value to be considered valid
     })
     .catch(() => {
-      throw {destination: 'Account not found'}
+      /* eslint no-throw-literal: "off" */
+      throw { destination: 'Account not found' }
     })
 }

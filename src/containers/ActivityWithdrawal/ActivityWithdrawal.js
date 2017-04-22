@@ -18,7 +18,6 @@ const cx = classNames.bind(styles)
 export default class ActivityWithdrawal extends Component {
   static propTypes = {
     activity: PropTypes.object.isRequired,
-    user: PropTypes.object.isRequired,
     config: PropTypes.object,
     advancedMode: PropTypes.bool
   }
@@ -27,11 +26,11 @@ export default class ActivityWithdrawal extends Component {
     config: {}
   }
 
-  componentWillMount() {
+  componentWillMount () {
     this.processActivity()
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps (nextProps) {
     if (this.props.activity === nextProps.activity) return
 
     this.processActivity(nextProps)
@@ -69,7 +68,7 @@ export default class ActivityWithdrawal extends Component {
     }
   }
 
-  render() {
+  render () {
     const { config } = this.props
     const { withdrawal } = this.state
     const advancedMode = this.props.advancedMode
@@ -77,8 +76,8 @@ export default class ActivityWithdrawal extends Component {
     // TODO payments grouping / message
     return (
       <div className={cx('ActivityWithdrawal')}>
-        <div className="row">
-          <div className="col-xs-8">
+        <div className='row'>
+          <div className='col-xs-8'>
             <i className={cx('fa', 'fa-minus', 'icon')} />
             <div className={cx('description')}>
               {/* TODO:UX include the withdrawal method */}
@@ -89,7 +88,7 @@ export default class ActivityWithdrawal extends Component {
               </div>
             </div>
           </div>
-          <div className="col-xs-4">
+          <div className='col-xs-4'>
             <div className={cx('amount')}>
               <Amount amount={withdrawal.amount} currencySymbol={config.currencySymbol} />
             </div>

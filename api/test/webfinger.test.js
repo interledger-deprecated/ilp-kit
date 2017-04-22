@@ -1,4 +1,4 @@
-"use strict"
+'use strict'
 
 const appHelper = require('./helpers/app')
 const webfingerMock = require('./data/webfinger')
@@ -19,7 +19,7 @@ describe('Webfinger', () => {
       yield this.agent
         .get('/webfinger')
         .query({resource: 'acct:alice@localhost'})
-        .expect(webfingerMock);
+        .expect(webfingerMock)
     })
   })
 })

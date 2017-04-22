@@ -9,7 +9,7 @@ const map = {
 }
 
 @connect(null, { advancedModeToggle })
-export default function hotkeys() {
+export default function hotkeys () {
   return (DecoratedComponent) => {
     return class extends Component {
       static propTypes = {
@@ -34,10 +34,10 @@ export default function hotkeys() {
         advancedMode: this.props.advancedModeToggle
       }
 
-      render() {
+      render () {
         return (
           <HotKeys keyMap={map} handlers={this.handlers} ref={this.overrideMousetrap}
-                   focused={true} id="app">
+            focused id='app'>
             <DecoratedComponent {...this.props} />
           </HotKeys>
         )

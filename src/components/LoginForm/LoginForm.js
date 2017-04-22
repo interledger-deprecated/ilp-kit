@@ -9,9 +9,9 @@ import { successable } from 'decorators'
 
 import Input from 'components/Input/Input'
 
-import classNames from 'classnames/bind';
-import styles from './LoginForm.scss';
-const cx = classNames.bind(styles);
+import classNames from 'classnames/bind'
+import styles from './LoginForm.scss'
+const cx = classNames.bind(styles)
 
 @reduxForm({
   form: 'login',
@@ -28,7 +28,6 @@ export default class LoginForm extends Component {
 
     // Successable
     permSuccess: PropTypes.func,
-    success: PropTypes.bool,
     permFail: PropTypes.func,
     fail: PropTypes.any
   }
@@ -39,41 +38,41 @@ export default class LoginForm extends Component {
       .catch(this.props.permFail)
   }
 
-  render() {
+  render () {
     const { handleSubmit, fail, pristine, invalid, submitting } = this.props
 
     return (
       <form onSubmit={handleSubmit(this.login)}>
         {fail && fail.id === 'UnauthorizedError' &&
-        <Alert bsStyle="danger">
+        <Alert bsStyle='danger'>
           Invalid username/password
         </Alert>}
 
         <div>
           {/* TODO:UX autofill the username after email verification */}
           <Field
-            name="username"
-            label="Username or Email"
-            size="lg"
+            name='username'
+            label='Username or Email'
+            size='lg'
             focus
-            autoCapitalize="off"
+            autoCapitalize='off'
             component={Input}
-            type="text"/>
+            type='text' />
           <Field
-            name="password"
-            label="Password"
-            size="lg"
+            name='password'
+            label='Password'
+            size='lg'
             component={Input}
-            type="password"/>
+            type='password' />
         </div>
-        <div className="row">
-          <div className="col-sm-4">
-            <button type="submit" className="btn btn-success btn-lg" disabled={pristine || invalid || submitting}>
+        <div className='row'>
+          <div className='col-sm-4'>
+            <button type='submit' className='btn btn-success btn-lg' disabled={pristine || invalid || submitting}>
               {submitting ? ' Logging In...' : ' Login'}
             </button>
           </div>
           <div className={cx('col-sm-8', 'text-right', 'forgotPasswordLinkContainer')}>
-            <Link to="/forgot-password">Forgot your password?</Link>
+            <Link to='/forgot-password'>Forgot your password?</Link>
           </div>
         </div>
       </form>

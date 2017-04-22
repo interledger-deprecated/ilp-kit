@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
@@ -15,9 +15,7 @@ export default class SettlementEtherium extends Component {
   static propTypes = {
   }
 
-  render() {
-    const { } = this.props
-
+  render () {
     return (
       <div className={cx('SettlementEtherium')}>
         <Helmet title={'Etherium - Settlement'} />

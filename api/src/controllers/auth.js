@@ -83,7 +83,7 @@ function AuthControllerFactory (User, log, ledger, mailer, auth) {
       router.post('/auth/profilepic',
         body({
           multipart: true,
-          uploadDir: __dirname + '/../../../uploads'
+          uploadDir: path.resolve(__dirname, '../../../uploads')
         }),
         auth.checkAuth,
         this.changeProfilePicture)
@@ -167,7 +167,7 @@ function AuthControllerFactory (User, log, ledger, mailer, auth) {
     }
 
     static * changePassword () {
-      const dbUser = yield User.findOne({ where: { username: this.body.username } } )
+      const dbUser = yield User.findOne({ where: { username: this.body.username } })
 
       if (!dbUser) throw new NotFoundError('Wrong username')
 

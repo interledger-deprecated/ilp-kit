@@ -46,12 +46,12 @@ export default class ForgotPasswordForm extends Component {
     return (
       <form onSubmit={handleSubmit(this.handleSubmit)}>
         {success &&
-        <Alert bsStyle="success">
+        <Alert bsStyle='success'>
           We've sent an email to you. Please follow the instructions in that email to change your password
         </Alert>}
 
         {error && error.id &&
-        <Alert bsStyle="danger">
+        <Alert bsStyle='danger'>
           {(() => {
             switch (error.id) {
               case 'NotFoundError': return 'Couldn\'t find the user with provided username or email'
@@ -64,15 +64,15 @@ export default class ForgotPasswordForm extends Component {
         <div>
           <div>
             <Field
-              name="resource"
+              name='resource'
               component={Input}
-              label="Username or Email"
-              size="lg"
+              label='Username or Email'
+              size='lg'
               focus
-              autoCapitalize="off" />
+              autoCapitalize='off' />
           </div>
-          <div className="row">
-            <button type="submit" className="btn btn-success btn-lg" disabled={pristine || (invalid && !submitFailed) || submitting}>
+          <div className='row'>
+            <button type='submit' className='btn btn-success btn-lg' disabled={pristine || (invalid && !submitFailed) || submitting}>
               {submitting ? ' Submitting...' : ' Submit'}
             </button>
           </div>

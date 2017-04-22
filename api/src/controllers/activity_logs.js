@@ -2,7 +2,6 @@
 
 module.exports = ActivityLogsControllerFactory
 
-const _ = require('lodash')
 const Auth = require('../lib/auth')
 const Log = require('../lib/log')
 const Utils = require('../lib/utils')

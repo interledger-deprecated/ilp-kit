@@ -2,8 +2,6 @@
 
 module.exports = PaymentsControllerFactory
 
-const _ = require('lodash')
-const request = require('five-bells-shared/utils/request')
 const Auth = require('../lib/auth')
 const Log = require('../lib/log')
 const SPSP = require('../lib/spsp')
@@ -11,7 +9,6 @@ const Pay = require('../lib/pay')
 const Utils = require('../lib/utils')
 const UserFactory = require('../models/user')
 const PaymentFactory = require('../models/payment')
-const InvalidBodyError = require('../errors/invalid-body-error')
 const NotFoundError = require('../errors/not-found-error')
 const ServerError = require('../errors/server-error')
 const NoQuote = require('../errors/no-quote-error')
@@ -66,7 +63,6 @@ function PaymentsControllerFactory (Auth, Payment, log, utils, spsp, User, pay) 
 
     // TODO don't allow payments to self
     static * putResource () {
-      const id = this.params.id && this.params.id.toLowerCase()
       const quote = this.body.quote
       const destination = this.body.destination
       const message = this.body.message
@@ -157,7 +153,7 @@ function PaymentsControllerFactory (Auth, Payment, log, utils, spsp, User, pay) 
      *    }
      */
     static * query () {
-      const user = yield User.findOne({ where: { username: this.params.username }})
+      const user = yield User.findOne({ where: { username: this.params.username } })
 
       if (!user) throw new NotFoundError()
 
