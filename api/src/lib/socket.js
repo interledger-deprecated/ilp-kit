@@ -8,11 +8,10 @@ const PaymentFactory = require('../models/payment')
 const Ledger = require('./ledger')
 
 module.exports = class Socket {
-  static constitute () { return [Log, PaymentFactory, Ledger] }
-  constructor (log, Payment, ledger) {
-    this.log = log('socket')
-    this.ledger = ledger
-    this.Payment = Payment
+  constructor (deps) {
+    this.log = deps(Log)('socket')
+    this.ledger = deps(Ledger)
+    this.Payment = deps(PaymentFactory)
 
     /**
      * Format

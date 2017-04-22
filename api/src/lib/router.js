@@ -1,6 +1,5 @@
 'use strict'
 
-const Container = require('constitute').Container
 const makeRouter = require('koa-router')
 
 const HealthController = require('../controllers/health')
@@ -17,47 +16,46 @@ const WithdrawalsController = require('../controllers/withdrawals')
 const ActivityLogsController = require('../controllers/activity_logs')
 
 module.exports = class Router {
-  static constitute () { return [ Container ] }
-  constructor (container) {
-    this.container = container
+  constructor (deps) {
+    this.deps = deps
     this.router = makeRouter()
   }
 
   setupDefaultRoutes () {
-    const health = this.container.constitute(HealthController)
+    const health = this.deps(HealthController)
     health.init(this.router)
 
-    const auth = this.container.constitute(AuthController)
+    const auth = this.deps(AuthController)
     auth.init(this.router)
 
-    const users = this.container.constitute(UsersController)
+    const users = this.deps(UsersController)
     users.init(this.router)
 
-    const payments = this.container.constitute(PaymentsController)
+    const payments = this.deps(PaymentsController)
     payments.init(this.router)
 
-    const webfinger = this.container.constitute(WebfingerController)
+    const webfinger = this.deps(WebfingerController)
     webfinger.init(this.router)
 
-    const misc = this.container.constitute(MiscController)
+    const misc = this.deps(MiscController)
     misc.init(this.router)
 
-    const invites = this.container.constitute(InviteController)
+    const invites = this.deps(InviteController)
     invites.init(this.router)
 
-    const peers = this.container.constitute(PeerController)
+    const peers = this.deps(PeerController)
     peers.init(this.router)
 
-    const settlementMethods = this.container.constitute(SettlementMethodsController)
+    const settlementMethods = this.deps(SettlementMethodsController)
     settlementMethods.init(this.router)
 
-    const settlements = this.container.constitute(SettlementsController)
+    const settlements = this.deps(SettlementsController)
     settlements.init(this.router)
 
-    const withdrawals = this.container.constitute(WithdrawalsController)
+    const withdrawals = this.deps(WithdrawalsController)
     withdrawals.init(this.router)
 
-    const activityLogs = this.container.constitute(ActivityLogsController)
+    const activityLogs = this.deps(ActivityLogsController)
     activityLogs.init(this.router)
   }
 

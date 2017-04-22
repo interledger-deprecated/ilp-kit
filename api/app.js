@@ -1,4 +1,4 @@
-const constitute = require('constitute')
+const reduct = require('reduct')
 const App = require('./src/lib/app')
 
-constitute(App).start()
+reduct()(App).start()

@@ -11,8 +11,10 @@ const Sequelize = require('sequelize')
 
 module.exports.DEFAULT_CURRENCY_SCALE = 9
 
-PeerFactory.constitute = [Database, Validator]
-function PeerFactory (sequelize, validator) {
+function PeerFactory (deps) {
+  const sequelize = deps(Database)
+  const validator = deps(Validator)
+
   class Peer extends Model {
     static convertFromExternal (data) {
       return data

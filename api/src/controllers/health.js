@@ -2,7 +2,6 @@
 
 module.exports = HealthControllerFactory
 
-HealthControllerFactory.constitute = []
 function HealthControllerFactory () {
   return class HealthController {
     static init (router) {

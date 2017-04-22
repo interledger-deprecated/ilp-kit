@@ -1,7 +1,7 @@
 'use strict'
 
 const request = require('supertest-as-promised')
-const constitute = require('constitute')
+const reduct = require('reduct')
 const App = require('../../src/lib/app')
 const Ledger = require('../../src/lib/ledger')
 const LedgerMock = require('./ledgerMock')
@@ -18,9 +18,9 @@ const sleep = function (delay) {
 }
 
 exports.create = function * () {
-  const container = new constitute.Container()
-  container.bindClass(Ledger, LedgerMock)
-  const app = container.constitute(App)
+  const deps = reduct()
+  deps.setOverride(Ledger, LedgerMock)
+  const app = deps(App)
 
   app.db.sync()
   // DB is unreliable unless you wait a few ticks

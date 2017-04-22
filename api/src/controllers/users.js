@@ -8,7 +8,6 @@ const request = require('five-bells-shared/utils/request')
 const Auth = require('../lib/auth')
 const Log = require('../lib/log')
 const Ledger = require('../lib/ledger')
-const Socket = require('../lib/socket')
 const Config = require('../lib/config')
 const Mailer = require('../lib/mailer')
 const Pay = require('../lib/pay')
@@ -28,9 +27,18 @@ const InvalidBodyError = require('../errors/invalid-body-error')
 
 const USERNAME_REGEX = /^[a-z0-9]([a-z0-9]|[-](?!-)){0,18}[a-z0-9]$/
 
-UsersControllerFactory.constitute = [Database, Auth, UserFactory, InviteFactory, Log, Ledger, Socket, Config, Mailer, Pay, SPSP, Antifraud]
-function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, socket, config, mailer, pay, spsp, antifraud) {
-  log = log('users')
+function UsersControllerFactory (deps) {
+  const sequelize = deps(Database)
+  const auth = deps(Auth)
+  const User = deps(UserFactory)
+  const Invite = deps(InviteFactory)
+  const log = deps(Log)('users')
+  const ledger = deps(Ledger)
+  const config = deps(Config)
+  const mailer = deps(Mailer)
+  const pay = deps(Pay)
+  const spsp = deps(SPSP)
+  const antifraud = deps(Antifraud)
 
   return class UsersController {
     static init (router) {

@@ -3,7 +3,6 @@
 module.exports = InviteFactory
 
 const _ = require('lodash')
-const Container = require('constitute').Container
 const Model = require('five-bells-shared').Model
 const PersistentModelMixin = require('five-bells-shared').PersistentModelMixin
 const Database = require('../lib/db')
@@ -11,8 +10,10 @@ const Validator = require('five-bells-shared/lib/validator')
 const Sequelize = require('sequelize')
 const UserFactory = require('./user')
 
-InviteFactory.constitute = [Database, Validator, Container]
-function InviteFactory (sequelize, validator, container) {
+function InviteFactory (deps) {
+  const sequelize = deps(Database)
+  const validator = deps(Validator)
+
   class Invite extends Model {
     static convertFromExternal (data) {
       return data
@@ -54,9 +55,11 @@ function InviteFactory (sequelize, validator, container) {
     }
   })
 
-  container.schedulePostConstructor((User) => {
+  deps.later(() => {
+    const User = deps(UserFactory)
+
     Invite.DbModel.belongsTo(User.DbModel)
-  }, [ UserFactory ])
+  })
 
   return Invite
 }
