@@ -151,11 +151,15 @@ function AuthControllerFactory (User, log, ledger, mailer, auth) {
 
       if (!dbUser) throw new NotFoundError('Wrong username/email')
 
+      const link = dbUser.generateForgotPasswordLink()
+
+      log.info('password link %s', link)
+
       // TODO Send the email
       yield mailer.forgotPassword({
         name: dbUser.username,
         to: dbUser.email,
-        link: dbUser.generateForgotPasswordLink()
+        link
       })
 
       this.body = {}
