@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react'
-import { reduxForm } from 'redux-form'
+import { connect } from 'react-redux'
+import { reduxForm, Field } from 'redux-form'
 import Helmet from 'react-helmet'
 import DropzoneComponent from 'react-dropzone-component'
 
@@ -10,16 +11,16 @@ import { successable } from 'decorators'
 
 import classNames from 'classnames/bind'
 import styles from './SettlementCustom.scss'
-const cx = classNames.bind(styles)
-
 
 import { update } from 'redux/actions/settlement_method'
 
-@reduxForm({
-  form: 'settlementMethod',
-  fields: ['name', 'description', 'logo', 'uri'],
-}, state => ({
+const cx = classNames.bind(styles)
+
+@connect(state => ({
 }), { update })
+@reduxForm({
+  form: 'settlementMethod'
+})
 @successable()
 export default class SettlementCustom extends Component {
   static propTypes = {
@@ -27,7 +28,6 @@ export default class SettlementCustom extends Component {
     method: PropTypes.object.isRequired,
 
     // Form
-    fields: PropTypes.object.isRequired,
     invalid: PropTypes.bool.isRequired,
     pristine: PropTypes.bool.isRequired,
     submitting: PropTypes.bool.isRequired,
@@ -70,8 +70,7 @@ export default class SettlementCustom extends Component {
   }
 
   render() {
-    const { handleSubmit, fields: { name, description, uri },
-      pristine, invalid, submitting, method, success, fail } = this.props
+    const { handleSubmit, pristine, invalid, submitting, method, success, fail } = this.props
 
     return (
       <div className={cx('SettlementCustom')}>
@@ -88,9 +87,21 @@ export default class SettlementCustom extends Component {
         </Alert>}
 
         <form onSubmit={handleSubmit(this.handleSave)} className={cx('clearfix')}>
-          <Input object={name} label="Settlement Method Name" size="lg" />
-          <Input object={description} label="Description" size="lg" />
-          <Input object={uri} label="Uri" size="lg" />
+          <Field
+            name="name"
+            component={Input}
+            label="Settlement Method Name"
+            size="lg" />
+          <Field
+            name="description"
+            component={Input}
+            label="Description"
+            size="lg" />
+          <Field
+            name="uri"
+            component={Input}
+            label="Uri"
+            size="lg" />
           <div className="clearfix">
             <div className={cx('logoField', method.logo || 'full')}>
               <DropzoneComponent

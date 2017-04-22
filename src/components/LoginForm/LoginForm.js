@@ -1,6 +1,6 @@
 import React, {Component, PropTypes} from 'react'
 import {Link} from 'react-router'
-import {reduxForm} from 'redux-form'
+import {reduxForm, Field} from 'redux-form'
 import loginValidation from './LoginValidation'
 
 import Alert from 'react-bootstrap/lib/Alert'
@@ -15,13 +15,11 @@ const cx = classNames.bind(styles);
 
 @reduxForm({
   form: 'login',
-  fields: ['username', 'password'],
   validate: loginValidation
 })
 @successable()
 export default class LoginForm extends Component {
   static propTypes = {
-    fields: PropTypes.object.isRequired,
     invalid: PropTypes.bool.isRequired,
     pristine: PropTypes.bool.isRequired,
     submitting: PropTypes.bool.isRequired,
@@ -42,7 +40,7 @@ export default class LoginForm extends Component {
   }
 
   render() {
-    const { handleSubmit, fail, fields: {username, password}, pristine, invalid, submitting } = this.props
+    const { handleSubmit, fail, pristine, invalid, submitting } = this.props
 
     return (
       <form onSubmit={handleSubmit(this.login)}>
@@ -53,8 +51,20 @@ export default class LoginForm extends Component {
 
         <div>
           {/* TODO:UX autofill the username after email verification */}
-          <Input object={username} label="Username or Email" size="lg" focus autoCapitalize="off" />
-          <Input object={password} label="Password" size="lg" type="password" />
+          <Field
+            name="username"
+            label="Username or Email"
+            size="lg"
+            focus
+            autoCapitalize="off"
+            component={Input}
+            type="text"/>
+          <Field
+            name="password"
+            label="Password"
+            size="lg"
+            component={Input}
+            type="password"/>
         </div>
         <div className="row">
           <div className="col-sm-4">

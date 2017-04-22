@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react'
-import {reduxForm} from 'redux-form'
+import { connect } from 'react-redux'
+import { reduxForm, Field, SubmissionError } from 'redux-form'
 import DropzoneComponent from 'react-dropzone-component'
 import Alert from 'react-bootstrap/lib/Alert'
 
@@ -7,8 +8,7 @@ import * as actions from 'redux/actions/auth'
 
 import validate from './ProfileValidation'
 
-import { successable } from 'decorators'
-import { resetFormOnSuccess } from 'decorators'
+import { successable, resetFormOnSuccess } from 'decorators'
 
 import Input from 'components/Input/Input'
 
@@ -16,11 +16,7 @@ import classNames from 'classnames/bind'
 import styles from './ProfileForm.scss'
 const cx = classNames.bind(styles)
 
-@reduxForm({
-  form: 'profileSettings',
-  fields: ['email', 'name', 'password', 'newPassword', 'verifyNewPassword'],
-  validate
-}, state => ({
+@connect(state => ({
   user: state.auth.user,
   fail: state.auth.fail,
   // TODO server side rendering for initialValues is messed up
@@ -30,12 +26,15 @@ const cx = classNames.bind(styles)
     name: (state.auth.user && state.auth.user.name) || undefined
   }
 }), actions)
+@reduxForm({
+  form: 'profileSettings',
+  validate
+})
 @successable()
 @resetFormOnSuccess('profileSettings')
 export default class ProfileForm extends Component {
   static propTypes = {
     // Redux Form
-    fields: PropTypes.object,
     pristine: PropTypes.bool,
     invalid: PropTypes.bool,
     handleSubmit: PropTypes.func,
@@ -57,7 +56,7 @@ export default class ProfileForm extends Component {
 
   state = {}
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps (nextProps) {
     if (this.props.fail !== nextProps.fail) {
       this.setState({
         error: nextProps.fail
@@ -81,7 +80,7 @@ export default class ProfileForm extends Component {
       .catch((error) => {
         tracker.track('Profile change', {status: 'fail', error: error})
 
-        throw {_error: error}
+        throw new SubmissionError({_error: error})
       })
   }
 
@@ -119,9 +118,9 @@ export default class ProfileForm extends Component {
     }
   }
 
-  render() {
-    const { fields: { email, name, password, newPassword, verifyNewPassword }, pristine, invalid,
-      handleSubmit, submitting, success, submitFailed, user } = this.props
+  render () {
+    const { pristine, invalid, handleSubmit, submitting, success, submitFailed,
+      user } = this.props
 
     const { error } = this.state
 
@@ -167,13 +166,39 @@ export default class ProfileForm extends Component {
           </div>
           <div className={cx('col-sm-9')}>
             <form onSubmit={handleSubmit(this.save)}>
-              <Input object={email} label="Email" type="email" size="lg" focus />
-              <Input object={name} label="Name" type="text" size="lg" />
-              <Input object={password} label="Current Password" type="password" size="lg" />
+              <Field
+                name="email"
+                component={Input}
+                label="Email"
+                type="email"
+                size="lg"
+                focus />
+              <Field
+                name="name"
+                component={Input}
+                label="Name"
+                type="text"
+                size="lg" />
+              <Field
+                name="password"
+                component={Input}
+                label="Current Password"
+                type="password"
+                size="lg" />
 
               <label>Change Password</label>
-              <Input object={newPassword} label="New Password" type="password" size="lg" />
-              <Input object={verifyNewPassword} label="Verify New Password" type="password" size="lg" />
+              <Field
+                name="newPassword"
+                component={Input}
+                label="New Password"
+                type="password"
+                size="lg" />
+              <Field
+                name="verifyNewPassword"
+                component={Input}
+                label="Verify New Password"
+                type="password"
+                size="lg" />
 
               <button type="submit" className="btn btn-success" disabled={pristine || (invalid && !submitFailed) || submitting}>
                 {submitting ? ' Saving...' : ' Save'}

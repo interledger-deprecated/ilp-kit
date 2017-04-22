@@ -1,10 +1,11 @@
 import React, {Component, PropTypes} from 'react'
 
-import cx from 'classnames/bind';
+import cx from 'classnames/bind'
 
 export default class Input extends Component {
   static propTypes = {
-    object: PropTypes.object,
+    meta: PropTypes.object.isRequired,
+    input: PropTypes.object.isRequired,
     type: PropTypes.string,
     disabled: PropTypes.any,
     label: PropTypes.string,
@@ -27,7 +28,7 @@ export default class Input extends Component {
   onChange = (event) => {
     const self = this
 
-    this.props.object.onChange(event)
+    this.props.input.onChange(event)
 
     const target = event.target
 
@@ -49,47 +50,29 @@ export default class Input extends Component {
     this.refs.input.focus()
   }
 
-  domOnlyProps = (object) => {
-    const newObject = {...object}
-    delete newObject.initialValue
-    delete newObject.autofill
-    delete newObject.onUpdate
-    delete newObject.valid
-    delete newObject.invalid
-    delete newObject.dirty
-    delete newObject.pristine
-    delete newObject.active
-    delete newObject.touched
-    delete newObject.visited
-    delete newObject.autofilled
-    delete newObject.error
-
-    return newObject
-  }
-
-  renderInput() {
-    const { object, type, disabled, size, focus, autoCapitalize, noErrors, validText } = this.props
+  renderInput () {
+    const { meta, input, type, disabled, size, focus, autoCapitalize, noErrors, validText } = this.props
 
     return (
       <span>
-        <input type={type} ref="input"
-               className={cx('form-control', size ? 'input-' + size : '')}
-               autoFocus={focus} {...this.domOnlyProps(object)}
-               onChange={this.onChange} disabled={disabled}
-               autoCapitalize={autoCapitalize} />
+        <input type={type} ref='input'
+          className={cx('form-control', size ? 'input-' + size : '')}
+          autoFocus={focus} {...input}
+          onChange={this.onChange} disabled={disabled}
+          autoCapitalize={autoCapitalize} />
 
-        {!noErrors && object.dirty && object.error && <div className="text-danger">{object.error}</div>}
-        {validText && <div className="text-success">{validText}</div>}
+        {!noErrors && meta.dirty && meta.error && <div className='text-danger'>{meta.error}</div>}
+        {validText && <div className='text-success'>{validText}</div>}
       </span>
     )
   }
 
-  renderInputContainer() {
-    const { object, label, disabled } = this.props
+  renderInputContainer () {
+    const { meta, label, disabled } = this.props
 
     return (
-      <div className={cx('form-group', 'form-group-default', object.active && 'focused', disabled && 'disabled')}
-           onClick={this.handleClick}>
+      <div className={cx('form-group', 'form-group-default', meta.active && 'focused', disabled && 'disabled')}
+        onClick={this.handleClick}>
         <label className={cx('fade')}>{label}</label>
 
         {this.renderInput()}
@@ -97,7 +80,7 @@ export default class Input extends Component {
     )
   }
 
-  render() {
+  render () {
     return this.props.label ? this.renderInputContainer() : this.renderInput()
   }
 }

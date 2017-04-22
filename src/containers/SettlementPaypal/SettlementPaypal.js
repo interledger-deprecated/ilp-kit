@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react'
-import { reduxForm } from 'redux-form'
+import { connect } from 'react-redux'
+import { reduxForm, Field } from 'redux-form'
 import Helmet from 'react-helmet'
 
 import classNames from 'classnames/bind'
@@ -15,11 +16,11 @@ import Alert from 'react-bootstrap/lib/Alert'
 
 import { update } from 'redux/actions/settlement_method'
 
-@reduxForm({
-  form: 'settlementPaypal',
-  fields: ['clientId', 'secret', 'sandbox'],
-}, state => ({
+@connect(state => ({
 }), { update })
+@reduxForm({
+  form: 'settlementPaypal'
+})
 @successable()
 export default class SettlementPaypal extends Component {
   static propTypes = {
@@ -27,7 +28,6 @@ export default class SettlementPaypal extends Component {
     method: PropTypes.object.isRequired,
 
     // Form
-    fields: PropTypes.object.isRequired,
     invalid: PropTypes.bool.isRequired,
     pristine: PropTypes.bool.isRequired,
     submitting: PropTypes.bool.isRequired,
@@ -70,9 +70,8 @@ export default class SettlementPaypal extends Component {
       .catch(this.props.permFail)
   }
 
-  render() {
-    const { handleSubmit, fields: { clientId, secret, sandbox },
-      pristine, invalid, submitting, success, fail } = this.props
+  render () {
+    const { handleSubmit, pristine, invalid, submitting, success, fail } = this.props
 
     return (
       <div className={cx('SettlementPaypal')}>
@@ -89,12 +88,24 @@ export default class SettlementPaypal extends Component {
         </Alert>}
 
         <form onSubmit={handleSubmit(this.handleSave)} className={cx('clearfix')}>
-          <Input object={clientId} label="Client ID" size="lg"/>
-          <Input object={secret} label="Secret" size="lg"/>
+          <Field
+            name="clientId"
+            component={Input}
+            label="Client ID"
+            size="lg" />
+          <Field
+            name="secret"
+            component={Input}
+            label="Secret"
+            size="lg" />
 
           <div className="checkbox check-success">
-            <InputRaw object={sandbox} type="checkbox" id="sandbox"
-                      checked={sandbox.value}/>
+            <Field
+              name="sandbox"
+              component={InputRaw}
+              type="checkbox"
+              id="sandbox"
+              checked={sandbox.value} />
             <label htmlFor="sandbox">Sandbox (are these Paypal Sandbox
               credentials?)</label>
           </div>

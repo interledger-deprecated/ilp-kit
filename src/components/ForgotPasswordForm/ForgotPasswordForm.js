@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react'
-import {reduxForm} from 'redux-form'
+import { reduxForm, Field, SubmissionError } from 'redux-form'
 import Validation from './Validation'
 
 import Alert from 'react-bootstrap/lib/Alert'
@@ -10,18 +10,16 @@ import { successable } from 'decorators'
 
 @reduxForm({
   form: 'forgotPassword',
-  fields: ['resource'],
   validate: Validation
 })
 @successable()
 export default class ForgotPasswordForm extends Component {
   static propTypes = {
-    fields: PropTypes.object.isRequired,
     invalid: PropTypes.bool.isRequired,
     pristine: PropTypes.bool.isRequired,
     submitting: PropTypes.bool.isRequired,
     handleSubmit: PropTypes.func.isRequired,
-    submit: PropTypes.func.isRequired,
+    submitAction: PropTypes.func.isRequired,
     submitFailed: PropTypes.bool,
     error: PropTypes.object,
 
@@ -31,19 +29,19 @@ export default class ForgotPasswordForm extends Component {
   }
 
   handleSubmit = (data) => {
-    return this.props.submit(data)
+    this.props.submitAction(data)
       .then(() => {
         this.props.permSuccess()
 
         tracker.track('Forgot password')
       })
       .catch((error) => {
-        throw {_error: error}
+        throw new SubmissionError({_error: error})
       })
   }
 
-  render() {
-    const { handleSubmit, error, success, fields: {resource}, pristine, invalid, submitting, submitFailed } = this.props
+  render () {
+    const { handleSubmit, error, success, pristine, invalid, submitting, submitFailed } = this.props
 
     return (
       <form onSubmit={handleSubmit(this.handleSubmit)}>
@@ -65,7 +63,13 @@ export default class ForgotPasswordForm extends Component {
         {!success &&
         <div>
           <div>
-            <Input object={resource} label="Username or Email" size="lg" focus autoCapitalize="off" />
+            <Field
+              name="resource"
+              component={Input}
+              label="Username or Email"
+              size="lg"
+              focus
+              autoCapitalize="off" />
           </div>
           <div className="row">
             <button type="submit" className="btn btn-success btn-lg" disabled={pristine || (invalid && !submitFailed) || submitting}>
