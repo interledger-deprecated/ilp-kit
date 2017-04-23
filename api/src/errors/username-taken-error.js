@@ -3,7 +3,7 @@
 const BaseError = require('five-bells-shared/errors/base-error')
 
 class UsernameTakenError extends BaseError {
-  * handler (ctx, log) {
+  async handler (ctx, log) {
     log.warn('Username taken: ' + this.message)
     ctx.status = 422
     ctx.body = {

@@ -1,7 +1,7 @@
 'use strict'
 
-const co = require('co')
 const _ = require('lodash')
+const IO = require('koa-socket')
 
 const Log = require('./log')
 const PaymentFactory = require('../models/payment')
@@ -12,6 +12,8 @@ module.exports = class Socket {
     this.log = deps(Log)('socket')
     this.ledger = deps(Ledger)
     this.Payment = deps(PaymentFactory)
+
+    this.io = new IO()
 
     /**
      * Format
@@ -92,16 +94,23 @@ module.exports = class Socket {
   attach (app) {
     const self = this
 
-    // TODO ensure the username is the currently logged in user
-    app.io.route('subscribe', function (next, username) {
-      self.addSubscription(username, this.socket)
+    this.io.attach(app)
+    // this.io.use(async (ctx, next) => {
+      // console.log('io middleware')
+      // self.log.info('Connected ' + ctx.socket.id)
+      // await next()
+      // self.log.info('Disconnected ' + ctx.socket.id)
+      // self.removeSubscription(ctx.socket.id)
+    // })
+    app._io.on('connection', sock => {
+      console.log('raw connection socket.io')
     })
-
-    app.io.use(function * (next) {
-      self.log.info('Connected ' + this.socket.id)
-      yield * next
-      self.log.info('Disconnected ' + this.socket.id)
-      self.removeSubscription(this.socket.id)
+    this.io.on('connection', function (ctx) {
+      console.log('socket io connection')
+    })
+    // TODO ensure the username is the currently logged in user
+    this.io.on('subscribe', function (ctx, username) {
+      self.addSubscription(username, ctx.socket)
     })
   }
 
@@ -110,10 +119,10 @@ module.exports = class Socket {
 
     self.emitToUser(username, 'activity', activityLog)
 
-    co(function * () {
-      const account = yield self.ledger.getAccount({ username }, true)
+    ;(async function () {
+      const account = await self.ledger.getAccount({ username }, true)
       self.updateBalance(username, account.balance)
-    }).catch(err => {
+    })().catch(err => {
       console.log('socket:152', err)
     })
 

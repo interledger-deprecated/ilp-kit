@@ -26,65 +26,65 @@ function InvitesControllerFactory (deps) {
     }
 
     // TODO move to auth
-    static * checkAdmin (next) {
-      if (this.req.user.username === config.data.getIn(['ledger', 'admin', 'user'])) {
-        return yield next
+    static async checkAdmin (ctx, next) {
+      if (ctx.req.user.username === config.data.getIn(['ledger', 'admin', 'user'])) {
+        return next()
       }
 
       // TODO throw exception
-      this.status = 404
+      ctx.status = 404
     }
 
-    static * getAll () {
+    static async getAll (ctx) {
       // TODO list could get too big
-      this.body = yield Invite.findAll({
+      ctx.body = await Invite.findAll({
         include: [{ all: true }],
         order: [['created_at', 'DESC']]
       })
     }
 
-    static * getResource () {
-      const code = this.params.code
+    static async getResource (ctx) {
+      const code = ctx.params.code
 
-      const invite = yield Invite.findOne({ where: {code} })
+      const invite = await Invite.findOne({ where: {code} })
 
       // TODO throw exception
       if (!invite) {
-        this.status = 404
+        ctx.status = 404
         return
       }
 
-      this.body = {
+      ctx.body = {
         code: invite.code,
         amount: invite.amount,
         claimed: invite.claimed
       }
     }
 
-    static * postResource () {
+    static async postResource (ctx) {
       const code = new Invite()
-      code.amount = this.body.amount
+      code.amount = ctx.body.amount
       code.code = uuid()
 
-      yield code.save()
+      await code.save()
 
-      this.body = code
+      ctx.body = code
     }
 
-    static * putResource () {
-      this.status = 200
+    static async putResource (ctx) {
+      ctx.status = 200
     }
 
-    static * deleteResource () {
-      const code = yield Invite.findOne({where: {
-        code: this.params.code
+    static async deleteResource (ctx) {
+      const code = await Invite.findOne({where: {
+        code: ctx.params.code
       }})
 
       if (!code) throw new NotFoundError("Code doesn't exist")
 
-      yield code.destroy()
+      await code.destroy()
 
-      this.body = this.params
+      ctx.body = ctx.params
     }
   }
 }

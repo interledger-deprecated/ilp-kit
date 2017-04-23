@@ -25,18 +25,18 @@ function SettlementMethodsControllerFactory (deps) {
     }
 
     // TODO move to auth
-    static * checkAdmin (next) {
-      if (this.req.user.username === config.data.getIn(['ledger', 'admin', 'user'])) {
-        return yield next
+    static async checkAdmin (ctx, next) {
+      if (ctx.req.user.username === config.data.getIn(['ledger', 'admin', 'user'])) {
+        return next()
       }
 
       throw new NotFoundError()
     }
 
-    static * getAll () {
-      if (this.req.user && this.req.user.username === config.data.getIn(['ledger', 'admin', 'user'])) {
+    static async getAll (ctx) {
+      if (ctx.req.user && ctx.req.user.username === config.data.getIn(['ledger', 'admin', 'user'])) {
         // TODO pagination
-        this.body = yield SettlementMethod.findAll({
+        ctx.body = await SettlementMethod.findAll({
           include: [{ all: true }],
           order: [
             ['enabled', 'DESC'],
@@ -47,7 +47,7 @@ function SettlementMethodsControllerFactory (deps) {
         return
       }
 
-      this.body = yield SettlementMethod.findAll({
+      ctx.body = await SettlementMethod.findAll({
         attributes: ['name', 'type', 'logo', 'description', 'uri'],
         where: { enabled: true },
         order: [
@@ -56,18 +56,18 @@ function SettlementMethodsControllerFactory (deps) {
       })
     }
 
-    static * postResource () {
+    static async postResource (ctx) {
       const method = new SettlementMethod()
 
-      if (['paypal', 'bitcoin', 'etherium', 'ripple', 'custom'].indexOf(this.body.type) === -1) {
+      if (['paypal', 'bitcoin', 'etherium', 'ripple', 'custom'].indexOf(ctx.body.type) === -1) {
         throw new InvalidBodyError('Unknown settlement method type')
       }
 
-      if (['paypal', 'bitcoin', 'etherium', 'ripple'].indexOf(this.body.type) !== -1) {
-        method.name = this.body.type.charAt(0).toUpperCase() + this.body.type.slice(1)
+      if (['paypal', 'bitcoin', 'etherium', 'ripple'].indexOf(ctx.body.type) !== -1) {
+        method.name = ctx.body.type.charAt(0).toUpperCase() + ctx.body.type.slice(1)
       }
 
-      method.type = this.body.type
+      method.type = ctx.body.type
       method.enabled = false
       // TODO
       // method.name
@@ -75,64 +75,64 @@ function SettlementMethodsControllerFactory (deps) {
       // method.description
       // method.uri
 
-      this.body = yield method.save()
+      ctx.body = await method.save()
     }
 
-    static * postLogoResource () {
-      const files = this.body.files
-      const id = this.params.id
-      const method = yield SettlementMethod.findOne({ where: { id } })
+    static async postLogoResource (ctx) {
+      const files = ctx.body.files
+      const id = ctx.params.id
+      const method = await SettlementMethod.findOne({ where: { id } })
 
       // TODO handle the name
       method.logo = path.basename(files.file.path)
 
       try {
-        this.body = SettlementMethod.fromDatabaseModel(yield method.save())
+        ctx.body = SettlementMethod.fromDatabaseModel(await method.save())
       } catch (e) {
         console.log('auth.js:191', e)
       }
     }
 
-    static * putResource () {
-      const id = this.params.id
-      const method = yield SettlementMethod.findOne({ where: { id } })
+    static async putResource (ctx) {
+      const id = ctx.params.id
+      const method = await SettlementMethod.findOne({ where: { id } })
 
       if (!method) throw new NotFoundError("Settlement method doesn't exist")
 
-      if (this.body.name !== undefined) {
-        method.name = this.body.name
+      if (ctx.body.name !== undefined) {
+        method.name = ctx.body.name
       }
 
-      if (this.body.description !== undefined) {
-        method.description = this.body.description
+      if (ctx.body.description !== undefined) {
+        method.description = ctx.body.description
       }
 
-      if (this.body.uri !== undefined) {
-        method.uri = this.body.uri
+      if (ctx.body.uri !== undefined) {
+        method.uri = ctx.body.uri
       }
 
-      if (this.body.enabled !== undefined) {
-        method.enabled = this.body.enabled
+      if (ctx.body.enabled !== undefined) {
+        method.enabled = ctx.body.enabled
       }
 
-      if (this.body.options !== undefined) {
-        method.options = this.body.options
+      if (ctx.body.options !== undefined) {
+        method.options = ctx.body.options
       }
 
-      yield method.save()
+      await method.save()
 
-      this.body = method
+      ctx.body = method
     }
 
-    static * deleteResource () {
-      const id = this.params.id
-      const method = yield SettlementMethod.findOne({ where: { id } })
+    static async deleteResource (ctx) {
+      const id = ctx.params.id
+      const method = await SettlementMethod.findOne({ where: { id } })
 
       if (!method) throw new NotFoundError("Settlement method doesn't exist")
 
-      yield method.destroy()
+      await method.destroy()
 
-      this.body = this.params
+      ctx.body = ctx.params
     }
   }
 }

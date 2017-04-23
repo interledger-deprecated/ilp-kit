@@ -12,7 +12,7 @@ module.exports = class Antifraud {
     this.log = deps(Log)('antifraud')
   }
 
-  * checkRisk (userObj) {
+  async checkRisk (userObj) {
       // Check for fraud
     const serviceUrl = this.config.data.getIn(['antifraud', 'service_url'])
 
@@ -21,7 +21,7 @@ module.exports = class Antifraud {
       let response
 
       try {
-        response = yield superagent.post(serviceUrl, {
+        response = await superagent.post(serviceUrl, {
           email: userObj.email || '',
           username: userObj.username || '',
           name: userObj.name || '',

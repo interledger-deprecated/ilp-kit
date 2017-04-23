@@ -49,14 +49,14 @@ function MiscControllerFactory (deps) {
      *      }
      *    }
      */
-    static * destination () {
-      const destination = this.query.destination
+    static async destination (ctx) {
+      const destination = ctx.query.destination
 
       if (!destination) {
         throw new InvalidBodyError('No destination specified')
       }
 
-      this.body = yield utils.parseDestination({ destination })
+      ctx.body = await utils.parseDestination({ destination })
     }
 
     /**
@@ -79,11 +79,11 @@ function MiscControllerFactory (deps) {
      *      "currencySymbol": "$"
      *    }
      */
-    static * config () {
-      const ledgerInfo = yield ledger.getInfo()
+    static async config (ctx) {
+      const ledgerInfo = await ledger.getInfo()
 
       const packageVersion = require('../../../package.json').version
-      const gitCommit = yield new Promise((resolve, reject) => {
+      const gitCommit = await new Promise((resolve, reject) => {
         exec('git rev-parse --short HEAD', { cwd: __dirname }, (err, stdout) => {
           if (err) {
             reject(err)
@@ -110,13 +110,13 @@ function MiscControllerFactory (deps) {
         version: `${packageVersion}-${gitCommit}`
       }
 
-      response.settlementMethods = yield connector.getSelfSettlementMethods(false, 0)
+      response.settlementMethods = await connector.getSelfSettlementMethods(false, 0)
 
       if (config.data.get('reload')) {
         response.reload = true
       }
 
-      this.body = response
+      ctx.body = response
     }
   }
 }

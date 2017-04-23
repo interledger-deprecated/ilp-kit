@@ -43,7 +43,7 @@ function ActivityLogFactory (deps) {
       return data
     }
 
-    static * getUserActivityLog (userId, page, limit) {
+    static async getUserActivityLog (userId, page, limit) {
       page = page > 0 ? Number(page) : 1
       limit = Number(limit)
 
@@ -62,7 +62,7 @@ function ActivityLogFactory (deps) {
       })
     }
 
-    static * getActivityLog (id) {
+    static async getActivityLog (id) {
       // TODO:BEFORE_DEPLOY don't include all of the fields
       return ActivityLog.findOne({
         where: { id },

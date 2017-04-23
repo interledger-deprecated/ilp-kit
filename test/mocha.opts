@@ -1,1 +1,1 @@
--r co-mocha --timeout 150000 --reporter spec ./api/**/*.test.js
+--timeout 150000 --reporter spec ./api/**/*.test.js

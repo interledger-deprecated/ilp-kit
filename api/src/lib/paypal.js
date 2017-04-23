@@ -11,23 +11,23 @@ module.exports = class Paypal {
     this.SettlementMethod = deps(SettlementMethodFactory)
   }
 
-  * getOptions () {
+  async getOptions () {
     if (this.options) return this.options
 
-    this.options = (yield this.SettlementMethod.findOne({ where: { type: 'paypal' } })).options
+    this.options = (await this.SettlementMethod.findOne({ where: { type: 'paypal' } })).options
     this.options.api = this.options.sandbox ? 'https://api.sandbox.paypal.com' : 'https://api.paypal.com'
 
     return this.options
   }
 
-  * getToken () {
+  async getToken () {
     if (this.token) return this.token
 
     debug('fetching auth token...')
 
-    const options = yield this.getOptions()
+    const options = await this.getOptions()
 
-    const res = yield request
+    const res = await request
       .post(`${options.api}/v1/oauth2/token`)
       .type('form')
       .send({ grant_type: 'client_credentials' })
@@ -46,13 +46,13 @@ module.exports = class Paypal {
     return this.token
   }
 
-  * createPayment (destination, amount) {
-    const options = yield this.getOptions()
-    const token = yield this.getToken()
+  async createPayment (destination, amount) {
+    const options = await this.getOptions()
+    const token = await this.getToken()
 
     debug('creating a payment')
 
-    const res = yield request
+    const res = await request
       .post(`${options.api}/v1/payments/payment`)
       .set('Authorization', `Bearer ${token}`)
       .send({
@@ -84,13 +84,13 @@ module.exports = class Paypal {
     return approvalLink
   }
 
-  * executePayment (query) {
-    const options = yield this.getOptions()
-    const token = yield this.getToken()
+  async executePayment (query) {
+    const options = await this.getOptions()
+    const token = await this.getToken()
 
     debug('executing the payment: ')
 
-    const res = yield request
+    const res = await request
       .post(`${options.api}/v1/payments/payment/${query.paymentId}/execute`)
       .set('Authorization', `Bearer ${token}`)
       .send({

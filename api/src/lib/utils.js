@@ -37,7 +37,7 @@ module.exports = class Utils {
       user.username + '/profilepic')
   }
 
-  * _webfingerLookup (resource) {
+  async _webfingerLookup (resource) {
     const webfinger = new WebFinger({
       webfist_fallback: false,
       tls_only: true,
@@ -45,14 +45,14 @@ module.exports = class Utils {
       request_timeout: 3000
     })
 
-    return (yield new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       webfinger.lookup(resource, (err, res) => err ? reject(err) : resolve(res.object))
-    }))
+    })
   }
 
-  * getWebfingerAccount (address) {
+  async getWebfingerAccount (address) {
     try {
-      const response = yield this._webfingerLookup(address)
+      const response = await this._webfingerLookup(address)
 
       return {
         ledgerUri: _.filter(response.links, {rel: 'https://interledger.org/rel/ledgerUri'})[0].href,
@@ -68,7 +68,7 @@ module.exports = class Utils {
    * options
    *  - destination - string (username or webfinger)
    */
-  * parseDestination (options) {
+  async parseDestination (options) {
     const self = this
 
     const destination = options.destination
@@ -81,7 +81,7 @@ module.exports = class Utils {
 
     if (self.isWebfinger(destination)) {
       // Webfinger lookup
-      const account = yield self.getWebfingerAccount(destination)
+      const account = await self.getWebfingerAccount(destination)
 
       ledgerUri = account.ledgerUri
       paymentUri = account.paymentUri
@@ -96,7 +96,7 @@ module.exports = class Utils {
     // Get SPSP receiver info
     let spspResponse
     try {
-      spspResponse = (yield superagent.get(paymentUri).end()).body
+      spspResponse = (await superagent.get(paymentUri).end()).body
 
       ledgerInfo = spspResponse.ledger_info
       receiverInfo = spspResponse.receiver_info
@@ -120,10 +120,10 @@ module.exports = class Utils {
     return username + '@' + this.localHost
   }
 
-  * hostLookup (host) {
+  async hostLookup (host) {
     let response
     try {
-      response = yield this._webfingerLookup(host)
+      response = await this._webfingerLookup(host)
     } catch (e) {
       throw new NotFoundError('Host is unavailable')
     }
