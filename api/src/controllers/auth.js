@@ -116,12 +116,12 @@ function AuthControllerFactory (deps) {
      *      "id": 1
      *    }
      */
-    static * load () {
-      const user = this.req.user
+    static async load (ctx) {
+      const user = ctx.req.user
 
       if (!user) throw new NotFoundError('No active user session')
 
-      this.body = user.getDataExternal()
+      ctx.body = user.getDataExternal()
     }
 
     /**
@@ -141,11 +141,11 @@ function AuthControllerFactory (deps) {
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
      */
-    static * forgotPassword () {
-      const resource = this.body.resource
+    static async forgotPassword (ctx) {
+      const resource = ctx.body.resource
 
       // TODO think about github users
-      const dbUser = yield User.findOne({where: {
+      const dbUser = await User.findOne({where: {
         $or: [
           { username: resource },
           { email: resource }
@@ -159,18 +159,18 @@ function AuthControllerFactory (deps) {
       log.info('password link %s', link)
 
       // TODO Send the email
-      yield mailer.forgotPassword({
+      await mailer.forgotPassword({
         name: dbUser.username,
         to: dbUser.email,
         link
       })
 
-      this.body = {}
-      this.status = 200
+      ctx.body = {}
+      ctx.status = 200
     }
 
-    static * changePassword () {
-      const dbUser = yield User.findOne({ where: { username: this.body.username } })
+    static async changePassword (ctx) {
+      const dbUser = await User.findOne({ where: { username: this.body.username } })
 
       if (!dbUser) throw new NotFoundError('Wrong username')
 
@@ -180,32 +180,32 @@ function AuthControllerFactory (deps) {
 
       dbUser.verifyForgotPasswordCode(this.body.code)
 
-      yield ledger.updateAccount({
+      await ledger.updateAccount({
         username: dbUser.username,
         newPassword: this.body.password
       }, true)
 
       // This invalidates the ForgotPasswordCode so that it's only used once
       dbUser.getDatabaseModel().changed('updated_at', true)
-      yield dbUser.save()
+      await dbUser.save()
 
-      this.body = dbUser.getDataExternal()
+      ctx.body = dbUser.getDataExternal()
     }
 
-    static * changeProfilePicture () {
-      const file = this.request.files && this.request.files[0]
+    static async changeProfilePicture (ctx) {
+      const file = ctx.request.files && ctx.request.files[0]
 
-      let user = this.req.user
+      let user = ctx.req.user
       if (!user) throw new NotFoundError('No active user session')
       if (!file) throw new InvalidBodyError('Request doesn\'t include an image file')
 
-      user = yield User.findOne({where: {id: user.id}})
+      user = await User.findOne({where: {id: user.id}})
 
       const newFilePath = file.path + '_square.' + file.type.split('/')[1]
 
       // Resize
       try {
-        const image = yield jimp.read(file.path)
+        const image = await jimp.read(file.path)
 
         image.cover(200, 200, jimp.HORIZONTAL_ALIGN_CENTER, jimp.VERTICAL_ALIGN_TOP)
           .write(newFilePath, err => {
@@ -220,12 +220,12 @@ function AuthControllerFactory (deps) {
       user.profile_picture = path.basename(newFilePath)
 
       try {
-        yield user.save()
+        await user.save()
       } catch (e) {
         console.log('auth.js:191', e)
       }
 
-      this.body = yield user.getDataExternal()
+      ctx.body = await user.getDataExternal()
     }
 
     /**
@@ -243,9 +243,9 @@ function AuthControllerFactory (deps) {
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
      */
-    static logout () {
-      this.session = null
-      this.status = 200
+    static logout (ctx) {
+      ctx.session = null
+      ctx.status = 200
     }
   }
 }

@@ -2,8 +2,7 @@
 
 const fs = require('fs')
 const path = require('path')
-const co = require('co')
-const Koa = require('koa.io')
+const Koa = require('koa')
 const body = require('koa-better-body')
 const logger = require('koa-mag')
 const session = require('koa-session')
@@ -52,18 +51,19 @@ module.exports = class App {
       if (err.code !== 'EEXIST') { throw err }
     }
 
+    this.socket.attach(app)
     app.use(body({
       multipart: false,
       strict: false
     }))
 
-    app.use(function * (next) {
-      if (this.request.method === 'POST' || this.request.method === 'PUT') {
+    app.use(async function (ctx, next) {
+      if (ctx.request.method === 'POST' || ctx.request.method === 'PUT') {
         // the parsed body will store in this.request.body
         // if nothing was parsed, body will be an empty object {}
-        this.body = this.request.fields
+        ctx.body = ctx.request.fields
       }
-      yield next
+      await next()
     })
 
     app.use(logger({mag: log('http')}))
@@ -79,37 +79,30 @@ module.exports = class App {
 
     app.use(require('koa-static')(path.resolve(__dirname, '../../../uploads')))
 
-    this.socket.attach(app)
     this.auth.attach(app)
 
     this.router.setupDefaultRoutes()
     this.router.attach(app)
   }
 
-  start () {
-    co(this._start.bind(this)).catch(err => {
-      this.log.critical(err)
-    })
-  }
-
-  * _start () {
+  async start () {
     if (this.db.options.dialect === 'sqlite') {
-      yield this.db.sync()
+      await this.db.sync()
     } else {
-      yield this.db.migrate()
+      await this.db.migrate()
     }
 
     // Ensure admin and connector accounts exists
-    const adminAccount = yield this.user.setupAdminAccount()
-    const connectorAccount = yield this.user.setupConnectorAccount()
+    const adminAccount = await this.user.setupAdminAccount()
+    const connectorAccount = await this.user.setupConnectorAccount()
 
     this.listen()
 
-    yield this.connector.start()
+    await this.connector.start()
 
     // Initial connector funding
     if (connectorAccount && connectorAccount.new) {
-      yield this.pay.pay({
+      await this.pay.pay({
         user: adminAccount,
         destination: connectorAccount.username,
         quote: {

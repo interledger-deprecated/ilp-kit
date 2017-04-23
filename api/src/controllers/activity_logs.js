@@ -14,13 +14,13 @@ function ActivityLogsControllerFactory (deps) {
       router.get('/activity_logs', auth.checkAuth, this.getAll)
     }
 
-    static * getAll () {
-      const page = this.query.page || 1
-      const limit = this.query.limit || 10
+    static async getAll (ctx) {
+      const page = ctx.query.page || 1
+      const limit = ctx.query.limit || 10
 
-      const activityLog = yield ActivityLog.getUserActivityLog(this.req.user.id, page, limit)
+      const activityLog = await ActivityLog.getUserActivityLog(ctx.state.user.id, page, limit)
 
-      this.body = {
+      ctx.body = {
         list: activityLog.rows,
         totalPages: Math.ceil(activityLog.count / limit)
       }

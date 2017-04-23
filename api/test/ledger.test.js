@@ -19,7 +19,7 @@ describe('Ledger', () => {
     assert(nock.isDone(), 'all nocks must be called')
   })
 
-  it('gets ledger info successfully', function * () {
+  it('gets ledger info successfully', async function () {
     nock('http://localhost:3101')
       .get('/')
       .reply(200, {
@@ -27,24 +27,24 @@ describe('Ledger', () => {
       })
 
     assert.deepEqual(
-      yield this.ledger.getInfo(),
+      await this.ledger.getInfo(),
       { info: 'some stuff' })
   })
 
-  it('throws on getInfo error', function * () {
+  it('throws on getInfo error', async function () {
     nock('http://localhost:3101')
       .get('/')
       .reply(404)
 
     try {
-      yield this.ledger.getInfo()
+      await this.ledger.getInfo()
       assert(false, 'getInfo should fail')
     } catch (e) {
       assert(true)
     }
   })
 
-  it('gets an account successfully', function * () {
+  it('gets an account successfully', async function () {
     nock('http://localhost:3101')
       .get('/accounts/alice')
       .reply(200, {
@@ -52,11 +52,11 @@ describe('Ledger', () => {
       })
 
     assert.deepEqual(
-      yield this.ledger.getAccount({ username: 'alice', password: 'alice' }),
+      await this.ledger.getAccount({ username: 'alice', password: 'alice' }),
       { info: 'some stuff' })
   })
 
-  it('uses admin credentials in getAccount', function * () {
+  it('uses admin credentials in getAccount', async function () {
     nock('http://localhost:3101', {
       reqheaders: { 'authorization': 'Basic Auth' }
     })
@@ -66,11 +66,11 @@ describe('Ledger', () => {
       })
 
     assert.deepEqual(
-      yield this.ledger.getAccount({ username: 'alice' }, true),
+      await this.ledger.getAccount({ username: 'alice' }, true),
       { info: 'some stuff' })
   })
 
-  it('handles a not found error in getAccount', function * () {
+  it('handles a not found error in getAccount', async function () {
     nock('http://localhost:3101')
       .get('/accounts/alice')
       .reply(404, {
@@ -79,7 +79,7 @@ describe('Ledger', () => {
       })
 
     try {
-      yield this.ledger.getAccount({ username: 'alice', password: 'alice' })
+      await this.ledger.getAccount({ username: 'alice', password: 'alice' })
       assert(false, 'getAccount should fail')
     } catch (e) {
       assert.equal(e.name, 'NotFoundError')
@@ -87,7 +87,7 @@ describe('Ledger', () => {
     }
   })
 
-  it('handles an unauthorized error in getAccount', function * () {
+  it('handles an unauthorized error in getAccount', async function () {
     nock('http://localhost:3101')
       .get('/accounts/alice')
       .reply(401, {
@@ -96,7 +96,7 @@ describe('Ledger', () => {
       })
 
     try {
-      yield this.ledger.getAccount({ username: 'alice', password: 'alice' })
+      await this.ledger.getAccount({ username: 'alice', password: 'alice' })
       assert(false, 'getAccount should fail')
     } catch (e) {
       assert.equal(e.name, 'NotFoundError')
@@ -104,7 +104,7 @@ describe('Ledger', () => {
     }
   })
 
-  it('handles an unexpected error in getAccount', function * () {
+  it('handles an unexpected error in getAccount', async function () {
     nock('http://localhost:3101')
       .get('/accounts/alice')
       .reply(451, {
@@ -113,14 +113,14 @@ describe('Ledger', () => {
       })
 
     try {
-      yield this.ledger.getAccount({ username: 'alice', password: 'alice' })
+      await this.ledger.getAccount({ username: 'alice', password: 'alice' })
       assert(false, 'getAccount should fail')
     } catch (e) {
       assert(true)
     }
   })
 
-  it('puts an account successfully', function * () {
+  it('puts an account successfully', async function () {
     nock('http://localhost:3101')
       .put('/accounts/alice')
       .reply(201, {
@@ -128,13 +128,13 @@ describe('Ledger', () => {
       })
 
     assert.deepEqual(
-      yield this.ledger.putAccount(
+      await this.ledger.putAccount(
         { username: 'admin', password: 'admin' },
         { name: 'alice', password: 'alice' }),
       { info: 'some stuff' })
   })
 
-  it('handles throws an error when it fails to put account', function * () {
+  it('handles throws an error when it fails to put account', async function () {
     nock('http://localhost:3101')
       .put('/accounts/alice')
       .reply(404, {
@@ -142,7 +142,7 @@ describe('Ledger', () => {
       })
 
     try {
-      yield this.ledger.putAccount(
+      await this.ledger.putAccount(
         { username: 'admin', password: 'admin' },
         { name: 'alice', password: 'alice' })
       assert(false, 'putAccount should have failed')
@@ -152,7 +152,7 @@ describe('Ledger', () => {
   })
 
   describe('createAccount and updateAccount', function () {
-    beforeEach(function * () {
+    beforeEach(async function () {
       this.reply = { info: 'some stuff' }
 
       nock('http://localhost:3101')
@@ -160,41 +160,41 @@ describe('Ledger', () => {
         .reply(201, this.reply)
     })
 
-    it('updates account balance if given', function * () {
+    it('updates account balance if given', async function () {
       assert.deepEqual(
-        yield this.ledger.updateAccount({ username: 'alice', balance: '10' }),
+        await this.ledger.updateAccount({ username: 'alice', balance: '10' }),
         this.reply)
     })
 
-    it('updates the password if given', function * () {
+    it('updates the password if given', async function () {
       assert.deepEqual(
-        yield this.ledger.updateAccount({ username: 'alice', newPassword: 'password' }),
+        await this.ledger.updateAccount({ username: 'alice', newPassword: 'password' }),
         this.reply)
     })
 
-    it('uses admin credentials if given', function * () {
+    it('uses admin credentials if given', async function () {
       assert.deepEqual(
-        yield this.ledger.updateAccount(
+        await this.ledger.updateAccount(
           { username: 'alice' },
           { username: 'admin', password: 'admin' }),
         this.reply)
     })
 
-    it('creates an account with no password', function * () {
+    it('creates an account with no password', async function () {
       assert.deepEqual(
-        yield this.ledger.createAccount({ username: 'alice' }),
+        await this.ledger.createAccount({ username: 'alice' }),
         this.reply)
     })
 
-    it('creates an account with initial balance', function * () {
+    it('creates an account with initial balance', async function () {
       assert.deepEqual(
-        yield this.ledger.createAccount({ username: 'alice', balance: '10' }),
+        await this.ledger.createAccount({ username: 'alice', balance: '10' }),
         this.reply)
     })
 
-    it('creates an account with a password', function * () {
+    it('creates an account with a password', async function () {
       assert.deepEqual(
-        yield this.ledger.createAccount({ username: 'alice', password: 'password' }),
+        await this.ledger.createAccount({ username: 'alice', password: 'password' }),
         this.reply)
     })
   })

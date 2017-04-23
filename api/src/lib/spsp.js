@@ -1,6 +1,5 @@
 'use strict'
 
-const co = require('co')
 const superagent = require('superagent-promise')(require('superagent'), Promise)
 const debug = require('debug')('ilp-kit:spsp')
 const uuid = require('uuid4')
@@ -58,15 +57,15 @@ module.exports = class SPSP {
   // .user.username
   // .destination
   // .sourceAmount XOR .destinationAmount
-  * quote (params) {
-    yield this.factory.connect()
+  async quote (params) {
+    await this.factory.connect()
 
     // save a webfinger call if it's on the same domain
     const receiver = this.utils.resolveSpspIdentifier(params.destination)
     debug('making SPSP quote to', receiver)
 
     return ILP.SPSP.quote(
-      yield this.factory.create({ username: params.user.username }),
+      await this.factory.create({ username: params.user.username }),
       {
         receiver,
         sourceAmount: params.sourceAmount,
@@ -75,8 +74,8 @@ module.exports = class SPSP {
     )
   }
 
-  * setup (options) {
-    return (yield superagent.post(options.paymentUri, {
+  async setup (options) {
+    return (await superagent.post(options.paymentUri, {
       amount: options.amount,
       source_identifier: options.source_identifier,
       sender_name: options.sender_name,
@@ -85,33 +84,33 @@ module.exports = class SPSP {
     })).body
   }
 
-  * pay (username, payment) {
-    yield this.factory.connect()
-    return yield ILP.SPSP.sendPayment(
-      yield this.factory.create({ username }),
+  async pay (username, payment) {
+    await this.factory.connect()
+    return ILP.SPSP.sendPayment(
+      await this.factory.create({ username }),
       Object.assign({}, payment, { id: uuid() }))
   }
 
-  * query (user) {
+  async query (user) {
     const self = this
     const destinationAccount = this.prefix + user.username
     const receiverSecret = this.config.generateSecret(destinationAccount)
 
-    yield this.factory.connect()
-    const receiver = yield this.factory.create({ username: user.username })
+    await this.factory.connect()
+    const receiver = await this.factory.create({ username: user.username })
 
     const psk = ILP.PSK.generateParams({
       destinationAccount,
       receiverSecret
     })
-    const ledgerInfo = yield this.ledger.getInfo()
+    const ledgerInfo = await this.ledger.getInfo()
 
     if (!this.listenerCache[user.username]) {
       this.listenerCache[user.username] = true
-      yield ILP.PSK.listen(receiver, { receiverSecret }, co.wrap(function * (params) {
+      await ILP.PSK.listen(receiver, { receiverSecret }, async function (params) {
         try {
             // Store the payment in the wallet db
-          const payment = yield self.Payment.createOrUpdate({
+          const payment = await self.Payment.createOrUpdate({
               // TODO:BEFORE_DEPLOY source_identifier
             source_identifier: params.headers['source-identifier'],
             source_name: params.headers['source-name'],
@@ -128,14 +127,14 @@ module.exports = class SPSP {
             state: 'success'
           })
 
-          yield self.activity.processPayment(payment, user)
+          await self.activity.processPayment(payment, user)
 
           return params.fulfill()
         } catch (e) {
           debug('Error fulfilling SPSP payment', e)
           throw e
         }
-      }))
+      })
     }
 
     return {

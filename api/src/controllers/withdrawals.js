@@ -24,28 +24,28 @@ function WithdrawalsControllerFactory (deps) {
     }
 
     // TODO move to auth
-    static * checkAdmin (next) {
-      if (this.req.user.username === config.data.getIn(['ledger', 'admin', 'user'])) {
-        return yield next
+    static async checkAdmin (ctx, next) {
+      if (ctx.req.user.username === config.data.getIn(['ledger', 'admin', 'user'])) {
+        return next()
       }
 
       throw new NotFoundError()
     }
 
-    static * getAll () {
+    static async getAll (ctx) {
       // TODO pagination
       // TODO don't return all of the fields / associations
-      this.body = yield Withdrawal.findAll({
+      ctx.body = await Withdrawal.findAll({
         include: [{ all: true }],
         order: [['created_at', 'DESC']]
       })
     }
 
-    static * putResource () {
-      const id = this.params.id
-      const data = this.body
+    static async putResource (ctx) {
+      const id = ctx.params.id
+      const data = ctx.body
 
-      const withdrawal = yield Withdrawal.findOne({ where: { id } })
+      const withdrawal = await Withdrawal.findOne({ where: { id } })
 
       if (!withdrawal) throw new NotFoundError()
 
@@ -53,12 +53,12 @@ function WithdrawalsControllerFactory (deps) {
         withdrawal.status = data.status
       }
 
-      this.body = yield withdrawal.save()
+      ctx.body = await withdrawal.save()
     }
 
-    static * postResource () {
-      const user = this.req.user
-      const amount = this.body.amount
+    static async postResource (ctx) {
+      const user = ctx.req.user
+      const amount = ctx.body.amount
 
       let transferId
 
@@ -76,9 +76,9 @@ function WithdrawalsControllerFactory (deps) {
       withdrawal.status = 'pending'
       withdrawal.transfer_id = transferId
       withdrawal.user_id = user.id
-      withdrawal = yield withdrawal.save()
+      withdrawal = await withdrawal.save()
 
-      yield activity.processWithdrawal(withdrawal)
+      await activity.processWithdrawal(withdrawal)
     }
   }
 }

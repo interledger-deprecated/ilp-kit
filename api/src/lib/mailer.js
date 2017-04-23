@@ -66,7 +66,7 @@ module.exports = class Mailer {
     })
   }
 
-  * send (params) {
+  async send (params) {
     const self = this
 
     const senderName = this.config.data.getIn(['email', 'sender_name'])
@@ -74,7 +74,7 @@ module.exports = class Mailer {
     const template = new EmailTemplate(path.join(templatesDir, params.template))
 
     try {
-      yield new Promise((resolve, reject) => {
+      await new Promise((resolve, reject) => {
         // TODO figure out the responses
         // TODO sometimes may go to spam folder. investigate and read this
         // https://documentation.mailgun.com/best_practices.html#email-best-practices
