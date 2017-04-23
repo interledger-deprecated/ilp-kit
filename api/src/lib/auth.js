@@ -1,7 +1,6 @@
 'use strict'
 
 const crypto = require('crypto')
-const co = require('co')
 const passport = require('koa-passport')
 const UserFactory = require('../models/user')
 const UnauthorizedError = require('five-bells-shared/errors/unauthorized-error')
@@ -33,13 +32,13 @@ module.exports = class Auth {
           callbackURL: config.data.getIn(['server', 'base_uri']) + '/auth/github/callback'
         },
         // TODO this whole function is a dup from local register flow
-        co.wrap(function * (accessToken, refreshToken, profile, done) {
+        async function (accessToken, refreshToken, profile, done) {
           const email = profile.emails[0] && profile.emails[0].value
           const name = profile.displayName
           const profilePic = profile.photos[0].value
 
           // Find a user by github id or email address
-          let dbUser = yield User.findOne({
+          let dbUser = await User.findOne({
             where: {
               $or: [
                 { github_id: profile.id },
@@ -64,7 +63,7 @@ module.exports = class Auth {
             return done(null, dbUser)
           }
 
-          const username = yield self.User.getAvailableUsername(profile.username)
+          const username = await self.User.getAvailableUsername(profile.username)
 
           // User doesn't exist
           const userObj = {
@@ -81,7 +80,7 @@ module.exports = class Auth {
           // Create the ledger account
           let ledgerUser
           try {
-            ledgerUser = yield ledger.createAccount(userObj)
+            ledgerUser = await ledger.createAccount(userObj)
           } catch (e) {
             // TODO handle
             console.log('auth.js:80', e)
@@ -91,20 +90,20 @@ module.exports = class Auth {
 
           // Create the db user
           try {
-            dbUser = User.fromDatabaseModel(yield User.createExternal(userObj))
+            dbUser = User.fromDatabaseModel(await User.createExternal(userObj))
           } catch (e) {
             // TODO handle
             console.log('auth.js:80', e)
           }
 
           // Append ledger account
-          const user = yield dbUser.appendLedgerAccount(ledgerUser)
+          const user = await dbUser.appendLedgerAccount(ledgerUser)
 
           user.password = self.generateGithubPassword(profile.id)
 
           return done(null, user)
         })
-      ))
+      )
     }
 
     passport.serializeUser((user, done) => {
@@ -113,17 +112,18 @@ module.exports = class Auth {
 
     passport.deserializeUser((userObj, done) => {
       User.findOne({where: {username: userObj.username}})
-        .then(co.wrap(function * (dbUser) {
+        .then(async function (dbUser) {
           if (!dbUser) {
             return done(new UnauthorizedError('Unknown or invalid account / password'))
           }
 
           let user = User.fromDataPersistent(dbUser)
-          user = yield user.appendLedgerAccount()
+          user = await user.appendLedgerAccount()
           user.password = userObj.password
 
           done(null, user)
-        }))
+        })
+        .catch(done)
     })
   }
 
@@ -133,21 +133,21 @@ module.exports = class Auth {
     app.use(passport.session())
   }
 
-  * checkAuth (next) {
+  async checkAuth (ctx, next) {
     // Local Strategy
-    if (this.isAuthenticated()) {
-      return yield next
+    if (ctx.isAuthenticated()) {
+      return next()
     }
 
     // Basic and OAuth strategies
-    yield passport.authenticate(['basic'], { session: false }).call(this, next)
+    return passport.authenticate(['basic'], { session: false })(ctx, next)
   }
 
   commonSetup (Strategy) {
     const self = this
 
-    passport.use(new Strategy(co.wrap(
-      function * (username, password, done) {
+    passport.use(new Strategy(
+      async function (username, password, done) {
         // If no Authorization is provided we can still
         // continue without throwing an error
         if (!username) {
@@ -155,7 +155,7 @@ module.exports = class Auth {
         }
 
         // Check if the db user exists
-        const dbUser = yield self.User.findOne({where: {
+        const dbUser = await self.User.findOne({where: {
           $or: [
             { username: username },
             { email: username }
@@ -170,7 +170,7 @@ module.exports = class Auth {
         // TODO do we need this check?
         let ledgerUser
         try {
-          ledgerUser = yield self.ledger.getAccount({
+          ledgerUser = await self.ledger.getAccount({
             username: dbUser.username,
             password: password
           })
@@ -179,12 +179,12 @@ module.exports = class Auth {
         }
 
         // Append ledger account
-        const user = yield dbUser.appendLedgerAccount(ledgerUser)
+        const user = await dbUser.appendLedgerAccount(ledgerUser)
         user.password = password
 
         return done(null, user)
       }
-    )))
+    ))
   }
 
   generateGithubPassword (userId) {

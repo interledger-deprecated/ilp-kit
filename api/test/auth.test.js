@@ -4,11 +4,11 @@ const appHelper = require('./helpers/app')
 const exampleApiData = require('./data/api')
 
 describe('Auth', () => {
-  beforeEach(function * () {
-    this.agent = yield appHelper.create()
+  beforeEach(async function () {
+    this.agent = await appHelper.create()
 
     // Create the user
-    yield this.agent
+    await this.agent
       .post('/users/alice')
       .send({
         username: 'alice',
@@ -18,9 +18,9 @@ describe('Auth', () => {
   })
 
   describe('/auth/', () => {
-    it.skip('login user', function * () {
+    it.skip('login user', async function () {
       // Try to login
-      yield this.agent
+      await this.agent
         .post('/auth/login')
         .send({
           username: 'alice',
@@ -29,15 +29,15 @@ describe('Auth', () => {
         .expect(exampleApiData.accounts.alice)
     })
 
-    it.skip('doesn\'t load non-logged-in user', function * () {
+    it.skip('doesn\'t load non-logged-in user', async function () {
       // log out first
-      yield this.agent
+      await this.agent
         .post('/auth/logout')
         .send()
         .expect(200)
 
       // auth load gets currently logged in user
-      yield this.agent
+      await this.agent
         .get('/auth/load')
         .send()
         .expect({
@@ -46,9 +46,9 @@ describe('Auth', () => {
         })
     })
 
-    it.skip('doesn\'t give forgotten password to non-existant user', function * () {
+    it.skip('doesn\'t give forgotten password to non-existant user', async function () {
       // gets forgotten password for requested resource
-      yield this.agent
+      await this.agent
         .post('/auth/forgot-password')
         .send({
           // bob doesn't exist
@@ -60,16 +60,16 @@ describe('Auth', () => {
         })
     })
 
-    it.skip('returns forgotten password to user', function * () {
+    it.skip('returns forgotten password to user', async function () {
       // Try to login
-      yield this.agent
+      await this.agent
         .post('/auth/login')
         .send({
           username: 'alice',
           password: 'alice'
         })
 
-      yield this.agent
+      await this.agent
         // now send a password reset message
         .post('/auth/forgot-password')
         .send({
@@ -79,8 +79,8 @@ describe('Auth', () => {
         .expect({})
     })
 
-    it.skip('won\'t change password for nonexistant user', function * () {
-      yield this.agent
+    it.skip('won\'t change password for nonexistant user', async function () {
+      await this.agent
         .post('/auth/change-password')
         .send({
           username: 'bob'
@@ -91,14 +91,14 @@ describe('Auth', () => {
         })
     })
 
-    it.skip('won\'t change password with non-matching passwords', function * () {
+    it.skip('won\'t change password with non-matching passwords', async function () {
       // log out first
-      yield this.agent
+      await this.agent
         .post('/auth/logout')
         .send()
         .expect(200)
 
-      yield this.agent
+      await this.agent
         .post('/auth/change-password')
         .send({
           // sends two passwords but they don't match
@@ -112,8 +112,8 @@ describe('Auth', () => {
         })
     })
 
-    it.skip('won\'t change password without code', function * () {
-      yield this.agent
+    it.skip('won\'t change password without code', async function () {
+      await this.agent
         .post('/auth/change-password')
         .send({
           // missing 'code' field
@@ -127,8 +127,8 @@ describe('Auth', () => {
         })
     })
 
-    it.skip('won\'t change password with invalid code', function * () {
-      yield this.agent
+    it.skip('won\'t change password with invalid code', async function () {
+      await this.agent
         .post('/auth/change-password')
         .send({
           // code needs to be 'date.secret'
@@ -143,8 +143,8 @@ describe('Auth', () => {
         })
     })
 
-    it.skip('won\'t change password with wrong code', function * () {
-      yield this.agent
+    it.skip('won\'t change password with wrong code', async function () {
+      await this.agent
         .post('/auth/change-password')
         .send({
           // date and secret in code are incorrect
@@ -159,15 +159,15 @@ describe('Auth', () => {
         })
     })
 
-    it.skip('won\'t change profile without logging in', function * () {
+    it.skip('won\'t change profile without logging in', async function () {
       // log out first
-      yield this.agent
+      await this.agent
         .post('/auth/logout')
         .send()
         .expect(200)
 
       // try to change profile
-      yield this.agent
+      await this.agent
         .post('/auth/profilepic')
         .send({
           files: {
@@ -182,9 +182,9 @@ describe('Auth', () => {
         })
     })
 
-    it.skip('changes profile picture successfully', function * () {
+    it.skip('changes profile picture successfully', async function () {
       // Try to login
-      yield this.agent
+      await this.agent
         .post('/auth/login')
         .send({
           username: 'alice',
@@ -192,7 +192,7 @@ describe('Auth', () => {
         })
 
       // send the new profile picture
-      yield this.agent
+      await this.agent
         .post('/auth/profilepic')
         .send({
           files: {
@@ -204,16 +204,16 @@ describe('Auth', () => {
         .expect(200)
     })
 
-    it.skip('should log out', function * () {
+    it.skip('should log out', async function () {
       // Try to login
-      yield this.agent
+      await this.agent
         .post('/auth/login')
         .send({
           username: 'alice',
           password: 'alice'
         })
 
-      yield this.agent
+      await this.agent
         .post('/auth/logout')
         .send()
         .expect(200)

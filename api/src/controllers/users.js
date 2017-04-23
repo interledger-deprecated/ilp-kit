@@ -15,7 +15,6 @@ const Antifraud = require('../lib/antifraud')
 const UserFactory = require('../models/user')
 const InviteFactory = require('../models/invite')
 const Database = require('../lib/db')
-const co = require('co')
 const SPSP = require('../lib/spsp')
 
 const UsernameTakenError = require('../errors/username-taken-error')
@@ -57,18 +56,18 @@ function UsersControllerFactory (deps) {
     }
 
     // TODO move to auth
-    static * checkAdmin (next) {
-      if (this.req.user.username === config.data.getIn(['ledger', 'admin', 'user'])) {
-        return yield next
+    static async checkAdmin (ctx, next) {
+      if (ctx.req.user.username === config.data.getIn(['ledger', 'admin', 'user'])) {
+        return next()
       }
 
       // TODO throw exception
-      this.status = 404
+      ctx.status = 404
     }
 
-    static * getAll () {
-      // this.body = yield ledger.getAccounts()
-      this.body = yield User.findAll()
+    static async getAll (ctx) {
+      // ctx.body = await ledger.getAccounts()
+      ctx.body = await User.findAll()
     }
 
     /**
@@ -92,21 +91,21 @@ function UsersControllerFactory (deps) {
      *      "id": 1
      *    }
      */
-    static * getResource () {
-      let username = this.params.username
+    static async getResource (ctx) {
+      let username = ctx.params.username
       request.validateUriParameter('username', username, 'Identifier')
       username = username.toLowerCase()
 
-      if (this.req.user.username !== username) {
+      if (ctx.req.user.username !== username) {
         // TODO throw exception
-        this.status = 404
+        ctx.status = 404
         return
       }
 
-      const dbUser = yield User.findOne({where: {username: username}})
-      const user = yield dbUser.appendLedgerAccount()
+      const dbUser = await User.findOne({where: {username: username}})
+      const user = await dbUser.appendLedgerAccount()
 
-      this.body = user.getDataExternal()
+      ctx.body = user.getDataExternal()
     }
 
     /**
@@ -135,25 +134,24 @@ function UsersControllerFactory (deps) {
      */
 
     // Only supports create
-    static * postResource () {
-      const self = this
-      const userObj = this.body
+    static async postResource (ctx) {
+      const userObj = ctx.body
 
       // check if registration is enabled
       if (!config.data.get('registration') && !userObj.inviteCode) {
         throw new InvalidBodyError('Registration is disabled without an invite code')
       }
 
-      let username = this.params.username.toLowerCase()
+      let username = ctx.params.username.toLowerCase()
       if (!USERNAME_REGEX.test(username)) {
         throw new InvalidBodyError('Username must be 2-20 characters, lowercase letters, numbers and hyphens ("-") only, with no two or more consecutive hyphens.')
       }
 
-      yield antifraud.checkRisk(userObj) // throws if fraud risk is too high
+      await antifraud.checkRisk(userObj) // throws if fraud risk is too high
 
       let dbUser
       let invite
-      yield sequelize.transaction(co.wrap(function * (t) {
+      await sequelize.transaction(async function (t) {
         const opts = {transaction: t}
 
         userObj.username = username
@@ -165,7 +163,7 @@ function UsersControllerFactory (deps) {
 
         // Check if invite code is valid
         if (userObj.inviteCode) {
-          invite = yield Invite.findOne(Object.assign({
+          invite = await Invite.findOne(Object.assign({
             where: {
               code: userObj.inviteCode,
               claimed: false
@@ -176,7 +174,7 @@ function UsersControllerFactory (deps) {
             dbUser.invite_code = invite.code
             invite.user_id = dbUser.id
             // throws if the user identified by user_id has already claimed another invite
-            yield invite.save(opts)
+            await invite.save(opts)
           } else if (!config.data.get('registration')) {
             throw new InvalidBodyError('The invite code is wrong')
           }
@@ -184,7 +182,7 @@ function UsersControllerFactory (deps) {
 
         // Create the db user
         try {
-          dbUser = yield dbUser.save(opts)
+          dbUser = await dbUser.save(opts)
           dbUser = User.fromDatabaseModel(dbUser)
         } catch (e) {
           let errorMsg = e.errors && e.errors[0] && e.errors[0].message
@@ -203,9 +201,9 @@ function UsersControllerFactory (deps) {
           // Sanity check: Verify that a ledger account with that name does not exist yet
           // Otherwise an attacker could take over a ledger account
           // for which no ILP kit account exits
-          const exists = yield ledger.existsAccount(userObj)
+          const exists = await ledger.existsAccount(userObj)
           if (!exists) {
-            yield ledger.createAccount(userObj)
+            await ledger.createAccount(userObj)
           } else {
             throw new Error(`Username ${userObj.username} already exists on the ledger` +
               ', but not in the ILP kit.')
@@ -214,22 +212,22 @@ function UsersControllerFactory (deps) {
           log.error(e)
           throw new UsernameTakenError('Ledger rejected username')
         }
-      })).then(co.wrap(function * (result) {
+      }).then(async function (result) {
         // transaction was commited
-        yield UsersController._onboardUser.call(self, invite, dbUser)
-      })).catch(function (e) {
+        await UsersController._onboardUser(ctx, invite, dbUser)
+      }).catch(function (e) {
         // transaction was rolled back
         log.debug(e)
         throw e
       })
     }
 
-    static * _handleInvite (invite, username) {
+    static async _handleInvite (invite, username) {
       try {
         if (invite) {
           if (invite.amount) {
             // Admin account funding the new account
-            const admin = yield User.findOne({
+            const admin = await User.findOne({
               where: {
                 username: config.data.getIn(['ledger', 'admin', 'user'])
               }
@@ -242,10 +240,10 @@ function UsersControllerFactory (deps) {
             }
 
             // Get a quote
-            const quote = yield spsp.quote(quoteReq)
+            const quote = await spsp.quote(quoteReq)
 
             // Send the invite money
-            yield pay.pay({
+            await pay.pay({
               user: admin.getDataExternal(),
               destination: destination,
               quote: quote
@@ -261,25 +259,25 @@ function UsersControllerFactory (deps) {
       }
     }
 
-    static * _onboardUser (invite, dbUser) {
+    static async _onboardUser (ctx, invite, dbUser) {
       if (invite) {
-        yield UsersController._handleInvite(invite, dbUser.username)
+        await UsersController._handleInvite(invite, dbUser.username)
       }
 
       // Fund the newly created account
-      yield UsersController.reload(dbUser)
+      await UsersController._reload(dbUser)
 
       // Send a welcome email
-      yield mailer.sendWelcome({
+      await mailer.sendWelcome({
         name: dbUser.username,
         to: dbUser.email,
         link: User.getVerificationLink(dbUser.username, dbUser.email)
       })
 
-      const user = yield dbUser.appendLedgerAccount()
+      const user = await dbUser.appendLedgerAccount()
 
       // TODO callbacks?
-      this.req.logIn(user, err => {
+      ctx.logIn(user, err => {
         if (err) {
           log.error('error while logging in: %s', err)
         }
@@ -287,8 +285,32 @@ function UsersControllerFactory (deps) {
 
       log.debug('created user ' + dbUser.username)
 
-      this.body = user.getDataExternal()
-      this.status = 201
+      ctx.body = user.getDataExternal()
+      ctx.status = 201
+    }
+
+    static async _reload (user) {
+      // Admin account funding the new account
+      const source = await User.findOne({
+        where: {
+          username: config.data.getIn(['ledger', 'admin', 'user'])
+        }
+      })
+
+      const quote = await spsp.quote({
+        user: source.getDataExternal(),
+        destination: user.username + '@' + config.data.getIn(['server', 'public_host']),
+        destinationAmount: 1000
+      })
+
+      quote.memo = 'Free money'
+
+      // Send the money
+      await pay.pay({
+        user: source.getDataExternal(),
+        destination: user.username,
+        quote
+      })
     }
 
     /**
@@ -316,12 +338,12 @@ function UsersControllerFactory (deps) {
      *      "id": 1
      *    }
      */
-    static * putResource () {
-      const data = this.body
-      const user = yield User.findOne({ where: {id: this.req.user.id} })
+    static async putResource (ctx) {
+      const data = ctx.body
+      const user = await User.findOne({ where: {id: ctx.req.user.id} })
 
       // Is the current password right?
-      yield ledger.getAccount({
+      await ledger.getAccount({
         username: user.username,
         password: data.password
       })
@@ -335,7 +357,7 @@ function UsersControllerFactory (deps) {
         }
 
         // Update the ledger user
-        yield ledger.updateAccount({
+        await ledger.updateAccount({
           username: user.username,
           password: data.password,
           newPassword: data.newPassword
@@ -350,9 +372,9 @@ function UsersControllerFactory (deps) {
       }
 
       if (data.email) {
-        yield user.changeEmail(data.email)
+        await user.changeEmail(data.email)
 
-        yield mailer.changeEmail({
+        await mailer.changeEmail({
           name: user.username,
           to: user.email,
           link: User.getVerificationLink(user.username, user.email)
@@ -362,55 +384,33 @@ function UsersControllerFactory (deps) {
       user.name = data.name
 
       try {
-        yield user.save()
+        await user.save()
 
-        this.req.logIn(yield user.appendLedgerAccount(), err => {
+        ctx.req.logIn(await user.appendLedgerAccount(), err => {
           if (err) {
             log.error('error while logging in: %s', err)
           }
         })
-        this.body = user.getDataExternal()
+        ctx.body = user.getDataExternal()
       } catch (e) {
         // TODO throw an exception
-        this.status = 500
+        ctx.status = 500
         log.warn(e)
       }
     }
 
     // This will only reload if the "reload" env var is true
-    static * reload (user) {
+    static async reload (ctx) {
       if (!config.data.get('reload')) {
-        this.status = 404
+        ctx.status = 404
         return
       }
 
-      if (!user.username) {
-        user = this.req.user
-      }
+      const user = ctx.req.user
 
-      // Admin account funding the new account
-      const source = yield User.findOne({
-        where: {
-          username: config.data.getIn(['ledger', 'admin', 'user'])
-        }
-      })
+      await UsersController._reload(user)
 
-      const quote = yield spsp.quote({
-        user: source.getDataExternal(),
-        destination: user.username + '@' + config.data.getIn(['server', 'public_host']),
-        destinationAmount: 1000
-      })
-
-      quote.memo = 'Free money'
-
-      // Send the money
-      yield pay.pay({
-        user: source.getDataExternal(),
-        destination: user.username,
-        quote
-      })
-
-      this.status = 200
+      ctx.status = 200
     }
 
     /**
@@ -438,23 +438,23 @@ function UsersControllerFactory (deps) {
      *      "email_verified": true
      *    }
      */
-    static * verify () {
-      let username = this.params.username
+    static async verify (ctx) {
+      let username = ctx.params.username
       request.validateUriParameter('username', username, 'Identifier')
       username = username.toLowerCase()
 
-      const dbUser = yield User.findOne({where: {username: username}})
+      const dbUser = await User.findOne({where: {username: username}})
 
       // Code is wrong
-      if (this.body.code !== User.getVerificationCode(dbUser.email)) {
+      if (ctx.body.code !== User.getVerificationCode(dbUser.email)) {
         throw new InvalidVerification('Verification code is invalid')
       }
 
       // TODO different result if the user has already been verified
       dbUser.email_verified = true
-      yield dbUser.save()
+      await dbUser.save()
 
-      this.status = 200
+      ctx.status = 200
     }
 
     /**
@@ -472,21 +472,21 @@ function UsersControllerFactory (deps) {
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
      */
-    static * resendVerification () {
-      let username = this.params.username
+    static async resendVerification (ctx) {
+      let username = ctx.params.username
       request.validateUriParameter('username', username, 'Identifier')
       username = username.toLowerCase()
 
-      const dbUser = yield User.findOne({where: {username: username}})
+      const dbUser = await User.findOne({where: {username: username}})
 
       // TODO could sometimes be sendWelcome
-      yield mailer.changeEmail({
+      await mailer.changeEmail({
         name: dbUser.username,
         to: dbUser.email,
         link: User.getVerificationLink(dbUser.username, dbUser.email)
       })
 
-      this.status = 200
+      ctx.status = 200
     }
 
     /**
@@ -512,19 +512,19 @@ function UsersControllerFactory (deps) {
      *      "image_url": "http://server.example/picture.jpg"
      *    }
      */
-    static * getReceiver () {
+    static async getReceiver (ctx) {
       const ledgerPrefix = config.data.getIn(['ledger', 'prefix'])
-      let user = yield User.findOne({where: {username: this.params.username}})
+      let user = await User.findOne({where: {username: ctx.params.username}})
 
       if (!user) {
         // TODO throw exception
-        this.status = 404
+        ctx.status = 404
         return
       }
 
       user = user.getDataExternal()
 
-      this.body = {
+      ctx.body = {
         'type': 'payee',
         'account': ledgerPrefix + user.username,
         'currency_code': config.data.getIn(['ledger', 'currency', 'code']),
@@ -534,24 +534,24 @@ function UsersControllerFactory (deps) {
       }
     }
 
-    static * getProfilePicture () {
-      const user = yield User.findOne({where: {username: this.params.username}})
+    static async getProfilePicture (ctx) {
+      const user = await User.findOne({where: {username: ctx.params.username}})
 
       if (!user) {
         // TODO throw exception
-        this.status = 404
+        ctx.status = 404
         return
       }
 
       const file = path.resolve(__dirname, '../../../uploads/', user.profile_picture)
 
       if (!fs.existsSync(file)) {
-        this.status = 422
+        ctx.status = 422
         return
       }
 
       const img = fs.readFileSync(file)
-      this.body = img
+      ctx.body = img
     }
   }
 }

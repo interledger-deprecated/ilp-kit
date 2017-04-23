@@ -17,14 +17,14 @@ const sleep = function (delay) {
   })
 }
 
-exports.create = function * () {
+exports.create = async function () {
   const deps = reduct()
   deps.setOverride(Ledger, LedgerMock)
   const app = deps(App)
 
   app.db.sync()
   // DB is unreliable unless you wait a few ticks
-  yield sleep(10)
+  await sleep(10)
 
   return Object.assign(request.agent(app.app.listen()), {
     App: {

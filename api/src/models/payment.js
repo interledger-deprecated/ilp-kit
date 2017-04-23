@@ -45,8 +45,8 @@ function PaymentFactory (deps) {
     static createBodyParser () {
       const Self = this
 
-      return function * (next) {
-        let json = this.body
+      return async function (ctx, next) {
+        let json = ctx.body
         const validationResult = Self.validateExternal(json)
         if (validationResult.valid !== true) {
           const message = validationResult.schema
@@ -57,14 +57,14 @@ function PaymentFactory (deps) {
 
         const model = new Self()
         model.setDataExternal(json)
-        this.body = model
+        ctx.body = model
 
-        yield next
+        await next()
       }
     }
 
-    static * getUserStats (user) {
-      const result = yield sequelize.query(
+    static async getUserStats (user) {
+      const result = await sequelize.query(
         'SELECT source_identifier, destination_identifier,' +
           ' sum(source_amount) as source_amount,' +
           ' source_name,' +
@@ -94,11 +94,11 @@ function PaymentFactory (deps) {
       return result[0]
     }
 
-    static * createOrUpdate (payment) {
+    static async createOrUpdate (payment) {
       debug('createOrUpdate', payment)
 
       // Get the db entry
-      let dbPayment = yield Payment.findOne({
+      let dbPayment = await Payment.findOne({
         where: { transfer: payment.transfer }
       })
 

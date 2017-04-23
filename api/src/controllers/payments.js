@@ -63,12 +63,12 @@ function PaymentsControllerFactory (deps) {
      */
 
     // TODO don't allow payments to self
-    static * putResource () {
-      const quote = this.body.quote
-      const destination = this.body.destination
+    static async putResource (ctx) {
+      const quote = ctx.body.quote
+      const destination = ctx.body.destination
 
       try {
-        yield pay.pay({ user: this.req.user, quote, destination })
+        await pay.pay({ user: ctx.req.user, quote, destination })
       } catch (e) {
         console.error(e)
 
@@ -76,7 +76,7 @@ function PaymentsControllerFactory (deps) {
       }
 
       // TODO should be something more meaningful
-      this.status = 200
+      ctx.status = 200
     }
 
     /**
@@ -108,13 +108,13 @@ function PaymentsControllerFactory (deps) {
      */
 
     // TODO handle not supplied params
-    static * quote () {
+    static async quote (ctx) {
       try {
-        this.body = yield spsp.quote({
-          user: this.req.user,
-          destination: this.body.destination,
-          sourceAmount: this.body.sourceAmount,
-          destinationAmount: this.body.destinationAmount
+        ctx.body = await spsp.quote({
+          user: ctx.req.user,
+          destination: ctx.body.destination,
+          sourceAmount: ctx.body.sourceAmount,
+          destinationAmount: ctx.body.destinationAmount
         })
       } catch (e) {
         console.error(e)
@@ -152,16 +152,16 @@ function PaymentsControllerFactory (deps) {
      *      "condition": "cc:0:3:XcJRQrVJQKsXrXnpHIk1Nm7PBm5JfnFgmd8ocsexjO4:32"
      *    }
      */
-    static * query () {
-      const user = yield User.findOne({ where: { username: this.params.username } })
+    static async query (ctx) {
+      const user = await User.findOne({ where: { username: ctx.params.username } })
 
       if (!user) throw new NotFoundError()
 
-      this.body = yield spsp.query(user)
+      ctx.body = await spsp.query(user)
     }
 
-    static * getStats () {
-      this.body = yield Payment.getUserStats(this.req.user)
+    static async getStats (ctx) {
+      ctx.body = await Payment.getUserStats(ctx.req.user)
     }
   }
 }

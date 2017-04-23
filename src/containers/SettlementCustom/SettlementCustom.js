@@ -52,12 +52,10 @@ export default class SettlementCustom extends Component {
   }
 
   updateMethod = (props = this.props) => {
-    props.initializeForm({
-      name: props.method.name || undefined,
-      description: props.method.description || undefined,
-      logo: props.method.logo || undefined,
-      uri: props.method.uri || undefined
-    })
+    props.change('name', props.method.name || undefined)
+    props.change('description', props.method.description || undefined)
+    props.change('logo', props.method.logo || undefined)
+    props.change('uri', props.method.uri || undefined)
   }
 
   handleSave = data => {

@@ -31,13 +31,13 @@ module.exports = class Ledger extends EventEmitter {
   }
 
   // TODO caching
-  * getInfo (uri) {
+  async getInfo (uri) {
     const ledgerUri = uri || this.ledgerUri
     let response
 
     try {
       this.log.info('getting ledger info ' + ledgerUri)
-      response = yield superagent.get(ledgerUri).end()
+      response = await superagent.get(ledgerUri).end()
     } catch (err) {
       throw err
     }
@@ -45,9 +45,9 @@ module.exports = class Ledger extends EventEmitter {
     return response.body
   }
 
-  * existsAccount (user) {
+  async existsAccount (user) {
     try {
-      yield this.getAccount(user, true)
+      await this.getAccount(user, true)
       return true
     } catch (e) {
       if (e.name === 'NotFoundError') {
@@ -56,11 +56,11 @@ module.exports = class Ledger extends EventEmitter {
     }
   }
 
-  * getAccount (user, admin) {
+  async getAccount (user, admin) {
     let response
 
     try {
-      response = yield superagent
+      response = await superagent
         .get(this.ledgerUri + '/accounts/' + user.username)
         .auth(admin ? this.config.data.getIn(['ledger', 'admin', 'user']) : user.username, admin ? this.config.data.getIn(['ledger', 'admin', 'pass']) : user.password)
         .end()
@@ -77,11 +77,11 @@ module.exports = class Ledger extends EventEmitter {
     return response.body
   }
 
-  * getAccounts () {
+  async getAccounts () {
     let response
 
     try {
-      response = yield superagent
+      response = await superagent
         .get(this.ledgerUri + '/accounts')
         .auth(this.config.data.getIn(['ledger', 'admin', 'user']), this.config.data.getIn(['ledger', 'admin', 'pass']))
         .end()
@@ -98,8 +98,8 @@ module.exports = class Ledger extends EventEmitter {
     return response.body
   }
 
-  * putAccount (auth, data) {
-    const response = yield superagent
+  async putAccount (auth, data) {
+    const response = await superagent
       .put(this.ledgerUri + '/accounts/' + data.name)
       .send(data)
       .auth(auth.username, auth.password)
@@ -108,12 +108,12 @@ module.exports = class Ledger extends EventEmitter {
   }
 
   // Make sure admin minimum allowed balance is negative infinity
-  * setupAdminAccount () {
+  async setupAdminAccount () {
     const username = this.config.data.getIn(['ledger', 'admin', 'user'])
     const password = this.config.data.getIn(['ledger', 'admin', 'pass'])
 
     // Get the account
-    const account = yield this.getAccount({ username, password })
+    const account = await this.getAccount({ username, password })
 
     delete account.id
     delete account.ledger
@@ -122,7 +122,7 @@ module.exports = class Ledger extends EventEmitter {
     account.minimum_allowed_balance = '-infinity'
 
     // Update the account
-    const response = yield superagent
+    const response = await superagent
       .put(this.ledgerUri + '/accounts/' + username)
       .send(account)
       .auth(username, password)
@@ -153,7 +153,7 @@ module.exports = class Ledger extends EventEmitter {
     return this.putAccount(user, data)
   }
 
-  * createAccount (user) {
+  createAccount (user) {
     const data = {
       name: user.username,
       balance: '0'
@@ -163,7 +163,7 @@ module.exports = class Ledger extends EventEmitter {
       data.password = user.password
     }
 
-    return yield this.putAccount({
+    return this.putAccount({
       username: this.config.data.getIn(['ledger', 'admin', 'user']),
       password: this.config.data.getIn(['ledger', 'admin', 'pass'])
     }, data)

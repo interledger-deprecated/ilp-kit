@@ -1,7 +1,6 @@
 'use strict'
 
 const request = require('superagent')
-const co = require('co')
 const connector = require('ilp-connector')
 const Log = require('./log')
 const Config = require('./config')
@@ -23,34 +22,34 @@ module.exports = class Connector {
     this.instance = connector
   }
 
-  * start () {
+  async start () {
     const self = this
 
     this.log.info('Waiting for the ledger...')
 
-    yield this.waitForLedger()
+    await this.waitForLedger()
 
     this.log.info('Starting the connector...')
 
     connector.listen()
 
     // Get the peers from the database
-    const peers = yield self.Peer.findAll()
+    const peers = await self.Peer.findAll()
 
     // TODO wait a bit before adding peers (until the below issue is resolved)
     // https://github.com/interledgerjs/ilp-connector/issues/294
-    setTimeout(co.wrap(function * () {
+    setTimeout(async function () {
       for (const peer of peers) {
         try {
-          yield self.connectPeer(peer)
+          await self.connectPeer(peer)
         } catch (e) {
           self.log.err("Couldn't add the peer to the connector", e)
         }
       }
-    }), 5000)
+    }, 5000)
   }
 
-  * waitForLedger () {
+  async waitForLedger () {
     const port = process.env.CLIENT_PORT
     const ledgerPublicPath = this.config.data.getIn(['ledger', 'public_uri'])
 
@@ -66,14 +65,14 @@ module.exports = class Connector {
     })
   }
 
-  * getPeerInfo (peer) {
+  async getPeerInfo (peer) {
     const peerInfo = this.peers[peer.destination]
 
     // Already have the info
     if (peerInfo && peerInfo.publicKey) return peerInfo
 
     // Get the host publicKey
-    const hostInfo = yield this.utils.hostLookup('https://' + peer.hostname)
+    const hostInfo = await this.utils.hostLookup('https://' + peer.hostname)
 
     let publicKey
     let rpcUri
@@ -102,14 +101,14 @@ module.exports = class Connector {
     return this.peers[peer.destination]
   }
 
-  * connectPeer (peer) {
+  async connectPeer (peer) {
     const self = this
 
     // Skip if already connected
     if (this.peers[peer.destination] && this.peers[peer.destination].online) return
 
     // Get host info
-    const hostInfo = yield this.getPeerInfo(peer)
+    const hostInfo = await this.getPeerInfo(peer)
 
     try {
       let options = {
@@ -125,7 +124,7 @@ module.exports = class Connector {
           connectors: [hostInfo.ledgerName + hostInfo.publicKey]
         }
       }
-      yield connector.addPlugin(hostInfo.ledgerName, {
+      await connector.addPlugin(hostInfo.ledgerName, {
         currency: options.currencyCode, // connectors have this option to contradict the ledgerInfo's currencyCode, but we don't use that.
         plugin: 'ilp-plugin-virtual',
         store: true,
@@ -141,7 +140,7 @@ module.exports = class Connector {
     const plugin = connector.getPlugin(hostInfo.ledgerName)
 
     try {
-      yield plugin.getLimit()
+      await plugin.getLimit()
 
       this.peers[peer.destination].online = true
     } catch (e) {
@@ -149,29 +148,29 @@ module.exports = class Connector {
       this.log.info("Can't get the peer limit")
     }
 
-    plugin.on('incoming_message', co.wrap(function * (message) {
+    plugin.on('incoming_message', async function (message) {
       if (message.data.method !== 'settlement_methods_request') return
 
-      const peerStatus = yield self.getPeer(peer)
+      const peerStatus = await self.getPeer(peer)
 
       if (!peerStatus) return
 
       // Settlement Methods
-      yield plugin.sendMessage({
+      await plugin.sendMessage({
         from: message.to,
         to: message.from,
         ledger: message.ledger,
         data: {
           method: 'settlement_methods_response',
-          settlement_methods: yield self.getSelfSettlementMethods(peer.destination, peerStatus.balance)
+          settlement_methods: await self.getSelfSettlementMethods(peer.destination, peerStatus.balance)
         }
       })
-    }))
+    })
   }
 
-  * getSelfSettlementMethods (destination, amount) {
+  async getSelfSettlementMethods (destination, amount) {
     // TODO:PERFORMANCE don't call this on every request
-    const dbSettlementMethods = yield this.SettlementMethod.findAll({ where: { enabled: true } })
+    const dbSettlementMethods = await this.SettlementMethod.findAll({ where: { enabled: true } })
     return dbSettlementMethods.map(settlementMethod => {
       let uri
 
@@ -194,13 +193,13 @@ module.exports = class Connector {
     })
   }
 
-  * removePeer (peer) {
+  async removePeer (peer) {
     const peerInfo = this.peers[peer.destination]
 
     if (!peerInfo || !peerInfo.online) return
 
     try {
-      yield connector.removePlugin(peerInfo.ledgerName)
+      await connector.removePlugin(peerInfo.ledgerName)
     } catch (e) {
       this.log.err("Couldn't remove the peer from the connector", e)
     }
@@ -208,9 +207,9 @@ module.exports = class Connector {
     delete this.peers[peer.destination]
   }
 
-  * getPeer (peer) {
+  async getPeer (peer) {
     try {
-      yield this.connectPeer(peer)
+      await this.connectPeer(peer)
     } catch (e) {
       // That's fine, we'll return an offline state
     }
@@ -222,8 +221,8 @@ module.exports = class Connector {
     const online = peerInfo.online
     const plugin = connector.getPlugin(peerInfo.ledgerName)
 
-    const balance = online && (yield plugin.getBalance())
-    const minBalance = online && (yield plugin.getLimit())
+    const balance = online && (await plugin.getBalance())
+    const minBalance = online && (await plugin.getLimit())
 
     return {
       online,
@@ -232,7 +231,7 @@ module.exports = class Connector {
     }
   }
 
-  * getSettlementMethods (peer) {
+  async getSettlementMethods (peer) {
     const peerInfo = this.peers[peer.destination]
     const plugin = connector.getPlugin(peerInfo.ledgerName)
 
@@ -250,7 +249,7 @@ module.exports = class Connector {
       plugin.on('incoming_message', handler)
     })
 
-    yield plugin.sendMessage({
+    await plugin.sendMessage({
       from: peerInfo.ledgerName + this.config.data.getIn(['connector', 'public_key']),
       to: peerInfo.ledgerName + peerInfo.publicKey,
       ledger: peerInfo.ledgerName,

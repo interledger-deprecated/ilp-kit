@@ -61,8 +61,8 @@ function UserFactory (deps) {
     static createBodyParser () {
       const Self = this
 
-      return function * (next) {
-        const json = this.body
+      return async function (ctx, next) {
+        const json = ctx.body
         const validationResult = Self.validateExternal(json)
         if (validationResult.valid !== true) {
           const message = validationResult.schema
@@ -73,14 +73,14 @@ function UserFactory (deps) {
 
         const model = new Self()
         model.setDataExternal(json)
-        this.body = model
+        ctx.body = model
 
-        yield next
+        await next()
       }
     }
 
-    static * getAvailableUsername (username) {
-      const user = yield User.findOne({ where: { username } })
+    static async getAvailableUsername (username) {
+      const user = await User.findOne({ where: { username } })
 
       return user ? username + Math.floor((Math.random() * 1000) + 1) : username
     }
@@ -93,10 +93,10 @@ function UserFactory (deps) {
       return config.data.get(['client_host']) + '/verify/' + username + '/' + User.getVerificationCode(email)
     }
 
-    static * setupAdminAccount () {
+    static async setupAdminAccount () {
       const username = config.data.getIn(['ledger', 'admin', 'user'])
 
-      let dbUser = yield this.findOne({ where: { username } })
+      let dbUser = await this.findOne({ where: { username } })
 
       if (!dbUser) {
         // Create the admin account
@@ -104,18 +104,18 @@ function UserFactory (deps) {
 
         dbUser.username = username
 
-        dbUser = this.fromDatabaseModel(yield dbUser.save())
+        dbUser = this.fromDatabaseModel(await dbUser.save())
 
         dbUser.new = true
       }
 
       // Setup ledger admin account
-      const ledgerAccount = yield ledger.setupAdminAccount()
+      const ledgerAccount = await ledger.setupAdminAccount()
 
-      return yield dbUser.appendLedgerAccount(ledgerAccount)
+      return dbUser.appendLedgerAccount(ledgerAccount)
     }
 
-    static * setupConnectorAccount () {
+    static async setupConnectorAccount () {
       const ledgers = JSON.parse(config.data.getIn(['connector', 'ledgers']))
       const prefix = config.data.getIn(['ledger', 'prefix'])
 
@@ -129,7 +129,7 @@ function UserFactory (deps) {
       const username = options.username || derivedUsername
       const password = options.password
 
-      let dbUser = yield this.findOne({ where: { username } })
+      let dbUser = await this.findOne({ where: { username } })
 
       // Create the db connector account
       if (!dbUser) {
@@ -137,7 +137,7 @@ function UserFactory (deps) {
 
         dbUser.username = username
 
-        dbUser = this.fromDatabaseModel(yield dbUser.save())
+        dbUser = this.fromDatabaseModel(await dbUser.save())
 
         // Used in app.js for the initial funding
         dbUser.new = true
@@ -148,18 +148,18 @@ function UserFactory (deps) {
       // Create the ledger connector account
       try {
         // Does the account already exist?
-        ledgerAccount = yield ledger.getAccount({ username, password })
+        ledgerAccount = await ledger.getAccount({ username, password })
       } catch (err) {
         // TODO does account not exist or is this a different exception?
 
         // Create the account
-        ledgerAccount = yield ledger.createAccount({ username, password })
+        ledgerAccount = await ledger.createAccount({ username, password })
       }
 
-      return yield dbUser.appendLedgerAccount(ledgerAccount)
+      return dbUser.appendLedgerAccount(ledgerAccount)
     }
 
-    * changeEmail (email, verified) {
+    async changeEmail (email, verified) {
       if (this.email === email) return this
 
       this.email = email
@@ -179,7 +179,7 @@ function UserFactory (deps) {
 
       try {
         // TODO verification
-        yield this.save()
+        await this.save()
       } catch (e) {
         // Email is already taken by someone else
         if (e.name === 'SequelizeUniqueConstraintError') {
@@ -193,9 +193,9 @@ function UserFactory (deps) {
       return this
     }
 
-    * appendLedgerAccount (ledgerUser) {
+    async appendLedgerAccount (ledgerUser) {
       if (!ledgerUser) {
-        ledgerUser = yield ledger.getAccount(this, true)
+        ledgerUser = await ledger.getAccount(this, true)
       }
       this.balance = Math.round(ledgerUser.balance * 100) / 100
       this.minimum_allowed_balance = ledgerUser.minimum_allowed_balance

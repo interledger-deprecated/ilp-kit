@@ -61,15 +61,15 @@ function WebfingerControllerFactory (deps) {
      *      ]
      *    }
      */
-    static * load () {
-      if (!this.query || !this.query.resource) {
+    static async load (ctx) {
+      if (!ctx.query || !ctx.query.resource) {
         // TODO throw exception
-        this.status = 400
+        ctx.status = 400
         return
       }
 
       // TODO rel support
-      const parsed = url.parse(this.query.resource)
+      const parsed = url.parse(ctx.query.resource)
 
       // Validate ledger
       if (config.data.getIn(['ledger', 'public_uri']).indexOf(parsed.hostname) < 0) {
@@ -91,9 +91,9 @@ function WebfingerControllerFactory (deps) {
       // Account lookup
       if (username) {
         // Validate the ledger account
-        const ledgerUser = yield ledger.getAccount({ username: username }, true)
+        const ledgerUser = await ledger.getAccount({ username: username }, true)
 
-        this.body = {
+        ctx.body = {
           'subject': 'acct:' + ledgerUser.name + '@' + parsed.hostname,
           'links': [
             {
@@ -128,7 +128,7 @@ function WebfingerControllerFactory (deps) {
       }
 
       // Host lookup
-      this.body = {
+      ctx.body = {
         'subject': config.data.get('client_host'),
         'properties': {
           'https://interledger.org/rel/publicKey': config.data.getIn(['connector', 'public_key']),

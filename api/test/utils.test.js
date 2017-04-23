@@ -100,7 +100,7 @@ function nockDestinationRemote () {
 }
 
 describe('Utils', () => {
-  beforeEach(function * () {
+  beforeEach(async function () {
     const deps = reduct()
     deps.setOverride(Ledger, LedgerMock)
 
@@ -117,18 +117,18 @@ describe('Utils', () => {
   })
 
   describe('getWebfingerAccount', function () {
-    it('doesn\'t get an account that doesn\'t exist', function * () {
+    it('doesn\'t get an account that doesn\'t exist', async function () {
       try {
-        yield this.utils.getWebfingerAccount('https://example.com/accounts/nonentity')
+        await this.utils.getWebfingerAccount('https://example.com/accounts/nonentity')
         assert(false, 'this.util.getWebfingerAccount should have failed')
       } catch (e) {
         assert(true)
       }
     })
 
-    it('doesn\'t get a webfinger account that doesn\'t exist', function * () {
+    it('doesn\'t get a webfinger account that doesn\'t exist', async function () {
       try {
-        yield this.utils.getWebfingerAccount(
+        await this.utils.getWebfingerAccount(
           'https://example.com/accounts/nonentity')
         assert(false, 'this.util.getWebfingerAccount should have failed')
       } catch (e) {
@@ -185,17 +185,17 @@ describe('Utils', () => {
       assert(nock.isDone(), 'nock should be called')
     })
 
-    it('gets a webfinger account with URI', function * () {
+    it('gets a webfinger account with URI', async function () {
       nockUri()
-      var result = yield this.utils.getWebfingerAccount(
+      var result = await this.utils.getWebfingerAccount(
         'https://example.com/accounts/alice'
       )
       assert.deepEqual(result, this.webfinger)
     })
 
-    it('gets a webfinger account with ID', function * () {
+    it('gets a webfinger account with ID', async function () {
       nockAcct()
-      assert.deepEqual(yield this.utils.getWebfingerAccount(
+      assert.deepEqual(await this.utils.getWebfingerAccount(
         'alice@example.com'
       ), this.webfinger)
     })
@@ -206,26 +206,26 @@ describe('Utils', () => {
 
       // SPSP addresses of the form https://example.com/accounts/alice
       // is not currently supported, so skipping this test:
-      it.skip('gets a destination from URI', function * () {
+      it.skip('gets a destination from URI', async function () {
         nockDestinationLocal()
         nockUri()
-        assert.deepEqual(yield this.utils.parseDestination({
+        assert.deepEqual(await this.utils.parseDestination({
           destination: 'https://example.com/accounts/alice'
         }), this.destinationLocal)
       })
 
-      it('gets a destination from Webfinger ID', function * () {
+      it('gets a destination from Webfinger ID', async function () {
         nockAcct()
         nockDestinationRemote()
-        assert.deepEqual(yield this.utils.parseDestination({
+        assert.deepEqual(await this.utils.parseDestination({
           destination: 'alice@example.com'
         }), this.destinationRemote)
       })
     })
 
-    it('doesn\'t get a malformed webfinger record (bug #204)', function * () {
+    it('doesn\'t get a malformed webfinger record (bug #204)', async function () {
       try {
-        yield this.utils.getWebfingerAccount(
+        await this.utils.getWebfingerAccount(
           'alice@mal.formed')
         assert(false, 'this.util.getWebfingerAccount should have failed')
       } catch (e) {
@@ -233,9 +233,9 @@ describe('Utils', () => {
       }
     })
 
-    it('gets a destination from non-foreign ID', function * () {
+    it('gets a destination from non-foreign ID', async function () {
       nockDestinationLocal()
-      assert.deepEqual(yield this.utils.parseDestination({
+      assert.deepEqual(await this.utils.parseDestination({
         destination: 'alice'
       }), this.destinationLocal)
 
@@ -243,18 +243,18 @@ describe('Utils', () => {
     })
 
     describe('hostLookup', function () {
-      it('gets host data from webfinger', function * () {
+      it('gets host data from webfinger', async function () {
         nockHost()
-        assert.deepEqual(yield this.utils.hostLookup(
+        assert.deepEqual(await this.utils.hostLookup(
           'https://ilp-kit.somebody.com'
         ), this.webfingerHost)
         assert(nock.isDone(), 'nock should be called')
       })
 
-      it('doesn\'t get incompatible host data from webfinger', function * () {
+      it('doesn\'t get incompatible host data from webfinger', async function () {
         nockHostEmpty()
         try {
-          assert.deepEqual(yield this.utils.hostLookup(
+          assert.deepEqual(await this.utils.hostLookup(
             'https://ilp-kit.somebody.com'
           ), this.webfingerHost)
           assert(false, 'this.util.hostLookup should have failed')

@@ -17,12 +17,12 @@ module.exports = class Pay {
     this.Payment = deps(PaymentFactory)
   }
 
-  * pay (opts) {
+  async pay (opts) {
     /**
      * Ledger payment
      */
     try {
-      yield this.spsp.pay(opts.user.username, opts.quote)
+      await this.spsp.pay(opts.user.username, opts.quote)
     } catch (e) {
       if (e.response && e.response.body && e.response.body.id && e.response.body.id === 'InsufficientFundsError') {
         throw new InsufficientFundsError()
@@ -34,7 +34,7 @@ module.exports = class Pay {
     /**
      * Store the payment in the wallet db
      */
-    const payment = yield this.Payment.createOrUpdate({
+    const payment = await this.Payment.createOrUpdate({
       source_user: opts.user.id,
       source_identifier: opts.user.identifier,
       source_amount: parseFloat(opts.quote.sourceAmount),
@@ -48,6 +48,6 @@ module.exports = class Pay {
       state: 'success'
     })
 
-    yield this.activity.processPayment(payment, opts.user)
+    await this.activity.processPayment(payment, opts.user)
   }
 }
