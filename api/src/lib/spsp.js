@@ -106,7 +106,7 @@ module.exports = class SPSP {
             // Store the payment in the wallet db
           const payment = await self.Payment.createOrUpdate({
               // TODO:BEFORE_DEPLOY source_identifier
-              // source_identifier: user.identifier,
+            source_identifier: params.headers['source-identifier'],
               // TODO source_amount ?
               // source_amount: parseFloat(params.transfer.sourceAmount),
             destination_user: user.id,
@@ -116,7 +116,7 @@ module.exports = class SPSP {
               // destination_image_url: destination.imageUrl,
             transfer: params.transfer.id,
               // TODO:BEFORE_DEPLOY message
-              // message: opts.message || null,
+            message: params.headers.message || null,
             execution_condition: params.transfer.executionCondition,
             state: 'success'
           })
