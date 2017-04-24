@@ -12,6 +12,7 @@ const Socket = require('./socket')
 const Ledger = require('./ledger')
 const Utils = require('./utils')
 const Activity = require('./activity')
+const uuid = require('uuid')
 
 // TODO exception handling
 module.exports = class SPSP {
