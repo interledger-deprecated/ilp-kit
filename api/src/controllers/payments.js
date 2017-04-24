@@ -64,11 +64,13 @@ function PaymentsControllerFactory (deps) {
 
     // TODO don't allow payments to self
     static async putResource (ctx) {
+      const id = this.params.id && this.params.id.toLowerCase()
       const quote = ctx.body.quote
       const destination = ctx.body.destination
+      const message = ctx.body.message
 
       try {
-        await pay.pay({ user: ctx.req.user, quote, destination })
+        await pay.pay({ user: ctx.req.user, quote, destination, message })
       } catch (e) {
         console.error(e)
 

@@ -6,5 +6,8 @@ const cmd = 'istanbul test -- _mocha'
 
 // TODO maybe use spawn
 exec(cmd, (error, stdout) => {
+  if (error) {
+    console.error(error)
+  }
   console.log(stdout)
 })

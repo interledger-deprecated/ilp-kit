@@ -1,6 +1,7 @@
 'use strict'
 
 const superagent = require('superagent-promise')(require('superagent'), Promise)
+const uuid = require('uuid4')
 const debug = require('debug')('ilp-kit:spsp')
 
 const ILP = require('ilp')
@@ -80,7 +81,8 @@ module.exports = class SPSP {
 
   async pay (username, payment) {
     await this.factory.connect()
-    return ILP.SPSP.sendPayment(await this.factory.create({ username }), payment)
+    return ILP.SPSP.sendPayment(await this.factory.create({ username }),
+      Object.assign({}, payment, { id: uuid() }))
   }
 
   async query (user) {
@@ -104,17 +106,17 @@ module.exports = class SPSP {
             // Store the payment in the wallet db
           const payment = await self.Payment.createOrUpdate({
               // TODO:BEFORE_DEPLOY source_identifier
-              // source_identifier: user.identifier,
+            source_identifier: params.headers['source-identifier'],
               // TODO source_amount ?
               // source_amount: parseFloat(params.transfer.sourceAmount),
             destination_user: user.id,
             destination_identifier: user.identifier,
-            destination_amount: parseFloat(params.transfer.amount),
+            destination_amount: parseFloat(params.transfer.amount) * Math.pow(10, -ledgerInfo.scale),
               // destination_name: destination.name,
               // destination_image_url: destination.imageUrl,
             transfer: params.transfer.id,
               // TODO:BEFORE_DEPLOY message
-              // message: opts.message || null,
+            message: params.headers.message || null,
             execution_condition: params.transfer.executionCondition,
             state: 'success'
           })
