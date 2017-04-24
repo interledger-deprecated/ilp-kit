@@ -84,7 +84,9 @@ module.exports = class SPSP {
 
   * pay (username, payment) {
     yield this.factory.connect()
-    return ILP.SPSP.sendPayment(yield this.factory.create({ username }), payment)
+    return yield ILP.SPSP.sendPayment(
+      yield this.factory.create({ username }),
+      Object.assign({}, payment, { id: uuid() }))
   }
 
   * query (user) {
@@ -113,7 +115,7 @@ module.exports = class SPSP {
               // source_amount: parseFloat(params.transfer.sourceAmount),
             destination_user: user.id,
             destination_identifier: user.identifier,
-            destination_amount: parseFloat(params.transfer.amount),
+            destination_amount: parseFloat(params.transfer.amount) * Math.pow(10, -ledgerInfo.scale),
               // destination_name: destination.name,
               // destination_image_url: destination.imageUrl,
             transfer: params.transfer.id,
