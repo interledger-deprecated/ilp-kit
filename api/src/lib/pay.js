@@ -24,7 +24,12 @@ module.exports = class Pay {
      * Ledger payment
      */
     try {
-      transfer = yield this.spsp.pay(opts.user.username, opts.quote)
+      transfer = yield this.spsp.pay(
+        opts.user.username,
+        Object.assign({}, opts.quote, { headers: {
+          'Source-Identifier': opts.user.identifier,
+          'Message': opts.message || ''
+        }}))
     } catch (e) {
       if (e.response && e.response.body && e.response.body.id && e.response.body.id === 'InsufficientFundsError') {
         throw new InsufficientFundsError()
@@ -45,7 +50,7 @@ module.exports = class Pay {
       // destination_name: destination.name,
       // destination_image_url: destination.imageUrl,
       transfer: opts.quote.id,
-      // message: opts.message || null,
+      message: opts.message || null,
       // execution_condition: transfer.executionCondition,
       state: 'success'
     })
