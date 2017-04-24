@@ -10,7 +10,7 @@ dependencies:
 
 test:
   override:
-#   - npm run lint
+    - npm run lint
     - npm test
     - npm run test-mocha
     - ./node_modules/.bin/integration-loader && ./node_modules/.bin/integration setup

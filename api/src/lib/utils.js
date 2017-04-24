@@ -34,9 +34,9 @@ module.exports = class Utils {
       request_timeout: 3000
     })
 
-    return (await new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       webfinger.lookup(resource, (err, res) => err ? reject(err) : resolve(res.object))
-    }))
+    })
   }
 
   async getWebfingerAccount (address) {
