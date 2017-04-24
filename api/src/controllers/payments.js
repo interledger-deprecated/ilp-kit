@@ -69,9 +69,10 @@ function PaymentsControllerFactory (Auth, Payment, log, utils, spsp, User, pay) 
       const id = this.params.id && this.params.id.toLowerCase()
       const quote = this.body.quote
       const destination = this.body.destination
+      const message = this.body.message
 
       try {
-        yield pay.pay({ user: this.req.user, quote, destination })
+        yield pay.pay({ user: this.req.user, quote, destination, message })
       } catch (e) {
         console.error(e)
 
