@@ -128,6 +128,8 @@ function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, soc
     static * postResource () {
       const self = this
 
+      const userObj = this.body
+
       // check if registration is enabled
       if (!config.data.get('registration') && !userObj.inviteCode) {
         throw new InvalidBodyError('Registration is disabled without an invite code')
@@ -137,8 +139,6 @@ function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, soc
       if (!USERNAME_REGEX.test(username)) {
         throw new InvalidBodyError('Username must be 2-20 characters, lowercase letters, numbers and hyphens ("-") only, with no two or more consecutive hyphens.')
       }
-
-      const userObj = this.body
 
       yield antifraud.checkRisk(userObj) // throws if fraud risk is too high
 
