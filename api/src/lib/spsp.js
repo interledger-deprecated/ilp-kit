@@ -1,6 +1,7 @@
 'use strict'
 
 const superagent = require('superagent-promise')(require('superagent'), Promise)
+const uuid = require('uuid4')
 const debug = require('debug')('ilp-kit:spsp')
 
 const ILP = require('ilp')
@@ -12,7 +13,6 @@ const Socket = require('./socket')
 const Ledger = require('./ledger')
 const Utils = require('./utils')
 const Activity = require('./activity')
-const uuid = require('uuid')
 
 // TODO exception handling
 module.exports = class SPSP {
