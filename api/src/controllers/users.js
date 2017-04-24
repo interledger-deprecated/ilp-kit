@@ -393,7 +393,7 @@ function UsersControllerFactory (deps) {
       try {
         await user.save()
 
-        ctx.req.logIn(await user.appendLedgerAccount(), err => {
+        ctx.logIn(await user.appendLedgerAccount(), err => {
           if (err) {
             log.error('error while logging in: %s', err)
           }
