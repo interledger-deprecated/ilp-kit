@@ -111,13 +111,13 @@ module.exports = class SPSP {
           const payment = yield self.Payment.createOrUpdate({
               // TODO:BEFORE_DEPLOY source_identifier
             source_identifier: params.headers['source-identifier'],
+            source_name: params.headers['source-name'],
+            source_image_url: params.headers['source-image-url'],
               // TODO source_amount ?
               // source_amount: parseFloat(params.transfer.sourceAmount),
             destination_user: user.id,
             destination_identifier: user.identifier,
             destination_amount: parseFloat(params.transfer.amount) * Math.pow(10, -ledgerInfo.scale),
-              // destination_name: destination.name,
-              // destination_image_url: destination.imageUrl,
             transfer: params.transfer.id,
               // TODO:BEFORE_DEPLOY message
             message: params.headers.message || null,
@@ -145,7 +145,8 @@ module.exports = class SPSP {
         currency_scale: ledgerInfo.scale // See https://github.com/interledgerjs/ilp-kit/issues/284
       },
       receiver_info: {
-         // TODO:BEFORE_DEPLOY fill
+        name: user.name,
+        image_url: this.utils.userToImageUrl(user)
       }
     }
   }
