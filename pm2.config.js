@@ -9,7 +9,8 @@ module.exports = {
       script    : './bin/ledger.js',
       env: {
         COMMON_VARIABLE: 'true',
-        NODE_ENV: 'production'
+        NODE_ENV: 'production',
+        DEBUG: 'ilp*,connector*'
       }
     },
     {
@@ -18,7 +19,8 @@ module.exports = {
       env: {
         COMMON_VARIABLE: 'true',
         NODE_PATH: './api',
-        NODE_ENV: 'production'
+        NODE_ENV: 'production',
+        DEBUG: 'ilp*,connector*'
       }
     },
     {
@@ -27,7 +29,8 @@ module.exports = {
       env: {
         COMMON_VARIABLE: 'true',
         NODE_PATH: './src',
-        NODE_ENV: 'production'
+        NODE_ENV: 'production',
+        DEBUG: 'ilp*,connector*'
       }
     }
   ]
