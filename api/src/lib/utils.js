@@ -15,6 +15,7 @@ module.exports = class Utils {
   static constitute () { return [ Config, Ledger ] }
   constructor (config, ledger) {
     this.ledger = ledger
+    this.config = config
     this.ledgerUriPublic = config.data.getIn(['ledger', 'public_uri'])
     this.ledgerPrefix = config.data.getIn(['ledger', 'prefix'])
     this.localUri = config.data.getIn(['server', 'base_uri'])
@@ -24,6 +25,11 @@ module.exports = class Utils {
   isWebfinger (destination) {
     // TODO better email style checking
     return destination.search('@') > -1
+  }
+
+  userToImageUrl (user) {
+    return (this.config.data.getIn(['server', 'base_uri']) + '/users/' +
+      user.username + '/profilepic')
   }
 
   * _webfingerLookup (resource) {

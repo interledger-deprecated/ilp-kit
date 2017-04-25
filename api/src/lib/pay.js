@@ -28,7 +28,9 @@ module.exports = class Pay {
         opts.user.username,
         Object.assign({}, opts.quote, { headers: {
           'Source-Identifier': opts.user.identifier,
-          'Message': opts.message || ''
+          'Source-Name': opts.user.name,
+          'Source-Image-Url': this.utils.userToImageUrl(opts.user),
+          'Message': opts.message || '',
         }}))
     } catch (e) {
       if (e.response && e.response.body && e.response.body.id && e.response.body.id === 'InsufficientFundsError') {
@@ -47,8 +49,8 @@ module.exports = class Pay {
       source_amount: parseFloat(opts.quote.sourceAmount),
       destination_identifier: opts.destination.identifier,
       destination_amount: parseFloat(opts.quote.destinationAmount),
-      // destination_name: destination.name,
-      // destination_image_url: destination.imageUrl,
+      destination_name: opts.quote.spsp.receiver_info.name,
+      destination_image_url: opts.quote.spsp.receiver_info.image_url,
       transfer: opts.quote.id,
       message: opts.message || null,
       // execution_condition: transfer.executionCondition,
