@@ -57,6 +57,7 @@ export default class Invites extends Component {
           <TableHeaderColumn dataField="profile_picture" dataFormat={ this.renderProfilePic } width='66px' />
           <TableHeaderColumn dataField="username" isKey dataSort>Username</TableHeaderColumn>
           <TableHeaderColumn dataField="name" dataSort>Name</TableHeaderColumn>
+          <TableHeaderColumn dataField="balance" dataSort>Balance</TableHeaderColumn>
           <TableHeaderColumn dataField="email" dataSort>Email</TableHeaderColumn>
           <TableHeaderColumn dataField="email_verified" dataSort>Email Verified</TableHeaderColumn>
         </BootstrapTable>
