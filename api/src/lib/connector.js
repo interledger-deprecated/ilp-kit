@@ -135,6 +135,12 @@ module.exports = class Conncetor {
         options
       })
     } catch (e) {
+      // if adding the plugin failed, then remove to make sure it doesn't
+      // keep a bad plugin in the table. If removePlugin fails because the
+      // plugin was never added, just perform a no-op.
+      yield (connector.removePlugin(hostInfo.ledgerName)
+        .catch(() => {}))
+
       if (e.message.indexOf('No rate available') > -1) {
         throw new InvalidBodyError('Unsupported currency')
       }
