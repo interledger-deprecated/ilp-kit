@@ -58,8 +58,13 @@ function UsersControllerFactory (sequelize, auth, User, Invite, log, ledger, soc
     }
 
     static * getAll () {
-      // this.body = yield ledger.getAccounts()
-      this.body = yield User.findAll()
+      const balances = (yield ledger.getAccounts()).reduce((agg, user) => {
+        agg[user.name] = user.balance
+        return agg
+      }, {})
+
+      this.body = (yield User.findAll()).map((user) =>
+        Object.assign({}, user, { balance: balances[user.username] }))
     }
 
     /**
