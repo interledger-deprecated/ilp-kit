@@ -1,4 +1,4 @@
-import { createValidator, required, integer, number, minValue, lessThanBalance } from 'utils/validation'
+import { createValidator, required, integer, number, minValue, greaterThanMinBalance } from 'utils/validation'
 import { destinationChange } from 'redux/actions/send'
 
 export const validate = (values, props) => {
@@ -21,13 +21,14 @@ export const validate = (values, props) => {
     minAmount = 1
   }
 
-  const sourceAmountValidators = [required, number, minValue(minAmount)]
-
-  // Source amount maximum
-  // TODO what if it's not -infinity but some other number
-  if (props.user.minimum_allowed_balance !== '-infinity') {
-    sourceAmountValidators.push(lessThanBalance(props.user.balance))
-  }
+  const sourceAmountValidators = [
+    required,
+    number,
+    minValue(minAmount),
+    greaterThanMinBalance(
+      props.user.balance,
+      props.user.minimum_allowed_balance)
+  ]
 
   return createValidator({
     destination: [required, notSelf],

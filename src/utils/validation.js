@@ -59,10 +59,10 @@ export function maxValue (max) {
   }
 }
 
-export function lessThanBalance (balance) {
+export function greaterThanMinBalance (balance, minBalance) {
   return value => {
-    if (value && parseFloat(value) > balance) {
-      return `Sending amount should be less than your balance`
+    if (value && parseFloat(balance) - parseFloat(value) < parseFloat(minBalance)) {
+      return `Minimum allowed balance is ${minBalance}.`
     }
   }
 }
