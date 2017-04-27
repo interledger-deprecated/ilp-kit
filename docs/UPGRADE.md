@@ -7,6 +7,12 @@ pm2 stop api
 pm2 stop ledger
 ```
 
+Update your node version if needed (check `engines` in package.json), for instance:
+```sh
+nvm install 7.7.1
+pm2 delete api && pm2 reload pm2.config.js --only api && pm2 stop api
+```
+
 Now update the code:
 ```sh
 rm -rf node_modules
