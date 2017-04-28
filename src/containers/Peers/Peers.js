@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import ReactTooltip from 'react-tooltip'
 import { HotKeys } from 'react-hotkeys'
 
 import { RIENumber } from 'riek'
@@ -48,7 +47,6 @@ export default class Peers extends Component {
 
   // TODO shouldn't be less then the balance
   handleUpdate = (peer, value) => {
-console.log('handleUpdate', peer, value)
     if (Number(value.limit) === this.toCurrency(peer.limit, peer)) return
 
     this.props.update(peer.id, fromCurrency(value, peer))
@@ -62,12 +60,10 @@ console.log('handleUpdate', peer, value)
   }
 
   fromCurrency = (amount, peer) => {
-console.log('fromCurrency', amount, peer)
     return Math.floor((amount * Math.pow(10, peer.currencyScale)) + .5)
   }
 
   toCurrency = (amount, peer) => {
-console.log('toCurrency', amount, peer)
     return amount / Math.pow(10, peer.currencyScale)
   }
 

@@ -1,6 +1,6 @@
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
+import { CSSTransitionGroup } from 'react-transition-group'
 import ReactPaginate from 'react-paginate'
 import { getPage } from 'redux/actions/activity'
 
@@ -58,7 +58,7 @@ export default class Home extends Component {
   componentWillReceiveProps(nextProps) {
     if (this.props.loadingPage === nextProps.loadingPage) return
 
-    // This whole list thing is just for the ReactCSSTransitionGroup to work properly
+    // This whole list thing is just for the CSSTransitionGroup to work properly
     // to not animate on initial load
     this.setState({
       list: []
@@ -87,7 +87,7 @@ export default class Home extends Component {
     return (
       <div className={cx('container')}>
         <ul className={cx('list')}>
-          {list.length > 0 && <ReactCSSTransitionGroup transitionName={{
+          {list.length > 0 && <CSSTransitionGroup transitionName={{
             appear: cx('enter'),
             appearActive: cx('enter-active'),
             enter: cx('enter'),
@@ -107,7 +107,7 @@ export default class Home extends Component {
               <ActivityWithdrawal activity={activity} />}
             </li>
           ))}
-          </ReactCSSTransitionGroup>}
+          </CSSTransitionGroup>}
 
           {initialLoad && list.length === 0 && <li className={cx('loading')}>No payments to show</li>}
         </ul>

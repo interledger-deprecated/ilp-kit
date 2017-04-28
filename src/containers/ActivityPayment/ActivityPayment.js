@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react'
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
+import { CSSTransitionGroup } from 'react-transition-group'
 import {connect} from 'react-redux'
 import moment from 'moment'
 import TimeAgo from 'react-timeago'
@@ -179,7 +179,7 @@ export default class ActivityPayment extends Component {
           </div>
         </div>
 
-        <ReactCSSTransitionGroup
+        <CSSTransitionGroup
           transitionName={{
             enter: cx('enter'),
             enterActive: cx('enterActive'),
@@ -213,7 +213,7 @@ export default class ActivityPayment extends Component {
               )
             })}
           </div>}
-        </ReactCSSTransitionGroup>
+        </CSSTransitionGroup>
       </div>
     )
   }
