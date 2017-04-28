@@ -62,10 +62,15 @@ module.exports = class SPSP {
   // .sourceAmount XOR .destinationAmount
   * quote (params) {
     yield this.factory.connect()
+
+    // save a webfinger call if it's on the same domain
+    const receiver = this.utils.resolveSpspIdentifier(params.destination)
+    debug('making SPSP quote to', receiver)
+
     return ILP.SPSP.quote(
       yield this.factory.create({ username: params.user.username }),
       {
-        receiver: params.destination,
+        receiver,
         sourceAmount: params.sourceAmount,
         destinationAmount: params.destinationAmount
       }
