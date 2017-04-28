@@ -270,7 +270,9 @@ function UsersControllerFactory (deps) {
       }
 
       // Fund the newly created account
-      await UsersController._reload(dbUser)
+      if (config.data.get('reload')) {
+        await UsersController._reload(dbUser)
+      }
 
       // Send a welcome email
       await mailer.sendWelcome({
