@@ -88,6 +88,7 @@ export default class ProfileForm extends Component {
   dropzoneConfig = {
     showFiletypeIcon: false,
     postUrl: '/api/auth/profilepic',
+    iconFiletypes: [ '.jpg', '.png', '.jpeg', '.gif' ],
     maxFiles: 1
   }
 
