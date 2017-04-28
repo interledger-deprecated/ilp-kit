@@ -22,6 +22,12 @@ module.exports = class Utils {
     this.localHost = config.data.getIn(['server', 'base_host'])
   }
 
+  resolveSpspIdentifier (identifier) {
+    const [ username, domain ] = identifier.split('@')
+    if (domain !== this.localHost) return identifier
+    return this.localUri + '/spsp/' + username
+  }
+
   isWebfinger (destination) {
     // TODO better email style checking
     return destination.search('@') > -1
