@@ -194,7 +194,7 @@ function AuthControllerFactory (User, log, ledger, mailer, auth) {
 
       user = yield User.findOne({where: {id: user.id}})
 
-      const newFilePath = file.path.replace(/(\.[\w\d_-]+)$/i, '_square$1')
+      const newFilePath = file.path + '_square.' + file.type.split('/')[1]
 
       // Resize
       try {
@@ -203,7 +203,7 @@ function AuthControllerFactory (User, log, ledger, mailer, auth) {
         image.cover(200, 200, jimp.HORIZONTAL_ALIGN_CENTER, jimp.VERTICAL_ALIGN_TOP)
           .write(newFilePath, err => {
             if (err) {
-              console.log('auth:197', err)
+              console.log('auth:197', newFilePath, err)
             }
           })
       } catch (e) {
