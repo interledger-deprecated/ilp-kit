@@ -49,7 +49,7 @@ export const transfer = () => (dispatch, getState) => dispatch({
     data: {
       quote: getState().send.quote,
       destination: getState().send.destinationInfo,
-      message: getState().form.send.message.value
+      message: getState().form.send.values.message
     }
   })
 })
