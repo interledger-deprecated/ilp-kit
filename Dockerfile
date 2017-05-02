@@ -6,7 +6,7 @@ WORKDIR /usr/src/app
 COPY . /usr/src/app
 
 # native modules need to be rebuilt for the new system
-RUN apt-get update && apt-get install -y python postgresql libpq-dev build-essential
+RUN apt-get update && apt-get install -y python postgresql libpq-dev build-essential libpq5
 RUN npm rebuild
 
 EXPOSE 3010
