@@ -38,27 +38,22 @@ export default class AmountsBox extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
+    const propsAmount = this.props[this.props.type + 'Amount']
+    const nextPropsAmount = nextProps[nextProps.type + 'Amount']
+
     // Amounts didn't change, ignore the rest
-    if (
-      this.props.sourceAmount === nextProps.sourceAmount &&
-      this.props.destinationAmount === nextProps.destinationAmount
-    ) {
+    if (propsAmount === nextPropsAmount) {
       if (!nextProps.quoting) return
 
-      if (this.props.type === 'source' && nextProps.input.value !== nextProps.sourceAmount) {
-        this.updateSourceInput(nextProps)
-      }
-
-      if (this.props.type === 'destination' && nextProps.input.value !== nextProps.destinationAmount) {
-        this.updateDestinationInput(nextProps)
+      if (nextProps.input.value !== nextPropsAmount) {
+        this.updateInput(nextProps)
       }
 
       return
     }
 
-    // Update the inputs
-    this.updateSourceInput(nextProps)
-    this.updateDestinationInput(nextProps)
+    // Update the input
+    this.updateInput(nextProps)
 
     // Quoting requires a destination
     if (!nextProps.destinationInfo.identifier) return
@@ -76,18 +71,14 @@ export default class AmountsBox extends Component {
       destinationAmount: nextProps.destinationAmount
     })
 
-    this.lastQuotingField = nextProps.sourceAmount ? 'source' : 'destination'
+    this.lastQuotingField = nextProps.type
   }
 
-  updateSourceInput = (props = this.props) => {
-    if (!props.meta.active) {
-      props.input.onChange(props.sourceAmount || '') // null values don't work with redux-form
-    }
-  }
+  updateInput = (props = this.props) => {
+    const amount = props[props.type + 'Amount']
 
-  updateDestinationInput = (props = this.props) => {
     if (!props.meta.active) {
-      props.input.onChange(props.destinationAmount || '') // null values don't work with redux-form
+      props.input.onChange(amount || '') // null values don't work with redux-form
     }
   }
 
