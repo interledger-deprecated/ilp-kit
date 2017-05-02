@@ -59,7 +59,7 @@ export default class DestinationBox extends Component {
             debounce />
 
           {!meta.active && destinationInfo.imageUrl &&
-          <img src={destinationInfo.imageUrl || require('../../containers/ActivityPayment/placeholder.png')} />}
+          <img src={destinationInfo.imageUrl || require('../../../static/placeholder.png')} />}
         </div>
       </div>
     )

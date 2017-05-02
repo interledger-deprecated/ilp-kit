@@ -550,14 +550,18 @@ function UsersControllerFactory (deps) {
         return
       }
 
-      const file = path.resolve(__dirname, '../../../uploads/', user.profile_picture)
+      let filePath = path.resolve(__dirname, '../../../static/placeholder.png')
 
-      if (!fs.existsSync(file)) {
+      if (user.profile_picture) {
+        filePath = path.resolve(__dirname, '../../../uploads/', user.profile_picture)
+      }
+
+      if (!fs.existsSync(filePath)) {
         ctx.status = 422
         return
       }
 
-      const img = fs.readFileSync(file)
+      const img = fs.readFileSync(filePath)
       ctx.body = img
     }
   }

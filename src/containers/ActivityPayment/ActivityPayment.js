@@ -123,7 +123,7 @@ export default class ActivityPayment extends Component {
     const { showTransfers, payment, type } = this.state
     const advancedMode = this.props.advancedMode
 
-    const profilePic = (type === 'outgoing' ? payment.destination_image_url : payment.source_image_url) || require('./placeholder.png')
+    const profilePic = (type === 'outgoing' ? payment.destination_image_url : payment.source_image_url) || require('../../../static/placeholder.png')
     const paymentAmount = type === 'outgoing' ? payment.source_amount : payment.destination_amount
 
     // TODO payments grouping / message
