@@ -65,13 +65,13 @@ function UsersControllerFactory (deps) {
       ctx.status = 404
     }
 
-    static async getAll () {
+    static async getAll (ctx) {
       const balances = (await ledger.getAccounts()).reduce((agg, user) => {
         agg[user.name] = user.balance
         return agg
       }, {})
 
-      this.body = (await User.findAll()).map((user) =>
+      ctx.body = (await User.findAll()).map((user) =>
         Object.assign({}, user, { balance: balances[user.username] }))
     }
 
