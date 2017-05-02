@@ -214,6 +214,7 @@ The CLI provides example values, but I'll also put the configuration I'm using (
 
 ```sh
 $ npm install -g pm2
+$ sudo pm2 logrotate -u sharafian # configure pm2 to use log rotation
 $ pm2 start pm2.config.js
 $ pm2 list # you should see three apps running: ledger, api, and web.
 $ pm2 logs
