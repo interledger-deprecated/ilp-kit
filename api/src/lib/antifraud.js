@@ -1,7 +1,7 @@
 'use strict'
 
 const requestIp = require('request-ip')
-const superagent = require('superagent-promise')(require('superagent'), Promise)
+const superagent = require('superagent')
 const Log = require('./log')
 const Config = require('../lib/config')
 const ServerError = require('../errors/server-error')

@@ -1,6 +1,6 @@
 'use strict'
 
-const superagent = require('superagent-promise')(require('superagent'), Promise)
+const superagent = require('superagent')
 const debug = require('debug')('ilp-kit:spsp')
 const uuid = require('uuid4')
 

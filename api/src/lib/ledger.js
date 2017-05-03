@@ -1,6 +1,6 @@
 'use strict'
 
-const superagent = require('superagent-promise')(require('superagent'), Promise)
+const superagent = require('superagent')
 const EventEmitter = require('events').EventEmitter
 
 const PaymentFactory = require('../models/payment')
@@ -37,7 +37,7 @@ module.exports = class Ledger extends EventEmitter {
 
     try {
       this.log.info('getting ledger info ' + ledgerUri)
-      response = await superagent.get(ledgerUri).end()
+      response = await superagent.get(ledgerUri)
     } catch (err) {
       throw err
     }
@@ -63,7 +63,6 @@ module.exports = class Ledger extends EventEmitter {
       response = await superagent
         .get(this.ledgerUri + '/accounts/' + user.username)
         .auth(admin ? this.config.data.getIn(['ledger', 'admin', 'user']) : user.username, admin ? this.config.data.getIn(['ledger', 'admin', 'pass']) : user.password)
-        .end()
     } catch (e) {
       if (e.response && e.response.body &&
          (e.response.body.id === 'NotFoundError' ||
@@ -84,7 +83,6 @@ module.exports = class Ledger extends EventEmitter {
       response = await superagent
         .get(this.ledgerUri + '/accounts')
         .auth(this.config.data.getIn(['ledger', 'admin', 'user']), this.config.data.getIn(['ledger', 'admin', 'pass']))
-        .end()
     } catch (e) {
       if (e.response && e.response.body &&
         (e.response.body.id === 'NotFoundError' ||
