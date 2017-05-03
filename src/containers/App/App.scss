@@ -1,4 +1,5 @@
 @import 'variables';
+@import 'mixins';
 
 .App {
   min-height: 100%;
@@ -39,4 +40,21 @@
 .version {
   margin: 0 0 20px;
   text-align: center;
+}
+.balanceContainer {
+  display: none;
+  margin-top: -20px;
+  margin-bottom: 20px;
+  padding: 10px 15px;
+  background: $container-background-color;
+
+  span {
+    display: block;
+    font-size: 25px;
+    padding: 5px 0 2px;
+  }
+
+  @include mobile {
+    display: block;
+  }
 }

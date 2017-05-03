@@ -196,6 +196,7 @@ function AuthControllerFactory (deps) {
       const file = ctx.request.files && ctx.request.files[0]
 
       let user = ctx.req.user
+
       if (!user) throw new NotFoundError('No active user session')
       if (!file) throw new InvalidBodyError('Request doesn\'t include an image file')
 
