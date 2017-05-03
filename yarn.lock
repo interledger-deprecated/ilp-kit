@@ -43,7 +43,7 @@ accepts@1.1.4:
     mime-types "~2.0.4"
     negotiator "0.4.9"
 
-accepts@^1.2.2, accepts@~1.3.3:
+accepts@1.3.3, accepts@^1.2.2, accepts@~1.3.3:
   version "1.3.3"
   resolved "https://registry.yarnpkg.com/accepts/-/accepts-1.3.3.tgz#c3ca7434938648c3e0d9c1e328dd68b622c284ca"
   dependencies:
@@ -314,17 +314,13 @@ ast-traverse@~0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/ast-traverse/-/ast-traverse-0.1.1.tgz#69cf2b8386f19dcda1bb1e05d68fe359d8897de6"
 
-ast-types@0.8.12:
+ast-types@0.8.12, ast-types@0.x.x:
   version "0.8.12"
   resolved "https://registry.yarnpkg.com/ast-types/-/ast-types-0.8.12.tgz#a0d90e4351bb887716c83fd637ebf818af4adfcc"
 
 ast-types@0.9.6:
   version "0.9.6"
   resolved "https://registry.yarnpkg.com/ast-types/-/ast-types-0.9.6.tgz#102c9e9e9005d3e7e3829bf0c4fa24ee862ee9b9"
-
-ast-types@0.x.x:
-  version "0.9.11"
-  resolved "https://registry.yarnpkg.com/ast-types/-/ast-types-0.9.11.tgz#371177bb59232ff5ceaa1d09ee5cad705b1a5aa9"
 
 async-each@^1.0.0:
   version "1.0.1"
@@ -1324,6 +1320,10 @@ base64id@0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/base64id/-/base64id-0.1.0.tgz#02ce0fdeee0cef4f40080e1e73e834f0b1bfce3f"
 
+base64id@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/base64id/-/base64id-1.0.0.tgz#47688cb99bb6804f0e06d3e763b1c32e57d8e6b6"
+
 base64url-adhoc@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/base64url-adhoc/-/base64url-adhoc-2.0.1.tgz#8f96c52258078bac845b3895085db4bd4bad87e2"
@@ -1413,7 +1413,7 @@ bluebird@2.x, bluebird@^2.9.27, bluebird@^2.9.33:
   version "2.11.0"
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-2.11.0.tgz#534b9033c022c9579c56ba3b3e5a5caafbb650e1"
 
-bluebird@^3.0.0, bluebird@^3.1.1, bluebird@^3.3.1, bluebird@^3.3.4, bluebird@^3.4.1, bluebird@^3.4.6:
+bluebird@^3.0.0, bluebird@^3.1.1, bluebird@^3.3.4, bluebird@^3.4.1, bluebird@^3.4.6:
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.0.tgz#791420d7f551eea2897453a8a77653f96606d67c"
 
@@ -2449,7 +2449,7 @@ debug-log@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/debug-log/-/debug-log-1.0.1.tgz#2307632d4c04382b8df8a32f70b895046d52745f"
 
-debug@*, debug@2, debug@2.6.1, debug@^2.1.1, debug@^2.2.0, debug@^2.3.3, debug@^2.6.0:
+debug@*, debug@2.6.1, debug@^2.1.1, debug@^2.2.0, debug@^2.3.3:
   version "2.6.1"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.1.tgz#79855090ba2c4e3115cc7d8769491d58f0491351"
   dependencies:
@@ -2458,6 +2458,12 @@ debug@*, debug@2, debug@2.6.1, debug@^2.1.1, debug@^2.2.0, debug@^2.3.3, debug@^
 debug@0.7.4:
   version "0.7.4"
   resolved "https://registry.yarnpkg.com/debug/-/debug-0.7.4.tgz#06e1ea8082c2cb14e39806e22e2f6f757f92af39"
+
+debug@2, debug@2.6.4, debug@^2.1.3, debug@^2.6.0:
+  version "2.6.4"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.4.tgz#7586a9b3c39741c0282ae33445c4e8ac74734fe0"
+  dependencies:
+    ms "0.7.3"
 
 debug@2.2.0, debug@~2.2.0:
   version "2.2.0"
@@ -2476,12 +2482,6 @@ debug@2.6.3:
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.3.tgz#0f7eb8c30965ec08c72accfa0130c8b79984141d"
   dependencies:
     ms "0.7.2"
-
-debug@2.6.4, debug@^2.1.3:
-  version "2.6.4"
-  resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.4.tgz#7586a9b3c39741c0282ae33445c4e8ac74734fe0"
-  dependencies:
-    ms "0.7.3"
 
 decamelize@^1.0.0, decamelize@^1.1.1, decamelize@^1.1.2:
   version "1.2.0"
@@ -2864,6 +2864,17 @@ engine.io@1.6.8:
     debug "2.2.0"
     engine.io-parser "1.2.4"
     ws "1.0.1"
+
+engine.io@1.8.3:
+  version "1.8.3"
+  resolved "https://registry.yarnpkg.com/engine.io/-/engine.io-1.8.3.tgz#8de7f97895d20d39b85f88eeee777b2bd42b13d4"
+  dependencies:
+    accepts "1.3.3"
+    base64id "1.0.0"
+    cookie "0.3.1"
+    debug "2.3.3"
+    engine.io-parser "1.3.2"
+    ws "1.1.2"
 
 enhanced-resolve@~0.9.0:
   version "0.9.1"
@@ -3590,6 +3601,23 @@ five-bells-shared@23.0.0, five-bells-shared@^23.0.0:
     through2 "^2.0.1"
     tweetnacl "^0.14.3"
 
+five-bells-shared@^24, five-bells-shared@^24.0.0:
+  version "24.0.0"
+  resolved "https://registry.yarnpkg.com/five-bells-shared/-/five-bells-shared-24.0.0.tgz#d45c41bc8108db3c70c0c09b54ec2e52acc2f310"
+  dependencies:
+    ajv "^4.9.0"
+    canonical-json "0.0.4"
+    co "^4.1.0"
+    co-body "^5.0.2"
+    co-defer "^1.0.0"
+    lodash "^4.6.1"
+    mag-colored-output "^1.0.0"
+    mag-format-message "^0.1.1"
+    path-to-regexp "^1.2.0"
+    retry-as-promised "^2.0.1"
+    through2 "^2.0.1"
+    tweetnacl "^0.14.3"
+
 flagged-respawn@^0.3.2:
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/flagged-respawn/-/flagged-respawn-0.3.2.tgz#ff191eddcd7088a675b2610fffc976be9b8074b5"
@@ -4291,20 +4319,20 @@ ignore@^3.0.11, ignore@^3.2.0:
   version "3.2.7"
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-3.2.7.tgz#4810ca5f1d8eca5595213a34b94f2eb4ed926bbd"
 
-ilp-connector@^17.0.0:
-  version "17.1.0"
-  resolved "https://registry.yarnpkg.com/ilp-connector/-/ilp-connector-17.1.0.tgz#1f03bafb6bfee7074aa3e7295b2841de22117870"
+ilp-connector@^18.0.0:
+  version "18.0.0"
+  resolved "https://registry.yarnpkg.com/ilp-connector/-/ilp-connector-18.0.0.tgz#e70cd4ca9619084093d01004d642772e273901dd"
   dependencies:
     bignumber.js "^3.0.1"
     co "^4.1.0"
     co-defer "^1.0.0"
     co-request "^1.0.0"
     eventemitter2 "^2.2.1"
-    five-bells-shared "^23.0.0"
+    five-bells-shared "^24"
     ilp-core "^14.0.0"
     ilp-packet "~1.1.1"
     ilp-plugin-bells "^13.0.0"
-    ilp-routing "~7.1.0"
+    ilp-routing "^8.0.0"
     lodash "^4.6.1"
     moment "^2.10.2"
     promise-retry "^1.1.1"
@@ -4419,9 +4447,17 @@ ilp-routing@^5.4.0:
     debug "^2.2.0"
     lodash "^4.14.1"
 
-ilp-routing@^7.0.0, ilp-routing@~7.1.0:
+ilp-routing@^7.0.0:
   version "7.1.0"
   resolved "https://registry.yarnpkg.com/ilp-routing/-/ilp-routing-7.1.0.tgz#7f38fa76eac9f173d9d41f37910c2fdead93cb52"
+  dependencies:
+    code42day-vis-why "^1.0.3"
+    debug "^2.2.0"
+    lodash "^4.14.1"
+
+ilp-routing@^8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/ilp-routing/-/ilp-routing-8.0.0.tgz#41555ffce37560a5a392916ac758a2e5b8baf1c3"
   dependencies:
     code42day-vis-why "^1.0.3"
     debug "^2.2.0"
@@ -5217,12 +5253,6 @@ koa-bunyan-logger@^1.3.0:
     node-uuid "~1.4.1"
     on-finished "~2.1.1"
 
-koa-compose@3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/koa-compose/-/koa-compose-3.1.0.tgz#f6e32f1b8953f7c87b97fc10c208fed334da76f4"
-  dependencies:
-    any-promise "^1.1.0"
-
 koa-compose@^2.3.0, koa-compose@^2.5.1:
   version "2.5.1"
   resolved "https://registry.yarnpkg.com/koa-compose/-/koa-compose-2.5.1.tgz#726cfb17694de5cb9fbf03c0adf172303f83f156"
@@ -5232,6 +5262,10 @@ koa-compose@^3.0.0:
   resolved "https://registry.yarnpkg.com/koa-compose/-/koa-compose-3.2.1.tgz#a85ccb40b7d986d8e5a345b3a1ace8eabcf54de7"
   dependencies:
     any-promise "^1.1.0"
+
+koa-compose@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/koa-compose/-/koa-compose-4.0.0.tgz#2800a513d9c361ef0d63852b038e4f6f2d5a773c"
 
 koa-compress@^1.0.6:
   version "1.0.9"
@@ -5321,12 +5355,12 @@ koa-session@^5.0.0:
     debug "^2.2.0"
     uid-safe "^2.1.3"
 
-koa-socket@^4.4.0:
+"koa-socket@git://github.com/quartz55/koa-socket.git#ece371d75fe5b47283b1d4b3564d05375a6876bf":
   version "4.4.0"
-  resolved "https://registry.yarnpkg.com/koa-socket/-/koa-socket-4.4.0.tgz#e651a003980d96d96fce3955116dfbc563665097"
+  resolved "git://github.com/quartz55/koa-socket.git#ece371d75fe5b47283b1d4b3564d05375a6876bf"
   dependencies:
-    koa-compose "3.1.0"
-    socket.io "1.4.5"
+    koa-compose "^4.0.0"
+    socket.io "^1.7.3"
 
 koa-static@^2.0.0:
   version "2.1.0"
@@ -5738,9 +5772,9 @@ loud-rejection@^1.0.0:
     currently-unhandled "^0.4.1"
     signal-exit "^3.0.0"
 
-lru-cache@2:
-  version "2.7.3"
-  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-2.7.3.tgz#6d4524e8b955f95d4f5b58851ce21dd72fb4e952"
+lru-cache@2, lru-cache@~2.6.5:
+  version "2.6.5"
+  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-2.6.5.tgz#e56d6354148ede8d7707b58d143220fd08df0fd5"
 
 lru-cache@2.2.x:
   version "2.2.4"
@@ -5752,10 +5786,6 @@ lru-cache@^4.0.0, lru-cache@^4.0.1:
   dependencies:
     pseudomap "^1.0.1"
     yallist "^2.0.0"
-
-lru-cache@~2.6.5:
-  version "2.6.5"
-  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-2.6.5.tgz#e56d6354148ede8d7707b58d143220fd08df0fd5"
 
 lru-queue@0.1:
   version "0.1.0"
@@ -6007,11 +6037,11 @@ minimist@0.0.8, minimist@~0.0.1:
   version "0.0.8"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-0.0.8.tgz#857fcabfc3397d2625b8228262e86aa7a011b05d"
 
-minimist@^1.1.0, minimist@^1.1.3, minimist@^1.2.0:
+minimist@^1.1.0, minimist@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.0.tgz#a35008b20f41383eec1fb914f4cd5df79a264284"
 
-minimist@~1.1.0:
+minimist@^1.1.3, minimist@~1.1.0:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.1.3.tgz#3bedfd91a92d39016fcfaa1c681e8faa1a1efda8"
 
@@ -6064,11 +6094,11 @@ ms@0.7.1:
   version "0.7.1"
   resolved "https://registry.yarnpkg.com/ms/-/ms-0.7.1.tgz#9cd13c03adbff25b65effde7ce864ee952017098"
 
-ms@0.7.2:
+ms@0.7.2, ms@^0.7.1:
   version "0.7.2"
   resolved "https://registry.yarnpkg.com/ms/-/ms-0.7.2.tgz#ae25cf2512b3885a1d95d7f037868d8431124765"
 
-ms@0.7.3, ms@^0.7.1:
+ms@0.7.3:
   version "0.7.3"
   resolved "https://registry.yarnpkg.com/ms/-/ms-0.7.3.tgz#708155a5e44e33f5fd0fc53e81d0d40a91be1fff"
 
@@ -8146,10 +8176,6 @@ regenerator-runtime@^0.10.0:
   version "0.10.5"
   resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.10.5.tgz#336c3efc1220adcedda2c9fab67b5a7955a33658"
 
-regenerator-runtime@~0.9.5:
-  version "0.9.6"
-  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.9.6.tgz#d33eb95d0d2001a4be39659707c51b0cb71ce029"
-
 regenerator-transform@0.9.11:
   version "0.9.11"
   resolved "https://registry.yarnpkg.com/regenerator-transform/-/regenerator-transform-0.9.11.tgz#3a7d067520cb7b7176769eb5ff868691befe1283"
@@ -8158,7 +8184,7 @@ regenerator-transform@0.9.11:
     babel-types "^6.19.0"
     private "^0.1.6"
 
-regenerator@0.8.40:
+regenerator@0.8.40, regenerator@~0.8.13:
   version "0.8.40"
   resolved "https://registry.yarnpkg.com/regenerator/-/regenerator-0.8.40.tgz#a0e457c58ebdbae575c9f8cd75127e93756435d8"
   dependencies:
@@ -8167,18 +8193,6 @@ regenerator@0.8.40:
     esprima-fb "~15001.1001.0-dev-harmony-fb"
     private "~0.1.5"
     recast "0.10.33"
-    through "~2.3.8"
-
-regenerator@~0.8.13:
-  version "0.8.46"
-  resolved "https://registry.yarnpkg.com/regenerator/-/regenerator-0.8.46.tgz#154c327686361ed52cad69b2545efc53a3d07696"
-  dependencies:
-    commoner "~0.10.3"
-    defs "~1.1.0"
-    esprima-fb "~15001.1001.0-dev-harmony-fb"
-    private "~0.1.5"
-    recast "0.10.33"
-    regenerator-runtime "~0.9.5"
     through "~2.3.8"
 
 regex-cache@^0.4.2:
@@ -8834,6 +8848,13 @@ socket.io-adapter@0.4.0:
     debug "2.2.0"
     socket.io-parser "2.2.2"
 
+socket.io-adapter@0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/socket.io-adapter/-/socket.io-adapter-0.5.0.tgz#cb6d4bb8bec81e1078b99677f9ced0046066bb8b"
+  dependencies:
+    debug "2.3.3"
+    socket.io-parser "2.3.1"
+
 socket.io-client@1.4.5:
   version "1.4.5"
   resolved "https://registry.yarnpkg.com/socket.io-client/-/socket.io-client-1.4.5.tgz#400d630c31e7c9579e45173f977e4f5bd8dc7d2e"
@@ -8850,7 +8871,7 @@ socket.io-client@1.4.5:
     socket.io-parser "2.2.6"
     to-array "0.1.4"
 
-socket.io-client@^1.5.0:
+socket.io-client@1.7.3, socket.io-client@^1.5.0:
   version "1.7.3"
   resolved "https://registry.yarnpkg.com/socket.io-client/-/socket.io-client-1.7.3.tgz#b30e86aa10d5ef3546601c09cde4765e381da377"
   dependencies:
@@ -8895,7 +8916,7 @@ socket.io-parser@2.3.1:
     isarray "0.0.1"
     json3 "3.3.2"
 
-socket.io@1.4.5, socket.io@^1.4.5:
+socket.io@^1.4.5:
   version "1.4.5"
   resolved "https://registry.yarnpkg.com/socket.io/-/socket.io-1.4.5.tgz#f202f49eeb9cf7cf6c0971ad75d8d96d451ea4f7"
   dependencies:
@@ -8905,6 +8926,18 @@ socket.io@1.4.5, socket.io@^1.4.5:
     socket.io-adapter "0.4.0"
     socket.io-client "1.4.5"
     socket.io-parser "2.2.6"
+
+socket.io@^1.7.3:
+  version "1.7.3"
+  resolved "https://registry.yarnpkg.com/socket.io/-/socket.io-1.7.3.tgz#b8af9caba00949e568e369f1327ea9be9ea2461b"
+  dependencies:
+    debug "2.3.3"
+    engine.io "1.8.3"
+    has-binary "0.1.7"
+    object-assign "4.1.0"
+    socket.io-adapter "0.5.0"
+    socket.io-client "1.7.3"
+    socket.io-parser "2.3.1"
 
 socks-proxy-agent@2:
   version "2.0.0"
@@ -9238,11 +9271,7 @@ superagent-mocker@^0.4.0:
   dependencies:
     path-to-regexp "^1.1.0"
 
-superagent-promise@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/superagent-promise/-/superagent-promise-1.1.0.tgz#baf22d8bbdd439a9b07dd10f8c08f54fe2503533"
-
-superagent@^1.7.2, superagent@^1.8.0:
+superagent@^1.7.2:
   version "1.8.5"
   resolved "https://registry.yarnpkg.com/superagent/-/superagent-1.8.5.tgz#1c0ddc3af30e80eb84ebc05cb2122da8fe940b55"
   dependencies:
@@ -9258,7 +9287,7 @@ superagent@^1.7.2, superagent@^1.8.0:
     readable-stream "1.0.27-1"
     reduce-component "1.0.1"
 
-superagent@^3.4.0:
+superagent@^3.4.0, superagent@^3.5.2:
   version "3.5.2"
   resolved "https://registry.yarnpkg.com/superagent/-/superagent-3.5.2.tgz#3361a3971567504c351063abeaae0faa23dbf3f8"
   dependencies:
@@ -9272,13 +9301,6 @@ superagent@^3.4.0:
     mime "^1.3.4"
     qs "^6.1.0"
     readable-stream "^2.0.5"
-
-supertest-as-promised@^4.0.1:
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/supertest-as-promised/-/supertest-as-promised-4.0.2.tgz#0464f2bd256568d4a59bce84269c0548f6879f1a"
-  dependencies:
-    bluebird "^3.3.1"
-    methods "^1.1.1"
 
 supertest@^1.2.0:
   version "1.2.0"
