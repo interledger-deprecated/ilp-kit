@@ -188,7 +188,7 @@ define({ "api": [
       "examples": [
         {
           "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"subject\": \"acct:alice@wallet.example\",\n  \"links\": [\n    {\n      \"rel\": \"https://interledger.org/rel/ledgerUri\",\n      \"href\": \"https://wallet.example/ledger\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/socketIOUri\",\n      \"href\": \"https://wallet.example/socket.io\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/sender/payment\",\n      \"href\": \"https://wallet.example/payments\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/sender/quote\",\n      \"href\": \"https://wallet.example/payments/quote\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/receiver\",\n      \"href\": \"https://wallet.example/receivers/alice\"\n    }\n  ]\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"subject\": \"acct:alice@wallet.example\",\n  \"links\": [\n    {\n      \"rel\": \"https://interledger.org/rel/ledgerUri\",\n      \"href\": \"https://wallet.example/ledger\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/socketIOUri\",\n      \"href\": \"https://wallet.example/socket.io\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/sender/payment\",\n      \"href\": \"https://wallet.example/payments\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/sender/quote\",\n      \"href\": \"https://wallet.example/payments/quote\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/spsp/v2\",\n      \"href\": \"https://wallet.example/spsp/alice\"\n    }\n  ]\n}",
           "type": "json"
         }
       ]
@@ -215,7 +215,7 @@ define({ "api": [
       "examples": [
         {
           "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  {\n    \"type\": \"local\",\n    \"ledgerUri\": \"http://wallet.example/ledger\",\n    \"paymentUri\": \"http://wallet.example/api/receivers/alice\",\n    \"ilpAddress\": \"wallet.alice\",\n    \"currencyCode\": \"USD\",\n    \"currencySymbol\": \"$\",\n    \"name\": \"Alice Faye\",\n    \"imageUrl\": \"\"\n  }\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  {\n    \"type\": \"local\",\n    \"ledgerUri\": \"http://wallet.example/ledger\",\n    \"paymentUri\": \"http://wallet.example/api/spsp/alice\",\n    \"ilpAddress\": \"wallet.alice\",\n    \"currencyCode\": \"USD\",\n    \"currencySymbol\": \"$\",\n    \"name\": \"Alice Faye\",\n    \"imageUrl\": \"\"\n  }\n}",
           "type": "json"
         }
       ]
@@ -293,7 +293,7 @@ define({ "api": [
             "group": "Parameter",
             "type": "String",
             "optional": false,
-            "field": "message",
+            "field": "memo",
             "description": "<p>text message for the destination</p>"
           }
         ]
@@ -302,7 +302,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Make a payment",
-        "content": "curl -X PUT -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"destination\": \"bob@wallet.example\",\n    \"sourceAmount\": \"5\",\n    \"destinationAmount\": \"5\",\n    \"message\": \"Some money for you!\"\n}'\nhttps://wallet.example/payments/9efa70ec-08b9-11e6-b512-3e1d05defe78",
+        "content": "curl -X PUT -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"destination\": \"bob@wallet.example\",\n    \"sourceAmount\": \"5\",\n    \"destinationAmount\": \"5\",\n    \"memo\": \"Some money for you!\"\n}'\nhttps://wallet.example/payments/9efa70ec-08b9-11e6-b512-3e1d05defe78",
         "type": "shell"
       }
     ],
@@ -310,7 +310,7 @@ define({ "api": [
       "examples": [
         {
           "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"id\": \"a36e3447-8ca5-4bc4-a586-7769e3dea63a\"\n  \"destination\": \"bob@wallet.example\",\n  \"sourceAmount\": \"5\",\n  \"destinationAmount\": \"5\",\n  \"message\": \"Some money for you!\",\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"id\": \"a36e3447-8ca5-4bc4-a586-7769e3dea63a\"\n  \"destination\": \"bob@wallet.example\",\n  \"sourceAmount\": \"5\",\n  \"destinationAmount\": \"5\",\n  \"memo\": \"Some money for you!\",\n}",
           "type": "json"
         }
       ]
@@ -403,7 +403,7 @@ define({ "api": [
       "examples": [
         {
           "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"type\": \"payee\",\n  \"account\": \"wallet.alice\",\n  \"currency_code\": \"USD\",\n  \"currency_symbol\": \"$\",\n  \"name\": \"Alice Faye\",\n  \"image_url\": \"http://server.example/picture.jpg\"\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"type\": \"payee\",\n  \"account\": \"wallet.alice\",\n  \"currency_code\": \"USD\",\n  \"currency_scale\": 2,\n  \"name\": \"Alice Faye\",\n  \"image_url\": \"http://server.example/picture.jpg\"\n}",
           "type": "json"
         }
       ]
