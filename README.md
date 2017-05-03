@@ -21,7 +21,10 @@ ILP wallet with hosted ledger and connector instances
 
 ## [Setup](https://github.com/interledgerjs/ilp-kit/blob/master/docs/SETUP.md)
 
-See https://github.com/interledgerjs/ilp-kit/blob/master/docs/SETUP.md
+* The easy way: [with docker-compose](https://github.com/interledgerjs/ilp-kit-docker-compose)
+* The hard way: [ubuntu manual setup](https://github.com/interledgerjs/ilp-kit/blob/master/docs/SETUP.md)
+* On Google Cloud Engine: https://github.com/sappenin/ilpkit-google-cloud/tree/master/ilpkit-gce-single
+* On Heroku: https://heroku.com/deploy?template=https://github.com/interledgerjs/ilp-kit/tree/latest
 
 ## [Development](https://github.com/interledgerjs/ilp-kit/blob/master/docs/DEV.md)
 
