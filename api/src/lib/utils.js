@@ -3,7 +3,7 @@
 const _ = require('lodash')
 const WebFinger = require('webfinger.js')
 const currencySymbolMap = require('currency-symbol-map').currencySymbolMap
-const superagent = require('superagent-promise')(require('superagent'), Promise)
+const superagent = require('superagent')
 
 const Config = require('./config')
 const Ledger = require('./ledger')
@@ -96,7 +96,7 @@ module.exports = class Utils {
     // Get SPSP receiver info
     let spspResponse
     try {
-      spspResponse = (await superagent.get(paymentUri).end()).body
+      spspResponse = (await superagent.get(paymentUri)).body
 
       ledgerInfo = spspResponse.ledger_info
       receiverInfo = spspResponse.receiver_info
