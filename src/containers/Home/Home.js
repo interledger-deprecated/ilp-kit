@@ -132,7 +132,7 @@ export default class Home extends Component {
         </div>
         <div className='col-sm-4'>
           {/* Balance */}
-          <div className={cx('balanceContainer')}>
+          <div className={cx('balanceContainer', 'hidden-xs')}>
             <h4 className={cx('balanceDescription')}>Your Balance</h4>
             <div className={cx('balance')}>
               <Amount amount={user.balance} currencySymbol={config.currencySymbol} />

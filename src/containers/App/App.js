@@ -13,6 +13,8 @@ import NavDropdown from 'react-bootstrap/lib/NavDropdown'
 import MenuItem from 'react-bootstrap/lib/MenuItem'
 import Label from 'react-bootstrap/lib/Label'
 
+import Amount from 'components/Amount/Amount'
+
 import hotkeys from 'decorators/hotkeys'
 
 import { isLoaded as isAuthLoaded, load as loadAuth, loadConfig, logout, updateBalance, verify, resendVerificationEmail } from 'redux/actions/auth'
@@ -202,6 +204,10 @@ export default class App extends Component {
             </Nav>
           </Navbar.Collapse>
         </Navbar>}
+
+        <div className={cx('balanceContainer')}>
+          Your Balance <Amount amount={user.balance} currencySymbol={config.currencySymbol} />
+        </div>
 
         {user && user.email && (!user.email_verified || verified) &&
         <Alert bsStyle={verified ? 'success' : 'info'} className={cx('notVerifiedBox')}>

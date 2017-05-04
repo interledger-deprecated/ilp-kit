@@ -190,13 +190,13 @@ export default class SendForm extends Component {
                 These fields are for streaming payments. The wallet will submit the same payment <i>"repeat"</i> times every <i>"interval"</i> milliseconds.
               </div>
               <div className='row'>
-                <div className='col-sm-6 form-group'>
+                <div className='col-xs-12 col-sm-6 form-group'>
                   <label>Repeats</label>
                   <Field
                     name='repeats'
                     component={Input} />
                 </div>
-                <div className='col-sm-6 form-group'>
+                <div className='col-xs-12 col-sm-6 form-group'>
                   <label>Interval</label>
                   <Field
                     name='interval'
