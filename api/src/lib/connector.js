@@ -50,13 +50,11 @@ module.exports = class Connector {
   }
 
   async waitForLedger () {
-    const port = process.env.CLIENT_PORT
-    const ledgerPublicPath = this.config.data.getIn(['ledger', 'public_uri'])
-
+    const ledgerUri = this.config.data.getIn(['ledger', 'public_uri'])
     return new Promise(resolve => {
       const interval = setInterval(() => {
-        request.get('0.0.0.0:' + port + '/' + ledgerPublicPath).end(err => {
-          if (!err) {
+        request.get(ledgerUri).end(function (err, res) {
+          if (!err && res.ok) {
             clearInterval(interval)
             resolve()
           }
