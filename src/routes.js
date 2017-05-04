@@ -87,6 +87,14 @@ export default (store) => {
     }, 'settings')
   }
 
+  const getSend = (nextState, cb) => {
+    require.ensure(['./containers/Send/Send'], require => {
+      cb(null, require('./containers/Send/Send'))
+
+      store.dispatch(locationUpdate())
+    }, 'send')
+  }
+
   const getInvites = (nextState, cb) => {
     require.ensure(['./containers/Invites/Invites'], require => {
       cb(null, require('./containers/Invites/Invites'))
@@ -181,6 +189,7 @@ export default (store) => {
         <Route onEnter={requireAuth}>
           <Route path='button' getComponent={getButton} />
           <Route path='settings' getComponent={getSettings} />
+          <Route path='send' getComponent={getSend} />
         </Route>
 
         { /* Admin pages */ }
