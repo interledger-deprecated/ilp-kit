@@ -1,6 +1,6 @@
 'use strict'
 
-const request = require('supertest-as-promised')
+const request = require('supertest')
 const reduct = require('reduct')
 const App = require('../../src/lib/app')
 const Ledger = require('../../src/lib/ledger')
