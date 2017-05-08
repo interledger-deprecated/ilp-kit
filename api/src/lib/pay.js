@@ -26,7 +26,7 @@ module.exports = class Pay {
         opts.user.username,
         Object.assign({}, opts.quote, { headers: {
           'Source-Identifier': opts.user.identifier,
-          'Source-Name': opts.user.name,
+          'Source-Name': opts.user.name || opts.user.identifier,
           'Source-Image-Url': this.utils.userToImageUrl(opts.user),
           'Message': opts.message || ''
         }}))
