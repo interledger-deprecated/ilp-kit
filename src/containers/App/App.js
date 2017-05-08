@@ -205,9 +205,10 @@ export default class App extends Component {
           </Navbar.Collapse>
         </Navbar>}
 
+        {user && user.balance &&
         <div className={cx('balanceContainer')}>
           Your Balance <Amount amount={user.balance} currencySymbol={config.currencySymbol} />
-        </div>
+        </div>}
 
         {user && user.email && (!user.email_verified || verified) &&
         <Alert bsStyle={verified ? 'success' : 'info'} className={cx('notVerifiedBox')}>
