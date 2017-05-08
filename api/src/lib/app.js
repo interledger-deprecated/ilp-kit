@@ -102,7 +102,7 @@ module.exports = class App {
 
     // Initial connector funding
     if (connectorAccount && connectorAccount.new) {
-      this.log.info('Funding new connector account.')
+      this.log.info('Funding new connector account: ', connectorAccount.identifier)
       const quote = await this.spsp.quote({
         destination: connectorAccount.identifier,
         user: adminAccount,
@@ -112,6 +112,7 @@ module.exports = class App {
       await this.pay.pay({
         quote,
         user: adminAccount,
+        destination: connectorAccount.identifier,
         message: 'Initial connector funding'
       })
     }
