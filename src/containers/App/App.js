@@ -205,7 +205,7 @@ export default class App extends Component {
           </Navbar.Collapse>
         </Navbar>}
 
-        {user && user.balance &&
+        {user && user.balance !== undefined &&
         <div className={cx('balanceContainer')}>
           Your Balance <Amount amount={user.balance} currencySymbol={config.currencySymbol} />
         </div>}
