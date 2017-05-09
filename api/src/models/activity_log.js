@@ -57,7 +57,7 @@ function ActivityLogFactory (deps) {
           { model: Withdrawal.DbModel }
         ],
         order: [
-          [ 'created_at', 'DESC' ],
+          [ 'updated_at', 'DESC' ],
           [ Payment.DbModel, 'created_at', 'DESC' ],
           [ Settlement.DbModel, 'created_at', 'DESC' ],
           [ Withdrawal.DbModel, 'created_at', 'DESC' ]
