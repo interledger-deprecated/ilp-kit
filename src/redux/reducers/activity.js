@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import * as types from '../actionTypes'
 
 import paginate from 'redux-pagination'
@@ -9,9 +10,19 @@ function reducer (state = {}, action = {}) {
       // TODO ^ is the above comment still relevant?
       if (state.currentPage !== 1) return state
 
+      const activityIndex = _.findIndex(state.list, activity => activity.id === action.result.id)
+
+      let list
+      if (activityIndex > -1) {
+        list = state.list.slice()
+        list.splice(activityIndex, 1, action.result)
+      } else {
+        list = [action.result].concat(state.list)
+      }
+
       return {
         ...state,
-        list: [action.result].concat(state.list)
+        list
       }
     case types.LOGOUT_SUCCESS:
       return {}
