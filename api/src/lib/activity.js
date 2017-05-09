@@ -46,6 +46,8 @@ module.exports = class Activity {
       // Cache exists, which means there was a payment between source and destination
       // with the same message, and the same side of activity within the past 30 mins
       activityLog = cache.activityLog
+      activityLog.changed('updated_at', true)
+      await activityLog.save()
     }
 
     // Add the payment to the activity
