@@ -145,7 +145,7 @@ export default class SendForm extends Component {
         <div className='col-sm-12'>
           {success &&
           <Alert bsStyle='success'>
-            You've just sent some money!
+            Your payment has been sent
           </Alert>}
 
           {err && err.id &&

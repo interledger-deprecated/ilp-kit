@@ -12,3 +12,15 @@
     @content;
   }
 }
+
+@mixin mobileHide {
+  @include mobile {
+    display: none !important;
+  }
+}
+
+@mixin desktopHide {
+  @include desktop {
+    display: none !important;
+  }
+}

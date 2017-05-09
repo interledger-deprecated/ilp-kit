@@ -56,7 +56,12 @@ function ActivityLogFactory (deps) {
           { model: Settlement.DbModel },
           { model: Withdrawal.DbModel }
         ],
-        order: [['created_at', 'DESC']],
+        order: [
+          [ 'created_at', 'DESC' ],
+          [ Payment.DbModel, 'created_at', 'DESC' ],
+          [ Settlement.DbModel, 'created_at', 'DESC' ],
+          [ Withdrawal.DbModel, 'created_at', 'DESC' ]
+        ],
         limit,
         offset: limit * (page - 1)
       })
@@ -70,7 +75,12 @@ function ActivityLogFactory (deps) {
           { model: Payment.DbModel },
           { model: Settlement.DbModel },
           { model: Withdrawal.DbModel }
-        ]
+        ],
+        order: [
+          [ Payment.DbModel, 'created_at', 'DESC' ],
+          [ Settlement.DbModel, 'created_at', 'DESC' ],
+          [ Withdrawal.DbModel, 'created_at', 'DESC' ]
+        ],
       })
     }
   }
