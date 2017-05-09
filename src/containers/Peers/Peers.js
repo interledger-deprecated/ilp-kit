@@ -48,7 +48,7 @@ export default class Peers extends Component {
   handleUpdate = peer => value => {
     if (Number(value.limit) === this.toCurrency(peer.limit, peer)) return
 
-    this.props.update(peer.id, this.fromCurrency(value, peer))
+    this.props.update(peer.id, { limit: this.fromCurrency(value.limit, peer) })
   }
 
   handleRemove = peer => e => {
