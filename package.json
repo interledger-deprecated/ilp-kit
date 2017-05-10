@@ -106,7 +106,7 @@
   },
   "dependencies": {
     "apidoc": "^0.16.1",
-    "autoprefixer-loader": "^3.2.0",
+    "autoprefixer": "^7.0.1",
     "babel-core": "~6.21.0",
     "babel-loader": "^6.2.10",
     "babel-plugin-add-module-exports": "^0.2.1",
@@ -181,6 +181,7 @@
     "pg": "^4.4.4",
     "pg-native": "^1.10.0",
     "piping": "^0.3.0",
+    "postcss-loader": "^2.0.3",
     "pretty-error": "^1.2.0",
     "prop-types": "^15.5.9",
     "raw-loader": "^0.5.1",
