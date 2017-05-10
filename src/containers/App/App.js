@@ -207,6 +207,20 @@ export default class App extends Component {
           </Navbar.Collapse>
         </Navbar>}
 
+        {user && user.email && (!user.email_verified || verified) &&
+        <Alert bsStyle={verified ? 'success' : 'info'} className={cx('notVerifiedBox')}>
+          <div className={cx('container')}>
+            {verified && <span>Your email has been verified!</span>}
+            {!verified &&
+            <span>
+              An email has been sent to <strong>{user.email}</strong>.
+              Please follow the steps in the message to confirm your email address.&nbsp;
+              {!verificationEmailSent && <a href='' onClick={this.resendVerification}>Resend the message</a>}
+              {verificationEmailSent && <strong>Verification email sent!</strong>}
+            </span>}
+          </div>
+        </Alert>}
+
         {user && user.balance !== undefined &&
         <div className={cx('mobileHeader')}>
           <div className={cx('balanceContainer')}>
@@ -221,20 +235,6 @@ export default class App extends Component {
             Make a Payment
           </Link>}
         </div>}
-
-        {user && user.email && (!user.email_verified || verified) &&
-        <Alert bsStyle={verified ? 'success' : 'info'} className={cx('notVerifiedBox')}>
-          <div className={cx('container')}>
-            {verified && <span>Your email has been verified!</span>}
-            {!verified &&
-            <span>
-              An email has been sent to <strong>{user.email}</strong>.
-              Please follow the steps in the message to confirm your email address.&nbsp;
-              {!verificationEmailSent && <a href='' onClick={this.resendVerification}>Resend the message</a>}
-              {verificationEmailSent && <strong>Verification email sent!</strong>}
-            </span>}
-          </div>
-        </Alert>}
 
         <div className={cx('container')}>
           {this.props.children}
