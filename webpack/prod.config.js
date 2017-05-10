@@ -35,7 +35,7 @@ module.exports = {
       'react-ga',
       'serialize-javascript',
       'uuid4',
-      'react-addons-css-transition-group',
+      'react-transition-group',
       'react-timeago',
       'moment',
       'moment-timezone',

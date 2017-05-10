@@ -87,6 +87,14 @@ export default (store) => {
     }, 'settings')
   }
 
+  const getSend = (nextState, cb) => {
+    require.ensure(['./containers/Send/Send'], require => {
+      cb(null, require('./containers/Send/Send'))
+
+      store.dispatch(locationUpdate())
+    }, 'send')
+  }
+
   const getInvites = (nextState, cb) => {
     require.ensure(['./containers/Invites/Invites'], require => {
       cb(null, require('./containers/Invites/Invites'))
@@ -164,43 +172,44 @@ export default (store) => {
    */
   return (
     <Router>
-      <Route path="widget" component={Widget} />
-      <Route path="/" component={App}>
+      <Route path='widget' component={Widget} />
+      <Route path='/' component={App}>
         { /* Home (main) route */ }
         <IndexRoute getComponent={rootComponent} />
 
         { /* Routes only available to guests */ }
         <Route onEnter={noAuth}>
-          <Route path="login" getComponent={getAuth} />
-          <Route path="register(/:inviteCode)" getComponent={getAuth} />
-          <Route path="forgot-password" getComponent={getAuth} />
-          <Route path="change-password/:username/:passwordChangeCode" getComponent={getAuth} />
+          <Route path='login' getComponent={getAuth} />
+          <Route path='register(/:inviteCode)' getComponent={getAuth} />
+          <Route path='forgot-password' getComponent={getAuth} />
+          <Route path='change-password/:username/:passwordChangeCode' getComponent={getAuth} />
         </Route>
 
         { /* Routes requiring Auth */ }
         <Route onEnter={requireAuth}>
-          <Route path="button" getComponent={getButton} />
-          <Route path="settings" getComponent={getSettings} />
+          <Route path='button' getComponent={getButton} />
+          <Route path='settings' getComponent={getSettings} />
+          <Route path='send' getComponent={getSend} />
         </Route>
 
         { /* Admin pages */ }
         <Route onEnter={requireAdmin}>
-          <Route path="invites" getComponent={getInvites} />
-          <Route path="users" getComponent={getUsers} />
-          <Route path="withdrawals" getComponent={getWithdrawals} />
-          <Route path="peers" getComponent={getPeers} />
-          <Route path="settlement" getComponent={getSettlement} />
+          <Route path='invites' getComponent={getInvites} />
+          <Route path='users' getComponent={getUsers} />
+          <Route path='withdrawals' getComponent={getWithdrawals} />
+          <Route path='peers' getComponent={getPeers} />
+          <Route path='settlement' getComponent={getSettlement} />
         </Route>
 
         { /* Routes available to all */ }
-        <Route path="settle/:method/:destination" getComponent={getSettle} />
-        <Route path="settlement/cancel" getComponent={getSettlementCancel} />
-        <Route path="settlement/:id" getComponent={getSettlementInfo} />
-        <Route path="withdraw" getComponent={getWithdraw} />
-        <Route path="verify/:username/:verifyCode" getComponent={rootComponent} />
+        <Route path='settle/:method/:destination' getComponent={getSettle} />
+        <Route path='settlement/cancel' getComponent={getSettlementCancel} />
+        <Route path='settlement/:id' getComponent={getSettlementInfo} />
+        <Route path='withdraw' getComponent={getWithdraw} />
+        <Route path='verify/:username/:verifyCode' getComponent={rootComponent} />
 
         { /* Catch all route */ }
-        <Route path="*" component={NotFound} status={404} />
+        <Route path='*' component={NotFound} status={404} />
       </Route>
     </Router>
   )

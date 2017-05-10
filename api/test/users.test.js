@@ -1,15 +1,13 @@
-"use strict"
+'use strict'
 
 const appHelper = require('./helpers/app')
-const assert = require('chai').assert
 
 describe('Users', () => {
-
-  beforeEach(function * () {
-    this.agent = yield appHelper.create()
+  beforeEach(async function () {
+    this.agent = await appHelper.create()
 
     // Create the user
-    yield this.agent
+    await this.agent
       .post('/users/alice')
       .send({
         username: 'alice',
@@ -19,8 +17,8 @@ describe('Users', () => {
       .expect(201)
   })
 
-  it.skip('should get a user by name', function * () {
-    yield this.agent
+  it.skip('should get a user by name', async function () {
+    await this.agent
       .get('/users/alice')
       .expect({
         id: 1,
@@ -34,24 +32,24 @@ describe('Users', () => {
       })
   })
 
-  it.skip('should 404 if auth user and user dont match', function * () {
-    yield this.agent
+  it.skip('should 404 if auth user and user dont match', async function () {
+    await this.agent
       .get('/users/bob')
       .expect(404)
   })
 
-  it.skip('should return 422 on existing user', function * () {
-    yield this.agent
+  it.skip('should return 422 on existing user', async function () {
+    await this.agent
       .post('/users/alice')
       .send({
         username: 'alice',
-        password: 'alice',
+        password: 'alice'
       })
       .expect(422)
   })
 
-  it.skip('should return 422 on existing email', function * () {
-    yield this.agent
+  it.skip('should return 422 on existing email', async function () {
+    await this.agent
       .post('/users/steve')
       .send({
         username: 'steve',
@@ -61,8 +59,8 @@ describe('Users', () => {
       .expect(422)
   })
 
-  it.skip('should change email', function * () {
-    yield this.agent
+  it.skip('should change email', async function () {
+    await this.agent
       .put('/users/alice')
       .send({
         email: 'alice@another.com'
@@ -70,34 +68,34 @@ describe('Users', () => {
       .expect(200)
   })
 
-  it.skip('should change password', function * () {
-    yield this.agent
+  it.skip('should change password', async function () {
+    await this.agent
       .put('/users/alice')
       .send({
         password: 'alice',
-        verifyPassword: 'alice',
+        verifyPassword: 'alice'
       })
       .expect(200)
   })
 
-  it.skip('should fail if passwords don\'t match', function * () {
-    yield this.agent
+  it.skip('should fail if passwords don\'t match', async function () {
+    await this.agent
       .put('/users/alice')
       .send({
         password: 'alice',
-        verifyPassword: 'qwertyuiop',
+        verifyPassword: 'qwertyuiop'
       })
       .expect(422)
   })
 
-  it.skip('should reload an account', function * () {
-    yield this.agent
+  it.skip('should reload an account', async function () {
+    await this.agent
       .post('/users/alice/reload')
       .expect(200)
   })
 
-  it.skip('should verify an email address', function * () {
-    yield this.agent
+  it.skip('should verify an email address', async function () {
+    await this.agent
       .put('/users/alice/verify')
       .send({
         code: this.agent.App.User.getVerificationCode('alice@example.com')
@@ -105,8 +103,8 @@ describe('Users', () => {
       .expect(200)
   })
 
-  it.skip('should not verify with wrong code', function * () {
-    yield this.agent
+  it.skip('should not verify with wrong code', async function () {
+    await this.agent
       .put('/users/alice/verify')
       .send({
         code: 'garbage'
@@ -114,14 +112,14 @@ describe('Users', () => {
       .expect(400)
   })
 
-  it.skip('should resend verification', function * () {
-    yield this.agent
+  it.skip('should resend verification', async function () {
+    await this.agent
       .post('/users/alice/resend-verification')
       .expect(200)
   })
 
-  it.skip('should get receiver', function * () {
-    yield this.agent
+  it.skip('should get receiver', async function () {
+    await this.agent
       .get('/spsp/alice')
       .expect({
         type: 'payee',
@@ -133,8 +131,8 @@ describe('Users', () => {
       })
   })
 
-  it.skip('should fail to get nonexistant receiver', function * () {
-    yield this.agent
+  it.skip('should fail to get nonexistant receiver', async function () {
+    await this.agent
       .get('/spsp/bob')
       .expect(404)
   })

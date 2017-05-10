@@ -15,7 +15,6 @@ const cx = classNames.bind(styles)
 @connect(
   state => ({
     withdrawalState: state.withdrawal,
-    config: state.auth.config,
     loaded: state.invite.loaded
   }),
   { load, update })
@@ -24,25 +23,22 @@ export default class Withdrawals extends Component {
     withdrawalState: PropTypes.object,
     update: PropTypes.func.isRequired,
     load: PropTypes.func.isRequired,
-    config: PropTypes.object,
     loaded: PropTypes.bool
   }
 
   state = {}
 
-  componentWillMount() {
-    if(!this.props.loaded) {
+  componentWillMount () {
+    if (!this.props.loaded) {
       this.props.load()
     }
   }
 
-  handleComplete = id => {
+  handleComplete = id => () => {
     this.props.update(id, { status: 'complete' })
   }
 
   renderWithdrawal = withdrawal => {
-    const config = this.props.config
-
     return (
       <div className={cx('withdrawal')} key={withdrawal.id}>
         <div className={cx('row', 'row-sm')}>
@@ -57,7 +53,7 @@ export default class Withdrawals extends Component {
           </div>
           <div className={cx('col-sm-2', 'text-right')}>
             {withdrawal.status !== 'complete' &&
-            <button className={cx('btn', 'btn-success')} onClick={this.handleComplete.bind(this, withdrawal.id)}>Complete</button>}
+            <button className={cx('btn', 'btn-success')} onClick={this.handleComplete(withdrawal.id)}>Complete</button>}
           </div>
         </div>
 
@@ -66,7 +62,7 @@ export default class Withdrawals extends Component {
     )
   }
 
-  render() {
+  render () {
     const { withdrawalState } = this.props
 
     return (
@@ -89,7 +85,7 @@ export default class Withdrawals extends Component {
         <List
           emptyScreen={(
             <div className={cx('panel', 'panel-default', 'status')}>
-              <div className="panel-body">
+              <div className='panel-body'>
                 <i className={cx('fa', 'fa-ticket')} />
                 <h1>No Withdrawals</h1>
               </div>

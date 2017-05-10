@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const isEmpty = value => value === undefined || value === null || value === ''
-const join = (rules) => (value, data) => rules.map(rule => rule(value, data)).filter(error => !!error)[0/* first error */]
+const join = (rules) => (value, data) => rules.map(rule => rule(value, data)).filter(error => !!error)[0] /* first error */
 
 export function email (value) {
   // Let's not start a debate on email regex. This is just for an example app!
@@ -38,7 +38,7 @@ export function integer (value) {
 }
 
 export function number (value) {
-  if (value && isNaN(parseFloat(value)) || !isFinite(value)) {
+  if ((value && isNaN(parseFloat(value))) || !isFinite(value)) {
     return 'Must be a number'
   }
 }
@@ -59,10 +59,10 @@ export function maxValue (max) {
   }
 }
 
-export function lessThanBalance (balance) {
+export function greaterThanMinBalance (balance, minBalance) {
   return value => {
-    if (value && parseFloat(value) > balance) {
-      return `Sending amount should be less than your balance`
+    if (value && parseFloat(balance) - parseFloat(value) < parseFloat(minBalance)) {
+      return `Minimum allowed balance is ${minBalance}.`
     }
   }
 }

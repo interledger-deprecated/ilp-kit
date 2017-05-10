@@ -9,7 +9,7 @@ class LedgerInsufficientFundsError extends UnprocessableEntityError {
     this.accountIdentifier = accountIdentifier
   }
 
-  * handler (ctx, log) {
+  async handler (ctx, log) {
     log.warn('Insufficient Funds: ' + this.message)
     ctx.status = 422
     ctx.body = {

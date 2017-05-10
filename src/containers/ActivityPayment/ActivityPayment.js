@@ -1,5 +1,5 @@
 import React, {Component, PropTypes} from 'react'
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
+import { CSSTransitionGroup } from 'react-transition-group'
 import {connect} from 'react-redux'
 import moment from 'moment'
 import TimeAgo from 'react-timeago'
@@ -25,11 +25,10 @@ const cx = classNames.bind(styles)
 export default class ActivityPayment extends Component {
   static propTypes = {
     activity: PropTypes.object.isRequired,
-    user: PropTypes.object.isRequired,
     config: PropTypes.object,
     advancedMode: PropTypes.bool,
     destinationChange: PropTypes.func.isRequired,
-    amountsChange: PropTypes.func.isRequired,
+    amountsChange: PropTypes.func.isRequired
   }
 
   static defaultProps = {
@@ -40,11 +39,11 @@ export default class ActivityPayment extends Component {
     showTransfers: false
   }
 
-  componentWillMount() {
+  componentWillMount () {
     this.processActivity()
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps (nextProps) {
     if (this.props.activity === nextProps.activity) return
 
     this.processActivity(nextProps)
@@ -119,36 +118,36 @@ export default class ActivityPayment extends Component {
     }
   }
 
-  render() {
+  render () {
     const config = this.props.config
     const { showTransfers, payment, type } = this.state
     const advancedMode = this.props.advancedMode
 
-    const profilePic = (type === 'outgoing' ? payment.destination_image_url : payment.source_image_url) || require('./placeholder.png')
+    const profilePic = (type === 'outgoing' ? payment.destination_image_url : payment.source_image_url) || require('../../../static/placeholder.png')
     const paymentAmount = type === 'outgoing' ? payment.source_amount : payment.destination_amount
 
     // TODO payments grouping / message
     return (
       <div className={cx('ActivityPayment')}>
-        <div className="row">
-          <div className="col-xs-8">
+        <div className='row row-mobile'>
+          <div className='col-xs-8'>
             <img src={profilePic} className={cx('profilePic')} />
             <div className={cx('description')}>
               <div className={cx('counterpartyContainer')}>
                 {type === 'outgoing' &&
                 <span>
-                  You paid <a href=""
-                              className={cx('counterparty')} title={payment.counterpartyIdentifier}
-                              onClick={this.handleCounterpartyClick}>
+                  You paid <a href=''
+                    className={cx('counterparty')} title={payment.counterpartyIdentifier}
+                    onClick={this.handleCounterpartyClick}>
                     {payment.counterpartyName || getAccountName(payment.counterpartyIdentifier) || 'someone'}
                   </a>
                 </span>}
 
                 {type === 'incoming' &&
                 <span>
-                  <a href="" className={cx('counterparty')}
-                     title={payment.counterpartyIdentifier}
-                     onClick={this.handleCounterpartyClick}>
+                  <a href='' className={cx('counterparty')}
+                    title={payment.counterpartyIdentifier}
+                    onClick={this.handleCounterpartyClick}>
                     {payment.counterpartyName || getAccountName(payment.counterpartyIdentifier) || 'someone'}
                   </a> paid you
                 </span>}
@@ -165,21 +164,21 @@ export default class ActivityPayment extends Component {
               </div>
             </div>
           </div>
-          <div className="col-xs-4">
+          <div className='col-xs-4'>
             <div className={cx('amount', type)}>
               {/* TODO Show both source and destination amounts */}
               <Amount amount={paymentAmount} currencySymbol={config.currencySymbol} />
             </div>
 
             <div className={cx('transfersCount')}>
-              <a href="" onClick={this.toggleTransfers}>
+              <a href='' onClick={this.toggleTransfers}>
                 {payment.transfers.length > 1 ? payment.transfers.length + ' transfers' : '1 transfer'}
               </a>
             </div>
           </div>
         </div>
 
-        <ReactCSSTransitionGroup
+        <CSSTransitionGroup
           transitionName={{
             enter: cx('enter'),
             enterActive: cx('enterActive'),
@@ -192,15 +191,15 @@ export default class ActivityPayment extends Component {
           transitionAppearTimeout={300}
           transitionEnterTimeout={300}
           transitionLeaveTimeout={300}
-          component="div"
-          className={cx('row', 'transfersContainer')}>
+          component='div'
+          className={cx('row', 'row-mobile', 'transfersContainer')}>
           {showTransfers &&
           <div className={cx('col-sm-12')}>
             {payment.transfers && payment.transfers.map(transfer => {
               return (
                 <div className={cx('row', 'transfer')} key={transfer.source_identifier + transfer.created_at}>
                   {advancedMode &&
-                  <div className="col-xs-2">
+                  <div className='col-xs-2'>
                     <a href={config.ledgerUri + '/transfers/' + transfer.transfer} className={cx('hash')}>{transfer.transfer && transfer.transfer.split('-')[0]}</a>
                   </div>}
                   <div className={cx(advancedMode ? 'col-xs-6' : 'col-xs-8', 'date')}>
@@ -213,7 +212,7 @@ export default class ActivityPayment extends Component {
               )
             })}
           </div>}
-        </ReactCSSTransitionGroup>
+        </CSSTransitionGroup>
       </div>
     )
   }

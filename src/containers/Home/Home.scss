@@ -1,4 +1,5 @@
 @import 'variables';
+@import 'mixins';
 
 .header {
   margin-bottom: 20px;
@@ -6,6 +7,8 @@
   h3 {
     margin: 0;
   }
+
+  @include mobileHide()
 }
 .balanceContainer {
   text-align: center;

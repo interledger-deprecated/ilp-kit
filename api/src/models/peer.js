@@ -1,4 +1,4 @@
-"use strict"
+'use strict'
 
 module.exports = PeerFactory
 
@@ -11,26 +11,28 @@ const Sequelize = require('sequelize')
 
 module.exports.DEFAULT_CURRENCY_SCALE = 9
 
-PeerFactory.constitute = [Database, Validator]
-function PeerFactory(sequelize, validator) {
+function PeerFactory (deps) {
+  const sequelize = deps(Database)
+  const validator = deps(Validator)
+
   class Peer extends Model {
-    static convertFromExternal(data) {
+    static convertFromExternal (data) {
       return data
     }
 
-    static convertToExternal(data) {
+    static convertToExternal (data) {
       delete data.created_at
       delete data.updated_at
 
       return data
     }
 
-    static convertFromPersistent(data) {
+    static convertFromPersistent (data) {
       data = _.omit(data, _.isNull)
       return data
     }
 
-    static convertToPersistent(data) {
+    static convertToPersistent (data) {
       return data
     }
   }

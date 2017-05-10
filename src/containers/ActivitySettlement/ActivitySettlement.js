@@ -16,9 +16,7 @@ const cx = classNames.bind(styles)
 export default class ActivitySettlement extends Component {
   static propTypes = {
     activity: PropTypes.object.isRequired,
-    user: PropTypes.object.isRequired,
-    config: PropTypes.object,
-    advancedMode: PropTypes.bool
+    config: PropTypes.object
   }
 
   static defaultProps = {
@@ -29,11 +27,11 @@ export default class ActivitySettlement extends Component {
     showTransfers: false
   }
 
-  componentWillMount() {
+  componentWillMount () {
     this.processActivity()
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps (nextProps) {
     if (this.props.activity === nextProps.activity) return
 
     this.processActivity(nextProps)
@@ -62,23 +60,22 @@ export default class ActivitySettlement extends Component {
     }
   }
 
-  render() {
+  render () {
     const { config } = this.props
     const { settlement } = this.state
-    const advancedMode = this.props.advancedMode
 
     // TODO payments grouping / message
     return (
       <div className={cx('ActivitySettlement')}>
-        <div className="row">
-          <div className="col-xs-8">
+        <div className='row row-mobile'>
+          <div className='col-xs-8'>
             <i className={cx('fa', 'fa-plus', 'icon')} />
             <div className={cx('description')}>
               {/* TODO:UX include the deposit method */}
               Deposit
             </div>
           </div>
-          <div className="col-xs-4">
+          <div className='col-xs-4'>
             <div className={cx('amount')}>
               <Amount amount={settlement.amount} currencySymbol={config.currencySymbol} />
             </div>

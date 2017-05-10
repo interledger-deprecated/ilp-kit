@@ -3,7 +3,7 @@ import config from '../config'
 
 const methods = ['get', 'post', 'put', 'patch', 'del']
 
-function formatUrl(path) {
+function formatUrl (path) {
   // Used for non api calls (ex. ledger transfer json retrieval)
   if (path.startsWith('http')) return path
 
@@ -23,8 +23,8 @@ function formatUrl(path) {
  * Remove it at your own risk.
  */
 class _ApiClient {
-  constructor(req) {
-    methods.forEach(method =>
+  constructor (req) {
+    methods.forEach(method => {
       this[method] = (path, { params, data } = {}) => new Promise((resolve, reject) => {
         const request = superagent[method](formatUrl(path))
 
@@ -41,7 +41,8 @@ class _ApiClient {
         }
 
         request.end((err, { body } = {}) => err ? reject(body || err) : resolve(body))
-      }))
+      })
+    })
   }
 }
 

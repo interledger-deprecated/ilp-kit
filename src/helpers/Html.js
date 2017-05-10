@@ -19,13 +19,13 @@ export default class Html extends Component {
     store: PropTypes.object
   }
 
-  render() {
+  render () {
     const {assets, component, store} = this.props
     const content = component ? ReactDOM.renderToString(component) : ''
     const head = Helmet.rewind()
 
     return (
-      <html lang="en-us">
+      <html lang='en-us'>
         <head>
           {head.base.toComponent()}
           {head.title.toComponent()}
@@ -33,21 +33,21 @@ export default class Html extends Component {
           {head.link.toComponent()}
           {head.script.toComponent()}
 
-          <link rel="shortcut icon" href="/favicon.png" />
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <link rel='shortcut icon' href='/favicon.png' />
+          <meta name='viewport' content='width=device-width, initial-scale=1' />
           {/* styles (will be present only in production with webpack extract text plugin) */}
-          <link href={assets.styles.main} media="screen, projection" rel="stylesheet" type="text/css" charSet="UTF-8"/>
+          <link href={assets.styles.main} media='screen, projection' rel='stylesheet' type='text/css' charSet='UTF-8' />
         </head>
         <body>
-          <div id="content" dangerouslySetInnerHTML={{__html: content}}/>
-          <script dangerouslySetInnerHTML={{__html: `window.__data=${serialize(store.getState())}`}} charSet="UTF-8"/>
-          {__DEVELOPMENT__ && <script src={assets.javascript.vendor} charSet="UTF-8"/>}
+          <div id='content' dangerouslySetInnerHTML={{__html: content}} />
+          <script dangerouslySetInnerHTML={{__html: `window.__data=${serialize(store.getState())}`}} charSet='UTF-8' />
+          {__DEVELOPMENT__ && <script src={assets.javascript.vendor} charSet='UTF-8' />}
           {/* TODO remove hardcode */}
-          {__DEVELOPMENT__ && <script src="http://localhost:3011/dist/app.js" charSet="UTF-8"/>}
+          {__DEVELOPMENT__ && <script src='http://localhost:3011/dist/app.js' charSet='UTF-8' />}
 
-          {!__DEVELOPMENT__ && <script src={assets.javascript.meta} charSet="UTF-8"/>}
-          {!__DEVELOPMENT__ && <script src={assets.javascript.vendor} charSet="UTF-8"/>}
-          {!__DEVELOPMENT__ && <script src={assets.javascript.main} charSet="UTF-8"/>}
+          {!__DEVELOPMENT__ && <script src={assets.javascript.meta} charSet='UTF-8' />}
+          {!__DEVELOPMENT__ && <script src={assets.javascript.vendor} charSet='UTF-8' />}
+          {!__DEVELOPMENT__ && <script src={assets.javascript.main} charSet='UTF-8' />}
         </body>
       </html>
     )

@@ -3,7 +3,6 @@
 module.exports = ActivityLogFactory
 
 const _ = require('lodash')
-const Container = require('constitute').Container
 const Model = require('five-bells-shared').Model
 const PersistentModelMixin = require('five-bells-shared').PersistentModelMixin
 const Database = require('../lib/db')
@@ -15,9 +14,10 @@ const WithdrawalFactory = require('./withdrawal')
 const SettlementFactory = require('./settlement')
 const ActivityLogsItemFactory = require('./activity_logs_item')
 
-ActivityLogFactory.constitute = [Database, Validator, Container]
-function ActivityLogFactory (sequelize, validator, container) {
-  let ActivityLogsItem
+function ActivityLogFactory (deps) {
+  const sequelize = deps(Database)
+  const validator = deps(Validator)
+
   let Payment
   let Settlement
   let Withdrawal
@@ -43,7 +43,7 @@ function ActivityLogFactory (sequelize, validator, container) {
       return data
     }
 
-    static * getUserActivityLog (userId, page, limit) {
+    static async getUserActivityLog (userId, page, limit) {
       page = page > 0 ? Number(page) : 1
       limit = Number(limit)
 
@@ -56,13 +56,18 @@ function ActivityLogFactory (sequelize, validator, container) {
           { model: Settlement.DbModel },
           { model: Withdrawal.DbModel }
         ],
-        order: [['created_at', 'DESC']],
+        order: [
+          [ 'updated_at', 'DESC' ],
+          [ Payment.DbModel, 'created_at', 'DESC' ],
+          [ Settlement.DbModel, 'created_at', 'DESC' ],
+          [ Withdrawal.DbModel, 'created_at', 'DESC' ]
+        ],
         limit,
         offset: limit * (page - 1)
       })
     }
 
-    static * getActivityLog (id) {
+    static async getActivityLog (id) {
       // TODO:BEFORE_DEPLOY don't include all of the fields
       return ActivityLog.findOne({
         where: { id },
@@ -70,7 +75,12 @@ function ActivityLogFactory (sequelize, validator, container) {
           { model: Payment.DbModel },
           { model: Settlement.DbModel },
           { model: Withdrawal.DbModel }
-        ]
+        ],
+        order: [
+          [ Payment.DbModel, 'created_at', 'DESC' ],
+          [ Settlement.DbModel, 'created_at', 'DESC' ],
+          [ Withdrawal.DbModel, 'created_at', 'DESC' ]
+        ],
       })
     }
   }
@@ -86,64 +96,54 @@ function ActivityLogFactory (sequelize, validator, container) {
     // TODO:BEFORE_DEPLOY update migration
   })
 
-  container.schedulePostConstructor(User => {
+  deps.later(() => {
+    const User = deps(UserFactory)
+    const ActivityLogsItem = deps(ActivityLogsItemFactory)
+    Payment = deps(PaymentFactory)
+    Settlement = deps(SettlementFactory)
+    Withdrawal = deps(WithdrawalFactory)
+
     ActivityLog.DbModel.belongsTo(User.DbModel)
-  }, [ UserFactory ])
 
-  container.schedulePostConstructor(model => {
-    ActivityLogsItem = model
-
-    container.schedulePostConstructor(model => {
-      Payment = model
-
-      // Payment
-      ActivityLog.DbModel.belongsToMany(Payment.DbModel, {
-        through: {
-          model: ActivityLogsItem.DbModel,
-          unique: false,
-          scope: {
-            item_type: 'payment'
-          }
-        },
-        foreignKey: 'activity_log_id',
-        constraints: false
-      })
-    }, [ PaymentFactory ])
+    // Payment
+    ActivityLog.DbModel.belongsToMany(Payment.DbModel, {
+      through: {
+        model: ActivityLogsItem.DbModel,
+        unique: false,
+        scope: {
+          item_type: 'payment'
+        }
+      },
+      foreignKey: 'activity_log_id',
+      constraints: false
+    })
 
     // Settlement
-    container.schedulePostConstructor(model => {
-      Settlement = model
-
-      ActivityLog.DbModel.belongsToMany(Settlement.DbModel, {
-        through: {
-          model: ActivityLogsItem.DbModel,
-          unique: false,
-          scope: {
-            item_type: 'settlement'
-          }
-        },
-        foreignKey: 'activity_log_id',
-        constraints: false
-      })
-    }, [ SettlementFactory ])
+    ActivityLog.DbModel.belongsToMany(Settlement.DbModel, {
+      through: {
+        model: ActivityLogsItem.DbModel,
+        unique: false,
+        scope: {
+          item_type: 'settlement'
+        }
+      },
+      foreignKey: 'activity_log_id',
+      constraints: false
+    })
 
     // Withdrawal
-    container.schedulePostConstructor(model => {
-      Withdrawal = model
-
-      ActivityLog.DbModel.belongsToMany(Withdrawal.DbModel, {
-        through: {
-          model: ActivityLogsItem.DbModel,
-          unique: false,
-          scope: {
-            item_type: 'withdrawal'
-          }
-        },
-        foreignKey: 'activity_log_id',
-        constraints: false
-      })
-    }, [ WithdrawalFactory ])
-  }, [ ActivityLogsItemFactory ])
+    ActivityLog.DbModel.belongsToMany(Withdrawal.DbModel, {
+      through: {
+        model: ActivityLogsItem.DbModel,
+        unique: false,
+        scope: {
+          item_type: 'withdrawal'
+        }
+      },
+      foreignKey: 'activity_log_id',
+      constraints: false
+    })
+  })
 
   return ActivityLog
 }

@@ -12,7 +12,7 @@ export default class Amount extends Component {
     currencySymbol: PropTypes.string
   }
 
-  render() {
+  render () {
     const { currencySymbol } = this.props
 
     const am = amount(this.props.amount, currencySymbol)

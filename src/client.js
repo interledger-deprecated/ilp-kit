@@ -1,5 +1,3 @@
-/* globals Raven */
-
 /**
  * THIS IS THE ENTRY POINT FOR THE CLIENT, JUST LIKE server.js IS THE ENTRY POINT FOR THE SERVER.
  */
@@ -30,7 +28,7 @@ client.get('/config')
 const dest = document.getElementById('content')
 const store = createStore(browserHistory, client, window.__data)
 
-function initSocket() {
+function initSocket () {
   return io('', {path: '/api/socket.io'})
 }
 
@@ -38,13 +36,16 @@ global.socket = initSocket()
 global.tracker = tracker
 
 // Google analytics page view tracking
-function logPageView() {
+function logPageView () {
   tracker.pageview(window.location.pathname)
 }
 
 match({ routes: getRoutes(store), history: browserHistory }, (error, redirectLocation, renderProps) => {
+  if (error) {
+    console.error(error)
+  }
   ReactDOM.render(
-    <Provider store={store} key="provider">
+    <Provider store={store} key='provider'>
       <Router
         {...renderProps}
         render={props => <ReduxAsyncConnect {...props} helpers={{client}} filter={item => !item.deferred} />}

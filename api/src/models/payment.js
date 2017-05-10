@@ -3,7 +3,6 @@
 module.exports = PaymentFactory
 
 const _ = require('lodash')
-const Container = require('constitute').Container
 const Model = require('five-bells-shared').Model
 const InvalidBodyError = require('five-bells-shared/errors/invalid-body-error')
 const PersistentModelMixin = require('five-bells-shared').PersistentModelMixin
@@ -16,9 +15,9 @@ const UserFactory = require('./user')
 const ActivityLogFactory = require('./activity_log')
 const ActivityLogsItemFactory = require('./activity_logs_item')
 
-PaymentFactory.constitute = [Database, Validator, Container, UserFactory]
-function PaymentFactory (sequelize, validator, container, User) {
-  let ActivityLog
+function PaymentFactory (deps) {
+  const sequelize = deps(Database)
+  const validator = deps(Validator)
 
   class Payment extends Model {
     static convertFromExternal (data) {
@@ -46,8 +45,8 @@ function PaymentFactory (sequelize, validator, container, User) {
     static createBodyParser () {
       const Self = this
 
-      return function * (next) {
-        let json = this.body
+      return async function (ctx, next) {
+        let json = ctx.body
         const validationResult = Self.validateExternal(json)
         if (validationResult.valid !== true) {
           const message = validationResult.schema
@@ -58,14 +57,14 @@ function PaymentFactory (sequelize, validator, container, User) {
 
         const model = new Self()
         model.setDataExternal(json)
-        this.body = model
+        ctx.body = model
 
-        yield next
+        await next()
       }
     }
 
-    static * getUserStats (user) {
-      const result = yield sequelize.query(
+    static async getUserStats (user) {
+      const result = await sequelize.query(
         'SELECT source_identifier, destination_identifier,' +
           ' sum(source_amount) as source_amount,' +
           ' source_name,' +
@@ -95,11 +94,11 @@ function PaymentFactory (sequelize, validator, container, User) {
       return result[0]
     }
 
-    static * createOrUpdate (payment) {
+    static async createOrUpdate (payment) {
       debug('createOrUpdate', payment)
 
       // Get the db entry
-      let dbPayment = yield Payment.findOne({
+      let dbPayment = await Payment.findOne({
         where: { transfer: payment.transfer }
       })
 
@@ -155,34 +154,33 @@ function PaymentFactory (sequelize, validator, container, User) {
     ]
   })
 
-  container.schedulePostConstructor(User => {
+  deps.later(() => {
+    const User = deps(UserFactory)
+    const ActivityLog = deps(ActivityLogFactory)
+    const ActivityLogsItem = deps(ActivityLogsItemFactory)
+
     Payment.DbModel.belongsTo(User.DbModel, {
       foreignKey: 'source_user',
       as: 'SourceUser'
     })
+
     Payment.DbModel.belongsTo(User.DbModel, {
       foreignKey: 'destination_user',
       as: 'DestinationUser'
     })
-  }, [ UserFactory ])
 
-  container.schedulePostConstructor(model => {
-    ActivityLog = model
-
-    container.schedulePostConstructor(ActivityLogsItem => {
-      Payment.DbModel.belongsToMany(ActivityLog.DbModel, {
-        through: {
-          model: ActivityLogsItem.DbModel,
-          unique: false,
-          scope: {
-            item_type: 'payment'
-          }
-        },
-        foreignKey: 'item_id',
-        constraints: false
-      })
-    }, [ ActivityLogsItemFactory ])
-  }, [ ActivityLogFactory ])
+    Payment.DbModel.belongsToMany(ActivityLog.DbModel, {
+      through: {
+        model: ActivityLogsItem.DbModel,
+        unique: false,
+        scope: {
+          item_type: 'payment'
+        }
+      },
+      foreignKey: 'item_id',
+      constraints: false
+    })
+  })
 
   return Payment
 }

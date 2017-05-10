@@ -3,7 +3,7 @@
 const _ = require('lodash')
 const WebFinger = require('webfinger.js')
 const currencySymbolMap = require('currency-symbol-map').currencySymbolMap
-const superagent = require('superagent-promise')(require('superagent'), Promise)
+const superagent = require('superagent')
 
 const Config = require('./config')
 const Ledger = require('./ledger')
@@ -12,13 +12,19 @@ const NotFoundError = require('../errors/not-found-error')
 
 // TODO implement caching
 module.exports = class Utils {
-  static constitute () { return [ Config, Ledger ] }
-  constructor (config, ledger) {
-    this.ledger = ledger
+  constructor (deps) {
+    const config = this.config = deps(Config)
+    this.ledger = deps(Ledger)
     this.ledgerUriPublic = config.data.getIn(['ledger', 'public_uri'])
     this.ledgerPrefix = config.data.getIn(['ledger', 'prefix'])
     this.localUri = config.data.getIn(['server', 'base_uri'])
     this.localHost = config.data.getIn(['server', 'base_host'])
+  }
+
+  resolveSpspIdentifier (identifier) {
+    const [ username, domain ] = identifier.split('@')
+    if (domain !== this.localHost) return identifier
+    return this.localUri + '/spsp/' + username
   }
 
   isWebfinger (destination) {
@@ -26,7 +32,12 @@ module.exports = class Utils {
     return destination.search('@') > -1
   }
 
-  * _webfingerLookup (resource) {
+  userToImageUrl (user) {
+    return (this.config.data.getIn(['server', 'base_uri']) + '/users/' +
+      user.username + '/profilepic')
+  }
+
+  async _webfingerLookup (resource) {
     const webfinger = new WebFinger({
       webfist_fallback: false,
       tls_only: true,
@@ -34,14 +45,14 @@ module.exports = class Utils {
       request_timeout: 3000
     })
 
-    return (yield new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       webfinger.lookup(resource, (err, res) => err ? reject(err) : resolve(res.object))
-    }))
+    })
   }
 
-  * getWebfingerAccount (address) {
+  async getWebfingerAccount (address) {
     try {
-      const response = yield this._webfingerLookup(address)
+      const response = await this._webfingerLookup(address)
 
       return {
         ledgerUri: _.filter(response.links, {rel: 'https://interledger.org/rel/ledgerUri'})[0].href,
@@ -57,7 +68,7 @@ module.exports = class Utils {
    * options
    *  - destination - string (username or webfinger)
    */
-  * parseDestination (options) {
+  async parseDestination (options) {
     const self = this
 
     const destination = options.destination
@@ -70,7 +81,7 @@ module.exports = class Utils {
 
     if (self.isWebfinger(destination)) {
       // Webfinger lookup
-      const account = yield self.getWebfingerAccount(destination)
+      const account = await self.getWebfingerAccount(destination)
 
       ledgerUri = account.ledgerUri
       paymentUri = account.paymentUri
@@ -85,7 +96,7 @@ module.exports = class Utils {
     // Get SPSP receiver info
     let spspResponse
     try {
-      spspResponse = (yield superagent.get(paymentUri).end()).body
+      spspResponse = (await superagent.get(paymentUri)).body
 
       ledgerInfo = spspResponse.ledger_info
       receiverInfo = spspResponse.receiver_info
@@ -109,10 +120,10 @@ module.exports = class Utils {
     return username + '@' + this.localHost
   }
 
-  * hostLookup (host) {
+  async hostLookup (host) {
     let response
     try {
-      response = yield this._webfingerLookup(host)
+      response = await this._webfingerLookup(host)
     } catch (e) {
       throw new NotFoundError('Host is unavailable')
     }

@@ -4,16 +4,16 @@ import { routeActions } from 'react-router-redux'
 
 import classNames from 'classnames/bind'
 import styles from './Withdraw.scss'
-const cx = classNames.bind(styles)
 
 import { withdraw } from 'redux/actions/withdrawal'
+
+const cx = classNames.bind(styles)
 
 @connect(state => ({
 
 }), { withdraw, pushState: routeActions.push })
 export default class Withdraw extends Component {
   static propTypes = {
-    params: PropTypes.object.isRequired,
     withdraw: PropTypes.func.isRequired,
     pushState: PropTypes.func.isRequired
   }
@@ -30,10 +30,10 @@ export default class Withdraw extends Component {
         this.setState({ loading: false })
         this.props.pushState('/')
       })
-      .catch(() => {this.setState({ loading: false })})
+      .catch(() => { this.setState({ loading: false }) })
   }
 
-  render() {
+  render () {
     const { loading } = this.state
 
     return (
@@ -45,11 +45,11 @@ export default class Withdraw extends Component {
         <form onSubmit={this.handleWithdraw} className={cx('inputBox')}>
           <label>
             <div>Enter the amount</div>
-            <input type="text" ref="amount" className={cx('amountField')} />
+            <input type='text' ref='amount' className={cx('amountField')} />
           </label>
           <div>
-            <button type="submit" className={cx('btn', 'btn-success', 'btn-lg')}
-                    disabled={loading}>{loading ? 'Loading...' : 'Make a Payment'}</button>
+            <button type='submit' className={cx('btn', 'btn-success', 'btn-lg')}
+              disabled={loading}>{loading ? 'Loading...' : 'Make a Payment'}</button>
           </div>
         </form>
       </div>

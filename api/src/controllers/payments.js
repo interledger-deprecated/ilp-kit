@@ -2,29 +2,27 @@
 
 module.exports = PaymentsControllerFactory
 
-const _ = require('lodash')
-const request = require('five-bells-shared/utils/request')
 const Auth = require('../lib/auth')
-const Log = require('../lib/log')
 const SPSP = require('../lib/spsp')
 const Pay = require('../lib/pay')
-const Utils = require('../lib/utils')
 const UserFactory = require('../models/user')
 const PaymentFactory = require('../models/payment')
-const InvalidBodyError = require('../errors/invalid-body-error')
 const NotFoundError = require('../errors/not-found-error')
 const ServerError = require('../errors/server-error')
 const NoQuote = require('../errors/no-quote-error')
 
-PaymentsControllerFactory.constitute = [Auth, PaymentFactory, Log, Utils, SPSP, UserFactory, Pay]
-function PaymentsControllerFactory (Auth, Payment, log, utils, spsp, User, pay) {
-  log = log('payments')
+function PaymentsControllerFactory (deps) {
+  const auth = deps(Auth)
+  const Payment = deps(PaymentFactory)
+  const spsp = deps(SPSP)
+  const User = deps(UserFactory)
+  const pay = deps(Pay)
 
   return class PaymentsController {
     static init (router) {
-      router.post('/payments/quote', Auth.checkAuth, this.quote)
-      router.put('/payments/:id', Auth.checkAuth, this.putResource)
-      router.get('/payments/stats', Auth.checkAuth, this.getStats)
+      router.post('/payments/quote', auth.checkAuth, this.quote)
+      router.put('/payments/:id', auth.checkAuth, this.putResource)
+      router.get('/payments/stats', auth.checkAuth, this.getStats)
 
       router.get('/spsp/:username', this.query)
     }
@@ -65,13 +63,13 @@ function PaymentsControllerFactory (Auth, Payment, log, utils, spsp, User, pay) 
      */
 
     // TODO don't allow payments to self
-    static * putResource () {
-      const id = this.params.id && this.params.id.toLowerCase()
-      const quote = this.body.quote
-      const destination = this.body.destination
+    static async putResource (ctx) {
+      const quote = ctx.body.quote
+      const destination = ctx.body.destination
+      const message = ctx.body.message
 
       try {
-        yield pay.pay({ user: this.req.user, quote, destination })
+        await pay.pay({ user: ctx.req.user, quote, destination, message })
       } catch (e) {
         console.error(e)
 
@@ -79,7 +77,7 @@ function PaymentsControllerFactory (Auth, Payment, log, utils, spsp, User, pay) 
       }
 
       // TODO should be something more meaningful
-      this.status = 200
+      ctx.status = 200
     }
 
     /**
@@ -111,13 +109,13 @@ function PaymentsControllerFactory (Auth, Payment, log, utils, spsp, User, pay) 
      */
 
     // TODO handle not supplied params
-    static * quote () {
+    static async quote (ctx) {
       try {
-        this.body = yield spsp.quote({
-          user: this.req.user,
-          destination: this.body.destination,
-          sourceAmount: this.body.sourceAmount,
-          destinationAmount: this.body.destinationAmount
+        ctx.body = await spsp.quote({
+          user: ctx.req.user,
+          destination: ctx.body.destination,
+          sourceAmount: ctx.body.sourceAmount,
+          destinationAmount: ctx.body.destinationAmount
         })
       } catch (e) {
         console.error(e)
@@ -155,16 +153,16 @@ function PaymentsControllerFactory (Auth, Payment, log, utils, spsp, User, pay) 
      *      "condition": "cc:0:3:XcJRQrVJQKsXrXnpHIk1Nm7PBm5JfnFgmd8ocsexjO4:32"
      *    }
      */
-    static * query () {
-      const user = yield User.findOne({ where: { username: this.params.username }})
+    static async query (ctx) {
+      const user = await User.findOne({ where: { username: ctx.params.username } })
 
       if (!user) throw new NotFoundError()
 
-      this.body = yield spsp.query(user)
+      ctx.body = await spsp.query(user)
     }
 
-    static * getStats () {
-      this.body = yield Payment.getUserStats(this.req.user)
+    static async getStats (ctx) {
+      ctx.body = await Payment.getUserStats(ctx.req.user)
     }
   }
 }

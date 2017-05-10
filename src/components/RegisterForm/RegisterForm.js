@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react'
-import {reduxForm} from 'redux-form'
+import { connect } from 'react-redux'
+import { reduxForm, Field } from 'redux-form'
 import registerValidation from './RegisterValidation'
 
 import Alert from 'react-bootstrap/lib/Alert'
@@ -14,16 +15,17 @@ import styles from './RegisterForm.scss'
 const cx = classNames.bind(styles)
 
 // TODO async validation on username
+@connect(state => ({
+  invite: state.invite.invite,
+  config: state.auth.config
+}), {loadCode})
 @reduxForm({
   form: 'register',
   fields: ['username', 'email', 'password', 'inviteCode',
     'name', 'phone', 'address1', 'address2', 'city',
     'region', 'country', 'zip_code', 'fingerprint'],
   validate: registerValidation
-}, state => ({
-  invite: state.invite.invite,
-  config: state.auth.config
-}), {loadCode})
+})
 @successable()
 export default class RegisterForm extends Component {
   static propTypes = {
@@ -33,23 +35,22 @@ export default class RegisterForm extends Component {
     config: PropTypes.object,
 
     // Form
-    fields: PropTypes.object.isRequired,
     invalid: PropTypes.bool.isRequired,
     pristine: PropTypes.bool.isRequired,
     submitting: PropTypes.bool.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     register: PropTypes.func.isRequired,
+    change: PropTypes.func.isRequired,
 
     // Successable
     permSuccess: PropTypes.func,
-    success: PropTypes.bool,
     permFail: PropTypes.func,
     fail: PropTypes.any
   }
 
   state = {}
 
-  componentDidMount() {
+  componentDidMount () {
     // this.refs.fakeuser.style = {display: 'none'}
     setTimeout(() => {
       this.setState({hideFakes: true})
@@ -57,27 +58,27 @@ export default class RegisterForm extends Component {
 
     // Device fingerprint
     if (this.props.config.antiFraud) {
-      let fingerprint = ""
+      let fingerprint = ''
 
-      fingerprint += navigator.plugins.length + ","
-      fingerprint += window.screen.availHeight + ","
-      fingerprint += window.screen.availWidth + ","
+      fingerprint += navigator.plugins.length + ','
+      fingerprint += window.screen.availHeight + ','
+      fingerprint += window.screen.availWidth + ','
 
-      for(let i=0;i<navigator.plugins.length;i++) {
-        fingerprint += navigator.plugins[i].name + ","
+      for (let i = 0; i < navigator.plugins.length; i++) {
+        fingerprint += navigator.plugins[i].name + ','
       }
 
-      fingerprint += navigator.language + "," + navigator.userLanguage + ","
-      fingerprint += new Date().getTimezoneOffset() + ","
+      fingerprint += navigator.language + ',' + navigator.userLanguage + ','
+      fingerprint += new Date().getTimezoneOffset() + ','
       fingerprint += navigator.userAgent
 
-      this.props.fields.fingerprint.onChange(fingerprint)
+      this.props.change('fingerprint', fingerprint)
     }
 
     this.handleUrlInviteCode()
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps (nextProps) {
     if (this.props.params !== nextProps.params) {
       this.handleUrlInviteCode(nextProps)
     }
@@ -88,7 +89,7 @@ export default class RegisterForm extends Component {
 
     if (!inviteCode) return
 
-    this.props.fields.inviteCode.onChange(inviteCode)
+    this.props.change('inviteCode', inviteCode)
     this.handleAddInviteCode(inviteCode)
   }
 
@@ -108,7 +109,7 @@ export default class RegisterForm extends Component {
     // redux-form onChange needs to happen first
     // TODO try without a timeout
     setTimeout(() => {
-      if (!this.props.fields.inviteCode.valid || !inviteCode) return
+      if (!inviteCode) return
 
       this.props.loadCode(inviteCode)
         .then(code => {
@@ -128,18 +129,15 @@ export default class RegisterForm extends Component {
       .catch(this.props.permFail)
   }
 
-  render() {
-    const { invite, handleSubmit, fail,
-      fields: { username, email, password, inviteCode, name, phone,
-        address1, address2, city, region, country, zip_code },
-      pristine, invalid, submitting, config } = this.props
+  render () {
+    const { invite, handleSubmit, fail, pristine, invalid, submitting, config } = this.props
     const hideFakes = this.state && this.state.hideFakes
     const { showInviteInput } = this.state
 
     return (
-      <form onSubmit={handleSubmit(this.register)} autoComplete="off">
+      <form onSubmit={handleSubmit(this.register)} autoComplete='off'>
         {fail && fail.id &&
-        <Alert bsStyle="danger">
+        <Alert bsStyle='danger'>
           {fail.id === 'UsernameTakenError' &&
           <div>Username is already taken</div>}
           {fail.id === 'EmailTakenError' &&
@@ -154,58 +152,112 @@ export default class RegisterForm extends Component {
           {/* Hey chrome, can you please stop autofilling the register form? */}
           {!hideFakes &&
             <div className={cx('fakeInputs')}>
-              <input type="text" name="fakeusernameremembered" ref="fakeuser"/>
-              <input type="password" name="fakepasswordremembered" ref="fakepass" />
+              <input type='text' name='fakeusernameremembered' ref='fakeuser' />
+              <input type='password' name='fakepasswordremembered' ref='fakepass' />
             </div>}
 
-          <Input object={username} label="Username" size="lg" focus autoCapitalize="off" />
-          <Input object={email} label="Email" size="lg" autoCapitalize="off" />
-          <Input object={password} label="Password" size="lg" type="password" />
+          <Field
+            name='username'
+            component={Input}
+            label='Username'
+            size='lg'
+            focus
+            autoCapitalize='off' />
+          <Field
+            name='email'
+            component={Input}
+            label='Email'
+            size='lg'
+            autoCapitalize='off' />
+          <Field
+            name='password'
+            component={Input}
+            label='Password'
+            size='lg'
+            type='password' />
 
           {config.antiFraud &&
           <div>
-            <div className="row">
-              <div className="col-sm-6">
-                <Input object={name} label="Full Name" size="lg" />
+            <div className='row'>
+              <div className='col-sm-6'>
+                <Field
+                  name='name'
+                  component={Input}
+                  label='Full Name'
+                  size='lg' />
               </div>
-              <div className="col-sm-6">
-                <Input object={phone} label="Phone" size="lg" />
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-sm-6">
-                <Input object={address1} label="Address 1" size="lg" />
-              </div>
-              <div className="col-sm-6">
-                <Input object={address2} label="Address 2" size="lg" />
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-sm-6">
-                <Input object={city} label="City" size="lg" />
-              </div>
-              <div className="col-sm-6">
-                <Input object={region} label="Region" size="lg" />
+              <div className='col-sm-6'>
+                <Field
+                  name='phone'
+                  component={Input}
+                  label='Phone'
+                  size='lg' />
               </div>
             </div>
-            <div className="row">
-              <div className="col-sm-6">
-                <Input object={country} label="Country" size="lg" />
+            <div className='row'>
+              <div className='col-sm-6'>
+                <Field
+                  name='address1'
+                  component={Input}
+                  label='Address 1'
+                  size='lg' />
               </div>
-              <div className="col-sm-6">
-                <Input object={zip_code} label="Zip Code" size="lg" />
+              <div className='col-sm-6'>
+                <Field
+                  name='address2'
+                  component={Input}
+                  label='Address 2'
+                  size='lg' />
+              </div>
+            </div>
+            <div className='row'>
+              <div className='col-sm-6'>
+                <Field
+                  name='city'
+                  component={Input}
+                  label='City'
+                  size='lg' />
+              </div>
+              <div className='col-sm-6'>
+                <Field
+                  name='region'
+                  component={Input}
+                  label='Region'
+                  size='lg' />
+              </div>
+            </div>
+            <div className='row'>
+              <div className='col-sm-6'>
+                <Field
+                  name='country'
+                  component={Input}
+                  label='Country'
+                  size='lg' />
+              </div>
+              <div className='col-sm-6'>
+                <Field
+                  name='zip_code'
+                  component={Input}
+                  label='Zip Code'
+                  size='lg' />
               </div>
             </div>
           </div>}
 
           {/* Invite code: Step 1 */}
           {!showInviteInput && !invite.code &&
-          <a href="" className={cx('inviteLink')} onClick={this.handleAddInviteCodeClick}>Have an invite code?</a>}
+          <a href='' className={cx('inviteLink')} onClick={this.handleAddInviteCodeClick}>Have an invite code?</a>}
 
           {/* Invite code: Step 2 */}
           {showInviteInput &&
-          <Input object={inviteCode} label="Invite Code" size="lg" focus
-                 onChange={this.handleAddInviteCode} />}
+            <Field
+              name='inviteCode'
+              component={Input}
+              label='Invite Code'
+              size='lg'
+              focus
+              onChange={this.handleAddInviteCode} />
+          }
 
           {/* Invite code: Step 3 */}
           {invite.code && !invite.claimed && !showInviteInput &&
@@ -223,10 +275,10 @@ export default class RegisterForm extends Component {
           {/* Invite code has already been claimed */}
           {invite.claimed &&
           <div className={cx('claimed')}>
-            Provided invite code has already been used. <a href="" onClick={this.handleAddInviteCodeClick}>Try another one</a>
+            Provided invite code has already been used. <a href='' onClick={this.handleAddInviteCodeClick}>Try another one</a>
           </div>}
         </div>
-        <button type="submit" className="btn btn-success btn-lg" disabled={pristine || invalid || submitting}>
+        <button type='submit' className='btn btn-success btn-lg' disabled={pristine || invalid || submitting}>
           {submitting ? ' Registering...' : ' Register'}
         </button>
       </form>

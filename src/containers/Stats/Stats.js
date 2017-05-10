@@ -1,6 +1,5 @@
 import React, {Component, PropTypes} from 'react'
 import {connect} from 'react-redux'
-// import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import moment from 'moment'
 
 import { loadStats } from 'redux/actions/stats'
@@ -17,12 +16,11 @@ const cx = classNames.bind(styles)
   {loadStats})
 export default class Home extends Component {
   static propTypes = {
-    user: PropTypes.object,
     loadStats: PropTypes.func,
     stats: PropTypes.array
   }
 
-  componentDidMount() {
+  componentDidMount () {
     this.props.loadStats()
   }
 
@@ -39,7 +37,7 @@ export default class Home extends Component {
     )
   }
 
-  render() {
+  render () {
     const { stats } = this.props
 
     return (

@@ -5,7 +5,6 @@ module.exports = SettlementsControllerFactory
 // const co = require('co')
 const uuid = require('uuid4')
 const Auth = require('../lib/auth')
-const Log = require('../lib/log')
 const Config = require('../lib/config')
 const Connector = require('../lib/connector')
 const Paypal = require('../lib/paypal')
@@ -18,12 +17,19 @@ const PeerFactory = require('../models/peer')
 const NotFoundError = require('../errors/not-found-error')
 const InvalidBodyError = require('../errors/invalid-body-error')
 
-SettlementsControllerFactory.constitute = [Auth, Config, Log, SettlementFactory, SettlementMethodFactory, UserFactory, PeerFactory, Connector, Paypal, Activity]
-function SettlementsControllerFactory (auth, config, log, Settlement, SettlementMethod, User, Peer, connector, paypal, activity) {
-  log = log('settlements')
+function SettlementsControllerFactory (deps) {
+  const auth = deps(Auth)
+  const config = deps(Config)
+  const Settlement = deps(SettlementFactory)
+  const SettlementMethod = deps(SettlementMethodFactory)
+  const User = deps(UserFactory)
+  const Peer = deps(PeerFactory)
+  const connector = deps(Connector)
+  const paypal = deps(Paypal)
+  const activity = deps(Activity)
 
-  const getDestination = function * (destination) {
-    return (yield User.findOne({ where: { destination } })) || (yield Peer.findOne({ where: { destination } }))
+  const getDestination = async function (destination) {
+    return (await User.findOne({ where: { destination } })) || Peer.findOne({ where: { destination } })
   }
 
   return class SettlementsController {
@@ -42,16 +48,16 @@ function SettlementsControllerFactory (auth, config, log, Settlement, Settlement
     }
 
     // TODO move to auth
-    static * checkAdmin (next) {
+    static async checkAdmin (ctx, next) {
       if (this.req.user.username === config.data.getIn(['ledger', 'admin', 'user'])) {
-        return yield next
+        return next()
       }
 
       throw new NotFoundError()
     }
 
-    static * getDestination () {
-      const destination = yield getDestination(this.params.destination)
+    static async getDestination (ctx) {
+      const destination = await getDestination(this.params.destination)
 
       if (!destination) {
         throw new NotFoundError('Invalid destination')
@@ -63,7 +69,7 @@ function SettlementsControllerFactory (auth, config, log, Settlement, Settlement
       }
     }
 
-    static * settle (params) {
+    static async settle (params) {
       const destination = params.destination
       const amount = params.amount
       const currency = params.currency
@@ -78,7 +84,7 @@ function SettlementsControllerFactory (auth, config, log, Settlement, Settlement
       }
 
       // Add the plugin to the connector
-      yield connector.instance.addPlugin(prefix, {
+      await connector.instance.addPlugin(prefix, {
         plugin: 'ilp-plugin-settlement-adapter',
         currency,
         options: {
@@ -91,10 +97,10 @@ function SettlementsControllerFactory (auth, config, log, Settlement, Settlement
       })
 
       // Emit a payment that gets routed to destination
-      yield connector.instance.getPlugin(prefix).receive()
+      await connector.instance.getPlugin(prefix).receive()
 
       // Remove the plugin
-      yield connector.instance.removePlugin(prefix)
+      await connector.instance.removePlugin(prefix)
 
       // Store the settlement in the database
       let settlement = new Settlement()
@@ -109,60 +115,60 @@ function SettlementsControllerFactory (auth, config, log, Settlement, Settlement
       settlement.amount = amount
       settlement.currency = currency
 
-      settlement = yield settlement.save()
+      settlement = await settlement.save()
 
-      yield activity.processSettlement(settlement)
+      await activity.processSettlement(settlement)
 
       return settlement
     }
 
-    static * custom () {
-      const destination = yield getDestination(this.params.destination)
+    static async custom (ctx) {
+      const destination = await getDestination(ctx.params.destination)
 
       if (!destination) throw new NotFoundError('Invalid destination')
 
-      const settlementMethod = yield SettlementMethod.findOne({
-        where: { id: this.body.settlement_method }
+      const settlementMethod = await SettlementMethod.findOne({
+        where: { id: ctx.body.settlement_method }
       })
 
       if (!settlementMethod) {
         throw new InvalidBodyError('Invalid settlement method')
       }
 
-      return yield SettlementsController.settle({
+      return SettlementsController.settle({
         destination,
         settlementMethod,
-        amount: this.body.amount,
-        currency: this.body.currency
+        amount: ctx.body.amount,
+        currency: ctx.body.currency
       })
     }
 
-    static * paypal () {
-      const destination = yield getDestination(this.params.destination)
+    static async paypal (ctx) {
+      const destination = await getDestination(ctx.params.destination)
 
       if (!destination) throw new NotFoundError('Invalid destination')
 
-      this.body = {
-        approvalLink: yield paypal.createPayment(destination.destination, this.body.amount)
+      ctx.body = {
+        approvalLink: await paypal.createPayment(destination.destination, ctx.body.amount)
       }
     }
 
-    static * paypalExecute () {
-      const destination = yield getDestination(this.params.destination)
+    static async paypalExecute (ctx) {
+      const destination = await getDestination(ctx.params.destination)
 
       if (!destination) throw new NotFoundError('Invalid destination')
 
       try {
-        const payment = yield paypal.executePayment(this.query)
+        const payment = await paypal.executePayment(ctx.query)
         // Weird
         if (destination.destination !== payment.destination) {
           // TODO this is caught locally
           throw new InvalidBodyError("Payment destination doesn't match the expected destination")
         }
 
-        const settlementMethod = yield SettlementMethod.findOne({ where: { type: 'paypal' } })
+        const settlementMethod = await SettlementMethod.findOne({ where: { type: 'paypal' } })
 
-        const settlement = yield SettlementsController.settle({
+        const settlement = await SettlementsController.settle({
           destination,
           settlementMethod,
           amount: payment.amount,
@@ -171,30 +177,30 @@ function SettlementsControllerFactory (auth, config, log, Settlement, Settlement
         })
 
         // TODO:BEFORE_DEPLOY handle destination.hostname, destination.currency for user
-        this.redirect(`${config.data.get('client_host')}/settlement/${settlement.id}`)
+        ctx.redirect(`${config.data.get('client_host')}/settlement/${settlement.id}`)
       } catch (e) {
         console.log('settlements:174', e)
-        this.redirect(`${config.data.get('client_host')}/settlement/cancel`)
+        ctx.redirect(`${config.data.get('client_host')}/settlement/cancel`)
       }
     }
 
-    static * paypalCancel () {
-      const destination = yield getDestination(this.params.destination)
+    static async paypalCancel (ctx) {
+      const destination = await getDestination(ctx.params.destination)
 
       if (!destination) throw new NotFoundError('Invalid destination')
 
-      this.redirect(`${config.data.get('client_host')}/settle/paypal/${destination.destination}/cancel`)
+      ctx.redirect(`${config.data.get('client_host')}/settle/paypal/${destination.destination}/cancel`)
     }
 
-    static * getResource () {
-      const settlement = yield Settlement.findOne({
-        where: { id: this.params.id },
+    static async getResource (ctx) {
+      const settlement = await Settlement.findOne({
+        where: { id: ctx.params.id },
         include: [{ all: true }]
       })
 
       if (!settlement) throw new NotFoundError()
 
-      this.body = {
+      ctx.body = {
         amount: settlement.amount,
         currency: settlement.currency,
         method: settlement.SettlementMethod.type,

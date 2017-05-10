@@ -11,13 +11,12 @@ const UserFactory = require('../models/user')
 const cacheLifetime = 30 * 60 // seconds
 
 module.exports = class Activity {
-  static constitute () { return [ Log, Config, Socket, ActivityLogFactory, UserFactory ] }
-  constructor (log, config, socket, ActivityLog, User) {
-    this.log = log('activity')
-    this.config = config
-    this.socket = socket
-    this.ActivityLog = ActivityLog
-    this.User = User
+  constructor (deps) {
+    this.log = deps(Log)('activity')
+    this.config = deps(Config)
+    this.socket = deps(Socket)
+    this.ActivityLog = deps(ActivityLogFactory)
+    this.User = deps(UserFactory)
 
     // TODO:PERFORMANCE use Redis
     this.paymentGroupCache = {}
@@ -25,7 +24,7 @@ module.exports = class Activity {
     setInterval(this.paymentGroupCacheCleanup.bind(this), 60000) // runs every minute
   }
 
-  * processPayment (payment, user) {
+  async processPayment (payment, user) {
     this.log.info(`Processing payment ${payment.id} for ${user.username}`)
 
     // This payment doesn't affect the given user
@@ -42,15 +41,17 @@ module.exports = class Activity {
     if (!cache) {
       activityLog = new this.ActivityLog()
       activityLog.user_id = user.id
-      activityLog = yield activityLog.save()
+      activityLog = await activityLog.save()
     } else {
       // Cache exists, which means there was a payment between source and destination
       // with the same message, and the same side of activity within the past 30 mins
       activityLog = cache.activityLog
+      activityLog.changed('updated_at', true)
+      await activityLog.save()
     }
 
     // Add the payment to the activity
-    yield activityLog.addPayment(payment)
+    await activityLog.addPayment(payment)
 
     // Add the payment to the recent payments cache (used for grouping)
     this.paymentGroupCache[cacheId] = {
@@ -61,48 +62,48 @@ module.exports = class Activity {
 
     // TODO:PERFORMANCE figure out a way to send a socket message for a single payment
     // instead of the whole activity (if the client already has a track of this activity)
-    activityLog = yield this.ActivityLog.getActivityLog(activityLog.id)
+    activityLog = await this.ActivityLog.getActivityLog(activityLog.id)
 
     // Notify the clients
     this.socket.activity(user.username, activityLog)
   }
 
-  * processSettlement (settlement) {
+  async processSettlement (settlement) {
     this.log.info(`Processing settlement ${settlement.id}`)
 
     // TODO handle peer settlement
     if (!settlement.user_id) return
 
     // TODO:PERFORMANCE avoid this call, we only do it to get the username
-    const user = yield this.User.findOne({ where: { id: settlement.user_id } })
+    const user = await this.User.findOne({ where: { id: settlement.user_id } })
 
     let activityLog = new this.ActivityLog()
     activityLog.user_id = settlement.user_id
-    activityLog = yield activityLog.save()
+    activityLog = await activityLog.save()
 
     // Add the settlement to the activity
-    yield activityLog.addSettlement(settlement)
+    await activityLog.addSettlement(settlement)
 
-    activityLog = yield this.ActivityLog.getActivityLog(activityLog.id)
+    activityLog = await this.ActivityLog.getActivityLog(activityLog.id)
 
     // Notify the clients
     this.socket.activity(user.username, activityLog)
   }
 
-  * processWithdrawal (withdrawal) {
+  async processWithdrawal (withdrawal) {
     this.log.info(`Processing withdrawal. ${withdrawal.id}`)
 
     // TODO:PERFORMANCE avoid this call, we only do it to get the username
-    const user = yield this.User.findOne({ where: { id: withdrawal.user_id } })
+    const user = await this.User.findOne({ where: { id: withdrawal.user_id } })
 
     let activityLog = new this.ActivityLog()
     activityLog.user_id = withdrawal.user_id
-    activityLog = yield activityLog.save()
+    activityLog = await activityLog.save()
 
     // Add the withdrawal to the activity
-    yield activityLog.addWithdrawal(withdrawal)
+    await activityLog.addWithdrawal(withdrawal)
 
-    activityLog = yield this.ActivityLog.getActivityLog(activityLog.id)
+    activityLog = await this.ActivityLog.getActivityLog(activityLog.id)
 
     // Notify the clients
     this.socket.activity(user.username, activityLog)

@@ -2,20 +2,17 @@
 
 module.exports = WithdrawalsControllerFactory
 
-const _ = require('lodash')
 const Auth = require('../lib/auth')
-const Log = require('../lib/log')
-const Utils = require('../lib/utils')
-const Ledger = require('../lib/ledger')
 const Activity = require('../lib/activity')
 const Config = require('../lib/config')
-const UserFactory = require('../models/user')
 const WithdrawalFactory = require('../models/withdrawal')
 const NotFoundError = require('../errors/not-found-error')
 
-WithdrawalsControllerFactory.constitute = [Auth, Config, Activity, Log, Utils, Ledger, UserFactory, WithdrawalFactory]
-function WithdrawalsControllerFactory (auth, config, activity, log, utils, ledger, User, Withdrawal) {
-  log = log('withdrawals')
+function WithdrawalsControllerFactory (deps) {
+  const auth = deps(Auth)
+  const config = deps(Config)
+  const activity = deps(Activity)
+  const Withdrawal = deps(WithdrawalFactory)
 
   return class ActivityLogsController {
     static init (router) {
@@ -27,28 +24,28 @@ function WithdrawalsControllerFactory (auth, config, activity, log, utils, ledge
     }
 
     // TODO move to auth
-    static * checkAdmin (next) {
-      if (this.req.user.username === config.data.getIn(['ledger', 'admin', 'user'])) {
-        return yield next
+    static async checkAdmin (ctx, next) {
+      if (ctx.req.user.username === config.data.getIn(['ledger', 'admin', 'user'])) {
+        return next()
       }
 
       throw new NotFoundError()
     }
 
-    static * getAll () {
+    static async getAll (ctx) {
       // TODO pagination
       // TODO don't return all of the fields / associations
-      this.body = yield Withdrawal.findAll({
+      ctx.body = await Withdrawal.findAll({
         include: [{ all: true }],
         order: [['created_at', 'DESC']]
       })
     }
 
-    static * putResource () {
-      const id = this.params.id
-      const data = this.body
+    static async putResource (ctx) {
+      const id = ctx.params.id
+      const data = ctx.body
 
-      const withdrawal = yield Withdrawal.findOne({ where: { id } })
+      const withdrawal = await Withdrawal.findOne({ where: { id } })
 
       if (!withdrawal) throw new NotFoundError()
 
@@ -56,12 +53,12 @@ function WithdrawalsControllerFactory (auth, config, activity, log, utils, ledge
         withdrawal.status = data.status
       }
 
-      this.body = yield withdrawal.save()
+      ctx.body = await withdrawal.save()
     }
 
-    static * postResource () {
-      const user = this.req.user
-      const amount = this.body.amount
+    static async postResource (ctx) {
+      const user = ctx.req.user
+      const amount = ctx.body.amount
 
       let transferId
 
@@ -79,9 +76,9 @@ function WithdrawalsControllerFactory (auth, config, activity, log, utils, ledge
       withdrawal.status = 'pending'
       withdrawal.transfer_id = transferId
       withdrawal.user_id = user.id
-      withdrawal = yield withdrawal.save()
+      withdrawal = await withdrawal.save()
 
-      yield activity.processWithdrawal(withdrawal)
+      await activity.processWithdrawal(withdrawal)
     }
   }
 }

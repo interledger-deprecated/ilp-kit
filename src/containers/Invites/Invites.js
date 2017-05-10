@@ -26,19 +26,23 @@ export default class Invites extends Component {
     inviteState: PropTypes.object,
     loadCodes: PropTypes.func,
     config: PropTypes.object,
-    loaded: PropTypes.bool
+    loaded: PropTypes.bool,
+    remove: PropTypes.func
   }
 
   state = {}
 
-  componentWillMount() {
-    if(!this.props.loaded) {
+  componentWillMount () {
+    if (!this.props.loaded) {
       this.props.loadCodes()
     }
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const Clipboard = require('clipboard')
+    // You should use "new" for side effects, but this instance is out of our
+    // control
+    // eslint-disable-next-line no-new
     new Clipboard('.copy')
   }
 
@@ -49,7 +53,7 @@ export default class Invites extends Component {
     })
   }
 
-  handleRemove = (code, e) => {
+  handleRemove = code => e => {
     e.preventDefault()
 
     this.props.remove(code)
@@ -62,9 +66,9 @@ export default class Invites extends Component {
       <div className={cx('invite')} key={invite.code}>
         <div className={cx('row', 'row-sm')}>
           <div className={cx('col-sm-5')}>
-            <a href="" onClick={e => {e.preventDefault()}} data-tip="click to copy the link"
-               data-clipboard-text={config.clientUri + '/register/' + invite.code}
-               className={cx('code', 'copy')}>{invite.code}</a>
+            <a href='' onClick={e => { e.preventDefault() }} data-tip='click to copy the link'
+              data-clipboard-text={config.clientUri + '/register/' + invite.code}
+              className={cx('code', 'copy')}>{invite.code}</a>
           </div>
           <div className={cx('col-sm-3', 'amountColumn')}>
             <span className={cx('amount')}>{invite.amount}</span>
@@ -77,9 +81,9 @@ export default class Invites extends Component {
           <div className={cx('col-sm-2', 'text-right')}>
             {/* TODO:UX shouldn't be able to delete already claimed ones */}
             <ButtonDanger
-              initialText="x"
-              confirmationText="sure?"
-              onConfirm={this.handleRemove.bind(null, invite.code)}
+              initialText='x'
+              confirmationText='sure?'
+              onConfirm={this.handleRemove(invite.code)}
               id={invite.code}
               className={cx('btn-delete')} />
           </div>
@@ -90,7 +94,7 @@ export default class Invites extends Component {
     )
   }
 
-  render() {
+  render () {
     const { inviteState } = this.props
     const { showAddForm } = this.state
 
@@ -105,7 +109,7 @@ export default class Invites extends Component {
             <h3>Invite Codes</h3>
           </div>
           <div className={cx('col-sm-2')}>
-            <button type="button" className={cx('btn', 'btn-success', 'btn-block')} onClick={this.handleToggleAddForm}>Add Invite Code</button>
+            <button type='button' className={cx('btn', 'btn-success', 'btn-block')} onClick={this.handleToggleAddForm}>Add Invite Code</button>
           </div>
         </div>}
 
@@ -130,15 +134,15 @@ export default class Invites extends Component {
         <List
           emptyScreen={(
             <div className={cx('panel', 'panel-default', 'invitesStatus')}>
-              <div className="panel-body">
+              <div className='panel-body'>
                 <i className={cx('fa', 'fa-ticket')} />
                 <h1>No Invite Codes</h1>
                 {!showAddForm &&
                 <div>
                   <div>Click the button below to add your first invite code.</div>
-                  <button type="button"
-                          onClick={this.handleToggleAddForm}
-                          className={cx('btn', 'btn-success', 'btn-lg', 'btn-add-lg')}>
+                  <button type='button'
+                    onClick={this.handleToggleAddForm}
+                    className={cx('btn', 'btn-success', 'btn-lg', 'btn-add-lg')}>
                     Add Invite Code
                   </button>
                 </div>}

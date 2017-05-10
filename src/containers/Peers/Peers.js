@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import ReactTooltip from 'react-tooltip'
 import { HotKeys } from 'react-hotkeys'
 
 import { RIENumber } from 'riek'
@@ -29,13 +28,12 @@ export default class Peers extends Component {
     peerState: PropTypes.object,
     load: PropTypes.func.isRequired,
     update: PropTypes.func.isRequired,
-    remove: PropTypes.func.isRequired,
-    loaded: PropTypes.bool
+    remove: PropTypes.func.isRequired
   }
 
   state = {}
 
-  componentWillMount() {
+  componentWillMount () {
     this.props.load()
   }
 
@@ -47,14 +45,13 @@ export default class Peers extends Component {
   }
 
   // TODO shouldn't be less then the balance
-  handleUpdate = (peer, value) => {
-console.log('handleUpdate', peer, value)
+  handleUpdate = peer => value => {
     if (Number(value.limit) === this.toCurrency(peer.limit, peer)) return
 
-    this.props.update(peer.id, fromCurrency(value, peer))
+    this.props.update(peer.id, { limit: this.fromCurrency(value.limit, peer) })
   }
 
-  handleRemove = (peer, e) => {
+  handleRemove = peer => e => {
     e.preventDefault()
 
     // TODO:UX Show an are you sure message
@@ -62,12 +59,10 @@ console.log('handleUpdate', peer, value)
   }
 
   fromCurrency = (amount, peer) => {
-console.log('fromCurrency', amount, peer)
-    return Math.floor((amount * Math.pow(10, peer.currencyScale)) + .5)
+    return Math.floor((amount * Math.pow(10, peer.currencyScale)) + 0.5)
   }
 
   toCurrency = (amount, peer) => {
-console.log('toCurrency', amount, peer)
     return amount / Math.pow(10, peer.currencyScale)
   }
 
@@ -78,15 +73,15 @@ console.log('toCurrency', amount, peer)
       <div className={cx('peer')} key={peer.id}>
         <div className={cx('row', 'row-sm')}>
           <div className={cx('col', 'hostnameBox')}>
-            {peer.online && <i className={cx('online', 'fa', 'fa-circle', 'icon')} data-tip="Online" />}
-            {!peer.online && <i className={cx('offline', 'fa', 'fa-circle', 'icon')} data-tip="Offline" />}
+            {peer.online && <i className={cx('online', 'fa', 'fa-circle', 'icon')} data-tip='Online' />}
+            {!peer.online && <i className={cx('offline', 'fa', 'fa-circle', 'icon')} data-tip='Offline' />}
             <span className={cx('label')}>{peer.currencyCode}</span> <a href={'http://' + peer.hostname}>{peer.hostname}</a>
             {/* <div className={cx('destination')}>
               <HelpIcon text="Destination number is used for settlement" />{peer.destination}
             </div> */}
           </div>
           <div className={cx('col', 'balanceBox')}>
-            <span className={cx('minBalance')}>{this.toCurrency(peer.minBalance, peer) || 0} <HelpIcon text="The minimum allowed balance (set by the peer)" /></span>
+            <span className={cx('minBalance')}>{this.toCurrency(peer.minBalance, peer) || 0} <HelpIcon text='The minimum allowed balance (set by the peer)' /></span>
             <div className={cx('graph')}>
               <span className={cx('min')} />
               <span className={cx('current')} style={{left: `calc(${currentPercent}% - 0.5px)`}} />
@@ -96,10 +91,10 @@ console.log('toCurrency', amount, peer)
             </div>
             <span className={cx('maxBalance')}>
               {/* limit is converted to a string because of how <RIENumber> didValueChange works */}
-              <HelpIcon text="The maximum allowed balance (set by you)" /> <RIENumber
+              <HelpIcon text='The maximum allowed balance (set by you)' /> <RIENumber
                 value={this.toCurrency(peer.limit, peer).toString()}
-                propName="limit"
-                change={this.handleUpdate.bind(null, peer)}
+                propName='limit'
+                change={this.handleUpdate(peer)}
                 className={cx('limit')}
                 classEditing={cx('limitInput')}
                 classLoading={cx('loading')}
@@ -110,18 +105,18 @@ console.log('toCurrency', amount, peer)
           <div className={cx('col', 'actionsBox')}>
             {peer.online && peer.minBalance !== 0 &&
             <PeerSettlementButton peer={peer} />}
-            <ButtonDanger initialText="x"
-                          confirmationText="sure?"
-                          onConfirm={this.handleRemove.bind(null, peer)}
-                          id={peer.id}
-                          className={cx('btn-delete')} />
+            <ButtonDanger initialText='x'
+              confirmationText='sure?'
+              onConfirm={this.handleRemove(peer)}
+              id={peer.id}
+              className={cx('btn-delete')} />
           </div>
         </div>
       </div>
     )
   }
 
-  render() {
+  render () {
     const { peerState } = this.props
     const { showAddForm } = this.state
 
@@ -136,7 +131,7 @@ console.log('toCurrency', amount, peer)
             <h3>Peers</h3>
           </div>
           <div className={cx('col-sm-2')}>
-            <button type="button" className={cx('btn', 'btn-success', 'btn-block')} onClick={this.handleToggleAddForm}>Add Peer</button>
+            <button type='button' className={cx('btn', 'btn-success', 'btn-block')} onClick={this.handleToggleAddForm}>Add Peer</button>
           </div>
         </div>}
 
@@ -148,15 +143,15 @@ console.log('toCurrency', amount, peer)
         <List
           emptyScreen={(
             <div className={cx('panel', 'panel-default', 'peersStatus')}>
-              <div className="panel-body">
+              <div className='panel-body'>
                 <i className={cx('fa', 'fa-link')} />
                 <h1>No Peers</h1>
                 {!showAddForm &&
                 <div>
                   <div>Click the button below to add your first peer.</div>
-                  <button type="button"
-                          onClick={this.handleToggleAddForm}
-                          className={cx('btn', 'btn-success', 'btn-lg', 'btn-add-lg')}>
+                  <button type='button'
+                    onClick={this.handleToggleAddForm}
+                    className={cx('btn', 'btn-success', 'btn-lg', 'btn-add-lg')}>
                     Add Peer
                   </button>
                 </div>}

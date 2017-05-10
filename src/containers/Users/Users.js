@@ -22,19 +22,19 @@ export default class Invites extends Component {
     loaded: PropTypes.bool
   }
 
-  componentWillMount() {
-    if(!this.props.loaded) {
+  componentWillMount () {
+    if (!this.props.loaded) {
       this.props.loadUsers()
     }
   }
 
   renderProfilePic = (cell, row) => {
     return <img
-      src={cell ? `/api/users/${row.username}/profilepic` : require('containers/ActivityPayment/placeholder.png')}
+      src={cell ? `/api/users/${row.username}/profilepic` : require('../../../static/placeholder.png')}
       className={cx('profilePic')} />
   }
 
-  render() {
+  render () {
     const { users } = this.props
 
     return (
@@ -54,11 +54,12 @@ export default class Invites extends Component {
           trClassName={cx('tr')}
           tableHeaderClass={cx('header')}
         >
-          <TableHeaderColumn dataField="profile_picture" dataFormat={ this.renderProfilePic } width='66px' />
-          <TableHeaderColumn dataField="username" isKey dataSort>Username</TableHeaderColumn>
-          <TableHeaderColumn dataField="name" dataSort>Name</TableHeaderColumn>
-          <TableHeaderColumn dataField="email" dataSort>Email</TableHeaderColumn>
-          <TableHeaderColumn dataField="email_verified" dataSort>Email Verified</TableHeaderColumn>
+          <TableHeaderColumn dataField='profile_picture' dataFormat={this.renderProfilePic} width='66px' />
+          <TableHeaderColumn dataField='username' isKey dataSort>Username</TableHeaderColumn>
+          <TableHeaderColumn dataField='name' dataSort>Name</TableHeaderColumn>
+          <TableHeaderColumn dataField='balance' dataSort>Balance</TableHeaderColumn>
+          <TableHeaderColumn dataField='email' dataSort>Email</TableHeaderColumn>
+          <TableHeaderColumn dataField='email_verified' dataSort>Email Verified</TableHeaderColumn>
         </BootstrapTable>
       </div>
     )

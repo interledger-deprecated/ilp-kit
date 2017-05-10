@@ -19,7 +19,7 @@ class InvalidBodyError extends BaseError {
     }
   }
 
-  * handler (ctx, log) {
+  async handler (ctx, log) {
     log.warn('Invalid body: ' + this.message)
     if (this.validationErrors) {
       for (let ve of this.validationErrors) {

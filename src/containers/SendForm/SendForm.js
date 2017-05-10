@@ -1,10 +1,10 @@
-import React, {Component, PropTypes} from 'react'
-import {reduxForm} from 'redux-form'
+import React, { Component, PropTypes } from 'react'
+import { connect } from 'react-redux'
+import { reduxForm, Field } from 'redux-form'
 import { validate, asyncValidate } from './SendValidation'
 import * as sendActions from 'redux/actions/send'
 
-import { successable } from 'decorators'
-import { resetFormOnSuccess } from 'decorators'
+import { successable, resetFormOnSuccess } from 'decorators'
 
 import Alert from 'react-bootstrap/lib/Alert'
 
@@ -13,68 +13,59 @@ import AmountsBox from './AmountsBox'
 
 import classNames from 'classnames/bind'
 import styles from './SendForm.scss'
-const cx = classNames.bind(styles)
 
 import Input from 'components/Input/Input'
 
-@reduxForm({
-  form: 'send',
-  fields: ['destination', 'sourceAmount', 'destinationAmount', 'message', 'repeats', 'interval'],
-  validate,
-  asyncValidate,
-  asyncBlurFields: ['destination'],
-}, state => ({
+const cx = classNames.bind(styles)
+
+@connect(state => ({
   user: state.auth.user,
-  destinationInfo: state.send.destinationInfo,
-  sourceAmount: state.send.sourceAmount,
-  destinationAmount: state.send.destinationAmount,
   send: state.send,
-  quote: state.send.quote,
+  config: state.auth.config,
   err: state.send.err,
   quoteError: state.send.quoteError,
   quoting: state.send.quoting,
-  advancedMode: state.auth.advancedMode,
-  config: state.auth.config,
+  advancedMode: state.auth.advancedMode
 }),
 {...sendActions, resetData: sendActions.reset})
+@reduxForm({
+  form: 'send',
+  validate,
+  asyncValidate,
+  asyncBlurFields: ['destination']
+})
 @successable()
 @resetFormOnSuccess('send')
 export default class SendForm extends Component {
   static propTypes = {
     user: PropTypes.object,
-    destinationChange: PropTypes.func.isRequired,
-    destinationInfo: PropTypes.object,
-    amountsChange: PropTypes.func.isRequired,
-    sourceAmount: PropTypes.number,
-    destinationAmount: PropTypes.number,
     transfer: PropTypes.func.isRequired,
-    quote: PropTypes.object,
     quoting: PropTypes.bool,
     err: PropTypes.object,
     quoteError: PropTypes.object,
     resetData: PropTypes.func,
     data: PropTypes.object,
-    advancedMode: PropTypes.bool,
+    // Used in form validation
+    // eslint-disable-next-line react/no-unused-prop-types
     config: PropTypes.object,
+    advancedMode: PropTypes.bool,
+    unmount: PropTypes.func,
 
     // Form
-    fields: PropTypes.object.isRequired,
+    change: PropTypes.func.isRequired,
     invalid: PropTypes.bool.isRequired,
     pristine: PropTypes.bool.isRequired,
     submitting: PropTypes.bool.isRequired,
     handleSubmit: PropTypes.func.isRequired,
-    values: PropTypes.object,
-    initializeForm: PropTypes.func,
 
     // Successable
     tempSuccess: PropTypes.func,
-    success: PropTypes.bool,
-    reset: PropTypes.func
+    success: PropTypes.bool
   }
 
   state = {}
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     this.props.unmount()
   }
 
@@ -129,8 +120,8 @@ export default class SendForm extends Component {
 
   toggleAdvanced = (event) => {
     if (this.state.showAdvanced) {
-      this.props.fields.repeats.onChange('')
-      this.props.fields.interval.onChange('')
+      this.props.change('repeats', '')
+      this.props.change('interval', '')
     }
 
     this.setState({
@@ -141,25 +132,24 @@ export default class SendForm extends Component {
     event.preventDefault()
   }
 
-  render() {
+  render () {
     if (!this.props.user) return null
 
     const { pristine, invalid, handleSubmit, submitting, success,
-      advancedMode, quoting, data, fields: { destination, sourceAmount,
-      destinationAmount, message, repeats, interval }, err, quoteError } = this.props
+      advancedMode, quoting, data, err, quoteError } = this.props
     const { showAdvanced } = this.state
 
     // TODO initial render should show a currency
     return (
-      <div className="row">
-        <div className="col-sm-12">
+      <div className='row'>
+        <div className='col-sm-12'>
           {success &&
-          <Alert bsStyle="success">
-            You've just sent some money!
+          <Alert bsStyle='success'>
+            Your payment has been sent
           </Alert>}
 
           {err && err.id &&
-          <Alert bsStyle="danger">
+          <Alert bsStyle='danger'>
             {(() => {
               switch (err.id) {
                 case 'LedgerInsufficientFundsError': return 'You have insufficient funds to make the payment'
@@ -169,32 +159,55 @@ export default class SendForm extends Component {
           </Alert>}
 
           <form onSubmit={handleSubmit(this.handleSubmit)}>
-            <DestinationBox destinationField={destination} />
+            <Field
+              name='destination'
+              component={DestinationBox} />
             <div>
-              <Input object={message} label="Message" size="lg" />
+              <Field
+                name='message'
+                component={Input}
+                label='Message'
+                size='lg' />
             </div>
-            <AmountsBox sourceAmountField={sourceAmount} destinationAmountField={destinationAmount} />
+            <div className={cx('amounts')}>
+              <div className={cx('row')}>
+                <Field
+                  name='sourceAmount'
+                  component={AmountsBox}
+                  type='source' />
+                <Field
+                  name='destinationAmount'
+                  component={AmountsBox}
+                  type='destination' />
+              </div>
+
+              {quoteError && quoteError.id && <div className='text-danger'>No quote for the specified recipient or amount</div>}
+            </div>
 
             {showAdvanced && advancedMode &&
             <div className={cx('advanced')}>
               <div className={cx('row', 'description')}>
                 These fields are for streaming payments. The wallet will submit the same payment <i>"repeat"</i> times every <i>"interval"</i> milliseconds.
               </div>
-              <div className="row">
-                <div className="col-sm-6 form-group">
+              <div className='row'>
+                <div className='col-xs-12 col-sm-6 form-group'>
                   <label>Repeats</label>
-                  <Input object={repeats} />
+                  <Field
+                    name='repeats'
+                    component={Input} />
                 </div>
-                <div className="col-sm-6 form-group">
+                <div className='col-xs-12 col-sm-6 form-group'>
                   <label>Interval</label>
-                  <Input object={interval} />
+                  <Field
+                    name='interval'
+                    component={Input} />
                 </div>
               </div>
             </div>}
 
-            <div className="row">
-              <div className="col-sm-5">
-                <button type="submit" className="btn btn-success btn-block btn-lg"
+            <div className='row'>
+              <div className='col-sm-5'>
+                <button type='submit' className='btn btn-success btn-block btn-lg'
                   disabled={(!data && pristine) || invalid || submitting || quoting || err.id === 'NotFoundError' || (quoteError && quoteError.id)}>
                   {submitting ? 'Sending...' : 'Send'}
                 </button>
@@ -202,10 +215,10 @@ export default class SendForm extends Component {
 
               <div className={cx('col-sm-7', 'advancedLink')}>
                 {!submitting && advancedMode &&
-                <a href="" onClick={this.toggleAdvanced}>{showAdvanced ? 'Hide' : 'Show'} Advanced Options</a>}
+                <a href='' onClick={this.toggleAdvanced}>{showAdvanced ? 'Hide' : 'Show'} Advanced Options</a>}
 
                 {showAdvanced && submitting && this.interval &&
-                <button type="button" onClick={this.stopRepeatedPayments} className="btn btn-danger">Stop</button>}
+                <button type='button' onClick={this.stopRepeatedPayments} className='btn btn-danger'>Stop</button>}
               </div>
             </div>
           </form>

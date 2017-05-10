@@ -1,4 +1,4 @@
-"use strict"
+'use strict'
 
 const path = require('path')
 const Sequelize = require('sequelize')
@@ -9,8 +9,10 @@ const Log = require('./log')
 const AbstractDatabase = require('five-bells-shared').DB(Sequelize)
 
 module.exports = class Database extends AbstractDatabase {
-  static constitute() { return [ Config, Log ] }
-  constructor(config, log) {
+  constructor (deps) {
+    const config = deps(Config)
+    const log = deps(Log)
+
     super(config.data.getIn(['db', 'uri']), {
       logging: log('sequelize').debug,
       omitNull: true
@@ -28,7 +30,7 @@ module.exports = class Database extends AbstractDatabase {
     })
   }
 
-  migrate() {
+  migrate () {
     return this.umzug.up()
   }
 }

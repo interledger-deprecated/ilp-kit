@@ -1,4 +1,4 @@
-import * as types from '../actionTypes';
+import * as types from '../actionTypes'
 
 export const loadCode = (code) => ({
   types: [types.LOAD_INVITE, types.LOAD_INVITE_SUCCESS, types.LOAD_INVITE_FAIL],
@@ -19,4 +19,3 @@ export const remove = (code) => ({
   types: [types.REMOVE_INVITE, types.REMOVE_INVITE_SUCCESS, types.REMOVE_INVITE_FAIL],
   promise: (client) => client.del('/invites/' + code)
 })
-

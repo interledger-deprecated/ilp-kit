@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap'
+import { Link } from 'react-router'
 import Helmet from 'react-helmet'
 import LoadingBar from 'react-redux-loading-bar'
 
@@ -12,6 +13,8 @@ import NavItem from 'react-bootstrap/lib/NavItem'
 import NavDropdown from 'react-bootstrap/lib/NavDropdown'
 import MenuItem from 'react-bootstrap/lib/MenuItem'
 import Label from 'react-bootstrap/lib/Label'
+
+import Amount from 'components/Amount/Amount'
 
 import hotkeys from 'decorators/hotkeys'
 
@@ -55,9 +58,7 @@ export default class App extends Component {
     updateBalance: PropTypes.func.isRequired,
     pushState: PropTypes.func.isRequired,
     params: PropTypes.object,
-    store: PropTypes.object,
     // TODO:UI add loading screen
-    loading: PropTypes.bool,
     advancedMode: PropTypes.bool,
     loadConfig: PropTypes.func,
 
@@ -69,20 +70,21 @@ export default class App extends Component {
   }
 
   static contextTypes = {
-    store: PropTypes.object.isRequired
+    store: PropTypes.object.isRequired,
+    router: PropTypes.object
   }
 
   state = {
     navExpanded: false
   }
 
-  componentWillMount() {
+  componentWillMount () {
     if (!this.props.config.ledgerUri) {
       this.props.loadConfig()
     }
   }
 
-  componentDidMount() {
+  componentDidMount () {
     const params = this.props.params
 
     // TODO socket stuff needs work
@@ -104,7 +106,7 @@ export default class App extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps (nextProps) {
     if (!this.props.user && nextProps.user) {
       // login
       this.props.pushState('/')
@@ -119,7 +121,7 @@ export default class App extends Component {
   }
 
   onNavbarToggle = () => {
-    this.setState({ navExpanded: ! this.state.navExpanded })
+    this.setState({ navExpanded: !this.state.navExpanded })
   }
 
   handleLogout = (event) => {
@@ -135,71 +137,70 @@ export default class App extends Component {
     this.props.resendVerificationEmail(this.props.user.username)
   }
 
-  render() {
-    const { user, advancedMode, verified, verificationEmailSent } = this.props
-    const appConfig = this.props.config || {}
+  render () {
+    const { user, config = {}, advancedMode, verified, verificationEmailSent } = this.props
+    const { router } = this.context
 
     return (
       <div className={cx('App', !user && 'darkBg')}>
         <Helmet
-          defaultTitle={appConfig.title}
-          titleTemplate={appConfig.title && '%s - ' + appConfig.title}
+          defaultTitle={config.title}
+          titleTemplate={config.title && '%s - ' + config.title}
           meta={[
             {'name': 'viewport', 'content': 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'},
 
             {'property': 'og:type', 'content': 'website'},
-            {'property': 'og:title', 'content': appConfig.title},
+            {'property': 'og:title', 'content': config.title},
 
-            {'name': 'twitter:title', 'content': appConfig.title},
+            {'name': 'twitter:title', 'content': config.title},
             {'name': 'twitter:card', 'content': 'summary'},
 
-            {'itemprop': 'name', 'content': appConfig.title}
+            {'itemprop': 'name', 'content': config.title}
           ]}
         />
 
         <LoadingBar className={cx('loadingBar')} />
 
         {user &&
-        <Navbar inverse expanded={ this.state.navExpanded } onToggle={ this.onNavbarToggle }>
+        <Navbar inverse expanded={this.state.navExpanded} onToggle={this.onNavbarToggle}>
           <Navbar.Header>
             <Navbar.Brand className={cx('brand')}>
-              {appConfig.title} {advancedMode && <Label bsStyle="warning">Advanced Mode</Label>}
+              {config.title} {advancedMode && <Label bsStyle='warning'>Advanced Mode</Label>}
             </Navbar.Brand>
             <Navbar.Toggle />
           </Navbar.Header>
           <Navbar.Collapse>
             <Nav pullRight>
-              <IndexLinkContainer to="/">
+              <IndexLinkContainer to='/'>
                 <NavItem onClick={this.onNavItemClick}>Home</NavItem>
               </IndexLinkContainer>
               {user.isAdmin &&
-              <LinkContainer to="/users">
+              <LinkContainer to='/users'>
                 <NavItem onClick={this.onNavItemClick}>Users</NavItem>
               </LinkContainer>}
               {user.isAdmin &&
-              <LinkContainer to="/withdrawals">
+              <LinkContainer to='/withdrawals'>
                 <NavItem onClick={this.onNavItemClick}>Withdrawals</NavItem>
               </LinkContainer>}
               {user.isAdmin &&
-              <LinkContainer to="/invites">
+              <LinkContainer to='/invites'>
                 <NavItem onClick={this.onNavItemClick}>Invites</NavItem>
               </LinkContainer>}
               {user.isAdmin &&
-              <LinkContainer to="/peers">
+              <LinkContainer to='/peers'>
                 <NavItem onClick={this.onNavItemClick}>Peers</NavItem>
               </LinkContainer>}
               {user.isAdmin &&
-              <LinkContainer to="/settlement">
+              <LinkContainer to='/settlement'>
                 <NavItem onClick={this.onNavItemClick}>Settlement</NavItem>
               </LinkContainer>}
 
-              <NavDropdown id="navDropdown" title={<span>{user.profile_picture && <img className={cx('profilePic')} src={user.profile_picture} />} {user.displayName}</span>}>
+              <NavDropdown id='navDropdown' title={<span>{user.profile_picture && <img className={cx('profilePic')} src={user.profile_picture} />} {user.displayName}</span>}>
                 {!user.github_id &&
-                <LinkContainer to="/settings">
+                <LinkContainer to='/settings'>
                   <MenuItem>Settings</MenuItem>
                 </LinkContainer>}
-                <MenuItem href="https://interledgerjs.github.io/ilp-kit/apidoc/" target="_blank">API Docs</MenuItem>
-                <MenuItem divider />
+                <MenuItem href='https://interledgerjs.github.io/ilp-kit/apidoc/' target='_blank'>API Docs</MenuItem>
                 <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
               </NavDropdown>
             </Nav>
@@ -214,11 +215,26 @@ export default class App extends Component {
             <span>
               An email has been sent to <strong>{user.email}</strong>.
               Please follow the steps in the message to confirm your email address.&nbsp;
-              {!verificationEmailSent && <a href="" onClick={this.resendVerification}>Resend the message</a>}
+              {!verificationEmailSent && <a href='' onClick={this.resendVerification}>Resend the message</a>}
               {verificationEmailSent && <strong>Verification email sent!</strong>}
             </span>}
           </div>
         </Alert>}
+
+        {user && user.balance !== undefined &&
+        <div className={cx('mobileHeader')}>
+          <div className={cx('balanceContainer')}>
+            Your Balance <Amount amount={user.balance} currencySymbol={config.currencySymbol} />
+          </div>
+          {router.isActive('/send') &&
+          <Link to='/' className={cx('actionBtn', 'btn', 'btn-primary')}>
+            Show Activity
+          </Link>}
+          {!router.isActive('/send') &&
+          <Link to='send' className={cx('actionBtn', 'btn', 'btn-success')}>
+            Make a Payment
+          </Link>}
+        </div>}
 
         <div className={cx('container')}>
           {this.props.children}

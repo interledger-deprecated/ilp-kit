@@ -1,12 +1,12 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { routeActions } from 'react-router-redux'
 
 import classNames from 'classnames/bind'
 import styles from './Settle.scss'
-const cx = classNames.bind(styles)
 
 import { getDestination, settle } from 'redux/actions/settlement_method'
+
+const cx = classNames.bind(styles)
 
 @connect(state => ({
   destination: state.settlementMethod.destination
@@ -16,16 +16,17 @@ export default class Settle extends Component {
     params: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
     getDestination: PropTypes.func.isRequired,
-    destination: PropTypes.object
+    destination: PropTypes.object,
+    settle: PropTypes.func.isRequired
   }
 
   state = {}
 
-  componentWillMount() {
+  componentWillMount () {
     this.props.getDestination(this.props.params.destination)
   }
 
-  componentDidMount() {
+  componentDidMount () {
     this.setState({
       hostname: location.hostname
     })
@@ -48,7 +49,7 @@ export default class Settle extends Component {
       })
   }
 
-  render() {
+  render () {
     const { destination, params, location } = this.props
     const { hostname, loading } = this.state
 
@@ -71,11 +72,11 @@ export default class Settle extends Component {
         <form onSubmit={this.handleSettle} className={cx('inputBox')}>
           <label>
             <div>Enter the amount</div>
-            <input type="text" ref="amount" className={cx('amountField')} defaultValue={initialAmount} />
+            <input type='text' ref='amount' className={cx('amountField')} defaultValue={initialAmount} />
           </label>
           <div>
-            <button type="submit" className={cx('btn', 'btn-success', 'btn-lg')}
-                    disabled={loading}>{loading ? 'Loading...' : 'Make a Payment'}</button>
+            <button type='submit' className={cx('btn', 'btn-success', 'btn-lg')}
+              disabled={loading}>{loading ? 'Loading...' : 'Make a Payment'}</button>
           </div>
         </form>
       </div>

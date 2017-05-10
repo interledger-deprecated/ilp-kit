@@ -1,25 +1,23 @@
-"use strict"
+'use strict'
 
 // For development
 // TODO get rid of this
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
 module.exports = WebfingerControllerFactory
 
 const url = require('url')
-const request = require('five-bells-shared/utils/request')
-const Log = require('../lib/log')
 const Config = require('../lib/config')
 const Ledger = require('../lib/ledger')
 
 const NotFoundError = require('../errors/not-found-error')
 
-WebfingerControllerFactory.constitute = [Log, Config, Ledger]
-function WebfingerControllerFactory(log, config, ledger) {
-  log = log('auth')
+function WebfingerControllerFactory (deps) {
+  const config = deps(Config)
+  const ledger = deps(Ledger)
 
   return class WebfingerController {
-    static init(router) {
+    static init (router) {
       router.get('/webfinger', this.load)
     }
 
@@ -63,14 +61,15 @@ function WebfingerControllerFactory(log, config, ledger) {
      *      ]
      *    }
      */
-    static * load() {
-      if (!this.query || !this.query.resource) {
+    static async load (ctx) {
+      if (!ctx.query || !ctx.query.resource) {
         // TODO throw exception
-        return this.status = 400
+        ctx.status = 400
+        return
       }
 
       // TODO rel support
-      const parsed = url.parse(this.query.resource);
+      const parsed = url.parse(ctx.query.resource)
 
       // Validate ledger
       if (config.data.getIn(['ledger', 'public_uri']).indexOf(parsed.hostname) < 0) {
@@ -82,21 +81,19 @@ function WebfingerControllerFactory(log, config, ledger) {
       // resource is an acct:
       if (parsed.auth) {
         username = parsed.auth
-      }
       // resource is a http(s):
-      else if (parsed.path) {
-        username = parsed.path.match(/([^\/]*)\/*$/)[1]
-      }
-      else {
+      } else if (parsed.path) {
+        username = parsed.path.match(/([^/]*)\/*$/)[1]
+      } else {
         throw new NotFoundError('Unknown account')
       }
 
       // Account lookup
       if (username) {
         // Validate the ledger account
-        const ledgerUser = yield ledger.getAccount({ username: username }, true)
+        const ledgerUser = await ledger.getAccount({ username: username }, true)
 
-        return this.body = {
+        ctx.body = {
           'subject': 'acct:' + ledgerUser.name + '@' + parsed.hostname,
           'links': [
             {
@@ -127,10 +124,11 @@ function WebfingerControllerFactory(log, config, ledger) {
             }
           ]
         }
+        return
       }
 
       // Host lookup
-      this.body = {
+      ctx.body = {
         'subject': config.data.get('client_host'),
         'properties': {
           'https://interledger.org/rel/publicKey': config.data.getIn(['connector', 'public_key']),

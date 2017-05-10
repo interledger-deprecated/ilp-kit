@@ -2,7 +2,6 @@
 
 module.exports = HealthControllerFactory
 
-HealthControllerFactory.constitute = []
 function HealthControllerFactory () {
   return class HealthController {
     static init (router) {
@@ -24,9 +23,10 @@ function HealthControllerFactory () {
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
      */
-    static health () {
+    static health (ctx) {
+      console.log('health hit')
       // TODO: Add some checks, e.g. database status
-      this.status = 200
+      ctx.status = 200
     }
   }
 }

@@ -1,10 +1,8 @@
-"use strict"
+'use strict'
 
 module.exports = MiscControllerFactory
 
 const exec = require('child_process').exec
-const Auth = require('../lib/auth')
-const Log = require('../lib/log')
 const Config = require('../lib/config')
 const Ledger = require('../lib/ledger')
 const Utils = require('../lib/utils')
@@ -12,9 +10,11 @@ const currencySymbolMap = require('currency-symbol-map').currencySymbolMap
 const Connector = require('../lib/connector')
 const InvalidBodyError = require('../errors/invalid-body-error')
 
-MiscControllerFactory.constitute = [Auth, Log, Config, Ledger, Utils, Connector]
-function MiscControllerFactory (Auth, log, config, ledger, utils, connector) {
-  log = log('misc')
+function MiscControllerFactory (deps) {
+  const config = deps(Config)
+  const ledger = deps(Ledger)
+  const utils = deps(Utils)
+  const connector = deps(Connector)
 
   return class MiscController {
     static init (router) {
@@ -49,14 +49,14 @@ function MiscControllerFactory (Auth, log, config, ledger, utils, connector) {
      *      }
      *    }
      */
-    static * destination () {
-      const destination = this.query.destination
+    static async destination (ctx) {
+      const destination = ctx.query.destination
 
       if (!destination) {
         throw new InvalidBodyError('No destination specified')
       }
 
-      this.body = yield utils.parseDestination({ destination })
+      ctx.body = await utils.parseDestination({ destination })
     }
 
     /**
@@ -79,13 +79,17 @@ function MiscControllerFactory (Auth, log, config, ledger, utils, connector) {
      *      "currencySymbol": "$"
      *    }
      */
-    static * config () {
-      const ledgerInfo = yield ledger.getInfo()
+    static async config (ctx) {
+      const ledgerInfo = await ledger.getInfo()
 
       const packageVersion = require('../../../package.json').version
-      const gitCommit = yield new Promise(resolve => {
+      const gitCommit = await new Promise((resolve, reject) => {
         exec('git rev-parse --short HEAD', { cwd: __dirname }, (err, stdout) => {
-          resolve(stdout.split('\n').join(''))
+          if (err) {
+            reject(err)
+          } else {
+            resolve(stdout.split('\n').join(''))
+          }
         })
       })
 
@@ -106,13 +110,13 @@ function MiscControllerFactory (Auth, log, config, ledger, utils, connector) {
         version: `${packageVersion}-${gitCommit}`
       }
 
-      response.settlementMethods = yield connector.getSelfSettlementMethods(false, 0)
+      response.settlementMethods = await connector.getSelfSettlementMethods(false, 0)
 
       if (config.data.get('reload')) {
         response.reload = true
       }
 
-      this.body = response
+      ctx.body = response
     }
   }
 }

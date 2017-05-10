@@ -1,66 +1,60 @@
-"use strict"
+'use strict'
 
 const request = require('superagent')
-const co = require('co')
 const connector = require('ilp-connector')
 const Log = require('./log')
 const Config = require('./config')
 const Utils = require('./utils')
 const PeerFactory = require('../models/peer')
 const SettlementMethodFactory = require('../models/settlement_method')
-const getPrefix = require('ilp-plugin-virtual/src/util/token').prefix
+const { generatePrefix } = require('ilp-plugin-virtual')
 
 const InvalidBodyError = require('../errors/invalid-body-error')
 
-const currencies = require('currency-symbol-map').currencySymbolMap
-
-module.exports = class Conncetor {
-  static constitute () { return [ Config, PeerFactory, Utils, Log, SettlementMethodFactory ] }
-  constructor (config, Peer, utils, log, SettlementMethod) {
-    this.config = config
-    this.utils = utils
-    this.Peer = Peer
-    this.SettlementMethod = SettlementMethod
-    this.log = log('connector')
+module.exports = class Connector {
+  constructor (deps) {
+    this.config = deps(Config)
+    this.utils = deps(Utils)
+    this.Peer = deps(PeerFactory)
+    this.SettlementMethod = deps(SettlementMethodFactory)
+    this.log = deps(Log)('connector')
     this.peers = {}
     this.instance = connector
   }
 
-  * start () {
+  async start () {
     const self = this
 
     this.log.info('Waiting for the ledger...')
 
-    yield this.waitForLedger()
+    await this.waitForLedger()
 
     this.log.info('Starting the connector...')
 
     connector.listen()
 
     // Get the peers from the database
-    const peers = yield self.Peer.findAll()
+    const peers = await self.Peer.findAll()
 
     // TODO wait a bit before adding peers (until the below issue is resolved)
     // https://github.com/interledgerjs/ilp-connector/issues/294
-    setTimeout(co.wrap(function * () {
+    setTimeout(async function () {
       for (const peer of peers) {
         try {
-          yield self.connectPeer(peer)
+          await self.connectPeer(peer)
         } catch (e) {
           self.log.err("Couldn't add the peer to the connector", e)
         }
       }
-    }), 5000)
+    }, 5000)
   }
 
-  * waitForLedger () {
-    const port = process.env.CLIENT_PORT
-    const ledgerPublicPath = this.config.data.getIn(['ledger', 'public_uri'])
-
+  async waitForLedger () {
+    const ledgerUri = this.config.data.getIn(['ledger', 'public_uri'])
     return new Promise(resolve => {
       const interval = setInterval(() => {
-        request.get('0.0.0.0:' + port + '/' + ledgerPublicPath).end(err => {
-          if (!err) {
+        request.get(ledgerUri).end(function (err, res) {
+          if (!err && res.ok) {
             clearInterval(interval)
             resolve()
           }
@@ -69,14 +63,14 @@ module.exports = class Conncetor {
     })
   }
 
-  * getPeerInfo (peer) {
+  async getPeerInfo (peer) {
     const peerInfo = this.peers[peer.destination]
 
     // Already have the info
     if (peerInfo && peerInfo.publicKey) return peerInfo
 
     // Get the host publicKey
-    const hostInfo = yield this.utils.hostLookup('https://' + peer.hostname)
+    const hostInfo = await this.utils.hostLookup('https://' + peer.hostname)
 
     let publicKey
     let rpcUri
@@ -85,9 +79,9 @@ module.exports = class Conncetor {
       publicKey = hostInfo.publicKey
       rpcUri = hostInfo.peersRpcUri
 
-      //this calls the function in ilp-plugin-virtual src/utils/token.js, which looks like:
-      //const prefix = ({ secretKey, peerPublicKey, currencyScale, currencyCode }) => {
-      ledgerName = getPrefix({
+      // this calls the function in ilp-plugin-virtual src/utils/token.js, which looks like:
+      // const prefix = ({ secretKey, peerPublicKey, currencyScale, currencyCode }) => {
+      ledgerName = generatePrefix({
         secretKey: this.config.data.getIn(['connector', 'ed25519_secret_key']),
         peerPublicKey: publicKey,
         currencyCode: peer.currencyCode,
@@ -105,14 +99,14 @@ module.exports = class Conncetor {
     return this.peers[peer.destination]
   }
 
-  * connectPeer (peer) {
+  async connectPeer (peer) {
     const self = this
 
     // Skip if already connected
     if (this.peers[peer.destination] && this.peers[peer.destination].online) return
 
     // Get host info
-    const hostInfo = yield this.getPeerInfo(peer)
+    const hostInfo = await this.getPeerInfo(peer)
 
     try {
       let options = {
@@ -128,13 +122,19 @@ module.exports = class Conncetor {
           connectors: [hostInfo.ledgerName + hostInfo.publicKey]
         }
       }
-      yield connector.addPlugin(hostInfo.ledgerName, {
+      await connector.addPlugin(hostInfo.ledgerName, {
         currency: options.currencyCode, // connectors have this option to contradict the ledgerInfo's currencyCode, but we don't use that.
         plugin: 'ilp-plugin-virtual',
         store: true,
         options
       })
     } catch (e) {
+      // if adding the plugin failed, then remove to make sure it doesn't
+      // keep a bad plugin in the table. If removePlugin fails because the
+      // plugin was never added, just perform a no-op.
+      await (connector.removePlugin(hostInfo.ledgerName)
+        .catch(() => {}))
+
       if (e.message.indexOf('No rate available') > -1) {
         throw new InvalidBodyError('Unsupported currency')
       }
@@ -144,7 +144,7 @@ module.exports = class Conncetor {
     const plugin = connector.getPlugin(hostInfo.ledgerName)
 
     try {
-      yield plugin.getLimit()
+      await plugin.getLimit()
 
       this.peers[peer.destination].online = true
     } catch (e) {
@@ -152,29 +152,29 @@ module.exports = class Conncetor {
       this.log.info("Can't get the peer limit")
     }
 
-    plugin.on('incoming_message', co.wrap(function *(message) {
+    plugin.on('incoming_message', async function (message) {
       if (message.data.method !== 'settlement_methods_request') return
 
-      const peerStatus = yield self.getPeer(peer)
+      const peerStatus = await self.getPeer(peer)
 
       if (!peerStatus) return
 
       // Settlement Methods
-      yield plugin.sendMessage({
+      await plugin.sendMessage({
         from: message.to,
         to: message.from,
         ledger: message.ledger,
         data: {
           method: 'settlement_methods_response',
-          settlement_methods: yield self.getSelfSettlementMethods(peer.destination, peerStatus.balance)
+          settlement_methods: await self.getSelfSettlementMethods(peer.destination, peerStatus.balance)
         }
       })
-    }))
+    })
   }
 
-  * getSelfSettlementMethods (destination, amount) {
+  async getSelfSettlementMethods (destination, amount) {
     // TODO:PERFORMANCE don't call this on every request
-    const dbSettlementMethods = yield this.SettlementMethod.findAll({ where: { enabled: true } })
+    const dbSettlementMethods = await this.SettlementMethod.findAll({ where: { enabled: true } })
     return dbSettlementMethods.map(settlementMethod => {
       let uri
 
@@ -197,13 +197,13 @@ module.exports = class Conncetor {
     })
   }
 
-  * removePeer (peer) {
+  async removePeer (peer) {
     const peerInfo = this.peers[peer.destination]
 
     if (!peerInfo || !peerInfo.online) return
 
     try {
-      yield connector.removePlugin(peerInfo.ledgerName)
+      await connector.removePlugin(peerInfo.ledgerName)
     } catch (e) {
       this.log.err("Couldn't remove the peer from the connector", e)
     }
@@ -211,9 +211,9 @@ module.exports = class Conncetor {
     delete this.peers[peer.destination]
   }
 
-  * getPeer (peer) {
+  async getPeer (peer) {
     try {
-      yield this.connectPeer(peer)
+      await this.connectPeer(peer)
     } catch (e) {
       // That's fine, we'll return an offline state
     }
@@ -225,8 +225,8 @@ module.exports = class Conncetor {
     const online = peerInfo.online
     const plugin = connector.getPlugin(peerInfo.ledgerName)
 
-    const balance = online && (yield plugin.getBalance())
-    const minBalance = online && (yield plugin.getLimit())
+    const balance = online && (await plugin.getBalance())
+    const minBalance = online && (await plugin.getLimit())
 
     return {
       online,
@@ -235,11 +235,11 @@ module.exports = class Conncetor {
     }
   }
 
-  * getSettlementMethods (peer) {
+  async getSettlementMethods (peer) {
     const peerInfo = this.peers[peer.destination]
     const plugin = connector.getPlugin(peerInfo.ledgerName)
 
-    if (!peerInfo.online) return Promise.reject()
+    if (!peerInfo.online) return Promise.reject(new Error('Peer not online'))
 
     const promise = new Promise(resolve => {
       const handler = message => {
@@ -253,7 +253,7 @@ module.exports = class Conncetor {
       plugin.on('incoming_message', handler)
     })
 
-    yield plugin.sendMessage({
+    await plugin.sendMessage({
       from: peerInfo.ledgerName + this.config.data.getIn(['connector', 'public_key']),
       to: peerInfo.ledgerName + peerInfo.publicKey,
       ledger: peerInfo.ledgerName,

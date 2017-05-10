@@ -50,9 +50,9 @@ dependencies with the following commands:
 $ cd # start in your home folder
 $ git clone https://github.com/interledgerjs/ilp-kit
 $ cd ilp-kit
-$ git checkout latest # the 'master' branch is not always stable, safer to use the 'latest' branch
-$ npm install 
-# $ yarn install --production # npm install also works, if you don't have yarn installed
+$ git checkout master
+$ npm install; npm rebuild; npm start
+$ yarn install --production # npm install also works, if you don't have yarn installed
 ```
 
 ### Domain setup
@@ -110,7 +110,7 @@ Start the configuration tool by running:
 $ npm run configure
 ``
 
-The CLI provides example values, but I'll also put the configuration I'm using.
+The CLI provides example values, but I'll also put the configuration I'm using (instead of `sharafian` and `PASSWORD`, put the postgres username/password you created previously in the [Postgresql setup](#postgresql-setup) step).
 
 - Posgres DB URI: `postgres://sharafian:PASSWORD@localhost/ilpkit`
 - Hostname: `niles.sharafian.com`
@@ -126,6 +126,7 @@ The CLI provides example values, but I'll also put the configuration I'm using.
 
 ```
 $ npm install -g pm2
+$ sudo pm2 logrotate -u sharafian # configure pm2 to use log rotation
 $ pm2 start pm2.config.js
 $ pm2 list # you should see three apps running: ledger, api, and web.
 $ pm2 logs

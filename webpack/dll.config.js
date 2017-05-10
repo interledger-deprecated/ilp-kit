@@ -100,7 +100,7 @@ module.exports = {
       'moment-timezone',
       'react',
       'react-addons-create-fragment',
-      'react-addons-css-transition-group',
+      'react-transition-group',
       'react-bootstrap',
       'react-dom',
       'react-dropzone-component',
@@ -120,6 +120,7 @@ module.exports = {
       'superagent',
       'uuid4',
       'react-hotkeys',
+      'napo',
 
       'redux-devtools',
       'redux-devtools-log-monitor',

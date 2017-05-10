@@ -1,8 +1,8 @@
-"use strict"
+'use strict'
 
 const path = require('path')
 const nodemailer = require('nodemailer')
-const mg = require('nodemailer-mailgun-transport');
+const mg = require('nodemailer-mailgun-transport')
 const Log = require('../lib/log')
 const Config = require('../lib/config')
 
@@ -11,10 +11,9 @@ const EmailTemplate = require('email-templates').EmailTemplate
 const templatesDir = path.resolve(__dirname, '..', 'email')
 
 module.exports = class Mailer {
-  static constitute() { return [ Log, Config ] }
-  constructor(log, config) {
-    this.log = log('mailer')
-    this.config = config
+  constructor (deps) {
+    this.log = deps(Log)('mailer')
+    const config = this.config = deps(Config)
 
     const auth = {
       auth: {
@@ -24,10 +23,10 @@ module.exports = class Mailer {
     }
 
     // create reusable transporter object using the default SMTP transport
-    this.transporter = nodemailer.createTransport(mg(auth));
+    this.transporter = nodemailer.createTransport(mg(auth))
   }
 
-  sendWelcome(params) {
+  sendWelcome (params) {
     const locals = {
       name: params.name,
       link: params.link,
@@ -41,7 +40,7 @@ module.exports = class Mailer {
     })
   }
 
-  changeEmail(params) {
+  changeEmail (params) {
     const locals = {
       name: params.name,
       link: params.link
@@ -54,7 +53,7 @@ module.exports = class Mailer {
     })
   }
 
-  forgotPassword(params) {
+  forgotPassword (params) {
     const locals = {
       name: params.name,
       link: params.link
@@ -67,7 +66,7 @@ module.exports = class Mailer {
     })
   }
 
-  * send(params) {
+  async send (params) {
     const self = this
 
     const senderName = this.config.data.getIn(['email', 'sender_name'])
@@ -75,7 +74,7 @@ module.exports = class Mailer {
     const template = new EmailTemplate(path.join(templatesDir, params.template))
 
     try {
-      yield new Promise((reject, resolve) => {
+      await new Promise((resolve, reject) => {
         // TODO figure out the responses
         // TODO sometimes may go to spam folder. investigate and read this
         // https://documentation.mailgun.com/best_practices.html#email-best-practices

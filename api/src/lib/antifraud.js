@@ -1,19 +1,18 @@
 'use strict'
 
 const requestIp = require('request-ip')
-const superagent = require('superagent-promise')(require('superagent'), Promise)
+const superagent = require('superagent')
 const Log = require('./log')
 const Config = require('../lib/config')
 const ServerError = require('../errors/server-error')
 
 module.exports = class Antifraud {
-  static constitute () { return [Config, Log] }
-  constructor (config, log) {
-    this.config = config
-    this.log = log('antifraud')
+  constructor (deps) {
+    this.config = deps(Config)
+    this.log = deps(Log)('antifraud')
   }
 
-  * checkRisk (userObj) {
+  async checkRisk (userObj) {
       // Check for fraud
     const serviceUrl = this.config.data.getIn(['antifraud', 'service_url'])
 
@@ -22,7 +21,7 @@ module.exports = class Antifraud {
       let response
 
       try {
-        response = yield superagent.post(serviceUrl, {
+        response = await superagent.post(serviceUrl, {
           email: userObj.email || '',
           username: userObj.username || '',
           name: userObj.name || '',

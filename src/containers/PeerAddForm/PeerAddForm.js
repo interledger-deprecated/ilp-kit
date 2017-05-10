@@ -1,26 +1,30 @@
 import React, {Component, PropTypes} from 'react'
-import { reduxForm } from 'redux-form'
+import { connect } from 'react-redux'
+import { reduxForm, Field } from 'redux-form'
 
 import { add } from 'redux/actions/peer'
 
 import { validate } from './PeerValidation'
 
-import { successable } from 'decorators'
-import { resetFormOnSuccess } from 'decorators'
+import { successable, resetFormOnSuccess } from 'decorators'
 
 import Alert from 'react-bootstrap/lib/Alert'
 
 import classNames from 'classnames/bind'
 import styles from './PeerAddForm.scss'
-const cx = classNames.bind(styles)
 
 import Input from 'components/Input/Input'
 
+const cx = classNames.bind(styles)
+
+@connect(null, { add })
 @reduxForm({
   form: 'peerAdd',
-  fields: ['hostname', 'limit', 'currencyCode', 'currencyScale'],
+  normalize: {
+    currency: value => value && value.toUpperCase()
+  },
   validate
-}, null, { add })
+})
 @successable()
 @resetFormOnSuccess('peerAdd')
 export default class PeerAddForm extends Component {
@@ -28,23 +32,16 @@ export default class PeerAddForm extends Component {
     add: PropTypes.func,
 
     // Form
-    fields: PropTypes.object.isRequired,
     invalid: PropTypes.bool.isRequired,
-    pristine: PropTypes.bool.isRequired,
     submitting: PropTypes.bool.isRequired,
     handleSubmit: PropTypes.func.isRequired,
-    values: PropTypes.object,
-    initializeForm: PropTypes.func,
     resetData: PropTypes.func,
 
     // Successable
-    permSuccess: PropTypes.func,
     tempSuccess: PropTypes.func,
     success: PropTypes.bool,
     permFail: PropTypes.func,
-    tempFail: PropTypes.func,
-    fail: PropTypes.any,
-    reset: PropTypes.func
+    fail: PropTypes.any
   }
 
   handleSubmit = (data) => {
@@ -56,39 +53,56 @@ export default class PeerAddForm extends Component {
       .catch(this.props.permFail)
   }
 
-  render() {
-    const { invalid, handleSubmit, submitting, success, fail, fields: { hostname, limit, currencyCode, currencyScale } } = this.props
+  render () {
+    const { invalid, handleSubmit, submitting, success, fail } = this.props
 
     return (
       <div className={cx('PeerAddForm')}>
         {success &&
-        <Alert bsStyle="success">
+        <Alert bsStyle='success'>
           Peer has been added!
         </Alert>}
 
         {fail && fail.id &&
-        <Alert bsStyle="danger">
+        <Alert bsStyle='danger'>
           {fail.message}
         </Alert>}
 
         <form onSubmit={handleSubmit(this.handleSubmit)}>
-          <div className="form-group">
+          <div className='form-group'>
             <div className={cx('row')}>
               <div className={cx('col-sm-5')}>
-                <Input object={hostname} label="Hostname" size="lg" focus />
+                <Field
+                  name='hostname'
+                  component={Input}
+                  label='Hostname'
+                  size='lg'
+                  focus />
               </div>
               <div className={cx('col-sm-2')}>
-                <Input object={limit} label="Limit" size="lg" />
+                <Field
+                  name='limit'
+                  component={Input}
+                  label='Limit'
+                  size='lg' />
               </div>
               <div className={cx('col-sm-2')}>
-                <Input object={currencyCode} label="Currency" size="lg" />
+                <Field
+                  name='currencyCode'
+                  component={Input}
+                  label='Currency'
+                  size='lg' />
               </div>
 
-              <Input object={currencyScale} value="9" type="hidden" />
+              <Field
+                name='currencyScale'
+                component={Input}
+                value='9'
+                type='hidden' />
 
               <div className={cx('col-sm-3')}>
-                <button type="submit" className={cx('btn', 'btn-lg', 'btn-success', 'btn-block', 'btn-submit')}
-                        disabled={invalid || submitting}>
+                <button type='submit' className={cx('btn', 'btn-lg', 'btn-success', 'btn-block', 'btn-submit')}
+                  disabled={invalid || submitting}>
                   {submitting ? 'Adding...' : 'Add'}
                 </button>
               </div>

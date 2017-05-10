@@ -3,11 +3,7 @@
 const BaseError = require('five-bells-shared/errors/base-error')
 
 class EmailTakenError extends BaseError {
-  constructor (message) {
-    super(message)
-  }
-
-  * handler (ctx, log) {
+  async handler (ctx, log) {
     log.warn('Email taken: ' + this.message)
     ctx.status = 422
     ctx.body = {
