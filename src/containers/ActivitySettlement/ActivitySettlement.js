@@ -67,7 +67,7 @@ export default class ActivitySettlement extends Component {
     // TODO payments grouping / message
     return (
       <div className={cx('ActivitySettlement')}>
-        <div className='row'>
+        <div className='row row-mobile'>
           <div className='col-xs-8'>
             <i className={cx('fa', 'fa-plus', 'icon')} />
             <div className={cx('description')}>

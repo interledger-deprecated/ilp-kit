@@ -76,7 +76,7 @@ export default class ActivityWithdrawal extends Component {
     // TODO payments grouping / message
     return (
       <div className={cx('ActivityWithdrawal')}>
-        <div className='row'>
+        <div className='row row-mobile'>
           <div className='col-xs-8'>
             <i className={cx('fa', 'fa-minus', 'icon')} />
             <div className={cx('description')}>

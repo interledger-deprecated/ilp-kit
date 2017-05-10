@@ -78,6 +78,14 @@ div[tabindex="-1"]:focus {
     padding-right: 15px;
   }
 }
+.row-mobile > div {
+  &:first-child {
+    padding-left: 0;
+  }
+  &:last-child {
+    padding-right: 0;
+  }
+}
 .col {
   position: relative;
   min-height: 1px;

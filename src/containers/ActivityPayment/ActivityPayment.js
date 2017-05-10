@@ -129,7 +129,7 @@ export default class ActivityPayment extends Component {
     // TODO payments grouping / message
     return (
       <div className={cx('ActivityPayment')}>
-        <div className='row'>
+        <div className='row row-mobile'>
           <div className='col-xs-8'>
             <img src={profilePic} className={cx('profilePic')} />
             <div className={cx('description')}>
@@ -192,7 +192,7 @@ export default class ActivityPayment extends Component {
           transitionEnterTimeout={300}
           transitionLeaveTimeout={300}
           component='div'
-          className={cx('row', 'transfersContainer')}>
+          className={cx('row', 'row-mobile', 'transfersContainer')}>
           {showTransfers &&
           <div className={cx('col-sm-12')}>
             {payment.transfers && payment.transfers.map(transfer => {

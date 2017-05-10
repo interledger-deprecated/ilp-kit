@@ -7,13 +7,22 @@ $screen-md: 992px;
 
 .ActivityWithdrawal {
   border-top: 1px solid $activity-payment-separator-color;
-  padding: 12px;
+  padding: 15px;
+
+  @include mobile {
+    border-top: none;
+    border-bottom: 1px solid $activity-payment-separator-color;
+  }
 }
 .icon {
   float: left;
   width: 15%;
   font-size: 55px;
   text-align: center;
+
+  @include mobile {
+    width: 20%;
+  }
 }
 .description {
   float: left;
@@ -28,6 +37,11 @@ $screen-md: 992px;
     font-size: 13px;
     line-height: 15px;
     color: $activity-date-text-color;
+  }
+
+  @include mobile {
+    width: 80%;
+    padding-left: 10px;
   }
 }
 .amount {
