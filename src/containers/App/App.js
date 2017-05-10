@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap'
+import { Link } from 'react-router'
 import Helmet from 'react-helmet'
 import LoadingBar from 'react-redux-loading-bar'
 
@@ -69,7 +70,8 @@ export default class App extends Component {
   }
 
   static contextTypes = {
-    store: PropTypes.object.isRequired
+    store: PropTypes.object.isRequired,
+    router: PropTypes.object
   }
 
   state = {
@@ -137,6 +139,7 @@ export default class App extends Component {
 
   render () {
     const { user, config = {}, advancedMode, verified, verificationEmailSent } = this.props
+    const { router } = this.context
 
     return (
       <div className={cx('App', !user && 'darkBg')}>
@@ -205,8 +208,18 @@ export default class App extends Component {
         </Navbar>}
 
         {user && user.balance !== undefined &&
-        <div className={cx('balanceContainer')}>
-          Your Balance <Amount amount={user.balance} currencySymbol={config.currencySymbol} />
+        <div className={cx('mobileHeader')}>
+          <div className={cx('balanceContainer')}>
+            Your Balance <Amount amount={user.balance} currencySymbol={config.currencySymbol} />
+          </div>
+          {router.isActive('/send') &&
+          <Link to='/' className={cx('actionBtn', 'btn', 'btn-primary')}>
+            Show Activity
+          </Link>}
+          {!router.isActive('/send') &&
+          <Link to='send' className={cx('actionBtn', 'btn', 'btn-success')}>
+            Make a Payment
+          </Link>}
         </div>}
 
         {user && user.email && (!user.email_verified || verified) &&

@@ -41,20 +41,30 @@
   margin: 0 0 20px;
   text-align: center;
 }
-.balanceContainer {
+.mobileHeader {
   display: none;
   margin-top: -20px;
   margin-bottom: 10px;
   padding: 10px 15px;
   background: $container-background-color;
-
-  span {
-    display: block;
-    font-size: 25px;
-    padding: 5px 0 2px;
-  }
+  overflow: hidden;
 
   @include mobile {
     display: block;
+  }
+
+  .balanceContainer {
+    float: left;
+
+    span {
+      display: block;
+      font-size: 25px;
+      padding: 5px 0 2px;
+    }
+  }
+
+  .actionBtn {
+    float: right;
+    margin: 5px 0;
   }
 }

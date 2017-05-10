@@ -169,7 +169,7 @@ export default class Home extends Component {
           </div>
 
           {/* Send Form */}
-          <div className='panel panel-default'>
+          <div className='panel panel-default hidden-xs'>
             <div className='panel-heading'>
               <div className='panel-title'>Send Money</div>
             </div>
