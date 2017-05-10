@@ -182,6 +182,7 @@
     "pg-native": "^1.10.0",
     "piping": "^0.3.0",
     "pretty-error": "^1.2.0",
+    "prop-types": "^15.5.9",
     "raw-loader": "^0.5.1",
     "react": "^15.4.0",
     "react-addons-create-fragment": "^15.4.0",

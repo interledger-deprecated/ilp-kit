@@ -1,4 +1,5 @@
-import React, {Component, PropTypes} from 'react'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import {reset} from 'redux-form'
 
 // Always use after @connect it uses the success prop
