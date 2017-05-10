@@ -1,3 +1,5 @@
+@import 'mixins';
+
 .navbar-inverse {
   top: 0;
   border-radius: 0;
@@ -8,15 +10,7 @@
   border-color: #e7e7e7;
 }
 .navbar-collapse {
-  padding: 0;
   background: #222 !important;
-
-  & > .navbar-text {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    padding-left: 10px;
-    padding-right: 10px;
-  }
 }
 .navbar-nav > li {
   padding: 0;
@@ -39,12 +33,14 @@
   .dropdown-menu {
     border: 1px solid #e7e7e7;
     border-top: none;
-    box-shadow: none;
+    box-shadow: none !important;
   }
 }
 
 .navbar-brand {
-  padding-top: 20px;
+  @include desktop {
+    padding-top: 20px;
+  }
 }
 
 .copyright{

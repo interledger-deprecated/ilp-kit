@@ -198,7 +198,6 @@ export default class App extends Component {
                   <MenuItem>Settings</MenuItem>
                 </LinkContainer>}
                 <MenuItem href='https://interledgerjs.github.io/ilp-kit/apidoc/' target='_blank'>API Docs</MenuItem>
-                <MenuItem divider />
                 <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
               </NavDropdown>
             </Nav>
