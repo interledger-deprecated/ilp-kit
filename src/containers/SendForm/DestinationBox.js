@@ -56,6 +56,7 @@ export default class DestinationBox extends Component {
             size='lg'
             validText={!meta.active && destinationInfo.name}
             onChange={this.onChange}
+            autoCapitalize='off'
             focus
             debounce />
 
