@@ -125,6 +125,12 @@ The CLI provides example values, but I'll also put the configuration I'm using (
 **That's all you need for a functioning ILP Kit!** To start your ILP Kit, run:
 
 ```
+$ npm install; npm rebuild; npm start
+```
+
+or
+
+```
 $ npm install -g pm2
 $ sudo pm2 logrotate -u sharafian # configure pm2 to use log rotation
 $ pm2 start pm2.config.js
@@ -140,8 +146,7 @@ open up your domain and log into it.
 Now when you want to modify or restart your ILP Kit, you can just run:
 
 ```
-$ chmod +x ./scripts/start.sh
-$ ./scripts/start.sh
+$ npm install; npm rebuild; npm start
 ```
 
 You'll see your connector connect successfully.
@@ -217,6 +222,18 @@ their instructions to get your domain set up with their service. Once it's verif
 [your domains page](https://mailgun.com/app/domains), and select the domain that your
 ILP Kit is using (eg. `niles.sharafian.com`). Under the "Domain Information" section, you'll
 see a field labelled "API Key." Copy this key down.
+
+### Configure TXT and MX records
+
+Correctly configuring TXT and MX records will prevent your email verification and password resets emails from landing
+in the spam folder.
+
+Configure TXT And MX records similar to 
+[TXT and MX Record Configuration](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-host-name-with-digitalocean)
+
+![alt text](https://github.com/interledgerjs/ilp-kit/blob/new_setup/docs/mailgun.jpeg?raw=true)
+
+![alt text](https://github.com/interledgerjs/ilp-kit/blob/new_setup/docs/domains.jpeg?raw=true)
 
 ### Edit `env.list`
 
@@ -301,6 +318,16 @@ pay back, nor do you want people to be able to send massive payments through
 your connector.
 
 ## Restarting ilp-kit after a server reboot
+
+```
+# Using npm
+$ cd ~/ilp-kit
+$ rm -rf node_modules
+$ npm install; npm rebuild; npm start 
+
+# Using pm2
+$ pm2 startup
+```
 
 One easy way to make sure your ilp-kit is started again after a reboot, is
 running `pm2 startup`, and then following the instructions of what you have
