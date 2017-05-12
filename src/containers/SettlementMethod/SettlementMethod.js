@@ -5,7 +5,7 @@ import Helmet from 'react-helmet'
 
 import { routeActions } from 'react-router-redux'
 
-import { ButtonDanger } from 'napo'
+import ButtonDanger from 'components/ButtonDanger/ButtonDanger'
 
 import SettlementPaypal from '../SettlementPaypal/SettlementPaypal'
 import SettlementBitcoin from '../SettlementBitcoin/SettlementBitcoin'

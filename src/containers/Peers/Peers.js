@@ -6,7 +6,7 @@ import { HotKeys } from 'react-hotkeys'
 
 import { RIENumber } from 'riek'
 
-import { ButtonDanger } from 'napo'
+import ButtonDanger from 'components/ButtonDanger/ButtonDanger'
 import HelpIcon from 'components/HelpIcon/HelpIcon'
 
 import { load, update, remove } from 'redux/actions/peer'

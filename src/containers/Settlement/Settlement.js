@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import { routeActions } from 'react-router-redux'
 
-import { AnimateEnterLeave } from 'napo'
+import AnimateEnterLeave from 'components/AnimateEnterLeave/AnimateEnterLeave'
 
 import Dropdown from 'react-bootstrap/lib/Dropdown'
 import MenuItem from 'react-bootstrap/lib/MenuItem'

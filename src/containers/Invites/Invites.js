@@ -5,7 +5,8 @@ import Helmet from 'react-helmet'
 import ReactTooltip from 'react-tooltip'
 import { HotKeys } from 'react-hotkeys'
 
-import { ButtonDanger, AnimateEnterLeave } from 'napo'
+import ButtonDanger from 'components/ButtonDanger/ButtonDanger'
+import AnimateEnterLeave from 'components/AnimateEnterLeave/AnimateEnterLeave'
 
 import { loadCodes, remove } from 'redux/actions/invite'
 import List from 'components/List/List'

@@ -120,7 +120,6 @@ module.exports = {
       'superagent',
       'uuid4',
       'react-hotkeys',
-      'napo',
 
       'redux-devtools',
       'redux-devtools-log-monitor',

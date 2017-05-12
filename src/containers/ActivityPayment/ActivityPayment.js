@@ -8,6 +8,7 @@ import _ from 'lodash'
 
 import { destinationChange, amountsChange } from 'redux/actions/send'
 
+import AnimateEnterLeave from 'components/AnimateEnterLeave/AnimateEnterLeave'
 import Amount from 'components/Amount/Amount'
 
 import { contextualizePayment } from '../../utils/api'
@@ -196,6 +197,7 @@ export default class ActivityPayment extends Component {
           className={cx('row', 'row-mobile', 'transfersContainer')}>
           {showTransfers &&
           <div className={cx('col-sm-12')}>
+            <AnimateEnterLeave>
             {payment.transfers && payment.transfers.map(transfer => {
               return (
                 <div className={cx('row', 'transfer')} key={transfer.source_identifier + transfer.created_at}>
@@ -212,6 +214,7 @@ export default class ActivityPayment extends Component {
                 </div>
               )
             })}
+            </AnimateEnterLeave>
           </div>}
         </CSSTransitionGroup>
       </div>

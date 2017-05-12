@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import ReactTooltip from 'react-tooltip'
 
-import { AnimateEnterLeave } from 'napo'
+import AnimateEnterLeave from 'components/AnimateEnterLeave/AnimateEnterLeave'
 
 import { load, update } from 'redux/actions/withdrawal'
 import List from 'components/List/List'
