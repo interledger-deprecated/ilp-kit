@@ -74,7 +74,7 @@ export default class Input extends Component {
     return (
       <div className={cx('form-group', 'form-group-default', meta.active && 'focused', disabled && 'disabled')}
         onClick={this.handleClick}>
-        <label className={cx('fade')}>{label}</label>
+        <label>{label}</label>
 
         {this.renderInput()}
       </div>
