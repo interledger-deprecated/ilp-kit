@@ -40,7 +40,8 @@
     "test-mocha": "NODE_ENV=test ./node_modules/.bin/mocha api/test",
     "integration": "integration-loader && integration all",
     "apidoc": "apidoc -i api/src/controllers/ -o apidoc-out",
-    "configure": "./node_modules/ilp-kit-cli/bin/configure.js"
+    "version-check" : "echo 'Scanning psql version'; chmod +x ./scripts/postgres_version_check.sh; if [ $(bash ./scripts/postgres_version_check.sh) = 'false' ]; then echo 'Postgres PSQL Version out of date, please upgrade to 9.5 or newer'; exit 126; fi;",
+    "configure": "npm run version-check && ./node_modules/ilp-kit-cli/bin/configure.js"
   },
   "betterScripts": {
     "start-prod": {
