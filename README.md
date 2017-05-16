@@ -10,15 +10,13 @@ ILP wallet with hosted ledger and connector instances
 
 <br>
 
-[![circle][circle-image]][circle-url] [![Known Vulnerabilities][snyk-image]][snyk-url] [![Deploy to Heroku][heroku-deploy-image]][heroku-deploy-url] [![FOSSA Status][fossa-image]][fossa-url]
+[![circle][circle-image]][circle-url] [![Deploy to Heroku][heroku-deploy-image]][heroku-deploy-url] [![FOSSA Status][fossa-image]][fossa-url]
 
 
 [heroku-deploy-image]: https://www.herokucdn.com/deploy/button.svg
 [heroku-deploy-url]: https://heroku.com/deploy?template=https://github.com/interledgerjs/ilp-kit/tree/release
 [circle-image]: https://circleci.com/gh/interledgerjs/ilp-kit.svg?style=shield&circle-token=65d802e1ea641aabcc95f8d28f2c6ade577716a9
 [circle-url]: https://circleci.com/gh/interledgerjs/ilp-kit
-[snyk-image]: https://snyk.io/test/github/interledgerjs/ilp-kit/badge.svg
-[snyk-url]: https://snyk.io/test/github/interledgerjs/ilp-kit
 [fossa-image]: https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Finterledgerjs%2Filp-kit.svg?type=shield
 [fossa-url]: https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Finterledgerjs%2Filp-kit?ref=badge_shield
 
