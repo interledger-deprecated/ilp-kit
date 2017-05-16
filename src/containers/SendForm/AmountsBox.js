@@ -106,7 +106,7 @@ export default class AmountsBox extends Component {
     const destinationCurrency = (destinationInfo && destinationInfo.currencySymbol) || config.currencySymbol
 
     return (
-      <div className='col-xs-12 col-sm-6 form-group'>
+      <div className='col-xs-6 form-group'>
         {
           type === 'source'
           ? <label>You Send</label>

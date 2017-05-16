@@ -144,10 +144,11 @@ export default class SendForm extends Component {
     return (
       <div className='row'>
         <div className='col-sm-12'>
-          {success &&
-          <Alert bsStyle='success'>
-            Your payment has been sent
-          </Alert>}
+          <div className={cx('notification', success && 'show')}>
+            <Alert bsStyle='success'>
+              <i className={cx('fa', 'fa-check-circle')} /> Your payment has been sent
+            </Alert>
+          </div>
 
           {err && err.id &&
           <Alert bsStyle='danger'>
@@ -171,7 +172,7 @@ export default class SendForm extends Component {
                 size='lg' />
             </div>
             <div className={cx('amounts')}>
-              <div className={cx('row')}>
+              <div className={cx('row', 'row-sm')}>
                 <Field
                   name='sourceAmount'
                   component={AmountsBox}

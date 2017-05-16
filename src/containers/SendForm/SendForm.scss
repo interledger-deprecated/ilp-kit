@@ -1,4 +1,5 @@
 @import 'variables';
+@import 'mixins';
 
 .pathFindAmount {
   font-size: 15px;
@@ -22,5 +23,42 @@
   a {
     color: $muted-text-color;
     border-bottom: 1px dashed lighten($muted-text-color, 15%);
+  }
+}
+.notification {
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+
+  &.show {
+    max-height: 100px;
+    opacity: 1;
+  }
+
+  i {
+    display: none;
+  }
+
+  @include mobile {
+    position: fixed;
+    top: 50px;
+    width: 100%;
+    z-index: 100;
+    left: 0;
+    transition: all .5s;
+    background: #10cfbd;
+
+    & > div {
+      margin: 0;
+      padding: 23px;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 20px;
+    }
+
+    i {
+      display: inline;
+    }
   }
 }
