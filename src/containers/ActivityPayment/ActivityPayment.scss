@@ -71,12 +71,18 @@ $screen-md: 992px;
   color: $activity-date-text-color;
 }
 .amount {
+  display: block;
   font-size: 22px;
   text-align: right;
   line-height: 37px;
 
   @media (max-width: $screen-md) {
     font-size: 20px;
+  }
+  transition: all .2s ease-in;
+
+  &.updating {
+    font-size: 30px;
   }
 }
 .outgoing {
@@ -156,27 +162,56 @@ $screen-md: 992px;
   // Animation
   .appear {
     max-height: 0;
+    opacity: 0;
     transition: all .3s ease-in;
   }
   .appearActive {
     max-height: 300px;
+    opacity: 1;
   }
   .enter {
     max-height: 0;
+    opacity: 0;
     transition: all .3s ease-in;
   }
   .enterActive {
+    opacity: 1;
     max-height: 300px;
   }
   .leave {
     max-height: 300px;
+    opacity: 1;
     transition: all .3s ease-out;
   }
   .leaveActive {
     max-height: 0;
+    opacity: 0;
   }
 }
 
 .jsonContainer {
   padding: 5px 35px 0;
+}
+
+// Animation
+.appear {
+  opacity: 0;
+  transition: all .3s ease-in;
+}
+.appearActive {
+  opacity: 1;
+}
+.enter {
+  opacity: 0;
+  transition: all .3s ease-in;
+}
+.enterActive {
+  opacity: 1;
+}
+.leave {
+  opacity: 1;
+  transition: all .3s ease-out;
+}
+.leaveActive {
+  opacity: 0;
 }

@@ -5,6 +5,7 @@ import {connect} from 'react-redux'
 import moment from 'moment'
 import TimeAgo from 'react-timeago'
 import _ from 'lodash'
+import AnimateOnChange from 'react-animate-on-change'
 
 import { destinationChange, amountsChange } from 'redux/actions/send'
 
@@ -48,10 +49,10 @@ export default class ActivityPayment extends Component {
   componentWillReceiveProps (nextProps) {
     if (this.props.activity === nextProps.activity) return
 
-    this.processActivity(nextProps)
+    this.processActivity(nextProps, true)
   }
 
-  processActivity = (props = this.props) => {
+  processActivity = (props = this.props, update) => {
     const firstPayment = props.activity.Payments[0]
 
     const sourceAmount = _.reduce(props.activity.Payments, (sum, payment) => {
@@ -81,8 +82,16 @@ export default class ActivityPayment extends Component {
     this.setState({
       ...this.state,
       payment,
-      type: payment.counterpartyIdentifier === payment.destination_identifier ? 'outgoing' : 'incoming'
+      type: payment.counterpartyIdentifier === payment.destination_identifier ? 'outgoing' : 'incoming',
+      updating: update && true
     })
+
+    update && setTimeout(() => {
+      this.setState({
+        ...this.state,
+        updating: false
+      })
+    }, 200)
   }
 
   toggleTransfers = event => {
@@ -167,10 +176,13 @@ export default class ActivityPayment extends Component {
             </div>
           </div>
           <div className='col-xs-4'>
-            <div className={cx('amount', type)}>
-              {/* TODO Show both source and destination amounts */}
+            {/* TODO Show both source and destination amounts */}
+            <AnimateOnChange
+              baseClassName={cx('amount', type)}
+              animationClassName={cx('updating')}
+              animate={this.state.updating}>
               <Amount amount={paymentAmount} currencySymbol={config.currencySymbol} />
-            </div>
+            </AnimateOnChange>
 
             <div className={cx('transfersCount')}>
               <a href='' onClick={this.toggleTransfers}>
