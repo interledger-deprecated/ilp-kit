@@ -192,26 +192,3 @@ $screen-md: 992px;
 .jsonContainer {
   padding: 5px 35px 0;
 }
-
-// Animation
-.appear {
-  opacity: 0;
-  transition: all .3s ease-in;
-}
-.appearActive {
-  opacity: 1;
-}
-.enter {
-  opacity: 0;
-  transition: all .3s ease-in;
-}
-.enterActive {
-  opacity: 1;
-}
-.leave {
-  opacity: 1;
-  transition: all .3s ease-out;
-}
-.leaveActive {
-  opacity: 0;
-}
