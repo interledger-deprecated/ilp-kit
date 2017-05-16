@@ -180,7 +180,7 @@ export default class ActivityPayment extends Component {
             <AnimateOnChange
               baseClassName={cx('amount', type)}
               animationClassName={cx('updating')}
-              animate={this.state.updating}>
+              animate={!!this.state.updating}>
               <Amount amount={paymentAmount} currencySymbol={config.currencySymbol} />
             </AnimateOnChange>
 
