@@ -26,8 +26,8 @@ const cx = classNames.bind(styles)
   err: state.send.err,
   quoteError: state.send.quoteError,
   quoting: state.send.quoting,
-  advancedMode: state.auth.advancedMode,
-  initialValues: props.params
+  advancedMode: state.auth.advancedMode
+  // initialValues: props.params
 }),
 {...sendActions, resetData: sendActions.reset})
 @reduxForm({
@@ -67,6 +67,16 @@ export default class SendForm extends Component {
   }
 
   state = {}
+
+  componentWillMount () {
+    const { destination, sourceAmount, destinationAmount, message } = this.props.params
+    const change = this.props.change
+
+    destination && change('destination', destination)
+    sourceAmount && change('sourceAmount', sourceAmount)
+    destinationAmount && change('destinationAmount', destinationAmount)
+    message && change('message', message)
+  }
 
   componentWillUnmount () {
     this.props.unmount()
