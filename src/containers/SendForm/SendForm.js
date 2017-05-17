@@ -69,6 +69,8 @@ export default class SendForm extends Component {
   state = {}
 
   componentWillMount () {
+    if (!this.props.params) return
+
     const { destination, sourceAmount, destinationAmount, message } = this.props.params
     const change = this.props.change
 
