@@ -19,14 +19,15 @@ import Input from 'components/Input/Input'
 
 const cx = classNames.bind(styles)
 
-@connect(state => ({
+@connect((state, props) => ({
   user: state.auth.user,
   send: state.send,
   config: state.auth.config,
   err: state.send.err,
   quoteError: state.send.quoteError,
   quoting: state.send.quoting,
-  advancedMode: state.auth.advancedMode
+  advancedMode: state.auth.advancedMode,
+  initialValues: props.params
 }),
 {...sendActions, resetData: sendActions.reset})
 @reduxForm({
@@ -51,6 +52,7 @@ export default class SendForm extends Component {
     config: PropTypes.object,
     advancedMode: PropTypes.bool,
     unmount: PropTypes.func,
+    params: PropTypes.object,
 
     // Form
     change: PropTypes.func.isRequired,

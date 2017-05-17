@@ -38,6 +38,15 @@ export default class AmountsBox extends Component {
     type: PropTypes.oneOf(['source', 'destination']).isRequired
   }
 
+  componentDidMount () {
+    // Pathfind if the amounts box is prefilled
+    if (this.props.input.value) {
+      setTimeout(() => {
+        this.props.amountsChange(this.props.input.value, null)
+      }, 2000) // TODO:UX wait for the fields to activate before doing a pathfind
+    }
+  }
+
   componentWillReceiveProps (nextProps) {
     const propsAmount = this.props[this.props.type + 'Amount']
     const nextPropsAmount = nextProps[nextProps.type + 'Amount']
@@ -120,6 +129,7 @@ export default class AmountsBox extends Component {
           <span className='input-group-addon'>{ type === 'source' ? sourceCurrency : destinationCurrency }</span>
           <Input
             {...this.props}
+            ref='field'
             size='lg'
             disabled={isAmountDisabled}
             noErrors

@@ -20,7 +20,17 @@ export default class DestinationBox extends Component {
   static propTypes = {
     meta: PropTypes.object.isRequired,
     destinationInfo: PropTypes.object,
-    destinationReset: PropTypes.func
+    destinationReset: PropTypes.func,
+    input: PropTypes.object
+  }
+
+  componentDidMount () {
+    // Activate amounts if the recipient is already filled
+    if (this.props.input.value) {
+      setTimeout(() => {
+        this.refs.recipient.refs.input.blur()
+      }, 300)
+    }
   }
 
   componentWillReceiveProps ({ meta, input, destinationInfo }) {
@@ -52,6 +62,7 @@ export default class DestinationBox extends Component {
           meta.dirty && meta.error && 'hasError')}>
           <Input
             {...this.props}
+            ref='recipient'
             label='Recipient'
             size='lg'
             validText={!meta.active && destinationInfo.name}
