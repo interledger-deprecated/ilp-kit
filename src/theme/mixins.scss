@@ -8,13 +8,13 @@
 
 // Responsiveness
 @mixin mobile {
-  @media (max-width: 568px) {
+  @media (max-width: 768px) {
     @content;
   }
 }
 
 @mixin desktop {
-  @media (min-width: 569px) {
+  @media (min-width: 769px) {
     @content;
   }
 }
