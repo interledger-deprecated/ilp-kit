@@ -1,3 +1,5 @@
+@import 'mixins';
+
 html,
 body {
   height: 100%;
@@ -8,6 +10,10 @@ body {
   display: table;
   width: 100%;
   height: inherit;
+
+  @include mobile {
+    padding-bottom: 50px;
+  }
 }
 #app {
   display: table-cell;

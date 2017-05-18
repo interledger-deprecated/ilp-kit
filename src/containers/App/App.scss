@@ -22,6 +22,12 @@
 .brand {
   color: #fff !important;
   cursor: default;
+
+  @include mobile {
+    width: 100%;
+    text-align: center;
+    padding: 30px;
+  }
 }
 .loadingBar {
   position: fixed;
@@ -42,29 +48,69 @@
   text-align: center;
 }
 .mobileHeader {
-  display: none;
+  width: 100%;
   margin-top: -20px;
   margin-bottom: 10px;
-  padding: 10px 15px;
-  background: $container-background-color;
+  padding: 15px 0;
+  background: #222;
   overflow: hidden;
+  color: #fff;
 
-  @include mobile {
-    display: block;
+  @include desktop {
+    display: none;
   }
 
   .balanceContainer {
-    float: left;
+    display: block;
+    padding: 0 0 15px;
+    line-height: normal;
+    text-align: center;
+    font-family: 'Open Sans', sans-serif;
+  }
+}
+.mobileFooter {
+  position: fixed;
+  bottom: 0;
+  z-index: 10;
+  background: #fff;
+  width: 100%;
+  height: 50px;
+  box-shadow: 0 -1px 15px 5px #dedede;
 
-    span {
-      display: block;
-      font-size: 25px;
-      padding: 5px 0 2px;
-    }
+  @include desktop {
+    display: none;
   }
 
-  .actionBtn {
-    float: right;
-    margin: 5px 0;
+  a {
+    display: inline-block;
+    line-height: 50px;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 1px;
+    border-right: 1px solid #d8d3d3;
+
+    &.activity, &.send {
+      width: 40%;
+    }
+    &.settings, &.logout {
+      width: 10%;
+    }
+
+    &:link, &:visited {
+      color: #626262;
+    }
+
+    &:hover, &:active {
+      background: #f7f7f7;
+    }
+
+    &:last-child {
+      border-right: transparent;
+    }
+
+    i {
+      font-size: 15px;
+    }
   }
 }

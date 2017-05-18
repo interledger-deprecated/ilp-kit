@@ -193,6 +193,7 @@
     "react-bootstrap-table": "^2.6.0",
     "react-dom": "^15.4.0",
     "react-dropzone-component": "^1.2.0",
+    "react-fittext": "0.0.7",
     "react-ga": "^1.4.1",
     "react-helmet": "^3.2.3",
     "react-hotkeys": "^0.9.0",

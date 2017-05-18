@@ -6,6 +6,7 @@ import { Link } from 'react-router'
 import Helmet from 'react-helmet'
 import LoadingBar from 'react-redux-loading-bar'
 
+import ReactFitText from 'react-fittext'
 import Alert from 'react-bootstrap/lib/Alert'
 
 import Navbar from 'react-bootstrap/lib/Navbar'
@@ -140,7 +141,6 @@ export default class App extends Component {
 
   render () {
     const { user, config = {}, advancedMode, verified, verificationEmailSent } = this.props
-    const { router } = this.context
 
     return (
       <div className={cx('App', !user && 'darkBg')}>
@@ -168,7 +168,6 @@ export default class App extends Component {
             <Navbar.Brand className={cx('brand')}>
               {config.title} {advancedMode && <Label bsStyle='warning'>Advanced Mode</Label>}
             </Navbar.Brand>
-            <Navbar.Toggle />
           </Navbar.Header>
           <Navbar.Collapse>
             <Nav pullRight>
@@ -224,22 +223,28 @@ export default class App extends Component {
 
         {user && user.balance !== undefined &&
         <div className={cx('mobileHeader')}>
-          <div className={cx('balanceContainer')}>
-            Your Balance <Amount amount={user.balance} currencySymbol={config.currencySymbol} />
-          </div>
-          {router.isActive('/send') &&
-          <Link to='/' className={cx('actionBtn', 'btn', 'btn-primary')}>
-            Show Activity
-          </Link>}
-          {!router.isActive('/send') &&
-          <Link to='send' className={cx('actionBtn', 'btn', 'btn-success')}>
-            Make a Payment
-          </Link>}
+          <ReactFitText compressor={0.8}>
+            <div className={cx('balanceContainer')}>
+              <Amount amount={user.balance} currencySymbol={config.currencySymbol} />
+            </div>
+          </ReactFitText>
         </div>}
 
         <div className={cx('container')}>
           {this.props.children}
         </div>
+
+        {user &&
+        <div className={cx('mobileFooter')}>
+          <Link to='/' className={cx('activity')}>Activity</Link>
+          <Link to='/send' className={cx('send')}>Send</Link>
+          <Link to='/settings' className={cx('settings')}>
+            <i className={cx('fa', 'fa-gear')} />
+          </Link>
+          <Link to='/' onClick={this.handleLogout} className={cx('logout')}>
+            <i className={cx('fa', 'fa-sign-out')} />
+          </Link>
+        </div>}
 
         {advancedMode && <div className={cx('version')}>Version: {config.version}</div>}
       </div>
