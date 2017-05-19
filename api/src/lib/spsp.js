@@ -115,6 +115,7 @@ module.exports = class SPSP {
             source_identifier: params.headers['source-identifier'],
             source_name: params.headers['source-name'],
             source_image_url: params.headers['source-image-url'],
+            stream_id: params.headers['stream-id'],
               // TODO source_amount ?
               // source_amount: parseFloat(params.transfer.sourceAmount),
             destination_user: user.id,

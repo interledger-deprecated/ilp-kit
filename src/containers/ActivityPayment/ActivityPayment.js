@@ -44,12 +44,42 @@ export default class ActivityPayment extends Component {
 
   componentWillMount () {
     this.processActivity()
+
+    if (this.props.activity.stream_id && this.isActiveStream()) {
+      this.streamInterval = setInterval(() => {
+        this.processStream()
+      }, 5000)
+    }
   }
 
   componentWillReceiveProps (nextProps) {
     if (this.props.activity === nextProps.activity) return
 
     this.processActivity(nextProps, true)
+  }
+
+  componentWillUnmount () {
+    clearInterval(this.streamInterval)
+  }
+
+  isActiveStream = () => {
+    // TODO:UX how about looking at the distance between payments in the stream
+    // to determine how many seconds we should wait before calling it a night
+    // instead of waiting 10 hardcoded seconds
+    return moment(this.props.activity.updated_at).add(10, 'second').isAfter(new Date())
+  }
+
+  processStream = () => {
+    // Not a stream
+    if (!this.props.activity.stream_id) return
+
+    // do async setState to not mess up other setStates in the process
+    setTimeout(() => {
+      this.setState({
+        ...this.state,
+        isActiveStream: this.isActiveStream()
+      })
+    }, 10)
   }
 
   processActivity = (props = this.props, update) => {
@@ -73,11 +103,13 @@ export default class ActivityPayment extends Component {
       destination_name: firstPayment.destination_name,
       destination_image_url: firstPayment.destination_image_url,
       message: firstPayment.message,
-      // time_slot: "2017-03-10T20:00:00.000Z",
       // TODO:BEFORE_DEPLOY should this be first payment or last payment
       recent_date: firstPayment.created_at,
       transfers: props.activity.Payments
     }, props.user)
+
+    // Handle the stream
+    this.processStream()
 
     this.setState({
       ...this.state,
@@ -131,7 +163,7 @@ export default class ActivityPayment extends Component {
 
   render () {
     const config = this.props.config
-    const { showTransfers, payment, type } = this.state
+    const { showTransfers, isActiveStream, payment, type } = this.state
     const advancedMode = this.props.advancedMode
 
     const profilePic = (type === 'outgoing' ? payment.destination_image_url : payment.source_image_url) || require('../../../static/placeholder.png')
@@ -176,6 +208,7 @@ export default class ActivityPayment extends Component {
             </div>
           </div>
           <div className='col-xs-4'>
+            {isActiveStream && <i className={cx('fa', 'fa-refresh', 'fa-spin', 'activeStream')} />}
             {/* TODO Show both source and destination amounts */}
             <AnimateOnChange
               baseClassName={cx('amount', type)}

@@ -70,6 +70,12 @@ $screen-md: 992px;
   line-height: 15px;
   color: $activity-date-text-color;
 }
+.activeStream {
+  position: absolute;
+  top: calc(50% - 15px); // 15px is half of the font-size
+  font-size: 30px;
+  color: #10cfbd;
+}
 .amount {
   display: block;
   font-size: 22px;
@@ -189,6 +195,3 @@ $screen-md: 992px;
   }
 }
 
-.jsonContainer {
-  padding: 5px 35px 0;
-}

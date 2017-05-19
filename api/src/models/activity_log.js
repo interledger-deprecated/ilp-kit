@@ -92,8 +92,8 @@ function ActivityLogFactory (deps) {
       type: Sequelize.UUID,
       primaryKey: true,
       defaultValue: Sequelize.UUIDV4
-    }
-    // TODO:BEFORE_DEPLOY update migration
+    },
+    stream_id: Sequelize.STRING
   })
 
   deps.later(() => {

@@ -142,6 +142,7 @@ function PaymentFactory (deps) {
     state: Sequelize.STRING('20'),
     message: Sequelize.STRING(1024), // TODO decide on the size
     execution_condition: Sequelize.STRING(1024), // TODO decide on the size
+    stream_id: Sequelize.STRING,
     created_at: Sequelize.DATE,
     completed_at: Sequelize.DATE
   }, {

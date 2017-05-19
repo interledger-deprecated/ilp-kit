@@ -41,6 +41,7 @@ module.exports = class Activity {
     if (!cache) {
       activityLog = new this.ActivityLog()
       activityLog.user_id = user.id
+      activityLog.stream_id = payment.stream_id
       activityLog = await activityLog.save()
     } else {
       // Cache exists, which means there was a payment between source and destination
