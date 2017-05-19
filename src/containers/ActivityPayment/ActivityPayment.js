@@ -44,12 +44,6 @@ export default class ActivityPayment extends Component {
 
   componentWillMount () {
     this.processActivity()
-
-    if (this.props.activity.stream_id && this.isActiveStream()) {
-      this.streamInterval = setInterval(() => {
-        this.processStream()
-      }, 5000)
-    }
   }
 
   componentWillReceiveProps (nextProps) {
@@ -62,24 +56,40 @@ export default class ActivityPayment extends Component {
     clearInterval(this.streamInterval)
   }
 
-  isActiveStream = () => {
+  isActiveStream = (props = this.props) => {
+    // Not a stream
+    if (!props.activity.stream_id) return
+
     // TODO:UX how about looking at the distance between payments in the stream
     // to determine how many seconds we should wait before calling it a night
     // instead of waiting 10 hardcoded seconds
-    return moment(this.props.activity.updated_at).add(10, 'second').isAfter(new Date())
+    return moment(props.activity.updated_at).add(10, 'second').isAfter(new Date())
   }
 
-  processStream = () => {
+  processStream = (props = this.props) => {
     // Not a stream
-    if (!this.props.activity.stream_id) return
+    if (!props.activity.stream_id) return
+
+    const isActiveStream = this.isActiveStream(props)
+
+    // Stream status didn't change
+    if (this.state.isActiveStream === isActiveStream) return
 
     // do async setState to not mess up other setStates in the process
     setTimeout(() => {
       this.setState({
         ...this.state,
-        isActiveStream: this.isActiveStream()
+        isActiveStream
       })
     }, 10)
+
+    // keep the isActiveStream in sync
+    clearInterval(this.streamInterval)
+    if (isActiveStream) {
+      this.streamInterval = setInterval(() => {
+        this.processStream()
+      }, 5000)
+    }
   }
 
   processActivity = (props = this.props, update) => {
@@ -109,7 +119,7 @@ export default class ActivityPayment extends Component {
     }, props.user)
 
     // Handle the stream
-    this.processStream()
+    this.processStream(props)
 
     this.setState({
       ...this.state,
