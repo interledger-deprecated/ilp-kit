@@ -56,7 +56,7 @@ export default class SettlementPaypal extends Component {
   updateMethod = (props = this.props) => {
     if (!props.method.options) return
 
-    props.initializeForm({
+    props.initialize({
       clientId: props.method.options.clientId || undefined,
       secret: props.method.options.secret || undefined,
       sandbox: props.method.options.sandbox || undefined

@@ -77,8 +77,7 @@ export default class Home extends Component {
     if (settlementMethod.type === 'custom') {
       return (
         <MenuItem href={`${settlementMethod.uri}?destination=${destination}`} key={settlementMethod.name}>
-          {settlementMethod.logo && <img src={settlementMethod.logo} className={cx('logo')} />}
-          {!settlementMethod.logo && settlementMethod.name}
+          {settlementMethod.logo && <img src={settlementMethod.logo} className={cx('logo')} />} {settlementMethod.name}
         </MenuItem>
       )
     }
@@ -86,8 +85,7 @@ export default class Home extends Component {
     return (
       <LinkContainer to={`/settle/${settlementMethod.type}/${destination}`} key={settlementMethod.name}>
         <MenuItem>
-          {settlementMethod.logo && <img src={settlementMethod.logo} className={cx('logo')} />}
-          {!settlementMethod.logo && settlementMethod.name}
+          {settlementMethod.logo && <img src={settlementMethod.logo} className={cx('logo')} />} {settlementMethod.name}
         </MenuItem>
       </LinkContainer>
     )
