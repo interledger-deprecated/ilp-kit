@@ -49,7 +49,7 @@ function SettlementMethodsControllerFactory (deps) {
 
       ctx.body = await SettlementMethod.findAll({
         attributes: ['name', 'type', 'logo', 'description', 'uri'],
-        where: { enabled: true },
+        where: { enabled: true, name: { $ne: null } },
         order: [
           ['name', 'ASC']
         ]

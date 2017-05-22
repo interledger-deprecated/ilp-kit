@@ -15,12 +15,15 @@ import styles from './SettlementCustom.scss'
 
 import { update } from 'redux/actions/settlement_method'
 
+import validate from './SettlementCustomValidation'
+
 const cx = classNames.bind(styles)
 
 @connect(state => ({
 }), { update })
 @reduxForm({
-  form: 'settlementMethod'
+  form: 'settlementMethod',
+  validate
 })
 @successable()
 export default class SettlementCustom extends Component {
