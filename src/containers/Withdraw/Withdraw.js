@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { routeActions } from 'react-router-redux'
 
+import Alert from 'react-bootstrap/lib/Alert'
+
 import classNames from 'classnames/bind'
 import styles from './Withdraw.scss'
 
@@ -31,11 +33,13 @@ export default class Withdraw extends Component {
         this.setState({ loading: false })
         this.props.pushState('/')
       })
-      .catch(() => { this.setState({ loading: false }) })
+      .catch(error => {
+        this.setState({ loading: false, error })
+      })
   }
 
   render () {
-    const { loading } = this.state
+    const { loading, error } = this.state
 
     return (
       <div>
@@ -44,6 +48,16 @@ export default class Withdraw extends Component {
         </h3>
 
         <form onSubmit={this.handleWithdraw} className={cx('inputBox')}>
+          {error && error.id &&
+          <Alert bsStyle='danger'>
+            {(() => {
+              switch (error.id) {
+                case 'LedgerInsufficientFundsError': return "You can't withdraw more than you have"
+                default: return 'Something went wrong'
+              }
+            })()}
+          </Alert>}
+
           <label>
             <div>Enter the amount</div>
             <input type='text' ref='amount' className={cx('amountField')} />

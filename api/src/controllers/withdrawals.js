@@ -7,6 +7,7 @@ const Config = require('../lib/config')
 const Pay = require('../lib/pay')
 const WithdrawalFactory = require('../models/withdrawal')
 const NotFoundError = require('../errors/not-found-error')
+const LedgerInsufficientFundsError = require('../errors/ledger-insufficient-funds-error')
 
 function WithdrawalsControllerFactory (deps) {
   const auth = deps(Auth)
@@ -57,7 +58,12 @@ function WithdrawalsControllerFactory (deps) {
     }
 
     static async postResource (ctx) {
-      await pay.withdraw(ctx.req.user, ctx.body.amount)
+      try {
+        await pay.withdraw(ctx.req.user, ctx.body.amount)
+      } catch (e) {
+        // TODO are there any other types of errors?
+        throw new LedgerInsufficientFundsError()
+      }
     }
   }
 }

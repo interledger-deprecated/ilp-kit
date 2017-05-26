@@ -69,8 +69,8 @@ module.exports = class Pay {
   }
 
   async withdraw (user, amount) {
-    const destination = this.config.data.getIn(['ledger', 'admin', 'user'])
-      + '@' + this.config.data.getIn(['server', 'public_host'])
+    const destination = this.config.data.getIn(['ledger', 'admin', 'user']) +
+      '@' + this.config.data.getIn(['server', 'public_host'])
 
     const quote = await this.spsp.quote({
       user: user.getDataExternal(),
