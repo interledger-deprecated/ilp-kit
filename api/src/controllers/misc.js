@@ -2,7 +2,6 @@
 
 module.exports = MiscControllerFactory
 
-const exec = require('child_process').exec
 const Config = require('../lib/config')
 const Ledger = require('../lib/ledger')
 const Utils = require('../lib/utils')
@@ -82,17 +81,6 @@ function MiscControllerFactory (deps) {
     static async config (ctx) {
       const ledgerInfo = await ledger.getInfo()
 
-      const packageVersion = require('../../../package.json').version
-      const gitCommit = await new Promise((resolve, reject) => {
-        exec('git rev-parse --short HEAD', { cwd: __dirname }, (err, stdout) => {
-          if (err) {
-            reject(err)
-          } else {
-            resolve(stdout.split('\n').join(''))
-          }
-        })
-      })
-
       const response = {
         clientUri: config.data.get('client_host'),
         ledgerUri: config.data.getIn(['ledger', 'public_uri']),
@@ -107,7 +95,7 @@ function MiscControllerFactory (deps) {
           mixpanel: config.data.getIn(['track', 'mixpanel'])
         },
         githubAuth: (config.data.getIn(['github', 'client_id']) && config.data.getIn(['github', 'client_secret'])),
-        version: `${packageVersion}-${gitCommit}`
+        versions: await config.getVersions()
       }
 
       response.settlementMethods = await connector.getSelfSettlementMethods(false, 0)

@@ -1,5 +1,7 @@
 'use strict'
 
+const superagent = require('superagent')
+const exec = require('child_process').exec
 const Config = require('five-bells-shared').Config
 const envPrefix = 'api'
 const crypto = require('crypto')
@@ -101,5 +103,30 @@ module.exports = class WalletConfig {
   generateSecret (text) {
     // TODO remove the hardcoded secret in case of API_SECRET not being present
     return crypto.createHmac('sha256', Config.getEnv(envPrefix, 'SECRET') || 'secret').update(text).digest()
+  }
+
+  async getVersions () {
+    if (this.versions) return this.versions
+
+    const current = require('../../../package.json').version
+    const gitCommit = await new Promise((resolve, reject) => {
+      exec('git rev-parse --short HEAD', { cwd: __dirname }, (err, stdout) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(stdout.split('\n').join(''))
+        }
+      })
+    })
+
+    const latest = await superagent.get('https://raw.githubusercontent.com/interledgerjs/ilp-kit/release/package.json')
+
+    this.versions = {
+      current,
+      currentFull: `${current}-${gitCommit}`,
+      latest: JSON.parse(latest.text).version
+    }
+
+    return this.versions
   }
 }

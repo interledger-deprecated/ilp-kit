@@ -208,7 +208,7 @@ export default class App extends Component {
         </Navbar>}
 
         {user && user.email && (!user.email_verified || verified) &&
-        <Alert bsStyle={verified ? 'success' : 'info'} className={cx('notVerifiedBox')}>
+        <Alert bsStyle={verified ? 'success' : 'info'} className={cx('topNotificationBox')}>
           <div className={cx('container')}>
             {verified && <span>Your email has been verified!</span>}
             {!verified &&
@@ -218,6 +218,13 @@ export default class App extends Component {
               {!verificationEmailSent && <a href='' onClick={this.resendVerification}>Resend the message</a>}
               {verificationEmailSent && <strong>Verification email sent!</strong>}
             </span>}
+          </div>
+        </Alert>}
+
+        {user.isAdmin && config.versions.current !== config.versions.latest &&
+        <Alert bsStyle={'info'} className={cx('topNotificationBox')}>
+          <div className={cx('container')}>
+            Your ILP Kit (v. {config.versions.current}) is outdated. Please upgrade to the <a href='https://github.com/interledgerjs/ilp-kit/tree/release' target='_blank'>latest version</a> (v. {config.versions.latest}).
           </div>
         </Alert>}
 
@@ -246,7 +253,7 @@ export default class App extends Component {
           </Link>
         </div>}
 
-        {advancedMode && <div className={cx('version')}>Version: {config.version}</div>}
+        {advancedMode && <div className={cx('version')}>Version: {config.versions.currentFull}</div>}
       </div>
     )
   }
