@@ -3,18 +3,18 @@
 module.exports = WithdrawalsControllerFactory
 
 const Auth = require('../lib/auth')
-const Activity = require('../lib/activity')
 const Config = require('../lib/config')
+const Pay = require('../lib/pay')
 const WithdrawalFactory = require('../models/withdrawal')
 const NotFoundError = require('../errors/not-found-error')
 
 function WithdrawalsControllerFactory (deps) {
   const auth = deps(Auth)
   const config = deps(Config)
-  const activity = deps(Activity)
+  const pay = deps(Pay)
   const Withdrawal = deps(WithdrawalFactory)
 
-  return class ActivityLogsController {
+  return class WithdrawalsController {
     static init (router) {
       router.post('/withdrawals/:id', auth.checkAuth, this.postResource)
 
@@ -57,28 +57,7 @@ function WithdrawalsControllerFactory (deps) {
     }
 
     static async postResource (ctx) {
-      const user = ctx.req.user
-      const amount = ctx.body.amount
-
-      let transferId
-
-      try {
-        // TODO:BEFORE_DEPLOY make the ledger payment
-      } catch (e) {
-        console.log('withdrawals:29', e)
-
-        // TODO:BEFORE_DEPLOY handle
-        throw e
-      }
-
-      let withdrawal = new Withdrawal()
-      withdrawal.amount = amount
-      withdrawal.status = 'pending'
-      withdrawal.transfer_id = transferId
-      withdrawal.user_id = user.id
-      withdrawal = await withdrawal.save()
-
-      await activity.processWithdrawal(withdrawal)
+      await pay.withdraw(ctx.req.user, ctx.body.amount)
     }
   }
 }
