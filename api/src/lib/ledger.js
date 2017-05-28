@@ -67,7 +67,11 @@ module.exports = class Ledger extends EventEmitter {
       if (e.response && e.response.body &&
          (e.response.body.id === 'NotFoundError' ||
           e.response.body.id === 'UnauthorizedError')) {
-        throw new NotFoundError(e.response.body.message)
+        throw new NotFoundError(e.response.body.message) // TODO: Use ILPException?
+      } else if (e.response && e.response.status &&
+         (e.response.status === 401 ||
+          e.response.status === 404)) {
+        throw new NotFoundError(JSON.stringify(e.response.body))
       } else {
         throw e
       }
