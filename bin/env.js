@@ -60,7 +60,7 @@ function normalizeEnv (noExit) {
     console.log('`env.list` version (' + version
       + ') is older than supported version (' + supportedVersion
       + '). Back up your env.list and run `npm run configure` to update.')
-    process.exit(1)
+    noExit || process.exit(1)
   }
 
   // backwards compatibility
