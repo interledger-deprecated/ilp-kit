@@ -203,6 +203,19 @@ In development, Redux Devtools are enabled by default. You can toggle visibility
 - <kbd>Ctrl+Q</kbd> Move Dock Position
 - see [redux-devtools-dock-monitor](https://github.com/gaearon/redux-devtools-dock-monitor) for more detail information.
 
+## Sentry
+
+ILP Kit has an integration with [Sentry](https://sentry.io). so if you want to track errors all you have to do is add some environment variables to the env file.
+ 
+```
+API_SENTRY_DSN=https://your-sentry-dsn
+API_SENTRY_ORG=your-sentry-organization
+API_SENTRY_PROJECT=your-sentry-project
+API_SENTRY_API_KEY=your-sentry-api-key
+```
+
+Note: API KEY can be generated [here](https://sentry.io/api/).
+
 ## Note
 
 It seems you may need to run:
