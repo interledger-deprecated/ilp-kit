@@ -263,7 +263,8 @@
     "superagent-mocker": "^0.4.0",
     "supertest": "^1.2.0",
     "webpack-dev-middleware": "^1.7.0",
-    "webpack-hot-middleware": "^2.12.2"
+    "webpack-hot-middleware": "^2.12.2",
+    "webpack-sentry-plugin": "^1.9.2"
   },
   "engines": {
     "node": "7.7.1"

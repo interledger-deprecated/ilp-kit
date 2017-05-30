@@ -82,6 +82,8 @@ module.exports = class WalletConfig {
     localConfig.client_host = 'https://' + Config.getEnv('CLIENT_HOST')
     localConfig.client_title = Config.getEnv('CLIENT_TITLE') || 'ILP Kit'
 
+    localConfig.sentry_dsn = Config.getEnv('SENTRY_DSN')
+
     if (!localConfig.sessionSecret) {
       if (process.env.NODE_ENV === 'production') {
         throw new Error('No ' + envPrefix.toUpperCase + '_SECRET provided.')
@@ -109,7 +111,7 @@ module.exports = class WalletConfig {
     if (this.versions) return this.versions
 
     const current = require('../../../package.json').version
-    const gitCommit = await new Promise((resolve, reject) => {
+    const hash = await new Promise((resolve, reject) => {
       exec('git rev-parse --short HEAD', { cwd: __dirname }, (err, stdout) => {
         if (err) {
           reject(err)
@@ -123,7 +125,7 @@ module.exports = class WalletConfig {
 
     this.versions = {
       current,
-      currentFull: `${current}-${gitCommit}`,
+      hash,
       latest: JSON.parse(latest.text).version
     }
 

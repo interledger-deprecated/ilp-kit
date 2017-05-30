@@ -253,7 +253,7 @@ export default class App extends Component {
           </Link>
         </div>}
 
-        {advancedMode && <div className={cx('version')}>Version: {config.versions && config.versions.currentFull}</div>}
+        {advancedMode && <div className={cx('version')}>Version: {config.versions && (config.versions.current + '-' + config.versions.hash)}</div>}
       </div>
     )
   }

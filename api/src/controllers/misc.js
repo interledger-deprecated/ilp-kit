@@ -95,6 +95,7 @@ function MiscControllerFactory (deps) {
           mixpanel: config.data.getIn(['track', 'mixpanel'])
         },
         githubAuth: (config.data.getIn(['github', 'client_id']) && config.data.getIn(['github', 'client_secret'])),
+        sentry_dsn: config.data.get('sentry_dsn'),
         versions: await config.getVersions()
       }
 

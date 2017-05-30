@@ -17,12 +17,14 @@ const client = new ApiClient()
 const tracker = new Tracker()
 
 client.get('/config')
-  .then((config) => {
+  .then(config => {
     global.config = config
     tracker.init(config.track)
 
     // Remote log service
-    // Raven.config(config.sentryUri).install()
+    if (config.sentry_dsn) Raven.config(config.sentry_dsn, {
+      release: config.versions.hash
+    }).install()
   })
 
 const dest = document.getElementById('content')

@@ -38,7 +38,7 @@ export default class Html extends Component {
           <meta name='viewport' content='width=device-width, initial-scale=1' />
           {/* styles (will be present only in production with webpack extract text plugin) */}
           <link href={assets.styles.main} media='screen, projection' rel='stylesheet' type='text/css' charSet='UTF-8' />
-          <link href="https://fonts.googleapis.com/css?family=Open+Sans:300" rel="stylesheet" />
+          <link href='https://fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' />
         </head>
         <body>
           <div id='content' dangerouslySetInnerHTML={{__html: content}} />
@@ -50,6 +50,8 @@ export default class Html extends Component {
           {!__DEVELOPMENT__ && <script src={assets.javascript.meta} charSet='UTF-8' />}
           {!__DEVELOPMENT__ && <script src={assets.javascript.vendor} charSet='UTF-8' />}
           {!__DEVELOPMENT__ && <script src={assets.javascript.main} charSet='UTF-8' />}
+
+          <script src='https://cdn.ravenjs.com/3.15.0/raven.min.js'></script>
         </body>
       </html>
     )
