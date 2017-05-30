@@ -60,7 +60,6 @@ if (process.env.API_SENTRY_DSN) {
     filenameTransform: function(filename) {
       return '~/dist/' + filename
     },
-    deleteAfterCompile: true,
     release: function() {
       return execSync('git rev-parse --short HEAD', { cwd: __dirname }).toString().split('\n').join('')
     }
