@@ -26,7 +26,7 @@ function getConfigFilePath () {
   return file
 }
 
-function normalizeEnv () {
+function normalizeEnv (noExit) {
   // get env vars from the env file
   try {
     const file = getConfigFilePath()
@@ -46,7 +46,7 @@ function normalizeEnv () {
       console.log('DB_URI is not set. Did you configure ilp-kit? \n'
         + 'To configure ilp-kit, run: npm run configure')
 
-      process.exit(1)
+      noExit || process.exit(1)
     }
   }
 

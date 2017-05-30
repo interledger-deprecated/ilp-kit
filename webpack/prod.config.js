@@ -1,5 +1,5 @@
 require('babel-polyfill')
-require('../bin/env').normalizeEnv()
+require('../bin/env').normalizeEnv(true)
 
 // Webpack config for creating the production bundle.
 var path = require('path');
