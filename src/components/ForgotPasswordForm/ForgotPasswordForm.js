@@ -30,7 +30,7 @@ export default class ForgotPasswordForm extends Component {
   }
 
   handleSubmit = (data) => {
-    this.props.submitAction(data)
+    return this.props.submitAction(data)
       .then(() => {
         this.props.permSuccess()
 
