@@ -49,7 +49,7 @@ export default class Withdrawals extends Component {
           <div className={cx('col-sm-3', 'amountColumn')}>
             <span className={cx('amount')}>{withdrawal.amount}</span>
           </div>
-          <div className={cx('col-sm-2')}>
+          <div className={cx('col-sm-2', 'status')}>
             {withdrawal.status}
           </div>
           <div className={cx('col-sm-2', 'text-right')}>
