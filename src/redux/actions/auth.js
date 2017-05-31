@@ -9,11 +9,6 @@ export const register = data => ({
   promise: client => client.post('/users/' + data.username, { data })
     .then(user => {
       if (__CLIENT__) {
-        if (socket) {
-          socket.connect()
-          socket.emit('subscribe', user.username)
-        }
-
         tracker.identify(user.username)
       }
 
@@ -46,11 +41,6 @@ export const load = () => dispatch => dispatch({
   promise: (client) => client.get('/auth/load')
     .then(user => {
       if (__CLIENT__) {
-        if (socket) {
-          socket.connect()
-          socket.emit('subscribe', user.username)
-        }
-
         tracker.identify(user.username)
       }
 
@@ -63,11 +53,6 @@ export const login = data => dispatch => dispatch({
   promise: client => client.post('/auth/login', { data })
     .then(user => {
       if (__CLIENT__) {
-        if (socket) {
-          socket.connect()
-          socket.emit('subscribe', user.username)
-        }
-
         tracker.identify(user.username)
       }
 

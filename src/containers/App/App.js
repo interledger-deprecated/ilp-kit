@@ -89,16 +89,7 @@ export default class App extends Component {
   componentDidMount () {
     const params = this.props.params
 
-    // TODO socket stuff needs work
-    if (socket) {
-      socket.connect()
-      socket.on('activity', this.props.addActivity)
-      socket.on('balance', this.props.updateBalance)
-
-      if (this.props.user && this.props.user.username) {
-        socket.emit('subscribe', this.props.user.username)
-      }
-    }
+    this.connect()
 
     if (params.username) {
       // Email verification
@@ -110,11 +101,26 @@ export default class App extends Component {
 
   componentWillReceiveProps (nextProps) {
     if (!this.props.user && nextProps.user) {
-      // login
+      // login or register
       this.props.pushState('/')
+      this.connect(nextProps)
     } else if (this.props.user && !nextProps.user) {
       // logout
       this.props.pushState('/')
+    }
+  }
+
+  connect = (props = this.props) => {
+    if (!props.user || !props.user.username) return
+
+    if (socket) {
+      socket.connect()
+
+      socket.on('activity', props.addActivity)
+      socket.on('balance', props.updateBalance)
+      socket.on('reconnect', () => socket.emit('subscribe', props.user.username))
+
+      socket.emit('subscribe', props.user.username)
     }
   }
 
