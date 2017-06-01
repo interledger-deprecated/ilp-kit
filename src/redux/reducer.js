@@ -13,6 +13,7 @@ import peer from './reducers/peer'
 import settlementMethod from './reducers/settlement_method'
 import settlement from './reducers/settlement'
 import withdrawal from './reducers/withdrawal'
+import receiver from './reducers/receiver'
 import user from './reducers/user'
 
 export default combineReducers({
@@ -27,6 +28,7 @@ export default combineReducers({
   settlementMethod,
   settlement,
   withdrawal,
+  receiver,
   user,
   form,
   loadingBar: loadingBarReducer

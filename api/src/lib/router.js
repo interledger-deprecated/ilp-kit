@@ -14,6 +14,7 @@ const SettlementsController = require('../controllers/settlements')
 const SettlementMethodsController = require('../controllers/settlement_methods')
 const WithdrawalsController = require('../controllers/withdrawals')
 const ActivityLogsController = require('../controllers/activity_logs')
+const ReceiverController = require('../controllers/receivers')
 
 module.exports = class Router {
   constructor (deps) {
@@ -57,6 +58,9 @@ module.exports = class Router {
 
     const activityLogs = this.deps(ActivityLogsController)
     activityLogs.init(this.router)
+
+    const receivers = this.deps(ReceiverController)
+    receivers.init(this.router)
   }
 
   attach (app) {

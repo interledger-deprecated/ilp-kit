@@ -42,6 +42,7 @@ module.exports = class WalletConfig {
     localConfig.secret = Config.getEnv(envPrefix, 'SECRET')
     localConfig.sessionSecret = this.generateSecret('session').toString('base64')
     localConfig.conditionSecret = this.generateSecret('condition')
+    localConfig.sspSecret = this.generateSecret('ssp')
 
     // Github
     localConfig.github = {
@@ -79,7 +80,8 @@ module.exports = class WalletConfig {
     localConfig.reload = Config.getEnv(envPrefix, 'RELOAD')
 
     // Client url
-    localConfig.client_host = 'https://' + Config.getEnv('CLIENT_HOST')
+    localConfig.client_host = Config.getEnv('CLIENT_HOST')
+    localConfig.client_uri = 'https://' + localConfig.client_host
     localConfig.client_title = Config.getEnv('CLIENT_TITLE') || 'ILP Kit'
 
     localConfig.sentry_dsn = Config.getEnv('SENTRY_DSN')

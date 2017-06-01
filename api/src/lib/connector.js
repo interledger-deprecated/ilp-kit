@@ -181,7 +181,7 @@ module.exports = class Connector {
       if (destination) {
         uri = settlementMethod.type === 'custom'
           ? `${settlementMethod.uri}?destination=${destination}`
-          : this.config.data.get('client_host') + '/settle/' + settlementMethod.type + '/' + destination + '?amount=' + Math.max(amount, 0)
+          : this.config.data.get('client_uri') + '/settle/' + settlementMethod.type + '/' + destination + '?amount=' + Math.max(amount, 0)
       } else {
         uri = settlementMethod.uri
       }

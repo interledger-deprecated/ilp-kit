@@ -1,27 +1,36 @@
 'use strict'
 
-module.exports = SettlementMethodFactory
+module.exports = ReceiverFactory
 
 const _ = require('lodash')
+const crypto = require('crypto')
+const base64url = require('base64url')
 const Model = require('five-bells-shared').Model
 const PersistentModelMixin = require('five-bells-shared').PersistentModelMixin
 const Database = require('../lib/db')
+const Config = require('../lib/config')
 const Validator = require('five-bells-shared/lib/validator')
 const Sequelize = require('sequelize')
-const Config = require('../lib/config')
 
-function SettlementMethodFactory (deps) {
+function hmac(key, message) {
+  const hm = crypto.createHmac('sha256', key)
+  hm.update(message, 'utf8')
+  return hm.digest()
+}
+
+function ReceiverFactory (deps) {
   const sequelize = deps(Database)
   const validator = deps(Validator)
   const config = deps(Config)
 
-  class SettlementMethod extends Model {
-    static convertFromExternal (data) {
+  class Receiver extends Model {
+    static convertFromExternal(data) {
+      delete data.shared_secret
+
       return data
     }
 
     static convertToExternal (data) {
-      delete data.password
       delete data.created_at
       delete data.updated_at
 
@@ -30,12 +39,6 @@ function SettlementMethodFactory (deps) {
 
     static convertFromPersistent (data) {
       data = _.omit(data, _.isNull)
-      data.logoUrl = data.logo && `/api/${data.logo}`
-
-      if (data.type === 'paypal') {
-        data.logoUrl = config.data.get('client_uri') + '/paypal.png'
-      }
-
       return data
     }
 
@@ -44,22 +47,18 @@ function SettlementMethodFactory (deps) {
     }
   }
 
-  SettlementMethod.validateExternal = validator.create('SettlementMethod')
+  Receiver.validateExternal = validator.create('Receiver')
 
-  PersistentModelMixin(SettlementMethod, sequelize, {
+  PersistentModelMixin(Receiver, sequelize, {
     id: {
       type: Sequelize.UUID,
       primaryKey: true,
       defaultValue: Sequelize.UUIDV4
     },
-    type: Sequelize.STRING,
     name: Sequelize.STRING,
-    logo: Sequelize.STRING,
-    description: Sequelize.STRING,
-    uri: Sequelize.STRING,
-    enabled: Sequelize.BOOLEAN,
-    options: Sequelize.JSON
+    user: Sequelize.INTEGER,
+    webhook: Sequelize.STRING
   })
 
-  return SettlementMethod
+  return Receiver
 }

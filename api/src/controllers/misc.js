@@ -82,7 +82,8 @@ function MiscControllerFactory (deps) {
       const ledgerInfo = await ledger.getInfo()
 
       const response = {
-        clientUri: config.data.get('client_host'),
+        clientHost: config.data.get('client_host'),
+        clientUri: config.data.get('client_uri'),
         ledgerUri: config.data.getIn(['ledger', 'public_uri']),
         currencyCode: ledgerInfo.currency_code,
         currencyScale: ledgerInfo.scale,

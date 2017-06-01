@@ -90,7 +90,7 @@ function UserFactory (deps) {
     }
 
     static getVerificationLink (username, email) {
-      return config.data.get(['client_host']) + '/verify/' + username + '/' + User.getVerificationCode(email)
+      return config.data.get(['client_uri']) + '/verify/' + username + '/' + User.getVerificationCode(email)
     }
 
     static async setupAdminAccount () {
@@ -210,7 +210,7 @@ function UserFactory (deps) {
     }
 
     generateForgotPasswordLink () {
-      return config.data.get(['client_host']) + '/change-password/' + this.username + '/' + this.generateForgotPasswordCode()
+      return config.data.get(['client_uri']) + '/change-password/' + this.username + '/' + this.generateForgotPasswordCode()
     }
 
     verifyForgotPasswordCode (code) {

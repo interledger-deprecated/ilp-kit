@@ -1,6 +1,8 @@
 'use strict'
 
 const superagent = require('superagent')
+const crypto = require('crypto')
+const base64url = require('base64url')
 const debug = require('debug')('ilp-kit:spsp')
 const uuid = require('uuid4')
 
@@ -8,16 +10,28 @@ const ILP = require('ilp')
 const PluginBellsFactory = require('ilp-plugin-bells').Factory
 
 const PaymentFactory = require('../models/payment')
+const ReceiverFactory = require('../models/receiver')
+const UserFactory = require('../models/user')
 const Config = require('./config')
 const Socket = require('./socket')
 const Ledger = require('./ledger')
 const Utils = require('./utils')
 const Activity = require('./activity')
 
+const SSP_CONDITION_STRING = 'ilp_ssp_condition'
+
+function hmac (key, message) {
+  const hm = crypto.createHmac('sha256', key)
+  hm.update(message, 'utf8')
+  return hm.digest()
+}
+
 // TODO exception handling
 module.exports = class SPSP {
   constructor (deps) {
     this.Payment = deps(PaymentFactory)
+    this.Receiver = deps(ReceiverFactory)
+    this.User = deps(UserFactory)
     this.socket = deps(Socket)
     this.config = deps(Config)
     this.ledger = deps(Ledger)
@@ -34,8 +48,11 @@ module.exports = class SPSP {
     this.factory = new PluginBellsFactory({
       adminUsername: adminUsername,
       adminPassword: adminPassword,
-      adminAccount: this.config.data.getIn(['ledger', 'public_uri']) + '/accounts/' + adminUsername
+      adminAccount: this.config.data.getIn(['ledger', 'public_uri']) + '/accounts/' + adminUsername,
+      globalSubscription: true
     })
+
+    this.factory.on('incoming_prepare', this._handleIncomingPreparedTransfer.bind(this))
 
     this.connect()
     this.listenerCache = {}
@@ -150,6 +167,119 @@ module.exports = class SPSP {
       receiver_info: {
         name: user.name,
         image_url: this.utils.userToImageUrl(user)
+      }
+    }
+
+    // Destroy the receiver if it hasn't been used for 15 seconds
+    self.scheduleReceiverDestroy(username)
+
+    return this.receivers[username].instance
+  }
+
+  // Destroy the receiver object
+  scheduleReceiverDestroy (username) {
+    const self = this
+    const receiver = self.receivers[username]
+
+    if (!receiver) return
+
+    // Keep the listeners alive for 15 seconds
+    clearTimeout(receiver.timeout)
+
+    receiver.timeout = setTimeout(async function () {
+      // TODO destroy the plugin
+      await receiver.instance.stopListening()
+
+      delete self.receivers[username]
+
+      debug('destroyed the receiver object')
+    }, 15000)
+  }
+
+  getSharedSecretForReceiver (receiver, username) {
+    const prefix = this.config.data.getIn(['ledger', 'prefix'])
+    const destinationAccount = prefix + username + '.~recv.' + receiver.name
+    const sharedSecret = base64url(hmac(this.config.data.get('sspSecret'), String(receiver.user) + ':' + receiver.name).slice(0, 16))
+
+    return {
+      destination_account: destinationAccount,
+      shared_secret: sharedSecret
+    }
+  }
+
+  async createRequest (destinationUser, destinationAmount) {
+    const precisionAndScale = await this.ledger.getInfo()
+    // TODO Turn all of the numbers to bignumber
+    const bnAmount = new BigNumber(destinationAmount + '')
+    const requiredPrecisionRounding = bnAmount.precision() - precisionAndScale.precision
+    const requiredScaleRounding = bnAmount.decimalPlaces() - precisionAndScale.scale
+
+    const roundedAmount =
+      (requiredPrecisionRounding > requiredScaleRounding)
+        ? bnAmount.toPrecision(precisionAndScale.precision, BigNumber.ROUND_UP)
+        : bnAmount.toFixed(precisionAndScale.scale, BigNumber.ROUND_UP)
+
+    const username = destinationUser.username
+
+    const receiver = await this.getReceiver(username)
+
+    const request = receiver.createRequest({
+      amount: roundedAmount
+    })
+
+    return request
+  }
+
+  async _handleIncomingPreparedTransfer (account, transfer) {
+    const user = await this.User.findOne({ where: { username: account }})
+    const plugin = await this.factory.create({ username: account })
+
+    const ilpHeader = transfer.data.ilp_header
+    const address = ilpHeader.account
+    if (address.indexOf(plugin.getAccount()) !== 0) {
+      debug('received transfer with unexpected ilp address expected=%s got=%s', plugin.getAccount(), address)
+      return
+    }
+
+    const localPart = address.slice(plugin.getAccount().length + 1)
+
+    if (localPart.indexOf('~recv.') !== 0) {
+      return
+    }
+
+    const [receiverName] = localPart.slice('~recv.'.length).split('.', 1)
+
+    const receiver = await this.Receiver.findOne({ where: { user: user.id, name: receiverName } })
+
+    if (receiver.webhook) {
+      debug('sending webhook to url=%s', receiver.webhook)
+      const res = await superagent
+        .post(receiver.webhook)
+        .send({
+          transfer,
+          amount: transfer.amount,
+          data: ilpHeader.data
+        })
+        .end()
+
+      debug('webhook completed with status=%d', res.status)
+
+      const packet = {
+        address,
+        amount: transfer.amount,
+        expires_at: ilpHeader.data.expires_at
+      }
+
+      const packetForSigning = stringify(packet)
+      const sharedSecret = Buffer.from(this.getSharedSecretForReceiver(receiver, account).shared_secret, 'base64')
+      const sspConditionKey = hmac(sharedSecret, SSP_CONDITION_STRING)
+      const fulfillment = 'cf:0:' + base64url(hmac(sspConditionKey, packetForSigning))
+
+      if (res.status === 200 && res.body.fulfill === true) {
+        debug('webhook requested that the payment should be fulfilled')
+        plugin.fulfillCondition(transfer.id, fulfillment)
+      } else {
+        debug('webhook requested that the payment be rejected')
       }
     }
   }
