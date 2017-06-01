@@ -170,19 +170,19 @@ function AuthControllerFactory (deps) {
     }
 
     static async changePassword (ctx) {
-      const dbUser = await User.findOne({ where: { username: this.body.username } })
+      const dbUser = await User.findOne({ where: { username: ctx.body.username } })
 
       if (!dbUser) throw new NotFoundError('Wrong username')
 
-      if (this.body.password !== this.body.repeatPassword) {
+      if (ctx.body.password !== ctx.body.repeatPassword) {
         throw new PasswordsDontMatchError('Passwords don\'t match')
       }
 
-      dbUser.verifyForgotPasswordCode(this.body.code)
+      dbUser.verifyForgotPasswordCode(ctx.body.code)
 
       await ledger.updateAccount({
         username: dbUser.username,
-        newPassword: this.body.password
+        newPassword: ctx.body.password
       }, true)
 
       // This invalidates the ForgotPasswordCode so that it's only used once

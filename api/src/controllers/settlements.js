@@ -49,7 +49,7 @@ function SettlementsControllerFactory (deps) {
 
     // TODO move to auth
     static async checkAdmin (ctx, next) {
-      if (this.req.user.username === config.data.getIn(['ledger', 'admin', 'user'])) {
+      if (ctx.req.user.username === config.data.getIn(['ledger', 'admin', 'user'])) {
         return next()
       }
 
@@ -57,13 +57,13 @@ function SettlementsControllerFactory (deps) {
     }
 
     static async getDestination (ctx) {
-      const destination = await getDestination(this.params.destination)
+      const destination = await getDestination(ctx.params.destination)
 
       if (!destination) {
         throw new NotFoundError('Invalid destination')
       }
 
-      this.body = {
+      ctx.body = {
         type: destination.hostname ? 'peer' : 'user',
         hostname: destination.hostname
       }
