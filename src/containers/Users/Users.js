@@ -40,7 +40,9 @@ export default class Invites extends Component {
 
     return (
       <div className={cx('Users')}>
-        <Helmet title={'Users'} />
+        <Helmet>
+          <title>Users</title>
+        </Helmet>
 
         <div className={cx('header')}>
           <h3>Users</h3>

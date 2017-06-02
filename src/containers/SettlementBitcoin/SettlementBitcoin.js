@@ -18,7 +18,9 @@ export default class SettlementBitcoin extends Component {
   render () {
     return (
       <div className={cx('SettlementBitcoin')}>
-        <Helmet title={'Bitcoin - Settlement'} />
+        <Helmet>
+          <title>Bitcoin - Settlement</title>
+        </Helmet>
 
         Bitcoin
       </div>

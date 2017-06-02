@@ -2,7 +2,7 @@
 
 module.exports = AuthControllerFactory
 
-const body = require('koa-better-body')
+const body = require('koa-body')
 const path = require('path')
 const passport = require('koa-passport')
 const jimp = require('jimp')
@@ -86,7 +86,9 @@ function AuthControllerFactory (deps) {
       router.post('/auth/profilepic',
         body({
           multipart: true,
-          uploadDir: path.resolve(__dirname, '../../../uploads')
+          formidable: {
+            uploadDir: path.resolve(__dirname, '../../../uploads')
+          }
         }),
         auth.checkAuth,
         this.changeProfilePicture)
@@ -193,7 +195,7 @@ function AuthControllerFactory (deps) {
     }
 
     static async changeProfilePicture (ctx) {
-      const file = ctx.request.files && ctx.request.files[0]
+      const file = ctx.request.body.files && ctx.request.body.files.file
 
       let user = ctx.req.user
 

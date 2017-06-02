@@ -102,7 +102,9 @@ export default class Invites extends Component {
 
     return (
       <div className={cx('Invites')}>
-        <Helmet title={'Invites'} />
+        <Helmet>
+          <title>Invites</title>
+        </Helmet>
 
         {/* Add new */}
         {!showAddForm && inviteState.list.length > 0 &&

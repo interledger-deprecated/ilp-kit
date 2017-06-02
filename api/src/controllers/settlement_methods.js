@@ -59,11 +59,11 @@ function SettlementMethodsControllerFactory (deps) {
     static async postResource (ctx) {
       const method = new SettlementMethod()
 
-      if (['paypal', 'bitcoin', 'etherium', 'ripple', 'custom'].indexOf(ctx.body.type) === -1) {
+      if (['paypal', 'bitcoin', 'ethereum', 'ripple', 'custom'].indexOf(ctx.body.type) === -1) {
         throw new InvalidBodyError('Unknown settlement method type')
       }
 
-      if (['paypal', 'bitcoin', 'etherium', 'ripple'].indexOf(ctx.body.type) !== -1) {
+      if (['paypal', 'bitcoin', 'ethereum', 'ripple'].indexOf(ctx.body.type) !== -1) {
         method.name = ctx.body.type.charAt(0).toUpperCase() + ctx.body.type.slice(1)
       }
 

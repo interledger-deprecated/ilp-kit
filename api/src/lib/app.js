@@ -3,7 +3,7 @@
 const fs = require('fs')
 const path = require('path')
 const Koa = require('koa')
-const body = require('koa-better-body')
+const body = require('koa-body')
 const logger = require('koa-mag')
 const session = require('koa-session')
 const cors = require('kcors')
@@ -61,7 +61,7 @@ module.exports = class App {
       if (ctx.request.method === 'POST' || ctx.request.method === 'PUT') {
         // the parsed body will store in this.request.body
         // if nothing was parsed, body will be an empty object {}
-        ctx.body = ctx.request.fields
+        ctx.body = ctx.request.body
       }
       await next()
     })

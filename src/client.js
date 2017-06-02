@@ -9,7 +9,7 @@ import ApiClient from './helpers/ApiClient'
 import io from 'socket.io-client'
 import {Provider} from 'react-redux'
 import { Router, browserHistory, match } from 'react-router'
-import { ReduxAsyncConnect } from 'redux-async-connect'
+import { ReduxAsyncConnect } from 'redux-connect'
 import Tracker from './tracker'
 
 import getRoutes from './routes'

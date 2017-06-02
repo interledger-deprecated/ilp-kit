@@ -123,7 +123,9 @@ export default class Peers extends Component {
 
     return (
       <div className={cx('Peers')}>
-        <Helmet title={'Peers'} />
+        <Helmet>
+          <title>Peers</title>
+        </Helmet>
 
         {/* Add new */}
         {!showAddForm && peerState.list.length > 0 &&

@@ -23,7 +23,7 @@ import hotkeys from 'decorators/hotkeys'
 import { isLoaded as isAuthLoaded, load as loadAuth, loadConfig, logout, updateBalance, verify, resendVerificationEmail } from 'redux/actions/auth'
 import { routeActions } from 'react-router-redux'
 import { addActivity } from 'redux/actions/activity'
-import { asyncConnect } from 'redux-async-connect'
+import { asyncConnect } from 'redux-connect'
 
 import classNames from 'classnames/bind'
 import styles from './App.scss'
@@ -150,21 +150,14 @@ export default class App extends Component {
 
     return (
       <div className={cx('App', !user && 'darkBg')}>
-        <Helmet
-          defaultTitle={config.title}
-          titleTemplate={config.title && '%s - ' + config.title}
-          meta={[
-            {'name': 'viewport', 'content': 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'},
-
-            {'property': 'og:type', 'content': 'website'},
-            {'property': 'og:title', 'content': config.title},
-
-            {'name': 'twitter:title', 'content': config.title},
-            {'name': 'twitter:card', 'content': 'summary'},
-
-            {'itemprop': 'name', 'content': config.title}
-          ]}
-        />
+        <Helmet defaultTitle={config.title} titleTemplate={config.title && '%s - ' + config.title}>
+          <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+          <meta property='og:type' content='website' />
+          <meta property='og:title' content={config.title} />
+          <meta name='twitter:title' content={config.title} />
+          <meta name='twitter:card' content='summary' />
+          <meta itemProp='name' content={config.title} />
+        </Helmet>
 
         <LoadingBar className={cx('loadingBar')} />
 

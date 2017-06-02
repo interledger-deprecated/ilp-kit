@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import * as authActions from 'redux/actions/auth'
-import { asyncConnect } from 'redux-async-connect'
+import { asyncConnect } from 'redux-connect'
 
 import SendForm from 'containers/SendForm/SendForm'
 import LoginForm from 'components/LoginForm/LoginForm'

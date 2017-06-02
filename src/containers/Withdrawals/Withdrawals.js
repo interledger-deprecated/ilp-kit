@@ -68,7 +68,9 @@ export default class Withdrawals extends Component {
 
     return (
       <div className={cx('Invites')}>
-        <Helmet title={'Withdrawals'} />
+        <Helmet>
+          <title>Withdrawals</title>
+        </Helmet>
 
         {withdrawalState.list.length > 0 &&
         <div className={cx('row', 'row-sm', 'tableHead')}>

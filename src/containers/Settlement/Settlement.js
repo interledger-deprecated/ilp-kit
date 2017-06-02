@@ -46,7 +46,9 @@ export default class Settlement extends Component {
 
     return (
       <div className={cx('Settlement')}>
-        <Helmet title={'Settlement'} />
+        <Helmet>
+          <title>Settlement</title>
+        </Helmet>
 
         {/* Add new */}
         <div className={cx('header', 'row', 'row-sm')}>

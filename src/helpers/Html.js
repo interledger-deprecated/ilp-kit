@@ -23,16 +23,16 @@ export default class Html extends Component {
   render () {
     const {assets, component, store} = this.props
     const content = component ? ReactDOM.renderToString(component) : ''
-    const head = Helmet.rewind()
+    const helmet = Helmet.rewind()
 
     return (
       <html lang='en-us'>
         <head>
-          {head.base.toComponent()}
-          {head.title.toComponent()}
-          {head.meta.toComponent()}
-          {head.link.toComponent()}
-          {head.script.toComponent()}
+          {helmet.base.toComponent()}
+          {helmet.title.toComponent()}
+          {helmet.meta.toComponent()}
+          {helmet.link.toComponent()}
+          {helmet.script.toComponent()}
 
           <link rel='shortcut icon' href='/favicon.png' />
           <meta name='viewport' content='width=device-width, initial-scale=1' />

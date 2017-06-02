@@ -7,7 +7,9 @@ export default class Settings extends Component {
   render () {
     return (
       <div className='row'>
-        <Helmet title={'Settings'} />
+        <Helmet>
+          <title>Settings</title>
+        </Helmet>
 
         <div className='col-md-8'>
           <ProfileForm />
