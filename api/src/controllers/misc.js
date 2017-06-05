@@ -19,7 +19,17 @@ function MiscControllerFactory (deps) {
   return class MiscController {
     static init (router) {
       router.get('/parse/destination', this.destination)
-      router.get('/config', this.config)
+      router.get('/config', {
+        clientUri: this.config.clientUri,
+        ledgerUri : this.config.ledgerUri,
+        currencyCode : this.config.currencyCode,
+        currencyScale: this.config.currencyScale,
+        registration: this.config.registration,
+        antiFraud: this.config.antiFraud,
+        title: this.config.title,
+        version: this.config.version,
+        settlementMethods: this.config.settlementMethods
+      })
     }
 
     /**
