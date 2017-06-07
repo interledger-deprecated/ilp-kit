@@ -51,7 +51,7 @@ module.exports = class WalletConfig {
     }
 
     // Registration
-    localConfig.registration = Config.castBool(Config.getEnv(envPrefix, 'REGISTRATION'), true)
+    localConfig.registration = Config.castBool(Config.getEnv(envPrefix, 'REGISTRATION'), false)
 
     // Email
     localConfig.mailgun = {
