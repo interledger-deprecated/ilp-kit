@@ -81,6 +81,17 @@ function MiscControllerFactory (deps) {
     static async config (ctx) {
       const ledgerInfo = await ledger.getInfo()
 
+      // A previous version accidentally leaked the Github client secret. Be
+      // careful when handling credentials
+      const githubClientId = config.data.getIn(['github', 'client_id'])
+      const githubClientSecret = config.data.getIn(['github', 'client_secret'])
+      const isGithubAuthEnabled = Boolean(
+        typeof githubClientId === 'string' &&
+        githubClientId.length > 0 &&
+        typeof githubClientScret === 'string' &&
+        githubClientSecret.length > 0
+      )
+
       const response = {
         clientUri: config.data.get('client_host'),
         ledgerUri: config.data.getIn(['ledger', 'public_uri']),
@@ -94,7 +105,7 @@ function MiscControllerFactory (deps) {
           ga: config.data.getIn(['track', 'ga']),
           mixpanel: config.data.getIn(['track', 'mixpanel'])
         },
-        githubAuth: (config.data.getIn(['github', 'client_id']) && config.data.getIn(['github', 'client_secret'])),
+        githubAuth: isGithubAuthEnabled,
         sentry_dsn: config.data.get('sentry_dsn'),
         versions: await config.getVersions()
       }
