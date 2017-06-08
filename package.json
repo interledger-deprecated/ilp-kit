@@ -150,7 +150,7 @@
     "ilp-connector": "^18.0.0",
     "ilp-kit-cli": "^11.2.0",
     "ilp-plugin-bells": "^13.0.0",
-    "ilp-plugin-settlement-adapter": "^1.0.0",
+    "ilp-plugin-settlement-adapter": "interledgerjs/ilp-plugin-settlement-adapter#master",
     "ilp-plugin-virtual": "^15.0.0",
     "istanbul": "^0.4.5",
     "jimp": "^0.2.27",
