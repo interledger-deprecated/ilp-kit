@@ -44,6 +44,8 @@ function SettlementsControllerFactory (deps) {
       router.get('/settlements/:id', auth.checkAuth, this.getResource)
 
       // Admin
+      router.get('/settlements', auth.checkAuth, this.getResources)
+      router.get('/settlements/:id', auth.checkAuth, this.getResource)
       router.post('/settlements/:destination', auth.checkAuth, this.checkAdmin, this.custom)
     }
 
@@ -208,6 +210,24 @@ function SettlementsControllerFactory (deps) {
         peer: settlement.Peer && settlement.Peer.hostname,
         user: settlement.User && settlement.User.username
       }
+    }
+
+    static async getResources (ctx) {
+      const type = ctx.query.type
+      let where
+
+      if (type === 'user') {
+        where = { user_id: { $not: null } }
+      }
+
+      if (type === 'peer') {
+        where = { peer_id: { $not: null } }
+      }
+
+      ctx.body = await Settlement.findAll({
+        where,
+        include: [{ all: true }]
+      })
     }
   }
 }

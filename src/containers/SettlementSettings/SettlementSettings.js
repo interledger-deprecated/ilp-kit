@@ -14,14 +14,14 @@ import { load, add } from 'redux/actions/settlement_method'
 import SettlementMethod from 'containers/SettlementMethod/SettlementMethod'
 
 import classNames from 'classnames/bind'
-import styles from './Settlement.scss'
+import styles from './SettlementSettings.scss'
 const cx = classNames.bind(styles)
 
 @connect(state => ({
   list: state.settlementMethod.list,
   loaded: state.settlementMethod.loaded
 }), { load, add, pushState: routeActions.push })
-export default class Settlement extends Component {
+export default class SettlementSettings extends Component {
   static propTypes = {
     add: PropTypes.func,
     load: PropTypes.func.isRequired,
@@ -45,9 +45,9 @@ export default class Settlement extends Component {
     const { list } = this.props
 
     return (
-      <div className={cx('Settlement')}>
+      <div className={cx('SettlementSettings')}>
         <Helmet>
-          <title>Settlement</title>
+          <title>SettlementSettings</title>
         </Helmet>
 
         {/* Add new */}
@@ -62,7 +62,10 @@ export default class Settlement extends Component {
               </Dropdown.Toggle>
               <Dropdown.Menu className={cx('options')}>
                 <MenuItem onClick={this.handleAdd('paypal')}>
-                  <img src='/paypal.png' className={cx('logo')} />
+                  <img src='/paypal.png' className={cx('logo')} /> Paypal
+                </MenuItem>
+                <MenuItem onClick={this.handleAdd('cash')}>
+                  <img src='/cash.png' className={cx('logo')} /> Cash
                 </MenuItem>
                 <MenuItem onClick={this.handleAdd('custom')}>
                   Custom

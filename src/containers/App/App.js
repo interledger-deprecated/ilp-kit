@@ -189,10 +189,16 @@ export default class App extends Component {
               <LinkContainer to='/peers'>
                 <NavItem onClick={this.onNavItemClick}>Peers</NavItem>
               </LinkContainer>}
+
               {user.isAdmin &&
-              <LinkContainer to='/settlement'>
-                <NavItem onClick={this.onNavItemClick}>Settlement</NavItem>
-              </LinkContainer>}
+              <NavDropdown id='settlementDropdown' title='Settlements'>
+                <LinkContainer to='/settlements/user'>
+                  <MenuItem>User Settlements</MenuItem>
+                </LinkContainer>
+                <LinkContainer to='/settlements/settings'>
+                  <MenuItem>Configure</MenuItem>
+                </LinkContainer>
+              </NavDropdown>}
 
               <NavDropdown id='navDropdown' title={<span>{user.profile_picture && <img className={cx('profilePic')} src={user.profile_picture} />} {user.displayName}</span>}>
                 {!user.github_id &&
