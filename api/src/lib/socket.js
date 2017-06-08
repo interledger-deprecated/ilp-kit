@@ -1,7 +1,7 @@
 'use strict'
 
 const _ = require('lodash')
-const IO = require('koa-socket')
+const IO = require('koa-socket-2')
 
 const Log = require('./log')
 const PaymentFactory = require('../models/payment')
