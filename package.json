@@ -40,7 +40,7 @@
     "test-mocha": "NODE_ENV=test ./node_modules/.bin/mocha api/test",
     "integration": "integration-loader && integration all",
     "apidoc": "apidoc -i api/src/controllers/ -o apidoc-out",
-    "version-check" : "echo 'Scanning psql version'; chmod +x ./scripts/postgres_version_check.sh; if [ $(bash ./scripts/postgres_version_check.sh) = 'false' ]; then echo 'Postgres PSQL Version out of date, please upgrade to 9.5 or newer'; exit 126; fi;",
+    "version-check": "echo 'Scanning psql version'; chmod +x ./scripts/postgres_version_check.sh; if [ $(bash ./scripts/postgres_version_check.sh) = 'false' ]; then echo 'Postgres PSQL Version out of date, please upgrade to 9.5 or newer'; exit 126; fi;",
     "configure": "npm run version-check && ./node_modules/ilp-kit-cli/bin/configure.js"
   },
   "betterScripts": {
@@ -144,13 +144,14 @@
     "five-bells-shared": "^25.0.0",
     "font-awesome": "^4.7.0",
     "font-awesome-webpack": "0.0.4",
+    "has-binary2": "^1.0.2",
     "hoist-non-react-statics": "^1.0.3",
     "http-proxy": "^1.12.0",
     "ilp": "^11.0.0",
     "ilp-connector": "^19.0.0",
     "ilp-kit-cli": "^11.2.0",
     "ilp-plugin-bells": "^14.0.0",
-    "ilp-plugin-settlement-adapter": "^1.0.0",
+    "ilp-plugin-settlement-adapter": "https://github.com/interledgerjs/ilp-plugin-settlement-adapter.git",
     "ilp-plugin-virtual": "^16.0.0",
     "istanbul": "^0.4.5",
     "jimp": "^0.2.27",
@@ -231,6 +232,7 @@
     "umzug": "^2.0.1",
     "url-loader": "^0.5.8",
     "uuid4": "^1.0.0",
+    "vis-why": "^1.2.2",
     "webfinger.js": "^2.6.5",
     "webpack": "^1.13.2",
     "webpack-isomorphic-tools": "^2.5.7"

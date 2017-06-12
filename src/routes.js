@@ -143,13 +143,13 @@ export default (store) => {
     }, 'settlementsUser')
   }
 
-  /*const getSettlementsPeer = (nextState, cb) => {
+  const getSettlementsPeer = (nextState, cb) => {
     require.ensure(['./containers/SettlementsPeer/SettlementsPeer'], require => {
       cb(null, require('./containers/SettlementsPeer/SettlementsPeer'))
 
       store.dispatch(locationUpdate())
     }, 'settlementsPeer')
-  }*/
+  }
 
   const getSettle = (nextState, cb) => {
     require.ensure(['./containers/Settle/Settle'], require => {
@@ -216,6 +216,7 @@ export default (store) => {
           <Route path='peers' getComponent={getPeers} />
           <Route path='settlements'>
             <Route path='user' getComponent={getSettlementsUser} />
+            <Route path='peer' getComponent={getSettlementsPeer} />
             <Route path='settings' getComponent={getSettlementSettings} />
           </Route>
         </Route>

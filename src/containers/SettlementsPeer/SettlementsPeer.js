@@ -10,16 +10,16 @@ import { getSettlements } from 'redux/actions/settlement'
 import List from 'components/List/List'
 
 import classNames from 'classnames/bind'
-import styles from './SettlementsUser.scss'
+import styles from './SettlementsPeer.scss'
 const cx = classNames.bind(styles)
 
 @connect(
   state => ({
-    settlementState: state.settlement.user,
-    loaded: state.settlement.user.loaded
+    settlementState: state.settlement.peer,
+    loaded: state.settlement.peer.loaded
   }),
   { getSettlements })
-export default class SettlementsUser extends Component {
+export default class SettlementsPeer extends Component {
   static propTypes = {
     settlementState: PropTypes.object,
     getSettlements: PropTypes.func.isRequired,
@@ -30,7 +30,7 @@ export default class SettlementsUser extends Component {
 
   componentWillMount () {
     if (!this.props.loaded) {
-      this.props.getSettlements('user')
+      this.props.getSettlements('peer')
     }
   }
 
@@ -39,7 +39,7 @@ export default class SettlementsUser extends Component {
       <div className={cx('settlement')} key={settlement.id}>
         <div className={cx('row', 'row-sm')}>
           <div className={cx('col-sm-5')}>
-            {settlement.User.username}
+            {settlement.Peer.hostname}
           </div>
           <div className={cx('col-sm-5', 'amountColumn')}>
             <span className={cx('amount')}>{settlement.amount}</span>
@@ -66,7 +66,7 @@ export default class SettlementsUser extends Component {
         {settlementState.list.length > 0 &&
         <div className={cx('row', 'row-sm', 'tableHead')}>
           <div className={cx('col-sm-5')}>
-            User
+            Peer
           </div>
           <div className={cx('col-sm-5', 'amountColumn')}>
             Amount
@@ -81,7 +81,7 @@ export default class SettlementsUser extends Component {
             <div className={cx('panel', 'panel-default', 'status')}>
               <div className='panel-body'>
                 <i className={cx('fa', 'fa-ticket')} />
-                <h1>No User Settlements</h1>
+                <h1>No Peer Settlements</h1>
               </div>
             </div>
           )} state={settlementState}>
