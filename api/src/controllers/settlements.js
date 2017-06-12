@@ -218,10 +218,10 @@ function SettlementsControllerFactory (deps) {
 
       if (type === 'user') {
         where = { user_id: { $not: null } }
-      }
-
-      if (type === 'peer') {
+      } else if (type === 'peer') {
         where = { peer_id: { $not: null } }
+      } else {
+        throw new InvalidBodyError('Settlement type is not specified')
       }
 
       ctx.body = await Settlement.findAll({

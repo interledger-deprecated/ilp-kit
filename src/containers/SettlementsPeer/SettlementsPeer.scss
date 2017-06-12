@@ -1,0 +1,70 @@
+@import 'variables';
+@import 'mixins';
+
+.header {
+  margin-bottom: 20px;
+
+  h3 {
+    margin: 0;
+  }
+}
+.btn-add-lg {
+  margin: 20px 0;
+}
+.status {
+  text-align: center;
+
+  i {
+    font-size: 50px;
+    margin: 10px 0 10px;
+  }
+}
+.settlement {
+  position: relative;
+  border-top: 1px solid $activity-payment-separator-color;
+  padding: 15px 0;
+
+  &:hover .deleteButton {
+    opacity: 1;
+  }
+
+  & > div > div {
+    line-height: 40px;
+  }
+}
+.tableHead {
+  font-size: 15px;
+  padding: 10px 0;
+}
+.lbl {
+  display: block;
+}
+.code {
+  border-bottom: 1px dotted $text-color;
+
+  @include singleLinkColor($text-color);
+}
+.amountColumn {
+  text-align: center;
+}
+.status {
+  text-transform: capitalize;
+}
+.amount {
+  font-size: 20px;
+}
+.claimed {
+  color: $muted-text-color;
+}
+.deleteButton {
+  position: absolute;
+  top: 0;
+  right: 4px;
+  padding: 5px;
+  color: $text-color;
+  opacity: 0;
+
+  &:hover {
+    color: $danger;
+  }
+}
