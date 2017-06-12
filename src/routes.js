@@ -127,13 +127,29 @@ export default (store) => {
     }, 'peers')
   }
 
-  const getSettlement = (nextState, cb) => {
-    require.ensure(['./containers/Settlement/Settlement'], require => {
-      cb(null, require('./containers/Settlement/Settlement'))
+  const getSettlementSettings = (nextState, cb) => {
+    require.ensure(['./containers/SettlementSettings/SettlementSettings'], require => {
+      cb(null, require('./containers/SettlementSettings/SettlementSettings'))
 
       store.dispatch(locationUpdate())
-    }, 'settlement')
+    }, 'settlementSettings')
   }
+
+  const getSettlementsUser = (nextState, cb) => {
+    require.ensure(['./containers/SettlementsUser/SettlementsUser'], require => {
+      cb(null, require('./containers/SettlementsUser/SettlementsUser'))
+
+      store.dispatch(locationUpdate())
+    }, 'settlementsUser')
+  }
+
+  /*const getSettlementsPeer = (nextState, cb) => {
+    require.ensure(['./containers/SettlementsPeer/SettlementsPeer'], require => {
+      cb(null, require('./containers/SettlementsPeer/SettlementsPeer'))
+
+      store.dispatch(locationUpdate())
+    }, 'settlementsPeer')
+  }*/
 
   const getSettle = (nextState, cb) => {
     require.ensure(['./containers/Settle/Settle'], require => {
@@ -198,7 +214,10 @@ export default (store) => {
           <Route path='users' getComponent={getUsers} />
           <Route path='withdrawals' getComponent={getWithdrawals} />
           <Route path='peers' getComponent={getPeers} />
-          <Route path='settlement' getComponent={getSettlement} />
+          <Route path='settlements'>
+            <Route path='user' getComponent={getSettlementsUser} />
+            <Route path='settings' getComponent={getSettlementSettings} />
+          </Route>
         </Route>
 
         { /* Routes available to all */ }

@@ -1,7 +1,13 @@
 import * as types from '../actionTypes'
 
 const initialState = {
-  info: {}
+  info: {},
+  user: {
+    list: []
+  },
+  peer: {
+    list: []
+  }
 }
 
 export default function reducer (state = initialState, action = {}) {
@@ -11,6 +17,19 @@ export default function reducer (state = initialState, action = {}) {
         ...state,
         info: action.result
       }
+    case types.GET_SETTLEMENTS_SUCCESS:
+      // TODO bit messy?
+      if (action.result.length > 0 && action.result[0].user_id) {
+        return {
+          ...state,
+          user: {
+            list: action.result
+          }
+        }
+      }
+
+      // TODO:BEFORE_DEPLOY do the peer type too
+
     default:
       return state
   }
