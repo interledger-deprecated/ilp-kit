@@ -48,7 +48,6 @@ export const transfer = () => (dispatch, getState) => dispatch({
   promise: client => client.put('/payments/' + getState().send.quote.id, {
     data: {
       quote: getState().send.quote,
-      destination: getState().send.destinationInfo,
       message: getState().form.send.values.message
     }
   })
