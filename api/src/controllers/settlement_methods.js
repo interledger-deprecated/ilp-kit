@@ -93,7 +93,7 @@ function SettlementMethodsControllerFactory (deps) {
     }
 
     /**
-     * @api {post} /settlement_methods Add a settlement method
+     * @api {POST} /settlement_methods Add a settlement method
      * @apiName PostSettlementMethods
      * @apiGroup SettlementMethod
      * @apiVersion 1.0.0
