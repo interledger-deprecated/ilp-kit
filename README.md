@@ -110,11 +110,11 @@ ILP kit UI comes with an "advanced mode" for developers and advanced users. You 
 
 ## Architecture
 ILP kit consists of:
-* a connector
-* a Five Bells ledger
-* a [Node.js](https://github.com/nodejs/node) (developed on v7.7.1) backend (REST API)
-* a proxy in front of that API, known as the 'wallet'.
-* a client built using [React](https://github.com/facebook/react).
+* a Five Bells ledger (the 'ledger' process)
+* a [Node.js](https://github.com/nodejs/node) (developed on v7.7.1) 'api' process, containing a connector and SPSP receivers
+* html+js+css statics, built using [React](https://github.com/facebook/react)
+* a 'server' process which serves the statics on example.com, the ledger on example.com/ledger, the api on example.com/api
+* an nginx instance in front the server process, which handles https termination
 
 ### Backend (REST API)
 The backend is responsible for communicating with the ILP ledger, creating accounts, sending payments and keeping the payment history.
