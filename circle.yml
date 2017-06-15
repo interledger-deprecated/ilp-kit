@@ -14,13 +14,11 @@ test:
     - npm test
     - npm run test-mocha
     - ./node_modules/.bin/integration-loader && ./node_modules/.bin/integration setup
+    - cd ./integration-test/ilp-kit && npm rebuild node-sass && npm run build
     - ./node_modules/.bin/integration test index
     - ./node_modules/.bin/integration test advanced
     - ./node_modules/.bin/integration test connector_first
     - ./node_modules/.bin/integration test ilp-kit
-  post:
-    - docker build -t interledgerjs/ilp-kit:latest .
-    - docker tag interledgerjs/ilp-kit:latest interledgerjs/ilp-kit:"$(git describe --tags)"
 
 
 deployment:
@@ -35,6 +33,10 @@ deployment:
   production:
     branch: release
     commands:
+      - rm -rf node_modules/*
+      - rm -rf static/dist
+      - docker build -t interledgerjs/ilp-kit:latest .
+      - docker tag interledgerjs/ilp-kit:latest interledgerjs/ilp-kit:"$(git describe --tags)"
       # Push Docker image tagged latest and tagged with commit descriptor
       - sed "s/<AUTH>/${DOCKER_TOKEN}/" < "dockercfg-template" > ~/.dockercfg
       - docker push interledgerjs/ilp-kit:latest

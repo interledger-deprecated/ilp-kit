@@ -26,7 +26,6 @@
     "start-prod-ledger": "better-npm-run start-prod-ledger",
     "build": "touch src/theme/variables-custom.scss ; better-npm-run build",
     "build-dlls": "touch src/theme/variables-custom.scss ; node ./bin/dlls.js",
-    "postinstall": "npm rebuild node-sass; npm run build",
     "lint": "eslint src api",
     "start-dev": "better-npm-run start-dev",
     "start-dev-api": "better-npm-run start-dev-api",
