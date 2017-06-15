@@ -26,10 +26,14 @@ export default function reducer (state = initialState, action = {}) {
             list: action.result
           }
         }
+      } else if (action.result.length > 0 && action.result[0].peer_id) {
+        return {
+          ...state,
+          peer: {
+            list: action.result
+          }
+        }
       }
-
-      // TODO:BEFORE_DEPLOY do the peer type too
-
     default:
       return state
   }

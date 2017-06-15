@@ -149,7 +149,8 @@ module.exports = class SPSP {
       },
       receiver_info: {
         name: user.name,
-        image_url: this.utils.userToImageUrl(user)
+        image_url: this.utils.userToImageUrl(user),
+        identifier: user.identifier
       }
     }
   }

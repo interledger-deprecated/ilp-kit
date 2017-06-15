@@ -154,7 +154,9 @@ module.exports = class Connector {
     }
   }
 
-  async getSelfSettlementMethods (destination, amount) {
+  async getSelfSettlementMethods (destination, internalAmount) {
+    const amount = internalAmount / 1000000000
+
     // TODO:PERFORMANCE don't call this on every request
     const dbSettlementMethods = await this.SettlementMethod.findAll({ where: { enabled: true,  name: { $ne: null } } })
     return dbSettlementMethods.map(settlementMethod => {

@@ -195,6 +195,9 @@ export default class App extends Component {
                 <LinkContainer to='/settlements/user'>
                   <MenuItem>User Settlements</MenuItem>
                 </LinkContainer>
+                <LinkContainer to='/settlements/peer'>
+                  <MenuItem>Peer Settlements</MenuItem>
+                </LinkContainer>
                 <LinkContainer to='/settlements/settings'>
                   <MenuItem>Configure</MenuItem>
                 </LinkContainer>

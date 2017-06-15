@@ -36,16 +36,14 @@ function MiscControllerFactory (deps) {
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
      *    {
-     *      {
-     *        "type": "local",
      *        "ledgerUri": "http://wallet.example/ledger",
      *        "paymentUri": "http://wallet.example/api/spsp/alice",
      *        "ilpAddress": "wallet.alice",
+     *        "identifier": "alice@wallet.example",
      *        "currencyCode": "USD",
      *        "currencySymbol": "$",
-     *        "name": "Alice Faye",
-     *        "imageUrl": ""
-     *      }
+     *        "name": "Alice",
+     *        "imageUrl": "http://wallet.example/api/users/alice/profilepic"
      *    }
      */
     static async destination (ctx) {
@@ -73,9 +71,31 @@ function MiscControllerFactory (deps) {
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
      *    {
+     *      "clientUri": "https://wallet.example",
      *      "ledgerUri": "https://wallet.example/ledger",
      *      "currencyCode": "USD",
-     *      "currencySymbol": "$"
+     *      "currencyScale": 9,
+     *      "currencySymbol": "$",
+     *      "registration": true,
+     *      "antiFraud": false,
+     *      "title": "Wallet Name",
+     *      "track": {},
+     *      "githubAuth": false,
+     *      "versions": {
+     *        "current": "2.0.2",
+     *        "hash": "bc056cc",
+     *        "latest": "2.0.2"
+     *      },
+     *      "settlementMethods": [
+     *        {
+     *          "id": "7b4a73b0-19c5-46ed-8905-febeae2b0a05",
+     *          "name": "Paypal",
+     *          "type": "paypal",
+     *          "description": null,
+     *          "uri": null,
+     *          "logo": "https://wallet.example/paypal.png"
+     *        }
+     *      ]
      *    }
      */
     static async config (ctx) {

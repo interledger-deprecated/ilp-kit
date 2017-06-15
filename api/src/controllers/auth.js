@@ -44,10 +44,25 @@ function AuthControllerFactory (deps) {
        * @apiSuccessExample {json} 200 Response:
        *    HTTP/1.1 200 OK
        *    {
-       *      "username": "alice",
-       *      "name": "Alice Faye",
-       *      "balance": "1000",
        *      "id": 1
+       *      "username": "alice",
+       *      "email": "alice@example.com",
+       *      "email_verified": true,
+       *      "github_id": null,
+       *      "destination": "451744",
+       *      "profile_picture": "https://wallet.example/api/users/alice/profilepic",
+       *      "name": "Alice",
+       *      "phone": null,
+       *      "address1": null,
+       *      "address2": null,
+       *      "city": null,
+       *      "region": null,
+       *      "country": null,
+       *      "zip_code": null,
+       *      "invite_code": null,
+       *      "identifier": "alice@wallet.example",
+       *      "balance": 987,
+       *      "minimum_allowed_balance": "0"
        *    }
        */
 
@@ -102,6 +117,7 @@ function AuthControllerFactory (deps) {
      * @apiName Load
      * @apiGroup Auth
      * @apiVersion 1.0.0
+     * @apiPermission user
      *
      * @apiDescription Get currently authenticated user (used for cookie based auth)
      *
@@ -112,10 +128,25 @@ function AuthControllerFactory (deps) {
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
      *    {
-     *      "username": "alice",
-     *      "name": "Alice Faye",
-     *      "balance": "1000",
      *      "id": 1
+     *      "username": "alice",
+     *      "email": "alice@example.com",
+     *      "email_verified": true,
+     *      "github_id": null,
+     *      "destination": "451744",
+     *      "profile_picture": "https://wallet.example/api/users/alice/profilepic",
+     *      "name": "Alice",
+     *      "phone": null,
+     *      "address1": null,
+     *      "address2": null,
+     *      "city": null,
+     *      "region": null,
+     *      "country": null,
+     *      "zip_code": null,
+     *      "invite_code": null,
+     *      "identifier": "alice@wallet.example",
+     *      "balance": 987,
+     *      "minimum_allowed_balance": "0"
      *    }
      */
     static async load (ctx) {
@@ -167,10 +198,51 @@ function AuthControllerFactory (deps) {
         link
       })
 
-      ctx.body = {}
       ctx.status = 200
     }
 
+    /**
+     * @api {post} /auth/change-password Change Password
+     * @apiName ChangePassword
+     * @apiGroup Auth
+     * @apiVersion 1.0.0
+     * @apiPermission user
+     *
+     * @apiDescription Change user password
+     *
+     * @apiParam {String} username username
+     * @apiParam {String} password new password
+     * @apiParam {String} repeatPassword new password
+     * @apiParam {String} code reset code sent to the user email
+     *
+     * @apiExample {shell} Change Password
+     *    curl -X POST
+     *    https://wallet.example/auth/change-password
+     *
+     * @apiSuccessExample {json} 200 Response:
+     *    HTTP/1.1 200 OK
+     *    {
+     *      "id": 1
+     *      "username": "alice",
+     *      "email": "alice@example.com",
+     *      "email_verified": true,
+     *      "github_id": null,
+     *      "destination": "451744",
+     *      "profile_picture": "https://wallet.example/api/users/alice/profilepic",
+     *      "name": "Alice",
+     *      "phone": null,
+     *      "address1": null,
+     *      "address2": null,
+     *      "city": null,
+     *      "region": null,
+     *      "country": null,
+     *      "zip_code": null,
+     *      "invite_code": null,
+     *      "identifier": "alice@wallet.example",
+     *      "balance": 987,
+     *      "minimum_allowed_balance": "0"
+     *    }
+     */
     static async changePassword (ctx) {
       const dbUser = await User.findOne({ where: { username: ctx.body.username } })
 
@@ -194,6 +266,45 @@ function AuthControllerFactory (deps) {
       ctx.body = dbUser.getDataExternal()
     }
 
+    /**
+     * @api {post} /auth/profilepic Change Profile Picture
+     * @apiName ChangeProfilePicture
+     * @apiGroup Auth
+     * @apiVersion 1.0.0
+     * @apiPermission user
+     *
+     * @apiDescription Change user profile picture
+     *
+     * @apiParam {File} file picture
+     *
+     * @apiExample {shell} Change Password
+     *    curl -X POST
+     *    https://wallet.example/auth/profilepic
+     *
+     * @apiSuccessExample {json} 200 Response:
+     *    HTTP/1.1 200 OK
+     *    {
+     *      "id": 1
+     *      "username": "alice",
+     *      "email": "alice@example.com",
+     *      "email_verified": true,
+     *      "github_id": null,
+     *      "destination": "451744",
+     *      "profile_picture": "https://wallet.example/api/users/alice/profilepic",
+     *      "name": "Alice",
+     *      "phone": null,
+     *      "address1": null,
+     *      "address2": null,
+     *      "city": null,
+     *      "region": null,
+     *      "country": null,
+     *      "zip_code": null,
+     *      "invite_code": null,
+     *      "identifier": "alice@wallet.example",
+     *      "balance": 987,
+     *      "minimum_allowed_balance": "0"
+     *    }
+     */
     static async changeProfilePicture (ctx) {
       const file = ctx.request.body.files && ctx.request.body.files.file
 
