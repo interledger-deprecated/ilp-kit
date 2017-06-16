@@ -47,6 +47,10 @@ function WebfingerControllerFactory (deps) {
      *          "href": "https://wallet.example/socket.io"
      *        },
      *        {
+     *          'rel': 'https://interledger.org/rel/ilpAddress',
+     *          'href': "alice.wallet"
+     *        },
+     *        {
      *          "rel": "https://interledger.org/rel/sender/payment",
      *          "href": "https://wallet.example/payments"
      *        },
