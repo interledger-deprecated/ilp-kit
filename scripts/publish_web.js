@@ -7,6 +7,10 @@ const exec = require('child_process').execSync
 
 let cwd = path.resolve(__dirname, '..')
 
+const branch = process.env.CIRCLE_BRANCH
+
+console.log('publish_web:12', branch)
+
 // Get current web branch
 console.log('\n# Cloning web branch')
 exec('rm -rf web', { cwd })
@@ -16,7 +20,7 @@ exec('git clone git@github.com:interledgerjs/ilp-kit.git --branch gh-pages --sin
 console.log('\n# Updating API docs')
 exec('npm run apidoc', { cwd })
 exec('mkdir -p web/apidoc', { cwd })
-exec('cp -r apidoc-out/* web/apidoc/', { cwd })
+exec('cp -r apidoc-out/* web/apidoc/' + (branch === 'master' ? 'master/' : ''), { cwd })
 
 // Update apidoc-template
 console.log('\n# Updating API doc template')
