@@ -120,7 +120,8 @@ ILP kit consists of:
 The backend is responsible for communicating with the ILP ledger, creating accounts, sending payments and keeping the payment history.
 
 #### API docs
-[https://interledgerjs.github.io/ilp-kit/apidoc](https://interledgerjs.github.io/ilp-kit/apidoc/)
+- stable (`release` branch) - [https://interledgerjs.github.io/ilp-kit/apidoc](https://interledgerjs.github.io/ilp-kit/apidoc/)
+- latest (`master` branch)  - [https://interledgerjs.github.io/ilp-kit/apidoc/master](https://interledgerjs.github.io/ilp-kit/apidoc/master/)
 
 #### How it works
 
