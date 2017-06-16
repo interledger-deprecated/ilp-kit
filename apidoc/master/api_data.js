@@ -440,7 +440,7 @@ define({ "api": [
       "examples": [
         {
           "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"subject\": \"acct:alice@wallet.example\",\n  \"links\": [\n    {\n      \"rel\": \"https://interledger.org/rel/ledgerUri\",\n      \"href\": \"https://wallet.example/ledger\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/socketIOUri\",\n      \"href\": \"https://wallet.example/socket.io\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/sender/payment\",\n      \"href\": \"https://wallet.example/payments\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/sender/quote\",\n      \"href\": \"https://wallet.example/payments/quote\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/spsp/v2\",\n      \"href\": \"https://wallet.example/spsp/alice\"\n    }\n  ]\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"subject\": \"acct:alice@wallet.example\",\n  \"links\": [\n    {\n      \"rel\": \"https://interledger.org/rel/ledgerUri\",\n      \"href\": \"https://wallet.example/ledger\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/socketIOUri\",\n      \"href\": \"https://wallet.example/socket.io\"\n    },\n    {\n      'rel': 'https://interledger.org/rel/ilpAddress',\n      'href': \"alice.wallet\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/sender/payment\",\n      \"href\": \"https://wallet.example/payments\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/sender/quote\",\n      \"href\": \"https://wallet.example/payments/quote\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/spsp/v2\",\n      \"href\": \"https://wallet.example/spsp/alice\"\n    }\n  ]\n}",
           "type": "json"
         }
       ]
@@ -665,6 +665,205 @@ define({ "api": [
     "groupTitle": "Payment"
   },
   {
+    "type": "delete",
+    "url": "/peers/:id",
+    "title": "Delete peer",
+    "name": "DeletePeers",
+    "group": "Peer",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "UUID",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Peer id</p>"
+          }
+        ]
+      }
+    },
+    "description": "<p>Delete peer</p>",
+    "examples": [
+      {
+        "title": "Delete peer",
+        "content": "curl -X DELETE -H \"Authorization: Basic YWxpY2U6YWxpY2U=\"\nhttps://wallet.example/peers/963d89dc-a211-456c-8e9f-897d379aae2a",
+        "type": "shell"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "200 Response:",
+          "content": "HTTP/1.1 204 OK",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "api/src/controllers/peers.js",
+    "groupTitle": "Peer"
+  },
+  {
+    "type": "GET",
+    "url": "/peers",
+    "title": "Get all peers",
+    "name": "GetPeers",
+    "group": "Peer",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "description": "<p>Get all peers</p>",
+    "examples": [
+      {
+        "title": "Get all peers",
+        "content": "curl -X GET -H \"Authorization: Basic YWxpY2U6YWxpY2U=\"\nhttps://wallet.example/peers",
+        "type": "shell"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "200 Response:",
+          "content": "HTTP/1.1 200 OK\n[\n  {\n     \"id\": \"963d89dc-a211-456c-8e9f-897d379aae2a\",\n     \"hostname\": \"wallet.example\",\n     \"limit\": 100000000000,\n     \"currencyCode\": \"USD\",\n     \"currencyScale\": 9,\n     \"destination\": \"269276\",\n     \"created_at\": \"2017-06-09T01:13:24.236Z\",\n     \"updated_at\": \"2017-06-09T01:13:24.236Z\",\n     \"online\": true\n  }\n]",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "api/src/controllers/peers.js",
+    "groupTitle": "Peer"
+  },
+  {
+    "type": "post",
+    "url": "/peers",
+    "title": "Add a peer",
+    "name": "PostPeers",
+    "group": "Peer",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "description": "<p>Add a peer</p>",
+    "examples": [
+      {
+        "title": "Add a peer",
+        "content": "curl -X POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\n'{\n    \"hostname\": \"wallet.example\",\n    \"limit\": \"100\",\n    \"currencyCode\": \"USD\"\n}'\nhttps://wallet.example/peers",
+        "type": "shell"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "201 Response:",
+          "content": "HTTP/1.1 201 OK\n{\n   \"id\": \"963d89dc-a211-456c-8e9f-897d379aae2a\",\n   \"hostname\": \"wallet.example\",\n   \"limit\": 100000000000,\n   \"currencyCode\": \"USD\",\n   \"currencyScale\": 9,\n   \"destination\": \"269276\",\n   \"created_at\": \"2017-06-09T01:13:24.236Z\",\n   \"updated_at\": \"2017-06-09T01:13:24.236Z\",\n   \"online\": true\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "api/src/controllers/peers.js",
+    "groupTitle": "Peer"
+  },
+  {
+    "type": "post",
+    "url": "/peers/:id",
+    "title": "Update peer",
+    "name": "PutPeers",
+    "group": "Peer",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "description": "<p>Update peer</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "UUID",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Peer id</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Update peer",
+        "content": "curl -X PUT -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\n'{\n    \"limit\": \"200\"\n}'\nhttps://wallet.example/peers/963d89dc-a211-456c-8e9f-897d379aae2a",
+        "type": "shell"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "200 Response:",
+          "content": "HTTP/1.1 200 OK\n{\n   \"id\": \"963d89dc-a211-456c-8e9f-897d379aae2a\",\n   \"hostname\": \"wallet.example\",\n   \"limit\": 200000000000,\n   \"currencyCode\": \"USD\",\n   \"currencyScale\": 9,\n   \"destination\": \"269276\",\n   \"created_at\": \"2017-06-09T01:13:24.236Z\",\n   \"updated_at\": \"2017-06-09T01:13:24.236Z\",\n   \"online\": true\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "api/src/controllers/peers.js",
+    "groupTitle": "Peer"
+  },
+  {
+    "type": "post",
+    "url": "/peers/:id/settlement_methods",
+    "title": "Get peer settlement methods",
+    "name": "getSettlementMethods",
+    "group": "Peer",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "description": "<p>Get peer settlement methods</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "UUID",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Peer id</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Get peer settlement methods",
+        "content": "curl -X GET -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\nhttps://wallet.example/peers/963d89dc-a211-456c-8e9f-897d379aae2a/settlement_methods",
+        "type": "shell"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "200 Response:",
+          "content": "HTTP/1.1 200 OK\n[\n  {\n    \"id\": \"e985594e-5e39-45bc-b856-4d4550aaeb23\",\n    \"name\": \"Paypal\",\n    \"type\": \"paypal\",\n    \"description\": null,\n    \"uri\": \"https://wallet2.example/settle/paypal/122940?amount=2.00598\",\n    \"logo\": \"https://wallet2.example/paypal.png\"\n  }\n]",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "api/src/controllers/peers.js",
+    "groupTitle": "Peer"
+  },
+  {
     "type": "get",
     "url": "/receivers/:username",
     "title": "Get receiver details",
@@ -702,6 +901,370 @@ define({ "api": [
     },
     "filename": "api/src/controllers/users.js",
     "groupTitle": "Receiver"
+  },
+  {
+    "type": "GET",
+    "url": "/settlements/:id",
+    "title": "Get Settlement",
+    "name": "GetSettlement",
+    "group": "Settlement",
+    "version": "1.0.0",
+    "description": "<p>Get Settlement</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "UUID",
+            "optional": false,
+            "field": "id",
+            "description": "<p>settlement id</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Get destination",
+        "content": "curl -X GET\nhttps://wallet.example/settlements/da978aa3-93c1-4899-8507-6888cb4ce8ca",
+        "type": "shell"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "200 Response:",
+          "content": "HTTP/1.1 200 OK\n{\n    \"amount\": 110,\n    \"currency\": \"USD\",\n    \"method\": \"paypal\",\n    \"date\": \"2017-03-16T17:03:02.767Z\",\n    \"peer\": null,\n    \"user\": \"alice\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "api/src/controllers/settlements.js",
+    "groupTitle": "Settlement"
+  },
+  {
+    "type": "GET",
+    "url": "/settlements",
+    "title": "Get Settlements",
+    "name": "GetSettlement",
+    "group": "Settlement",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "description": "<p>Get Settlement</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "string",
+            "optional": false,
+            "field": "type",
+            "description": "<p>settlement type. 'peer' or 'user'</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Get destination",
+        "content": "curl -X GET -H \"Authorization: Basic YWxpY2U6YWxpY2U=\"\nhttps://wallet.example/settlements",
+        "type": "shell"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "200 Response:",
+          "content": "HTTP/1.1 200 OK\n[\n   {\n       \"id\": \"da978aa3-93c1-4899-8507-6888cb4ce8ca\",\n       \"amount\": 110,\n       \"currency\": \"USD\",\n       \"created_at\": \"2017-03-16T17:03:02.767Z\",\n       \"updated_at\": \"2017-03-16T17:03:02.767Z\",\n       \"peer_id\": null,\n       \"user_id\": 2,\n       \"settlement_method_id\": \"7b4a73b0-19c5-46ed-8905-febeae2b0a05\",\n       \"Peer\": null,\n       \"User\": {\n           \"id\": 2,\n           \"username\": \"alice\",\n           \"email\": \"alice@example.com\",\n           \"email_verified\": true,\n           \"github_id\": null,\n           \"destination\": \"451744\",\n           \"profile_picture\": \"upload_3a252b77b8f4c76f3037d7df30892441_square.jpeg\",\n           \"name\": \"Alice\",\n           \"phone\": null,\n           \"address1\": null,\n           \"address2\": null,\n           \"city\": null,\n           \"region\": null,\n           \"country\": null,\n           \"zip_code\": null,\n           \"created_at\": \"2016-12-02T22:27:49.360Z\",\n           \"updated_at\": \"2017-06-02T20:20:29.214Z\",\n           \"invite_code\": null\n       },\n       \"SettlementMethod\": {\n           \"id\": \"7b4a73b0-19c5-46ed-8905-febeae2b0a05\",\n           \"type\": \"paypal\",\n           \"name\": \"Paypal\",\n           \"logo\": null,\n           \"description\": null,\n           \"uri\": null,\n           \"enabled\": true,\n           \"options\": {\n               \"clientId\": \"...\",\n               \"secret\": \"...\",\n               \"sandbox\": true\n           },\n           \"created_at\": \"2017-02-02T19:20:04.190Z\",\n           \"updated_at\": \"2017-03-07T01:48:29.769Z\"\n       },\n       \"ActivityLogs\": [\n           {\n               \"id\": \"67407a5e-08df-46e2-b7fe-41b46b067626\",\n               \"stream_id\": null,\n               \"created_at\": \"2017-03-16T17:03:02.813Z\",\n               \"updated_at\": \"2017-03-16T17:03:02.813Z\",\n               \"user_id\": 2,\n               \"ActivityLogsItem\": {\n                   \"id\": 4482,\n                   \"activity_log_id\": \"67407a5e-08df-46e2-b7fe-41b46b067626\",\n                   \"item_type\": \"settlement\",\n                   \"item_id\": \"da978aa3-93c1-4899-8507-6888cb4ce8ca\",\n                   \"created_at\": \"2017-03-16T17:03:02.847Z\",\n                   \"updated_at\": \"2017-03-16T17:03:02.847Z\"\n               }\n           }\n       ]\n   }\n]",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "api/src/controllers/settlements.js",
+    "groupTitle": "Settlement"
+  },
+  {
+    "type": "GET",
+    "url": "/destinations/:destination",
+    "title": "Get destination",
+    "name": "GetSettlementDestination",
+    "group": "Settlement",
+    "version": "1.0.0",
+    "description": "<p>Get all settlement methods</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "int",
+            "optional": false,
+            "field": "destination",
+            "description": "<p>destination</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Get destination",
+        "content": "curl -X GET\nhttps://wallet.example/destinations/813133",
+        "type": "shell"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "200 Response:",
+          "content": "HTTP/1.1 200 OK\n{\n   \"type\": \"user\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "api/src/controllers/settlements.js",
+    "groupTitle": "Settlement"
+  },
+  {
+    "type": "delete",
+    "url": "/settlement_methods/:id",
+    "title": "Delete settlement method",
+    "name": "DeleteSettlementMethod",
+    "group": "SettlementMethod",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "UUID",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Settlement Method id</p>"
+          }
+        ]
+      }
+    },
+    "description": "<p>Delete Settlement Method</p>",
+    "examples": [
+      {
+        "title": "Delete Settlement Method",
+        "content": "curl -X DELETE -H \"Authorization: Basic YWxpY2U6YWxpY2U=\"\nhttps://wallet.example/settlement_methods/2e0e85a6-64f1-4c57-aee4-898237a27486",
+        "type": "shell"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "200 Response:",
+          "content": "HTTP/1.1 204 OK",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "api/src/controllers/settlement_methods.js",
+    "groupTitle": "SettlementMethod"
+  },
+  {
+    "type": "GET",
+    "url": "/settlement_methods",
+    "title": "Get all settlement methods",
+    "name": "GetSettlementMethods",
+    "group": "SettlementMethod",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "description": "<p>Get all settlement methods</p>",
+    "examples": [
+      {
+        "title": "Get all settlement methods",
+        "content": "curl -X GET -H \"Authorization: Basic YWxpY2U6YWxpY2U=\"\nhttps://wallet.example/settlement_methods",
+        "type": "shell"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "200 Response:",
+          "content": "HTTP/1.1 200 OK\n[\n  {\n    \"name\": \"Paypal\",\n    \"type\": \"paypal\",\n    \"logo\": null,\n    \"description\": null,\n    \"uri\": null,\n    \"logoUrl\": \"https://wallet1.com/paypal.png\"\n  }\n]",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "api/src/controllers/settlement_methods.js",
+    "groupTitle": "SettlementMethod"
+  },
+  {
+    "type": "POST",
+    "url": "/settlement_methods",
+    "title": "Add a settlement method",
+    "name": "PostSettlementMethods",
+    "group": "SettlementMethod",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "description": "<p>Add a settlement method</p>",
+    "examples": [
+      {
+        "title": "Add a settlement method",
+        "content": "curl -X POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\n'{\n    \"type\": \"Paypal\"\n}'\nhttps://wallet.example/peers",
+        "type": "shell"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "201 Response:",
+          "content": "HTTP/1.1 201 OK\n{\n    \"id\": \"2e0e85a6-64f1-4c57-aee4-898237a27486\",\n    \"name\": \"Paypal\",\n    \"type\": \"paypal\",\n    \"enabled\": false,\n    \"updated_at\": \"2017-06-14T17:52:20.742Z\",\n    \"created_at\": \"2017-06-14T17:52:20.742Z\",\n    \"logo\": null,\n    \"description\": null,\n    \"uri\": null,\n    \"options\": null\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "api/src/controllers/settlement_methods.js",
+    "groupTitle": "SettlementMethod"
+  },
+  {
+    "type": "put",
+    "url": "/settlement_methods/:id",
+    "title": "Update settlement method",
+    "name": "PutSettlementMethods",
+    "group": "SettlementMethod",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "description": "<p>Update settlement method</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "UUID",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Settlement Method id</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Update settlement method",
+        "content": "curl -X PUT -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\n'{\n    \"enabled\": true\n}'\nhttps://wallet.example/settlement_methods/2e0e85a6-64f1-4c57-aee4-898237a27486",
+        "type": "shell"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "200 Response:",
+          "content": "HTTP/1.1 200 OK\n{\n    \"id\": \"2e0e85a6-64f1-4c57-aee4-898237a27486\",\n    \"name\": \"Paypal\",\n    \"type\": \"paypal\",\n    \"enabled\": true,\n    \"updated_at\": \"2017-06-14T17:52:20.742Z\",\n    \"created_at\": \"2017-06-14T17:52:20.742Z\",\n    \"logo\": null,\n    \"description\": null,\n    \"uri\": null,\n    \"options\": null\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "api/src/controllers/settlement_methods.js",
+    "groupTitle": "SettlementMethod"
+  },
+  {
+    "type": "POST",
+    "url": "/settlements/:destination/paypal",
+    "title": "Get Paypal link",
+    "name": "PostPaypalLink",
+    "group": "Settlement",
+    "version": "1.0.0",
+    "description": "<p>Get Paypal link</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "int",
+            "optional": false,
+            "field": "destination",
+            "description": "<p>destination</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Get destination",
+        "content": "curl -X POST\nhttps://wallet.example/settlements/813133/paypal",
+        "type": "shell"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "200 Response:",
+          "content": "HTTP/1.1 200 OK\n{\n   \"approvalLink\": \"https://www.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=EC-7R410477WT7455126\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "api/src/controllers/settlements.js",
+    "groupTitle": "Settlement"
+  },
+  {
+    "type": "POST",
+    "url": "/settlements/:destination",
+    "title": "Settle",
+    "name": "PostSettle",
+    "group": "Settlement",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "description": "<p>Settle</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "int",
+            "optional": false,
+            "field": "destination",
+            "description": "<p>destination</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Settle",
+        "content": "curl -X POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\n'{\n    \"amount\": \"10\",\n    \"currency\": \"USD\",\n    \"settlement_method\": \"7b4a73b0-19c5-46ed-8905-febeae2b0a05\"\n}'\nhttps://wallet.example/settlements/813133",
+        "type": "shell"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "204 Response:",
+          "content": "HTTP/1.1 204 OK",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "api/src/controllers/settlements.js",
+    "groupTitle": "Settlement"
   },
   {
     "type": "get",
@@ -899,5 +1462,127 @@ define({ "api": [
     },
     "filename": "api/src/controllers/users.js",
     "groupTitle": "User"
+  },
+  {
+    "type": "GET",
+    "url": "/withdrawals",
+    "title": "Get all withdrawals",
+    "name": "GetWithdrawals",
+    "group": "Withdrawal",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "description": "<p>Get all withdrawals</p>",
+    "examples": [
+      {
+        "title": "Get all withdrawals",
+        "content": "curl -X GET -H \"Authorization: Basic YWxpY2U6YWxpY2U=\"\nhttps://wallet.example/withdrawals",
+        "type": "shell"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "200 Response:",
+          "content": "HTTP/1.1 200 OK\n[\n   {\n       \"id\": \"23163cfd-cc83-4991-9b10-f89d1b2fc095\",\n       \"amount\": 1,\n       \"status\": \"pending\",\n       \"transfer_id\": \"abf0f73f-4c64-4c84-864d-a3b1a1df2faa\",\n       \"created_at\": \"2017-06-13T22:36:18.899Z\",\n       \"updated_at\": \"2017-06-13T22:36:18.899Z\",\n       \"user_id\": 2,\n       \"User\": {\n           \"id\": 2,\n           \"username\": \"alice\",\n           \"email\": \"alice@example.com\",\n           \"email_verified\": true,\n           \"github_id\": null,\n           \"destination\": \"451744\",\n           \"profile_picture\": \"upload_3a252b77b8f4c76f3037d7df30892441_square.jpeg\",\n           \"name\": \"Alice Jan\",\n           \"phone\": null,\n           \"address1\": null,\n           \"address2\": null,\n           \"city\": null,\n           \"region\": null,\n           \"country\": null,\n           \"zip_code\": null,\n           \"created_at\": \"2016-12-02T22:27:49.360Z\",\n           \"updated_at\": \"2017-06-02T20:20:29.214Z\",\n           \"invite_code\": null\n       },\n       \"ActivityLogs\": [\n           {\n               \"id\": \"8289447f-7269-420e-894e-d61cbf2ffd87\",\n               \"stream_id\": null,\n               \"created_at\": \"2017-06-13T22:36:18.964Z\",\n               \"updated_at\": \"2017-06-13T22:36:18.964Z\",\n               \"user_id\": 2,\n               \"ActivityLogsItem\": {\n                   \"id\": 4894,\n                   \"activity_log_id\": \"8289447f-7269-420e-894e-d61cbf2ffd87\",\n                   \"item_type\": \"withdrawal\",\n                   \"item_id\": \"23163cfd-cc83-4991-9b10-f89d1b2fc095\",\n                   \"created_at\": \"2017-06-13T22:36:18.995Z\",\n                   \"updated_at\": \"2017-06-13T22:36:18.995Z\"\n               }\n           }\n       ]\n   }\n]",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "api/src/controllers/withdrawals.js",
+    "groupTitle": "Withdrawal"
+  },
+  {
+    "type": "POST",
+    "url": "/withdrawals/:id",
+    "title": "Withdraw",
+    "name": "PutWithdrawals",
+    "group": "Withdrawal",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "user"
+      }
+    ],
+    "description": "<p>Withdraw</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "UUID",
+            "optional": false,
+            "field": "id",
+            "description": "<p>withdrawal id</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Withdraw",
+        "content": "curl -X POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\n'{\n    \"amount\": 10\n}'\nhttps://wallet.example/withdrawals/23163cfd-cc83-4991-9b10-f89d1b2fc095",
+        "type": "shell"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "201 Response:",
+          "content": "HTTP/1.1 201 OK",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "api/src/controllers/withdrawals.js",
+    "groupTitle": "Withdrawal"
+  },
+  {
+    "type": "PUT",
+    "url": "/withdrawals/:id",
+    "title": "Update withdrawal",
+    "name": "PutWithdrawals",
+    "group": "Withdrawal",
+    "version": "1.0.0",
+    "permission": [
+      {
+        "name": "admin"
+      }
+    ],
+    "description": "<p>Update withdrawal</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "UUID",
+            "optional": false,
+            "field": "id",
+            "description": "<p>withdrawal id</p>"
+          }
+        ]
+      }
+    },
+    "examples": [
+      {
+        "title": "Update withdrawal",
+        "content": "curl -X PUT -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\n'{\n    \"status\": \"complete\"\n}'\nhttps://wallet.example/withdrawals/23163cfd-cc83-4991-9b10-f89d1b2fc095",
+        "type": "shell"
+      }
+    ],
+    "success": {
+      "examples": [
+        {
+          "title": "200 Response:",
+          "content": " HTTP/1.1 200 OK\n{\n  \"id\": \"23163cfd-cc83-4991-9b10-f89d1b2fc095\",\n  \"amount\": 1,\n  \"status\": \"complete\",\n  \"transfer_id\": \"abf0f73f-4c64-4c84-864d-a3b1a1df2faa\",\n  \"created_at\": \"2017-06-13T22:36:18.899Z\",\n  \"updated_at\": \"2017-06-15T18:51:42.372Z\",\n  \"user_id\": 2\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "api/src/controllers/withdrawals.js",
+    "groupTitle": "Withdrawal"
   }
 ] });
