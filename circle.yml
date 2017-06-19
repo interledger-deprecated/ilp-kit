@@ -14,7 +14,6 @@ test:
     - npm test
     - npm run test-mocha
     - ./node_modules/.bin/integration-loader && ./node_modules/.bin/integration setup
-    - cd ./integration-test/ilp-kit && npm rebuild node-sass && npm run build
     - ./node_modules/.bin/integration test index
     - ./node_modules/.bin/integration test advanced
     - ./node_modules/.bin/integration test connector_first

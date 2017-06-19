@@ -5,7 +5,6 @@ node_modules/
 /coverage/
 *.iml
 webpack-stats.json
-webpack-assets.json
 npm-debug.log*
 src/theme/variables-custom.scss
 uploads/
