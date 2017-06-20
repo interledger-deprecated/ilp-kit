@@ -88,8 +88,8 @@
       "value": "true"
     },
     "CONNECTOR_LEDGERS": {
-      "description": "[NEEDS CHANGE] Look into the JSON, and replace ~TWO~ <APP-NAME>, plus choose a connector password",
-      "value": "{\"g.<APP-NAME>.\":{\"currency\":\"USD\",\"plugin\":\"ilp-plugin-bells\",\"options\":{\"account\":\"https://<APP-NAME>.herokuapp.com/ledger/accounts/connector\",\"username\":\"connector\",\"password\":\"connector\"}}}"
+      "description": "[NEEDS CHANGE] Look into the JSON, and replace <LEDGER-NAME>, <APP-NAME>, plus choose a connector password",
+      "value": "{\"g.<LEDGER-NAME>.\":{\"currency\":\"USD\",\"plugin\":\"ilp-plugin-bells\",\"options\":{\"account\":\"https://<APP-NAME>.herokuapp.com/ledger/accounts/connector\",\"username\":\"connector\",\"password\":\"connector\"}}}"
     },
     "CONNECTOR_LOG_LEVEL": {
       "value": "info"
@@ -116,8 +116,8 @@
       "value": "9"
     },
     "LEDGER_ILP_PREFIX": {
-      "description": "[NEEDS CHANGE] Change to your appname (no spaces, alltogether)",
-      "value": "g.<APPNAME>."
+      "description": "[NEEDS CHANGE] Change to your ledger name (no spaces, alltogether)",
+      "value": "g.<LEDGER-NAME>."
     },
     "LEDGER_PRECISION": {
       "value": "10"
