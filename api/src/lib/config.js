@@ -114,7 +114,7 @@ module.exports = class WalletConfig {
     const hash = await new Promise((resolve, reject) => {
       exec('git rev-parse --short HEAD', { cwd: __dirname }, (err, stdout) => {
         if (err) {
-          reject(err)
+          resolve('unknown')
         } else {
           resolve(stdout.split('\n').join(''))
         }

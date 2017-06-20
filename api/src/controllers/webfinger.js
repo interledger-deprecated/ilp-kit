@@ -136,6 +136,7 @@ function WebfingerControllerFactory (deps) {
         'subject': config.data.get('client_host'),
         'properties': {
           'https://interledger.org/rel/publicKey': config.data.getIn(['connector', 'public_key']),
+          'https://interledger.org/rel/title': config.data.getIn(['client_title']),
           'https://interledger.org/rel/protocolVersion': 'Compatible: ilp-kit v' + config.data.getIn(['ilpKitVersion'])
         },
         'links': [
