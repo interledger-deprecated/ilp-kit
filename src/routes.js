@@ -183,6 +183,14 @@ export default (store) => {
     }, 'withdraw')
   }
 
+  const getPay = (nextState, cb) => {
+    require.ensure(['./containers/Pay/Pay'], require => {
+      cb(null, require('./containers/Pay/Pay'))
+
+      store.dispatch(locationUpdate())
+    }, 'pay')
+  }
+
   /**
    * Please keep routes in alphabetical order
    */
@@ -227,6 +235,7 @@ export default (store) => {
         <Route path='settlement/:id' getComponent={getSettlementInfo} />
         <Route path='withdraw' getComponent={getWithdraw} />
         <Route path='verify/:username/:verifyCode' getComponent={rootComponent} />
+        <Route path='pay/:username' getComponent={getPay} />
 
         { /* Catch all route */ }
         <Route path='*' component={NotFound} status={404} />
