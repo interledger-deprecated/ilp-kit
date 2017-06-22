@@ -24,6 +24,11 @@ export default function reducer (state = initialState, action = {}) {
         ...state,
         loaded: true
       }
+    case types.GET_USER_SUCCESS:
+      return {
+        ...state,
+        user: action.result
+      }
     default:
       return state
   }

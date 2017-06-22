@@ -164,6 +164,10 @@ export const LOAD_USERS = 'LOAD_USERS_PENDING'
 export const LOAD_USERS_SUCCESS = 'LOAD_USERS_SUCCESS'
 export const LOAD_USERS_FAIL = 'LOAD_USERS_FAIL'
 
+export const GET_USER = 'GET_USER'
+export const GET_USER_SUCCESS = 'GET_USER_SUCCESS'
+export const GET_USER_FAIL = 'GET_USER_FAIL'
+
 // Withdraw
 export const WITHDRAW = 'WITHDRAW'
 export const WITHDRAW_SUCCESS = 'WITHDRAW_SUCCESS'
