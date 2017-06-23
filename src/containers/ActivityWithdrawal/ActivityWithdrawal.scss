@@ -30,8 +30,14 @@ $screen-md: 992px;
   padding-left: 15px;
 
   .message {
+    display: block;
     font-size: 18px;
-    line-height: 35px;
+    padding: 8px 0;
+
+    .status {
+      font-size: 13px;
+      color: $muted-text-color;
+    }
   }
   .date {
     font-size: 13px;
@@ -47,8 +53,9 @@ $screen-md: 992px;
 .amount {
   font-size: 22px;
   text-align: right;
-  line-height: 53px;
+  padding: 20px 0;
   color: $activity-negative;
+  word-wrap: break-word;
 
   @media (max-width: $screen-md) {
     font-size: 20px;

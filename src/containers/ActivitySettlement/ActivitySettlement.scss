@@ -28,8 +28,18 @@ $screen-md: 992px;
   float: left;
   width: 85%;
   padding-left: 15px;
-  font-size: 18px;
-  line-height: 53px;
+
+  .message {
+    display: block;
+    font-size: 18px;
+    padding: 8px 0;
+  }
+
+  .date {
+    font-size: 13px;
+    line-height: 15px;
+    color: $activity-date-text-color;
+  }
 
   @include mobile {
     width: 80%;
@@ -39,8 +49,9 @@ $screen-md: 992px;
 .amount {
   font-size: 22px;
   text-align: right;
-  line-height: 53px;
+  padding: 20px 0;
   color: $activity-positive;
+  word-wrap: break-word;
 
   @media (max-width: $screen-md) {
     font-size: 20px;

@@ -82,7 +82,7 @@ export default class ActivityWithdrawal extends Component {
             <i className={cx('fa', 'fa-minus', 'icon')} />
             <div className={cx('description')}>
               {/* TODO:UX include the withdrawal method */}
-              <span className={cx('message')}>Withdrawal ({withdrawal.status})</span>
+              <span className={cx('message')}>Withdrawal <span className={cx('status')}>({withdrawal.status})</span></span>
               <div className={cx('date')} title={moment(withdrawal.recent_date).format('LLL')}>
                 {advancedMode && <span>{moment(withdrawal.recent_date || withdrawal.created_at).format('MMM D, YYYY LTS')} - </span>}
                 <TimeAgo date={withdrawal.recent_date || withdrawal.created_at} formatter={this.timeAgoFormatter} />

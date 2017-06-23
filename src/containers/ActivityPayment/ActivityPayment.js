@@ -137,12 +137,13 @@ export default class ActivityPayment extends Component {
   }
 
   toggleTransfers = event => {
+    // Don't expand when clicking on links
+    if (event.target.nodeName === 'A') return
+
     this.setState({
       ...this.state,
       showTransfers: !this.state.showTransfers
     })
-
-    event.preventDefault()
   }
 
   handleCounterpartyClick = e => {
@@ -181,7 +182,7 @@ export default class ActivityPayment extends Component {
 
     // TODO payments grouping / message
     return (
-      <div className={cx('ActivityPayment')}>
+      <div className={cx('ActivityPayment')} onClick={this.toggleTransfers} title='Click to expand'>
         <div className='row row-mobile'>
           <div className='col-xs-8'>
             <img src={profilePic} className={cx('profilePic')} />
@@ -228,9 +229,7 @@ export default class ActivityPayment extends Component {
             </AnimateOnChange>
 
             <div className={cx('transfersCount')}>
-              <a href='' onClick={this.toggleTransfers}>
-                {payment.transfers.length > 1 ? payment.transfers.length + ' transfers' : '1 transfer'}
-              </a>
+              {payment.transfers.length > 1 ? payment.transfers.length + ' transfers' : '1 transfer'}
             </div>
           </div>
         </div>
