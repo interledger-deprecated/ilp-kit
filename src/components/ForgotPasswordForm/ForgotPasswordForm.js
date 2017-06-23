@@ -72,7 +72,7 @@ export default class ForgotPasswordForm extends Component {
               focus
               autoCapitalize='off' />
           </div>
-          <div className='row'>
+          <div>
             <button type='submit' className='btn btn-success btn-lg' disabled={pristine || (invalid && !submitFailed) || submitting}>
               {submitting ? ' Submitting...' : ' Submit'}
             </button>

@@ -4,21 +4,20 @@ html,
 body {
   height: 100%;
   background: #fff;
+
+  &.guest {
+    background: #333333;
+  }
 }
 
 #content {
   display: table;
   width: 100%;
   height: inherit;
-
-  @include mobile {
-    padding-bottom: 50px;
-  }
 }
 #app {
   display: table-cell;
 }
-
 a {
   cursor: pointer;
 }

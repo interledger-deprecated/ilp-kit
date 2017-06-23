@@ -97,6 +97,16 @@ export default class App extends Component {
         this.props.verify(params.username, params.verifyCode)
       }
     }
+
+    // Disable scaling
+    document.addEventListener('touchmove', function(event) {
+      event = event.originalEvent || event
+      if (event.scale !== 1) {
+        event.preventDefault()
+      }
+    }, false)
+
+    this.fixAppHeight()
   }
 
   componentWillReceiveProps (nextProps) {
@@ -108,6 +118,14 @@ export default class App extends Component {
       // logout
       this.props.pushState('/')
     }
+  }
+
+  fixAppHeight = () => {
+    // Viewport height
+    const height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
+    document.getElementsByClassName(cx('App'))[0].style['min-height'] = height + 'px'
+
+    window.addEventListener('resize', this.fixAppHeight, false)
   }
 
   connect = (props = this.props) => {
@@ -149,7 +167,7 @@ export default class App extends Component {
     const { user, config = {}, advancedMode, verified, verificationEmailSent } = this.props
 
     return (
-      <div className={cx('App', !user && 'darkBg')}>
+      <div className={cx('App', !user && 'guest')}>
         <Helmet defaultTitle={config.title} titleTemplate={config.title && '%s - ' + config.title}>
           <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
           <meta property='og:type' content='website' />

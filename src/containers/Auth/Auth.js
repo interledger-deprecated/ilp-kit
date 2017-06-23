@@ -45,8 +45,16 @@ export default class Home extends Component {
     this.setCurrentView()
   }
 
+  componentDidMount () {
+    document.getElementsByTagName('body')[0].className = 'guest'
+  }
+
   componentWillReceiveProps (nextProps) {
     this.setCurrentView(nextProps)
+  }
+
+  componentWillUnmount () {
+    document.getElementsByTagName('body')[0].className = ''
   }
 
   setCurrentView (props) {
@@ -74,7 +82,7 @@ export default class Home extends Component {
     const appConfig = this.props.config || {}
 
     return (
-      <div className={cx('Auth', 'container')}>
+      <div className={cx('Auth')}>
         <div>
           <div className={cx('header')}>
             <h1 className={cx('title')}>{appConfig.title}</h1>
