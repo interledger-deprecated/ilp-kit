@@ -17,14 +17,13 @@ ILP wallet with hosted ledger and connector instances
 [heroku-deploy-url]: https://heroku.com/deploy?template=https://github.com/interledgerjs/ilp-kit/tree/release
 [circle-image]: https://circleci.com/gh/interledgerjs/ilp-kit.svg?style=shield&circle-token=65d802e1ea641aabcc95f8d28f2c6ade577716a9
 [circle-url]: https://circleci.com/gh/interledgerjs/ilp-kit
-[fossa-image]: https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Finterledgerjs%2Filp-kit.svg?type=shield
+[fossa-image]: https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Finterledgerjs%2Filp-kit.svg?type=small
 [fossa-url]: https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Finterledgerjs%2Filp-kit?ref=badge_shield
 
 
 ## [Setup](https://github.com/interledgerjs/ilp-kit/blob/master/docs/SETUP.md)
 
 * The easy way: [with docker-compose](https://github.com/interledgerjs/ilp-kit-docker-compose)
-* The hard way: [ubuntu manual setup](https://github.com/interledgerjs/ilp-kit/blob/master/docs/SETUP.md)
 * On Google Cloud Engine: https://github.com/sappenin/ilpkit-google-cloud/tree/master/ilpkit-gce-single
 * On Heroku: https://heroku.com/deploy?template=https://github.com/interledgerjs/ilp-kit/tree/release
 
