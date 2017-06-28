@@ -56,8 +56,28 @@ export default class Pay extends Component {
     this.props.getUser(this.props.params.username)
   }
 
-  handlePay = () => {
+  handlePay = data => {
+    const methodData = [
+      {
+        supportedMethods: ['interledger'],
+        data: {
+          spspEndpoint: `alice@blue.ilpdemo.org`
+        }
+      }
+    ]
+    const details = {
+      total: {
+        label: 'Sending amount',
+        amount: { currency: this.props.user.currencyCode, value: data.amount }
+      }
+    }
 
+    const paymentRequest = new PaymentRequest(methodData, details)
+    paymentRequest.show()
+      .then(paymentResponse => {
+        console.log('payment response:', paymentResponse)
+      })
+      .catch(console.log)
   }
 
   render () {
@@ -85,12 +105,12 @@ export default class Pay extends Component {
               size='lg'
               currencyCode={user.currencyCode} />
 
-            <submit className={cx('btn', 'btn-success', 'btn-block', 'btn-lg')} disabled={pristine || invalid || submitting}>Pay</submit>
+            <button type='submit'
+                    className={cx('btn', 'btn-success', 'btn-block', 'btn-lg')}
+                    disabled={pristine || invalid || submitting}>Pay</button>
           </form>
         </div>
       </div>
     )
   }
 }
-
-
