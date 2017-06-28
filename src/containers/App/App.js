@@ -17,6 +17,7 @@ import MenuItem from 'react-bootstrap/lib/MenuItem'
 import Label from 'react-bootstrap/lib/Label'
 
 import Amount from 'components/Amount/Amount'
+import PaymentHandler from 'containers/PaymentHandler/PaymentHandler'
 
 import hotkeys from 'decorators/hotkeys'
 
@@ -278,6 +279,8 @@ export default class App extends Component {
             <i className={cx('fa', 'fa-sign-out')} />
           </Link>
         </div>}
+
+        {user && <PaymentHandler />}
 
         {advancedMode && <div className={cx('version')}>Version: {config.versions && (config.versions.current + '-' + config.versions.hash)}</div>}
       </div>
