@@ -48,7 +48,7 @@ module.exports = class Connector {
 
     // TODO wait a bit before adding peers (until the below issue is resolved)
     // https://github.com/interledgerjs/ilp-connector/issues/294
-    await new Promise((resolve) => setTimeout(resolve, 5000)
+    await new Promise((resolve) => setTimeout(resolve, 5000))
 
     for (const peer of peers) {
       try {
@@ -179,10 +179,10 @@ module.exports = class Connector {
         prefix,
         token: this.token.get(prefix, Infinity),
         maxBalance: '0',
-        currencyCode: // ledger currency code
-        currencyScale: // ledger currency scale
+        currencyCode: 'USD', // TODO: set ledger currency code
+        currencyScale: 10, // TODO: set ledger currency scale
         // TODO: allow the user to specify a custom RPC URI too
-        rpcUri: config.data.getIn(['server', 'base_uri']) + '/spsp/client_rpc'
+        rpcUri: config.data.getIn(['server', 'base_uri']) + '/spsp/client_rpc',
         tolerateFailure: true
       }
 

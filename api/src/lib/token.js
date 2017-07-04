@@ -1,10 +1,11 @@
 const jsonWebToken = require('jsonwebtoken')
 const debug = require('debug')('jsonwebtoken')
+const Config = require('./config')
 
 module.exports = class Token {
   constructor (deps) {
     this.config = deps(Config)
-    this.secret = this.config.data.getIn(['api', 'secret'])
+    this.secret = this.config.generateSecret('token')
   }
 
  /**
@@ -19,13 +20,18 @@ module.exports = class Token {
         algorithm: 'HS256',
         subject: prefix
       },
-      {
-        // TODO: make expiresIn a mandatory property of the json web token
-        expiresIn && {expiresIn}
-      })
+      // TODO: make expiresIn a mandatory property of the json web token
+      expiresIn && {expiresIn})
     )
   }
 
+  /**
+   * Checks if a given JSON Web Token is valid for a given trustline prefix.
+   * 
+   * @param  {[type]}  prefix The trustline prefix
+   * @param  {[type]}  token  JSON Web Token
+   * @return {Boolean}        True if the token is valid, false otherwise.
+   */
   isValid (prefix, token) {
     try {
       return jsonWebToken.verify(token, this.secret, {

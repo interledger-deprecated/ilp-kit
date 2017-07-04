@@ -50,7 +50,7 @@ module.exports = class SPSP {
     const prefix = this.prefix + username + '.'
     const clientPlugin = new PluginVirtual({
       prefix,
-      token: this.token.get(prefix, Infinity)
+      token: this.token.get(prefix, Infinity),
       rpcUri: this.config.data.getIn(['server', 'base_uri']) + '/peers/rpc'
     })
 
