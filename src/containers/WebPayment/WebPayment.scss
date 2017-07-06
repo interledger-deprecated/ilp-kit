@@ -1,0 +1,67 @@
+@import 'mixins';
+
+.WebPayment {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  background: #fff;
+  width: 100vw;
+  min-height: calc(100vh - 60px);
+  z-index: 100;
+}
+.window {
+  background: #fff;
+  padding: 0 30px;
+  border-radius: 3px;
+  box-shadow: #adadad 1px 1px 3px 0px;
+
+  @include mobile {
+    box-shadow: none;
+  }
+}
+.profile {
+  margin: 0 -30px 20px -30px;
+  padding: 40px 0;
+  background: #f9f9f9;
+  text-align: center;
+  border-radius: 3px 3px 0 0;
+  box-shadow: inset #ececec 0 -1px 2px 0px;
+
+  .payingTo {
+    font-size: 15px;
+    padding: 10px 0;
+  }
+
+  .profilePic {
+    border-radius: 200px;
+    height: 200px;
+    width: 200px;
+  }
+
+  @include mobile {
+    margin: 0 -40px 20px;
+  }
+}
+.total {
+  overflow: hidden;
+  font-size: 20px;
+  margin: 20px 0;
+  line-height: 40px;
+
+  .desc {
+    float: left;
+  }
+  .amount {
+    float: right;
+    font-weight: bold;
+    font-size: 40px;
+  }
+}
+.description {
+  font-size: 15px;
+}
+.btnConfirm {
+  position: absolute;
+  bottom: 20px;
+  width: calc(100% - 60px);
+}
