@@ -191,6 +191,14 @@ export default (store) => {
     }, 'pay')
   }
 
+  const getWebPayment = (nextState, cb) => {
+    require.ensure(['./containers/WebPayment/WebPayment'], require => {
+      cb(null, require('./containers/WebPayment/WebPayment'))
+
+      store.dispatch(locationUpdate())
+    }, 'webpayment')
+  }
+
   /**
    * Please keep routes in alphabetical order
    */
@@ -235,7 +243,8 @@ export default (store) => {
         <Route path='settlement/:id' getComponent={getSettlementInfo} />
         <Route path='withdraw' getComponent={getWithdraw} />
         <Route path='verify/:username/:verifyCode' getComponent={rootComponent} />
-        <Route path='pay/:username' getComponent={getPay} />
+        <Route path='pay(/:username)' getComponent={getPay} />
+        <Route path='webpayment/:identifier/:amount' getComponent={getWebPayment} />
 
         { /* Catch all route */ }
         <Route path='*' component={NotFound} status={404} />
