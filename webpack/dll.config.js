@@ -130,7 +130,7 @@ module.exports = {
     path: assetsPath,
     filename: '[name].dll.js',
     library: '[name]',
-    publicPath: 'http://' + host + ':' + (port - 1) + '/dist/'
+    publicPath: process.env.DEV_PROTOCOL + '://' + host + ':' + (port - 1) + '/dist/'
   },
   module: {
     loaders: [

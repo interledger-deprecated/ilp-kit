@@ -67,7 +67,7 @@ module.exports = {
   context: path.resolve(__dirname, '..'),
   entry: {
     'main': [
-      'webpack-hot-middleware/client?path=http://' + host + ':' + port + '/__webpack_hmr',
+      'webpack-hot-middleware/client?path=' + process.env.DEV_PROTOCOL + '://' + host + ':' + port + '/__webpack_hmr',
       'bootstrap-sass!./src/theme/bootstrap.config.js',
       'font-awesome-webpack!./src/theme/font-awesome.config.js',
       './src/client.js'
@@ -77,7 +77,7 @@ module.exports = {
     path: assetsPath,
     filename: 'app.js',
     chunkFilename: '[name].app.js',
-    publicPath: 'http://' + host + ':' + port + '/dist/'
+    publicPath: process.env.DEV_PROTOCOL + '://' + host + ':' + port + '/dist/'
   },
   module: {
     // TODO add happypack https://github.com/erikras/react-redux-universal-hot-example/pull/1201
