@@ -29,6 +29,8 @@ export default class Pay extends Component {
     requestQuote: PropTypes.func.isRequired
   }
 
+  state = {}
+
   componentDidMount () {
     const params = this.props.params
 
@@ -45,6 +47,10 @@ export default class Pay extends Component {
     const amount = this.props.params.amount
     const destination = this.props.params.destination
 
+    this.setState({
+      sending: true
+    })
+
     return this.props.transfer({
       destination,
       destinationAmount: amount
@@ -54,10 +60,18 @@ export default class Pay extends Component {
         methodName: 'interledger'
       })
       window.close()
+
+      this.setState({
+        sending: false
+      })
     })
     .catch(err => {
       navigator.serviceWorker.controller.postMessage({})
       window.close()
+
+      this.setState({
+        sending: false
+      })
 
       throw err
     })
@@ -70,6 +84,7 @@ export default class Pay extends Component {
 
   render () {
     const { params, quote } = this.props
+    const { sending } = this.state
 
     if (!quote.spsp) return null
 
@@ -104,10 +119,10 @@ export default class Pay extends Component {
 
           <div className={cx('row', 'btns')}>
             <div className={cx('col-xs-4')}>
-              <button onClick={this.handleCancel} className={cx('btn', 'btn-default', 'btn-block', 'btn-lg', 'btnCancel')}>Cancel</button>
+              <button onClick={this.handleCancel} className={cx('btn', 'btn-default', 'btn-block', 'btn-lg', 'btnCancel')} disabled={sending}>Cancel</button>
             </div>
             <div className={cx('col-xs-8')}>
-              <button onClick={this.handlePay} className={cx('btn', 'btn-success', 'btn-block', 'btn-lg', 'btnConfirm')}>Confirm</button>
+              <button onClick={this.handlePay} className={cx('btn', 'btn-success', 'btn-block', 'btn-lg', 'btnConfirm')} disabled={sending}>{sending ? 'Sending...' : 'Confirm'}</button>
             </div>
           </div>
         </div>
