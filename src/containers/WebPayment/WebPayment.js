@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { routeActions } from 'react-router-redux'
 
 import { getUser } from 'redux/actions/user'
-import { transfer } from 'redux/actions/send'
+import { requestQuote, transfer } from 'redux/actions/send'
 
 import classNames from 'classnames/bind'
 import styles from './WebPayment.scss'
@@ -12,39 +12,66 @@ const cx = classNames.bind(styles)
 
 @connect(state => ({
   user: state.user.user,
-}), { getUser, pushState: routeActions.push, transfer })
+  quoting: state.send.quoting,
+  quote: state.send.quote
+}), { getUser, pushState: routeActions.push, requestQuote, transfer })
 export default class Pay extends Component {
   static propTypes = {
     // Props
     params: PropTypes.object.isRequired,
+
     // State
     user: PropTypes.object,
-    transfer: PropTypes.func.isRequired
+    quoting: PropTypes.bool,
+    quote: PropTypes.object,
+
+    transfer: PropTypes.func.isRequired,
+    requestQuote: PropTypes.func.isRequired
   }
 
   componentDidMount () {
-    window.addEventListener('message', message => {
-      console.log('WebPayment:29', message)
-    }, false)
+    const params = this.props.params
+
+    if (!params.amount || !params.destination) return
+
+    // Request a quote
+    this.props.requestQuote({
+      destination: params.destination,
+      destinationAmount: params.amount
+    })
   }
 
   handlePay = () => {
     const amount = this.props.params.amount
-    const destination = this.props.params.identifier
+    const destination = this.props.params.destination
 
     return this.props.transfer({
       destination,
       destinationAmount: amount
     })
+    .then(response => {
+      navigator.serviceWorker.controller.postMessage({
+        methodName: 'interledger'
+      })
+      window.close()
+    })
     .catch(err => {
-      console.log('Pay:100', err)
+      navigator.serviceWorker.controller.postMessage({})
+      window.close()
+
       throw err
     })
   }
 
+  handleCancel = () => {
+    navigator.serviceWorker.controller.postMessage({})
+    window.close()
+  }
+
   render () {
-    const { params } = this.props
-    const currency = 'USD'
+    const { params, quote } = this.props
+
+    if (!quote.spsp) return null
 
     // TODO:BEFORE_DEPLOY show loading
 
@@ -52,8 +79,18 @@ export default class Pay extends Component {
       <div className={cx('WebPayment')}>
         <div className={cx('window')}>
           <div className={cx('profile')}>
-            <span className={cx('payingTo')}>Payment to</span>
-            <h1>{params.identifier}</h1>
+            <div className={cx('payingTo')}>Payment to</div>
+            {quote.spsp.receiver_info && quote.spsp.receiver_info.image_url && <img src={quote.spsp.receiver_info.image_url} className={cx('profilePic')} />}
+            <h1>{(quote.spsp.receiver_info && quote.spsp.receiver_info.name) || params.destination}</h1>
+          </div>
+
+          <div className={cx('total', 'sub')}>
+            <span className={cx('desc')}>
+              Destination Amount:
+            </span>
+            <span className={cx('amount')}>
+              {quote.spsp.ledger_info.currency_code} {params.amount}
+            </span>
           </div>
 
           <div className={cx('total')}>
@@ -61,11 +98,18 @@ export default class Pay extends Component {
               Total:
             </span>
             <span className={cx('amount')}>
-              {currency} {params.amount}
+              {config.currencyCode} {quote.sourceAmount}
             </span>
           </div>
 
-          <button type='submit' onClick={this.handlePay} className={cx('btn', 'btn-success', 'btn-lg', 'btnConfirm')}>Confirm</button>
+          <div className={cx('row', 'btns')}>
+            <div className={cx('col-xs-4')}>
+              <button onClick={this.handleCancel} className={cx('btn', 'btn-default', 'btn-block', 'btn-lg', 'btnCancel')}>Cancel</button>
+            </div>
+            <div className={cx('col-xs-8')}>
+              <button onClick={this.handlePay} className={cx('btn', 'btn-success', 'btn-block', 'btn-lg', 'btnConfirm')}>Confirm</button>
+            </div>
+          </div>
         </div>
       </div>
     )

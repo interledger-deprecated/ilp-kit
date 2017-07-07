@@ -13,15 +13,10 @@
   background: #fff;
   padding: 0 30px;
   border-radius: 3px;
-  box-shadow: #adadad 1px 1px 3px 0px;
-
-  @include mobile {
-    box-shadow: none;
-  }
 }
 .profile {
   margin: 0 -30px 20px -30px;
-  padding: 40px 0;
+  padding: 20px 0;
   background: #f9f9f9;
   text-align: center;
   border-radius: 3px 3px 0 0;
@@ -34,8 +29,8 @@
 
   .profilePic {
     border-radius: 200px;
-    height: 200px;
-    width: 200px;
+    height: 100px;
+    width: 100px;
   }
 
   @include mobile {
@@ -47,6 +42,12 @@
   font-size: 20px;
   margin: 20px 0;
   line-height: 40px;
+
+  &.sub {
+    .amount {
+      font-size: 25px;
+    }
+  }
 
   .desc {
     float: left;
@@ -60,8 +61,8 @@
 .description {
   font-size: 15px;
 }
-.btnConfirm {
+.btns {
   position: absolute;
-  bottom: 20px;
-  width: calc(100% - 60px);
+  bottom: 100px;
+  width: calc(100% - 30px);
 }

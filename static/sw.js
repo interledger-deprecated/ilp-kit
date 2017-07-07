@@ -1,4 +1,4 @@
-/* globals self */
+/* globals self, clients */
 
 let paymentRequestEvent
 let paymentRequestResolver
@@ -12,8 +12,6 @@ self.addEventListener('paymentrequest', e => {
   const identifier = paymentRequestEvent.methodData[0].data.identifier
   const amount = paymentRequestEvent.total.amount.value
 
-  console.log('sw:15', "I'm here!")
-
   e.openWindow(`https://wallet1.com/webpayment/${identifier}/${amount}`)
     .catch(err => {
       paymentRequestResolver.reject(err)
@@ -21,12 +19,10 @@ self.addEventListener('paymentrequest', e => {
 })
 
 self.addEventListener('message', e => {
-  console.log('sw:19', e)
-
-  if (e.data === 'payment_app_window_ready') {
+  /* if (e.data === 'payment_app_window_ready') {
     sendPaymentRequest()
     return
-  }
+  } */
 
   if (e.data.methodName) {
     paymentRequestResolver.resolve(e.data)
@@ -35,7 +31,7 @@ self.addEventListener('message', e => {
   }
 })
 
-function sendPaymentRequest () {
+/* function sendPaymentRequest () {
   // Note that the returned window_client from openWindow is not used since
   // it might be changed by refreshing the opened page.
   // Refer to https://www.w3.org/TR/service-workers-1/#clients-getall
@@ -44,7 +40,7 @@ function sendPaymentRequest () {
     type: 'window'
   }
   clients.matchAll(options).then(clientList => {
-    for (var i = 0; i < clientList.length; i++) {
+    for (let i = 0; i < clientList.length; i++) {
       // Might do more communications or checks to make sure the message is
       // posted to the correct window only.
 
@@ -55,7 +51,7 @@ function sendPaymentRequest () {
       clientList[i].postMessage(paymentRequestEvent.total)
     }
   })
-}
+} */
 
 function PromiseResolver () {
   /** @private {function(T=): void} */
