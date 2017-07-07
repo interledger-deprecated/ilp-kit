@@ -88,8 +88,6 @@ export default class Pay extends Component {
 
     if (!quote.spsp) return null
 
-    // TODO:BEFORE_DEPLOY show loading
-
     return (
       <div className={cx('WebPayment')}>
         <div className={cx('window')}>

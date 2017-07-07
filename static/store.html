@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>AllAngels</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+  <script type="text/javascript">
+    handlePay = () => {
+      const methodData = [
+        {
+          supportedMethods: ['interledger'],
+          data: {
+            identifier: `allangels@wallet1.com`
+          }
+        }
+      ]
+      const details = {
+        total: {
+          label: 'Total amount',
+          amount: { currency: 'USD', value: 760 }
+        }
+      }
+
+      const paymentRequest = new PaymentRequest(methodData, details)
+      paymentRequest.show()
+        .then(paymentResponse => {
+          console.log('payment response:', paymentResponse)
+
+          paymentResponse.complete(paymentResponse.methodName ? 'success' : 'fail')
+        })
+        .catch(console.log)
+    }
+  </script>
+</head>
+<body style="text-align: center">
+<img src="https://n.nordstrommedia.com/ImageGallery/store/product/Zoom/19/_13301839.jpg?crop=pad&pad_color=FFF&format=jpeg&w=860&h=1318" style="max-width: 90%; max-height: 80vh;" />
+<br />
+<button onClick="javascript:handlePay()" style="padding: 20px;">buy this awesome cruelty-free faux leather jacket for $760</button>
+</body>
+</html>
