@@ -28,6 +28,8 @@ export default class PaymentHandler extends Component {
       // See https://github.com/slightlyoff/ServiceWorker/issues/468
       navigator.serviceWorker.register('/sw.js')
         .then(reg => {
+          if (!reg.paymentManager) return console.warn("Web Payments are not enabled in the browser")
+
           // updatefound is fired if service-worker.js changes.
           reg.onupdatefound = () => {
             // The updatefound event implies that reg.installing is set see
