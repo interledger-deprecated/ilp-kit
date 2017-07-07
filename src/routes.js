@@ -244,7 +244,7 @@ export default (store) => {
         <Route path='withdraw' getComponent={getWithdraw} />
         <Route path='verify/:username/:verifyCode' getComponent={rootComponent} />
         <Route path='pay(/:username)' getComponent={getPay} />
-        <Route path='webpayment/:identifier/:amount' getComponent={getWebPayment} />
+        <Route path='webpayment/:destination/:amount' getComponent={getWebPayment} />
 
         { /* Catch all route */ }
         <Route path='*' component={NotFound} status={404} />
