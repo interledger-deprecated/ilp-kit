@@ -36,14 +36,14 @@ function MiscControllerFactory (deps) {
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
      *    {
-     *        "ledgerUri": "http://wallet.example/ledger",
-     *        "paymentUri": "http://wallet.example/api/spsp/alice",
+     *        "ledgerUri": "https://wallet.example/ledger",
+     *        "paymentUri": "https://wallet.example/api/spsp/alice",
      *        "ilpAddress": "wallet.alice",
      *        "identifier": "alice@wallet.example",
      *        "currencyCode": "USD",
      *        "currencySymbol": "$",
      *        "name": "Alice",
-     *        "imageUrl": "http://wallet.example/api/users/alice/profilepic"
+     *        "imageUrl": "https://wallet.example/api/users/alice/profilepic"
      *    }
      */
     static async destination (ctx) {

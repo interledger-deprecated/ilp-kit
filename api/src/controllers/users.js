@@ -519,7 +519,7 @@ function UsersControllerFactory (deps) {
      *      "currency_code": "USD",
      *      "currency_scale": 2,
      *      "name": "Alice Faye",
-     *      "image_url": "http://server.example/picture.jpg"
+     *      "image_url": "https://server.example/picture.jpg"
      *    }
      */
     static async getReceiver (ctx) {

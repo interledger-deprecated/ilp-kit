@@ -158,7 +158,7 @@ function PaymentsControllerFactory (deps) {
      *        },
      *        "receiver_info": {
      *            "name": "Alice Jan",
-     *            "image_url": "http://wallet.example/api/users/alice/profilepic",
+     *            "image_url": "https://wallet.example/api/users/alice/profilepic",
      *            "identifier": "alice@wallet.example"
      *        }
      *    }
