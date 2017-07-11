@@ -38,7 +38,7 @@ function normalizeEnv (noExit) {
 
       const keyPairArray = line.split('=')
 
-      envVars[keyPairArray[0]] = keyPairArray.slice(1).join('=')
+      envVars[keyPairArray[0]] = keyPairArray.slice(1).join('=').trim()
     })
   } catch (err) {
     // Both env.list and environment variables are missing
