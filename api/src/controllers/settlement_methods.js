@@ -65,7 +65,7 @@ function SettlementMethodsControllerFactory (deps) {
      *        "logo": null,
      *        "description": null,
      *        "uri": null,
-     *        "logoUrl": "https://wallet1.com/paypal.png"
+     *        "logoUrl": "https://wallet.com/paypal.png"
      *      }
      *    ]
      */
