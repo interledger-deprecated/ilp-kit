@@ -106,7 +106,8 @@ module.exports = {
       'react-bootstrap/lib/NavItem',
       'react-bootstrap/lib/NavDropdown',
       'react-bootstrap/lib/MenuItem'
-    ]
+    ],
+    '../sw.js': './src/sw.js'
   },
   devtool: 'source-map',
   output: {
