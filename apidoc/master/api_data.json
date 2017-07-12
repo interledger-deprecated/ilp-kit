@@ -467,7 +467,7 @@
       "examples": [
         {
           "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n{\n    \"ledgerUri\": \"http://wallet.example/ledger\",\n    \"paymentUri\": \"http://wallet.example/api/spsp/alice\",\n    \"ilpAddress\": \"wallet.alice\",\n    \"identifier\": \"alice@wallet.example\",\n    \"currencyCode\": \"USD\",\n    \"currencySymbol\": \"$\",\n    \"name\": \"Alice\",\n    \"imageUrl\": \"http://wallet.example/api/users/alice/profilepic\"\n}",
+          "content": "HTTP/1.1 200 OK\n{\n    \"ledgerUri\": \"https://wallet.example/ledger\",\n    \"paymentUri\": \"https://wallet.example/api/spsp/alice\",\n    \"ilpAddress\": \"wallet.alice\",\n    \"identifier\": \"alice@wallet.example\",\n    \"currencyCode\": \"USD\",\n    \"currencySymbol\": \"$\",\n    \"name\": \"Alice\",\n    \"imageUrl\": \"https://wallet.example/api/users/alice/profilepic\"\n}",
           "type": "json"
         }
       ]
@@ -602,7 +602,7 @@
       "examples": [
         {
           "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n{\n    \"destination_account\": \"wallet.alice.iD4LnxavIqs4CKbwVkelHEluk5VTnH8Vw\",\n    \"shared_secret\": \"dwGaLn1pIrrOmmq6Xk362g\",\n    \"maximum_destination_amount\": \"18446744073709552000\",\n    \"minimum_destination_amount\": \"1\",\n    \"ledger_info\": {\n        \"currency_code\": \"USD\",\n        \"currency_scale\": 9\n    },\n    \"receiver_info\": {\n        \"name\": \"Alice Jan\",\n        \"image_url\": \"http://wallet.example/api/users/alice/profilepic\",\n        \"identifier\": \"alice@wallet.example\"\n    }\n}",
+          "content": "HTTP/1.1 200 OK\n{\n    \"destination_account\": \"wallet.alice.iD4LnxavIqs4CKbwVkelHEluk5VTnH8Vw\",\n    \"shared_secret\": \"dwGaLn1pIrrOmmq6Xk362g\",\n    \"maximum_destination_amount\": \"18446744073709552000\",\n    \"minimum_destination_amount\": \"1\",\n    \"ledger_info\": {\n        \"currency_code\": \"USD\",\n        \"currency_scale\": 9\n    },\n    \"receiver_info\": {\n        \"name\": \"Alice Jan\",\n        \"image_url\": \"https://wallet.example/api/users/alice/profilepic\",\n        \"identifier\": \"alice@wallet.example\"\n    }\n}",
           "type": "json"
         }
       ]
@@ -894,7 +894,7 @@
       "examples": [
         {
           "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"type\": \"payee\",\n  \"account\": \"wallet.alice\",\n  \"currency_code\": \"USD\",\n  \"currency_scale\": 2,\n  \"name\": \"Alice Faye\",\n  \"image_url\": \"http://server.example/picture.jpg\"\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"type\": \"payee\",\n  \"account\": \"wallet.alice\",\n  \"currency_code\": \"USD\",\n  \"currency_scale\": 2,\n  \"name\": \"Alice Faye\",\n  \"image_url\": \"https://server.example/picture.jpg\"\n}",
           "type": "json"
         }
       ]
@@ -1096,7 +1096,7 @@
       "examples": [
         {
           "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n[\n  {\n    \"name\": \"Paypal\",\n    \"type\": \"paypal\",\n    \"logo\": null,\n    \"description\": null,\n    \"uri\": null,\n    \"logoUrl\": \"https://wallet1.com/paypal.png\"\n  }\n]",
+          "content": "HTTP/1.1 200 OK\n[\n  {\n    \"name\": \"Paypal\",\n    \"type\": \"paypal\",\n    \"logo\": null,\n    \"description\": null,\n    \"uri\": null,\n    \"logoUrl\": \"https://wallet.com/paypal.png\"\n  }\n]",
           "type": "json"
         }
       ]
