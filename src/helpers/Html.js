@@ -44,7 +44,7 @@ export default class Html extends Component {
           <div id='content' dangerouslySetInnerHTML={{__html: content}} />
           <script dangerouslySetInnerHTML={{__html: `window.__data=${serialize(store.getState())}`}} charSet='UTF-8' />
           {__DEVELOPMENT__ && <script src={`//${process.env.CLIENT_HOST}/dist/vendor.dll.js`} charSet='UTF-8' />}
-          {__DEVELOPMENT__ && <script src={`//${process.env.CLIENT_HOST}:3011/dist/app.js`} charSet='UTF-8' />}
+          {__DEVELOPMENT__ && <script src={`//${process.env.CLIENT_HOST}:${Number(process.env.CLIENT_PORT) + 1}/dist/app.js`} charSet='UTF-8' />}
 
           {!__DEVELOPMENT__ && <script src={assets.javascript.meta} charSet='UTF-8' />}
           {!__DEVELOPMENT__ && <script src={assets.javascript.vendor} charSet='UTF-8' />}
