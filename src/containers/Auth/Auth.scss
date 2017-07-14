@@ -24,6 +24,7 @@
 
   @include mobile {
     width: 90vw;
+    margin: 0 0 20px;
   }
 }
 .oauthBox {
@@ -37,15 +38,17 @@
 }
 .switchBox {
   background: #333333;
-  position: absolute;
-  bottom: 5vh;
-  right: 5vh;
-  padding: 10px 20px;
+  padding: 20px;
   border-radius: 5px;
+  text-align: right;
 
   .label {
     color: #d9d9d9;
     line-height: 35px;
+
+    @include mobile {
+      display: none;
+    }
   }
   .btnSwitch {
     color: #d9d9d9;
@@ -57,6 +60,11 @@
     &:hover {
       color: #696969;
       background: #fff;
+    }
+
+    @include mobile {
+      width: 100%;
+      margin: 0;
     }
   }
 }
