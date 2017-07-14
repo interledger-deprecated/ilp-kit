@@ -43,8 +43,13 @@ function PeersControllerFactory (deps) {
       const [ , authToken ] = auth.match(/^Bearer (.+)$/) || []
       const plugin = connector.getPlugin(prefix)
 
-      if (!authToken || !plugin || !plugin.isAuthorized || !plugin.isAuthorized(authToken)) {
+      if (!authToken || !plugin || !plugin.isAuthorized) {
         ctx.status = 401
+        return
+      }
+
+      if (!plugin.isAuthorized(authToken)) {
+        ctx.status = 403
         return
       }
 
@@ -304,8 +309,8 @@ function PeersControllerFactory (deps) {
       const method = ctx.query.method
       const params = ctx.body
 
-      if (!prefix) throw new InvalidBodyError('Prefix is not supplied')
-      if (!method) throw new InvalidBodyError('Method is not supplied')
+      if (typeof prefix !== 'string') throw new InvalidBodyError('Prefix must be string')
+      if (typeof method !== 'string') throw new InvalidBodyError('Method must be string')
 
       const plugin = connector.getPlugin(prefix)
 
@@ -320,7 +325,10 @@ function PeersControllerFactory (deps) {
         ctx.body = await plugin.receive(method, params)
       } catch (e) {
         ctx.statusCode = 422
-        ctx.body = e.message
+        ctx.body = {
+          id: e.name,
+          message: e.message
+        }
         log.err('connector.rpc() failed: ', e.stack)
       }
     }
