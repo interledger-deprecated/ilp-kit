@@ -88,7 +88,7 @@ export default class Home extends Component {
           ))}
           </CSSTransitionGroup>}
 
-          {initialLoad && activity.length === 0 && <li className={cx('loading')}>No payments to show</li>}
+          {initialLoad && activity.length === 0 && <li className={cx('loading')}>No activities to show</li>}
         </ul>
 
         {activity && activity.length > 0 &&
