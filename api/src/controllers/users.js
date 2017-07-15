@@ -16,6 +16,7 @@ const UserFactory = require('../models/user')
 const InviteFactory = require('../models/invite')
 const Database = require('../lib/db')
 const SPSP = require('../lib/spsp')
+const Connector = require('../lib/connector')
 
 const UsernameTakenError = require('../errors/username-taken-error')
 const EmailTakenError = require('../errors/email-taken-error')
@@ -38,6 +39,7 @@ function UsersControllerFactory (deps) {
   const pay = deps(Pay)
   const spsp = deps(SPSP)
   const antifraud = deps(Antifraud)
+  const connector = deps(Connector)
 
   return class UsersController {
     static init (router) {
@@ -206,19 +208,18 @@ function UsersControllerFactory (deps) {
         }
 
         try {
-          // Sanity check: Verify that a ledger account with that name does not exist yet
-          // Otherwise an attacker could take over a ledger account
-          // for which no ILP kit account exits
-          const exists = await ledger.existsAccount(userObj)
+          // make sure that the connector is not already running a plugin with this prefix 
+          const ledgerPrefix = config.data.getIn(['ledger', 'prefix'])
+          const exists = await connector.getPeer(ledgerPrefix + userObj.username + '.')
           if (!exists) {
-            await ledger.createAccount(userObj)
+            await connector.connectPeer(userObj)
           } else {
-            throw new Error(`Username ${userObj.username} already exists on the ledger` +
+            throw new Error(`Plugin "${ledgerPrefix + userObj.username}." already exists on the connector` +
               ', but not in the ILP kit.')
           }
         } catch (e) {
           log.error(e)
-          throw new UsernameTakenError('Ledger rejected username')
+          throw new UsernameTakenError('Connector rejected username')
         }
       }).then(async function (result) {
         // transaction was commited

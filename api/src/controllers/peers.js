@@ -8,6 +8,7 @@ const Log = require('../lib/log')
 const Config = require('../lib/config')
 const Connector = require('../lib/connector')
 const PeerFactory = require('../models/peer')
+const Token = require('../lib/token')
 
 const NotFoundError = require('../errors/not-found-error')
 const InvalidBodyError = require('../errors/invalid-body-error')
@@ -18,6 +19,7 @@ function PeersControllerFactory (deps) {
   const log = deps(Log)('peers')
   const Peer = deps(PeerFactory)
   const connector = deps(Connector)
+  const token = deps(Token)
 
   return class PeersController {
     static init (router) {
@@ -43,7 +45,7 @@ function PeersControllerFactory (deps) {
       const [ , authToken ] = auth.match(/^Bearer (.+)$/) || []
       const plugin = connector.getPlugin(prefix)
 
-      if (!authToken || !plugin || !plugin.isAuthorized || !plugin.isAuthorized(authToken)) {
+      if (!authToken || !plugin || !token.isValid(prefix, authToken)) {
         ctx.status = 401
         return
       }

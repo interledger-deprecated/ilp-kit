@@ -25,6 +25,7 @@ function PaymentsControllerFactory (deps) {
       router.get('/payments/stats', auth.checkAuth, this.getStats)
 
       router.get('/spsp/:username', this.query)
+      router.get('/spsp/client_rpc', this.clientRpc)
     }
 
     /**
@@ -173,6 +174,10 @@ function PaymentsControllerFactory (deps) {
 
     static async getStats (ctx) {
       ctx.body = await Payment.getUserStats(ctx.req.user)
+    }
+
+    static async clientRpc (ctx) {
+      await spsp.clientRpc(ctx)
     }
   }
 }

@@ -4,8 +4,10 @@ const request = require('superagent')
 const connector = require('ilp-connector')
 const Log = require('./log')
 const Config = require('./config')
+const Token = require('./token')
 const Utils = require('./utils')
 const PeerFactory = require('../models/peer')
+const User = require('../models/user')
 const SettlementMethodFactory = require('../models/settlement_method')
 const { generatePrefix } = require('ilp-plugin-virtual')
 
@@ -16,9 +18,12 @@ module.exports = class Connector {
     this.config = deps(Config)
     this.utils = deps(Utils)
     this.Peer = deps(PeerFactory)
+    this.User = deps(User)
     this.SettlementMethod = deps(SettlementMethodFactory)
+    this.token = deps(Token)
     this.log = deps(Log)('connector')
     this.peers = {}
+    this.users = {}
     this.peerDestinations = {} // { connectorAccount ⇒ peer.destination }
     this.instance = connector
     connector.registerRequestHandler(this._handleRequestMessage.bind(this))
@@ -38,17 +43,28 @@ module.exports = class Connector {
     // Get the peers from the database
     const peers = await self.Peer.findAll()
 
+    // Get the users from the database
+    const users = await self.User.findAll()
+
     // TODO wait a bit before adding peers (until the below issue is resolved)
     // https://github.com/interledgerjs/ilp-connector/issues/294
-    setTimeout(async function () {
-      for (const peer of peers) {
-        try {
-          await self.connectPeer(peer)
-        } catch (e) {
-          self.log.err("Couldn't add the peer to the connector", e)
-        }
+    await new Promise((resolve) => setTimeout(resolve, 5000))
+
+    for (const peer of peers) {
+      try {
+        await self.connectPeer(peer)
+      } catch (e) {
+        self.log.err("Couldn't add the peer to the connector", e)
       }
-    }, 5000)
+    }
+
+    for (const user of users) {
+      try {
+        await self.connectUser(user)
+      } catch (e) {
+        self.log.err('Couldn\'t add user to the connector. user=', user, 'error=', e)
+      }
+    }
   }
 
   async waitForLedger () {
@@ -151,6 +167,40 @@ module.exports = class Connector {
     } catch (e) {
       // Not connected. The other side hasn't peered with this kit
       this.log.info("Can't get the peer limit")
+    }
+  }
+
+  async connectUser (user) {
+    if (connector.getPlugin()) return
+
+    try {
+      const prefix = config.data.getIn(['ledger', 'prefix']) + user.username + '.'
+      const options = {
+        prefix,
+        token: this.token.get(prefix, Infinity),
+        maxBalance: '0',
+        currencyCode: 'USD', // TODO: set ledger currency code
+        currencyScale: 10, // TODO: set ledger currency scale
+        // TODO: allow the user to specify a custom RPC URI too
+        rpcUri: config.data.getIn(['server', 'base_uri']) + '/spsp/client_rpc',
+        tolerateFailure: true
+      }
+
+      await connector.addPlugin(prefix, {
+        currency: options.currencyCode,
+        plugin: 'ilp-plugin-virtual',
+        store: true,
+        options
+      })
+    } catch (e) {
+
+      await (connector.removePlugin(hostInfo.ledgerName)
+        .catch(() => {}))
+
+      if (e.message.indexOf('No rate available') > -1) {
+        throw new InvalidBodyError('Unsupported currency')
+      }
+      throw e
     }
   }
 

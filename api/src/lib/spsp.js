@@ -5,13 +5,14 @@ const debug = require('debug')('ilp-kit:spsp')
 const uuid = require('uuid4')
 
 const ILP = require('ilp')
-const PluginBellsFactory = require('ilp-plugin-bells').Factory
+const PluginVirtual = require('ilp-plugin-virtual')
 
 const PaymentFactory = require('../models/payment')
 const Config = require('./config')
 const Socket = require('./socket')
 const Ledger = require('./ledger')
 const Utils = require('./utils')
+const Token = require('./token')
 const Activity = require('./activity')
 
 // TODO exception handling
@@ -21,21 +22,13 @@ module.exports = class SPSP {
     this.socket = deps(Socket)
     this.config = deps(Config)
     this.ledger = deps(Ledger)
+    this.token = deps(Token)
     this.prefix = this.config.data.getIn(['ledger', 'prefix'])
     this.utils = deps(Utils)
     this.activity = deps(Activity)
 
     this.senders = {}
     this.receivers = {}
-
-    const adminUsername = this.config.data.getIn(['ledger', 'admin', 'user'])
-    const adminPassword = this.config.data.getIn(['ledger', 'admin', 'pass'])
-
-    this.factory = new PluginBellsFactory({
-      adminUsername: adminUsername,
-      adminPassword: adminPassword,
-      adminAccount: this.config.data.getIn(['ledger', 'public_uri']) + '/accounts/' + adminUsername
-    })
 
     this.connect()
     this.listenerCache = {}
@@ -53,19 +46,62 @@ module.exports = class SPSP {
     return this.connection
   }
 
+  async getClientPlugin (username) {
+    const prefix = this.prefix + username + '.'
+    const clientPlugin = new PluginVirtual({
+      prefix,
+      token: this.token.get(prefix, Infinity),
+      rpcUri: this.config.data.getIn(['server', 'base_uri']) + '/peers/rpc'
+    })
+
+    await clientPlugin.connect()
+    return clientPlugin
+  }
+
+  async clientRpc (ctx) {
+    const prefix = ctx.query.prefix
+    const method = ctx.query.method
+    const params = ctx.body
+
+    if (!prefix) throw new InvalidBodyError('Prefix is not supplied')
+    if (!method) throw new InvalidBodyError('Method is not supplied')
+
+    const auth = ctx.request.headers.authorization || ''
+    const plugin = this.listenerCache[prefix]
+    if (!plugin) {
+      ctx.statusCode = 404
+      ctx.body = 'no cached listener with prefix "' + prefix + '"'
+      return
+    }
+
+    const [ , authToken ] = auth.match(/^Bearer (.+)$/) || []
+    if (!authToken || !plugin || !this.token.isValid(prefix, authToken)) {
+      ctx.status = 401
+      ctx.body = 'unauthorized bearer token'
+      return
+    }
+
+    try {
+      ctx.body = await plugin.receive(method, params)
+    } catch (e) {
+      ctx.statusCode = 422
+      ctx.body = e.message
+      log.err('client.rpc() failed: ', e.stack)
+    }
+  }
+
   // params should contain:
   // .user.username
   // .destination
   // .sourceAmount XOR .destinationAmount
   async quote (params) {
-    await this.factory.connect()
-
     // save a webfinger call if it's on the same domain
     const receiver = this.utils.resolveSpspIdentifier(params.destination)
     debug('making SPSP quote to', receiver)
 
+    const clientPlugin = await this.getClientPlugin(params.user.username)
     return ILP.SPSP.quote(
-      await this.factory.create({ username: params.user.username }),
+      clientPlugin,
       {
         receiver,
         sourceAmount: params.sourceAmount,
@@ -85,9 +121,9 @@ module.exports = class SPSP {
   }
 
   async pay (username, payment) {
-    await this.factory.connect()
+    const clientPlugin = await this.getClientPlugin(username)
     return ILP.SPSP.sendPayment(
-      await this.factory.create({ username }),
+      clientPlugin,
       Object.assign({}, payment, { id: uuid() }))
   }
 
@@ -96,8 +132,7 @@ module.exports = class SPSP {
     const destinationAccount = this.prefix + user.username
     const receiverSecret = this.config.generateSecret(destinationAccount)
 
-    await this.factory.connect()
-    const receiver = await this.factory.create({ username: user.username })
+    const receiver = await this.getClientPlugin(user.username)
 
     const psk = ILP.PSK.generateParams({
       destinationAccount,
@@ -105,8 +140,8 @@ module.exports = class SPSP {
     })
     const ledgerInfo = await this.ledger.getInfo()
 
-    if (!this.listenerCache[user.username]) {
-      this.listenerCache[user.username] = true
+    if (!this.listenerCache[receiver.getInfo().prefix]) {
+      this.listenerCache[receiver.getInfo().prefix] = receiver
       await ILP.PSK.listen(receiver, { receiverSecret }, async function (params) {
         try {
           // Store the payment in the wallet db
