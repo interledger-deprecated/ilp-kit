@@ -112,12 +112,12 @@ export default class Home extends Component {
           {currentView === 'login' &&
           <div className={cx('switchBox')}>
             <span className={cx('label')}>Don't have an account?</span>
-            <Link to='/register' data-toggle='tab' role='tab' aria-expanded='true' className={cx('btnSwitch', 'btn', 'btn-default')}>Sign Up</Link>
+            <Link to='/register' data-toggle='tab' role='tab' aria-expanded='true' className={cx('btnSwitch', 'btn', 'btn-lg', 'btn-default')}>Sign Up</Link>
           </div>}
           {currentView === 'register' &&
           <div className={cx('switchBox')}>
             <span className={cx('label')}>Already have an account?</span>
-            <Link to='/login' data-toggle='tab' role='tab' aria-expanded='true' className={cx('btnSwitch', 'btn', 'btn-default')}>Login</Link>
+            <Link to='/login' data-toggle='tab' role='tab' aria-expanded='true' className={cx('btnSwitch', 'btn', 'btn-lg', 'btn-default')}>Login</Link>
           </div>}
         </div>
 

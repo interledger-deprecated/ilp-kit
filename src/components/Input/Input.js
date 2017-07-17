@@ -25,6 +25,15 @@ export default class Input extends Component {
     focus: false
   }
 
+  componentDidMount() {
+    // Don't autofocus on mobile devices
+    const desktop = window.matchMedia("only screen and (max-width: 760px)").matches === false
+
+    if (desktop && this.props.focus) {
+      this.refs.input.focus()
+    }
+  }
+
   // Default event, if onChange is not specified
   onChange = (event) => {
     const self = this
@@ -58,7 +67,7 @@ export default class Input extends Component {
       <span>
         <input type={type} ref='input'
           className={cx('form-control', size ? 'input-' + size : '')}
-          autoFocus={focus} {...input}
+          {...input}
           onChange={this.onChange} disabled={disabled}
           autoCapitalize={autoCapitalize} />
 

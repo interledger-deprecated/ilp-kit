@@ -111,7 +111,7 @@ export default class Pay extends Component {
               Total:
             </span>
             <span className={cx('amount')}>
-              {config.currencyCode} {quote.sourceAmount}
+              {config.currencyCode} {Number(quote.sourceAmount).toFixed(2)}
             </span>
           </div>
 
