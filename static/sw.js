@@ -10,7 +10,7 @@ self.addEventListener('paymentrequest', e => {
   e.respondWith(paymentRequestResolver.promise)
 
   const identifier = paymentRequestEvent.methodData[0].data.identifier
-  const amount = paymentRequestEvent.total.amount.value
+  const amount = paymentRequestEvent.total.value
 
   e.openWindow(`https://${location.host}/webpayment/${identifier}/${amount}`)
     .catch(err => {
