@@ -1,6 +1,6 @@
 define({
   "name": "ilp-kit",
-  "version": "2.0.2",
+  "version": "3.0.0-alpha3",
   "description": "ILP kit",
   "title": "ILP kit",
   "url": "https://wallet.example",
@@ -11,11 +11,12 @@ define({
     "Auth"
   ],
   "sampleUrl": false,
-  "apidoc": "0.2.0",
+  "defaultVersion": "0.0.0",
+  "apidoc": "0.3.0",
   "generator": {
     "name": "apidoc",
-    "time": "2017-05-17T11:21:32.943Z",
+    "time": "2017-07-19T19:38:53.098Z",
     "url": "http://apidocjs.com",
-    "version": "0.16.1"
+    "version": "0.17.6"
   }
 });
