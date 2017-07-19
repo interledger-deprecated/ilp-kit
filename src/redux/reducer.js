@@ -14,6 +14,7 @@ import settlementMethod from './reducers/settlement_method'
 import settlement from './reducers/settlement'
 import withdrawal from './reducers/withdrawal'
 import user from './reducers/user'
+import webpayments from './reducers/webpayments'
 
 export default combineReducers({
   routing: routeReducer,
@@ -29,5 +30,6 @@ export default combineReducers({
   withdrawal,
   user,
   form,
+  webpayments,
   loadingBar: loadingBarReducer
 })

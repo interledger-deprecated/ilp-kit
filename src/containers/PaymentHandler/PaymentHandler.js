@@ -4,6 +4,8 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
+import { check } from 'redux/actions/webpayments'
+
 import classNames from 'classnames/bind'
 import styles from './PaymentHandler.scss'
 const cx = classNames.bind(styles)
@@ -12,10 +14,11 @@ const cx = classNames.bind(styles)
   state => ({
     user: state.auth.user
   }),
-  {})
+  { check })
 export default class PaymentHandler extends Component {
   static propTypes = {
-    user: PropTypes.object.isRequired
+    user: PropTypes.object.isRequired,
+    check: PropTypes.func.isRequired
   }
 
   async componentDidMount () {
@@ -28,6 +31,9 @@ export default class PaymentHandler extends Component {
       // See https://github.com/slightlyoff/ServiceWorker/issues/468
       navigator.serviceWorker.register('/sw.js')
         .then(reg => {
+          // Keep the browser support in store
+          this.props.check(!!reg.paymentManager)
+
           if (!reg.paymentManager) return console.warn("Web Payments are not enabled in the browser")
 
           // updatefound is fired if service-worker.js changes.
