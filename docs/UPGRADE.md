@@ -16,8 +16,7 @@ pm2 delete api && pm2 reload pm2.config.js --only api && pm2 stop api
 Now update the code:
 ```sh
 rm -rf node_modules
-npm install -g yarn
-yarn install --production
+npm install --production
 ```
 
 And start it back up:

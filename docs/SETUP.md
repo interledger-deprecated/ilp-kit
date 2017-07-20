@@ -123,7 +123,7 @@ $ cd # start in your home folder
 $ git clone https://github.com/interledgerjs/ilp-kit
 $ cd ilp-kit
 $ git checkout release # the 'master' branch is not always stable, safer to use the 'release' branch
-$ yarn install --production # npm install also works, if you don't have yarn installed
+$ npm install --production
 ```
 
 # Domain setup

@@ -1,1 +1,16 @@
-node_modules
+.git
+.idea/
+node_modules/
+dist/
+/web/
+/apidoc-out/
+/coverage/
+*.iml
+webpack-assets.json
+webpack-stats.json
+npm-debug.log*
+src/theme/variables-custom.scss
+uploads/
+env.list
+keys/
+integration-test/

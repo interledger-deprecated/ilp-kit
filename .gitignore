@@ -5,6 +5,7 @@ dist/
 /apidoc-out/
 /coverage/
 *.iml
+webpack-assets.json
 webpack-stats.json
 npm-debug.log*
 src/theme/variables-custom.scss
