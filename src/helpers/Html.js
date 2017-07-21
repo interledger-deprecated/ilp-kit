@@ -35,6 +35,7 @@ export default class Html extends Component {
           {helmet.script.toComponent()}
 
           <link rel='shortcut icon' href='/favicon.png' />
+          <link rel="manifest" href="/manifest.json" />
           <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
           {/* styles (will be present only in production with webpack extract text plugin) */}
           <link href={assets.styles.main} media='screen, projection' rel='stylesheet' type='text/css' charSet='UTF-8' />

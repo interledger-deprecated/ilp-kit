@@ -96,6 +96,17 @@ app.use('/ledger', (req, res) => {
   proxyLedger.web(req, res)
 })
 
+app.use('/manifest.json', (req, res) => {
+  res.json({
+    "name": process.env.CLIENT_TITLE,
+    "icons": [{
+      "src": "favicon.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    }]
+  })
+})
+
 // added the error handling to avoid https://github.com/nodejitsu/node-http-proxy/issues/527
 proxyLedger.on('error', (error, req, res) => {
   let json
