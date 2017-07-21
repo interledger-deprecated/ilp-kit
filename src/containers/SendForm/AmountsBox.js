@@ -112,7 +112,7 @@ export default class AmountsBox extends Component {
       (quoting && this.lastQuotingField !== type)
 
     const sourceCurrency = config.currencySymbol
-    const destinationCurrency = (destinationInfo && destinationInfo.currencySymbol) || config.currencySymbol
+    const destinationCurrency = (destinationInfo && destinationInfo.currencySymbol) || destinationInfo.currencyCode || config.currencySymbol
 
     return (
       <div className='col-xs-6 form-group'>
