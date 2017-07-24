@@ -1,6 +1,6 @@
 {
   "name": "ilp-kit",
-  "version": "3.0.0-alpha3",
+  "version": "3.0.0-alpha4",
   "description": "ILP kit",
   "main": "bin/server.js",
   "license": "Apache-2.0",
