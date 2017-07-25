@@ -235,7 +235,8 @@
     "vis-why": "^1.2.2",
     "webfinger.js": "^2.6.5",
     "webpack": "^1.13.2",
-    "webpack-isomorphic-tools": "^2.5.7"
+    "webpack-isomorphic-tools": "^2.5.7",
+    "webpack-sentry-plugin": "^1.9.2"
   },
   "devDependencies": {
     "babel-eslint": "^7.2.3",
