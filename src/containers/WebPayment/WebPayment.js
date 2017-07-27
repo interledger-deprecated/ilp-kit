@@ -87,10 +87,9 @@ export default class Pay extends Component {
     const { params, quote } = this.props
     const { sending } = this.state
 
-    if (!quote.spsp) return null
-
     return (
       <div className={cx('WebPayment')}>
+        {quote.spsp &&
         <div className={cx('window')}>
           <div className={cx('profile')}>
             <div className={cx('payingTo')}>Payment to</div>
@@ -124,7 +123,7 @@ export default class Pay extends Component {
               <button onClick={this.handlePay} className={cx('btn', 'btn-success', 'btn-block', 'btn-lg', 'btnConfirm')} disabled={sending}>{sending ? 'Sending...' : 'Confirm'}</button>
             </div>
           </div>
-        </div>
+        </div>}
       </div>
     )
   }
