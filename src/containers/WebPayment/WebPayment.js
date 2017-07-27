@@ -57,7 +57,8 @@ export default class Pay extends Component {
     })
     .then(response => {
       navigator.serviceWorker.controller.postMessage({
-        methodName: 'interledger'
+        methodName: 'interledger',
+        details: {}
       })
       window.close()
 
