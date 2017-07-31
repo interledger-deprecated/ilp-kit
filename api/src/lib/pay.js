@@ -21,7 +21,7 @@ module.exports = class Pay {
     this.Withdrawal = deps(WithdrawalFactory)
   }
 
-  async _payment (source, destination, quote, message) {
+  async _payment (source, quote, message) {
     /**
      * Ledger payment
      */
@@ -49,7 +49,7 @@ module.exports = class Pay {
       source_user: source.id,
       source_identifier: source.identifier,
       source_amount: parseFloat(quote.sourceAmount),
-      destination_identifier: destination.identifier,
+      destination_identifier: quote.spsp.receiver_info.identifier,
       destination_amount: parseFloat(quote.destinationAmount),
       destination_name: quote.spsp.receiver_info.name,
       destination_image_url: quote.spsp.receiver_info.image_url,
@@ -61,7 +61,7 @@ module.exports = class Pay {
   }
 
   async pay (opts) {
-    const payment = await this._payment(opts.user, opts.destination, opts.quote, opts.message)
+    const payment = await this._payment(opts.user, opts.quote, opts.message)
 
     await this.activity.processPayment(payment, opts.user)
 
@@ -79,7 +79,7 @@ module.exports = class Pay {
     })
 
     // Send the money
-    const payment = await this._payment(user.getDataExternal(), destination, quote, 'Withdrawal')
+    const payment = await this._payment(user.getDataExternal(), quote, 'Withdrawal')
 
     let withdrawal = new this.Withdrawal()
     withdrawal.amount = amount

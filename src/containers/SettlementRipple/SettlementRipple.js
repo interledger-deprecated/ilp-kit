@@ -27,7 +27,9 @@ export default class SettlementRipple extends Component {
 
     return (
       <div className={cx('SettlementRipple')}>
-        <Helmet title={'Ripple - Settlement'} />
+        <Helmet>
+          <title>Ripple - Settlement</title>
+        </Helmet>
 
         <Field
           name='destination'

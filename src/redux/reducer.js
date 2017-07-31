@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux'
 import { routeReducer } from 'react-router-redux'
-import { reducer as reduxAsyncConnect } from 'redux-async-connect'
+import { reducer as reduxAsyncConnect } from 'redux-connect'
 import { reducer as form } from 'redux-form'
 import { loadingBarReducer } from 'react-redux-loading-bar'
 
@@ -14,6 +14,7 @@ import settlementMethod from './reducers/settlement_method'
 import settlement from './reducers/settlement'
 import withdrawal from './reducers/withdrawal'
 import user from './reducers/user'
+import webpayments from './reducers/webpayments'
 
 export default combineReducers({
   routing: routeReducer,
@@ -29,5 +30,6 @@ export default combineReducers({
   withdrawal,
   user,
   form,
+  webpayments,
   loadingBar: loadingBarReducer
 })

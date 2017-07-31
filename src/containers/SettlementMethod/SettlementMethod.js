@@ -10,7 +10,7 @@ import ButtonDanger from 'components/ButtonDanger/ButtonDanger'
 import SettlementPaypal from '../SettlementPaypal/SettlementPaypal'
 import SettlementBitcoin from '../SettlementBitcoin/SettlementBitcoin'
 import SettlementRipple from '../SettlementRipple/SettlementRipple'
-import SettlementEtherium from '../SettlementEtherium/SettlementEtherium'
+import SettlementEthereum from '../SettlementEthereum/SettlementEthereum'
 import SettlementCustom from '../SettlementCustom/SettlementCustom'
 
 import { get, update, updateLogo, remove } from 'redux/actions/settlement_method'
@@ -80,7 +80,7 @@ export default class SettlementMethod extends Component {
     if (method.type === 'paypal') return <img src='/paypal.png' />
     if (method.type === 'bitcoin') return <img src='/bitcoin.png' />
     if (method.type === 'ripple') return <img src='/ripple.png' />
-    if (method.type === 'etherium') return <img src='/etherium.png' />
+    if (method.type === 'ethereum') return <img src='/ethereum.png' />
 
     if (!method.logo) {
       return method.name || 'Unnamed'
@@ -94,7 +94,9 @@ export default class SettlementMethod extends Component {
 
     return (
       <div className={cx('form')}>
-        <Helmet title={method.name} />
+        <Helmet>
+          <title>{method.name}</title>
+        </Helmet>
 
         <div className={cx('row', 'row-sm', 'enableBox')}>
           <div className={cx('col-sm-offset-8', 'col-sm-2')}>
@@ -116,7 +118,7 @@ export default class SettlementMethod extends Component {
         {method.type === 'paypal' && <SettlementPaypal method={method} />}
         {method.type === 'bitcoin' && <SettlementBitcoin />}
         {method.type === 'ripple' && <SettlementRipple />}
-        {method.type === 'etherium' && <SettlementEtherium />}
+        {method.type === 'ethereum' && <SettlementEthereum />}
         {method.type === 'custom' && <SettlementCustom method={method} />}
       </div>
     )

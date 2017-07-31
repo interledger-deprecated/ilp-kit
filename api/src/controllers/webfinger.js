@@ -47,6 +47,10 @@ function WebfingerControllerFactory (deps) {
      *          "href": "https://wallet.example/socket.io"
      *        },
      *        {
+     *          'rel': 'https://interledger.org/rel/ilpAddress',
+     *          'href': "alice.wallet"
+     *        },
+     *        {
      *          "rel": "https://interledger.org/rel/sender/payment",
      *          "href": "https://wallet.example/payments"
      *        },
@@ -132,6 +136,7 @@ function WebfingerControllerFactory (deps) {
         'subject': config.data.get('client_host'),
         'properties': {
           'https://interledger.org/rel/publicKey': config.data.getIn(['connector', 'public_key']),
+          'https://interledger.org/rel/title': config.data.getIn(['client_title']),
           'https://interledger.org/rel/protocolVersion': 'Compatible: ilp-kit v' + config.data.getIn(['ilpKitVersion'])
         },
         'links': [

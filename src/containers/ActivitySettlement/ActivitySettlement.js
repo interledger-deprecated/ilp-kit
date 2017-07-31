@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
+import moment from 'moment'
+import TimeAgo from 'react-timeago'
 
 import Amount from 'components/Amount/Amount'
 
@@ -17,7 +19,8 @@ const cx = classNames.bind(styles)
 export default class ActivitySettlement extends Component {
   static propTypes = {
     activity: PropTypes.object.isRequired,
-    config: PropTypes.object
+    config: PropTypes.object,
+    advancedMode: PropTypes.bool
   }
 
   static defaultProps = {
@@ -64,6 +67,7 @@ export default class ActivitySettlement extends Component {
   render () {
     const { config } = this.props
     const { settlement } = this.state
+    const advancedMode = this.props.advancedMode
 
     // TODO payments grouping / message
     return (
@@ -72,8 +76,14 @@ export default class ActivitySettlement extends Component {
           <div className='col-xs-8'>
             <i className={cx('fa', 'fa-plus', 'icon')} />
             <div className={cx('description')}>
-              {/* TODO:UX include the deposit method */}
-              Deposit
+              <span className={cx('message')}>
+                {/* TODO:UX include the deposit method */}
+                Deposit
+              </span>
+              <div className={cx('date')} title={moment(settlement.recent_date).format('LLL')}>
+                {advancedMode && <span>{moment(settlement.recent_date || settlement.created_at).format('MMM D, YYYY LTS')} - </span>}
+                <TimeAgo date={settlement.recent_date || settlement.created_at} formatter={this.timeAgoFormatter} />
+              </div>
             </div>
           </div>
           <div className='col-xs-4'>

@@ -26,7 +26,7 @@ function getConfigFilePath () {
   return file
 }
 
-function normalizeEnv () {
+function normalizeEnv (noExit) {
   // get env vars from the env file
   try {
     const file = getConfigFilePath()
@@ -38,7 +38,7 @@ function normalizeEnv () {
 
       const keyPairArray = line.split('=')
 
-      envVars[keyPairArray[0]] = keyPairArray.slice(1).join('=')
+      envVars[keyPairArray[0]] = keyPairArray.slice(1).join('=').trim()
     })
   } catch (err) {
     // Both env.list and environment variables are missing
@@ -46,7 +46,7 @@ function normalizeEnv () {
       console.log('DB_URI is not set. Did you configure ilp-kit? \n'
         + 'To configure ilp-kit, run: npm run configure')
 
-      process.exit(1)
+      noExit || process.exit(1)
     }
   }
 
@@ -60,7 +60,7 @@ function normalizeEnv () {
     console.log('`env.list` version (' + version
       + ') is older than supported version (' + supportedVersion
       + '). Back up your env.list and run `npm run configure` to update.')
-    process.exit(1)
+    noExit || process.exit(1)
   }
 
   // backwards compatibility
@@ -100,9 +100,11 @@ function normalizeEnv () {
     const API_PUBLIC_HTTPS = Config.castBool(getVar('API_PUBLIC_HTTPS'), true)
     const LEDGER_PUBLIC_HTTPS = Config.castBool(getVar('LEDGER_PUBLIC_HTTPS'), API_PUBLIC_HTTPS)
     envVars.LEDGER_PUBLIC_HTTPS = LEDGER_PUBLIC_HTTPS
-    const protocol = API_PUBLIC_HTTPS ? 'https:' : 'http:'
+    envVars.API_PROTOCOL = API_PUBLIC_HTTPS ? 'https:' : 'http:'
     envVars.API_LEDGER_URI = 'http://' + (getVar('API_PRIVATE_HOSTNAME') || getVar('LEDGER_HOSTNAME')) + ':' + getVar('LEDGER_PORT')
-    envVars.API_LEDGER_PUBLIC_URI = protocol + '//' + getVar('LEDGER_HOSTNAME') + ledgerPublicPort + '/' + getVar('LEDGER_PUBLIC_PATH')
+    envVars.API_LEDGER_PUBLIC_URI = envVars.API_PROTOCOL + '//' + getVar('LEDGER_HOSTNAME') + ledgerPublicPort + '/' + getVar('LEDGER_PUBLIC_PATH')
+
+    envVars.DEV_PROTOCOL = Config.castBool(getVar('DEV_HTTPS')) ? 'https' : 'http'
   }
 
   // Set envVars in environment

@@ -1,10 +1,13 @@
-require('babel-polyfill');
+require('babel-polyfill')
+require('../bin/env').normalizeEnv(true)
 
 // Webpack config for creating the production bundle.
 var path = require('path');
+var execSync = require('child_process').execSync;
 var webpack = require('webpack');
 var CleanPlugin = require('clean-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var SentryPlugin = require('webpack-sentry-plugin');
 var strip = require('strip-loader');
 
 var projectRootPath = path.resolve(__dirname, '../');
@@ -13,6 +16,55 @@ var assetsPath = path.resolve(projectRootPath, './static/dist');
 // https://github.com/halt-hammerzeit/webpack-isomorphic-tools
 var WebpackIsomorphicToolsPlugin = require('webpack-isomorphic-tools/plugin');
 var webpackIsomorphicToolsPlugin = new WebpackIsomorphicToolsPlugin(require('./webpack-isomorphic-tools'));
+
+const plugins = [
+  new CleanPlugin([assetsPath], { root: projectRootPath }),
+
+  // css files from the extract-text-plugin loader
+  new ExtractTextPlugin('[name]-[chunkhash].css', {allChunks: true}),
+  new webpack.DefinePlugin({
+    'process.env': {
+      NODE_ENV: '"production"'
+    },
+
+    __CLIENT__: true,
+    __SERVER__: false,
+    __DEVELOPMENT__: false,
+    __DEVTOOLS__: false
+  }),
+
+  // ignore dev config
+  new webpack.IgnorePlugin(/\.\/dev/, /\/config$/),
+
+  // optimizations
+  new webpack.optimize.DedupePlugin(),
+  new webpack.optimize.OccurenceOrderPlugin(),
+  new webpack.optimize.UglifyJsPlugin({
+    compress: {
+      warnings: false
+    }
+  }),
+  // TODO:PERFORMANCE this is not a final solution to long term caching.
+  //   If the number of modules changes (add/remove modules), all of the chunknames change too
+  new webpack.optimize.CommonsChunkPlugin("vendor", "vendor-[chunkhash].js"),
+  new webpack.optimize.CommonsChunkPlugin({name: 'meta', chunks: ["vendor"]}),
+
+  webpackIsomorphicToolsPlugin
+]
+
+if (process.env.API_SENTRY_DSN) {
+  plugins.push(new SentryPlugin({
+    organisation: process.env.API_SENTRY_ORG,
+    project: process.env.API_SENTRY_PROJECT,
+    apiKey: process.env.API_SENTRY_API_KEY,
+    filenameTransform: function(filename) {
+      return '~/dist/' + filename
+    },
+    release: function() {
+      return execSync('git rev-parse --short HEAD', { cwd: __dirname }).toString().split('\n').join('')
+    }
+  }))
+}
 
 module.exports = {
   context: path.resolve(__dirname, '..'),
@@ -29,7 +81,7 @@ module.exports = {
       'react-router',
       'redux',
       'react-redux',
-      'redux-async-connect',
+      'redux-connect',
       'redux-form',
       'socket.io-client',
       'react-ga',
@@ -40,11 +92,13 @@ module.exports = {
       'moment',
       'moment-timezone',
       'classnames/bind',
-      'react-waypoint',
       'react-router-redux',
       'redux-pagination',
       'react-dropzone-component',
       'superagent',
+      'uuid4',
+      'react-hotkeys',
+      'react-fittext',
 
       'react-bootstrap/lib/Alert',
       'react-bootstrap/lib/Navbar',
@@ -54,6 +108,7 @@ module.exports = {
       'react-bootstrap/lib/MenuItem'
     ]
   },
+  devtool: 'source-map',
   output: {
     path: assetsPath,
     filename: '[name]-[chunkhash].js',
@@ -85,38 +140,5 @@ module.exports = {
   sassLoader: {
     includePaths: [path.resolve(__dirname, "../src/theme"), 'node_modules']
   },
-  plugins: [
-    new CleanPlugin([assetsPath], { root: projectRootPath }),
-
-    // css files from the extract-text-plugin loader
-    new ExtractTextPlugin('[name]-[chunkhash].css', {allChunks: true}),
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: '"production"'
-      },
-
-      __CLIENT__: true,
-      __SERVER__: false,
-      __DEVELOPMENT__: false,
-      __DEVTOOLS__: false
-    }),
-
-    // ignore dev config
-    new webpack.IgnorePlugin(/\.\/dev/, /\/config$/),
-
-    // optimizations
-    new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false
-      }
-    }),
-    // TODO:PERFORMANCE this is not a final solution to long term caching.
-    //   If the number of modules changes (add/remove modules), all of the chunknames change too
-    new webpack.optimize.CommonsChunkPlugin("vendor", "vendor-[chunkhash].js"),
-    new webpack.optimize.CommonsChunkPlugin({name: 'meta', chunks: ["vendor"]}),
-
-    webpackIsomorphicToolsPlugin
-  ]
+  plugins
 };

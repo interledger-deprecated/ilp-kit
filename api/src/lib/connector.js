@@ -19,7 +19,9 @@ module.exports = class Connector {
     this.SettlementMethod = deps(SettlementMethodFactory)
     this.log = deps(Log)('connector')
     this.peers = {}
+    this.peerDestinations = {} // { connectorAccount ⇒ peer.destination }
     this.instance = connector
+    connector.registerRequestHandler(this._handleRequestMessage.bind(this))
   }
 
   async start () {
@@ -100,8 +102,6 @@ module.exports = class Connector {
   }
 
   async connectPeer (peer) {
-    const self = this
-
     // Skip if already connected
     if (this.peers[peer.destination] && this.peers[peer.destination].online) return
 
@@ -142,6 +142,7 @@ module.exports = class Connector {
     }
 
     const plugin = connector.getPlugin(hostInfo.ledgerName)
+    this.peerDestinations[plugin.getAccount()] = peer.destination
 
     try {
       await plugin.getLimit()
@@ -151,28 +152,11 @@ module.exports = class Connector {
       // Not connected. The other side hasn't peered with this kit
       this.log.info("Can't get the peer limit")
     }
-
-    plugin.on('incoming_message', async function (message) {
-      if (message.data.method !== 'settlement_methods_request') return
-
-      const peerStatus = await self.getPeer(peer)
-
-      if (!peerStatus) return
-
-      // Settlement Methods
-      await plugin.sendMessage({
-        from: message.to,
-        to: message.from,
-        ledger: message.ledger,
-        data: {
-          method: 'settlement_methods_response',
-          settlement_methods: await self.getSelfSettlementMethods(peer.destination, peerStatus.balance)
-        }
-      })
-    })
   }
 
-  async getSelfSettlementMethods (destination, amount) {
+  async getSelfSettlementMethods (destination, internalAmount) {
+    const amount = internalAmount / 1000000000
+
     // TODO:PERFORMANCE don't call this on every request
     const dbSettlementMethods = await this.SettlementMethod.findAll({ where: { enabled: true,  name: { $ne: null } } })
     return dbSettlementMethods.map(settlementMethod => {
@@ -241,31 +225,42 @@ module.exports = class Connector {
 
     if (!peerInfo.online) return Promise.reject(new Error('Peer not online'))
 
-    const promise = new Promise(resolve => {
-      const handler = message => {
-        if (message.data.method !== 'settlement_methods_response') return
-
-        plugin.removeListener('incoming_message', handler)
-
-        resolve(message.data.settlement_methods)
-      }
-
-      plugin.on('incoming_message', handler)
-    })
-
-    await plugin.sendMessage({
-      from: peerInfo.ledgerName + this.config.data.getIn(['connector', 'public_key']),
+    const responseMessage = await plugin.sendRequest({
+      from: plugin.getAccount(),
       to: peerInfo.ledgerName + peerInfo.publicKey,
       ledger: peerInfo.ledgerName,
-      data: {
+      custom: {
         method: 'settlement_methods_request'
       }
     })
-
-    return promise
+    const responseData = responseMessage.custom
+    if (!responseData || !responseData.settlement_methods) {
+      return Promise.reject(new Error('Invalid settlement methods response'))
+    }
+    return responseData.settlement_methods
   }
 
   getPlugin (prefix) {
     return connector.getPlugin(prefix)
+  }
+
+  async _handleRequestMessage (message) {
+    if (!message.custom || message.custom.method !== 'settlement_methods_request') return
+
+    const peerDestination = this.peerDestinations[message.to].toString()
+    const peer = await this.Peer.findOne({ where: { destination: peerDestination } })
+    const peerStatus = await this.getPeer(peer)
+    if (!peerStatus) return
+
+    // Settlement Methods
+    return {
+      ledger: message.ledger,
+      from: message.to,
+      to: message.from,
+      custom: {
+        method: 'settlement_methods_response',
+        settlement_methods: await this.getSelfSettlementMethods(peer.destination, peerStatus.balance)
+      }
+    }
   }
 }

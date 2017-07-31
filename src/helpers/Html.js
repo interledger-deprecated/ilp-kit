@@ -23,33 +23,35 @@ export default class Html extends Component {
   render () {
     const {assets, component, store} = this.props
     const content = component ? ReactDOM.renderToString(component) : ''
-    const head = Helmet.rewind()
+    const helmet = Helmet.rewind()
 
     return (
       <html lang='en-us'>
         <head>
-          {head.base.toComponent()}
-          {head.title.toComponent()}
-          {head.meta.toComponent()}
-          {head.link.toComponent()}
-          {head.script.toComponent()}
+          {helmet.base.toComponent()}
+          {helmet.title.toComponent()}
+          {helmet.meta.toComponent()}
+          {helmet.link.toComponent()}
+          {helmet.script.toComponent()}
 
           <link rel='shortcut icon' href='/favicon.png' />
-          <meta name='viewport' content='width=device-width, initial-scale=1' />
+          <link rel="manifest" href="/manifest.json" />
+          <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
           {/* styles (will be present only in production with webpack extract text plugin) */}
           <link href={assets.styles.main} media='screen, projection' rel='stylesheet' type='text/css' charSet='UTF-8' />
-          <link href="https://fonts.googleapis.com/css?family=Open+Sans:300" rel="stylesheet" />
+          <link href='https://fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' />
         </head>
         <body>
           <div id='content' dangerouslySetInnerHTML={{__html: content}} />
           <script dangerouslySetInnerHTML={{__html: `window.__data=${serialize(store.getState())}`}} charSet='UTF-8' />
-          {__DEVELOPMENT__ && <script src={assets.javascript.vendor} charSet='UTF-8' />}
-          {/* TODO remove hardcode */}
-          {__DEVELOPMENT__ && <script src='http://localhost:3011/dist/app.js' charSet='UTF-8' />}
+          {__DEVELOPMENT__ && <script src={`//${process.env.CLIENT_HOST}/dist/vendor.dll.js`} charSet='UTF-8' />}
+          {__DEVELOPMENT__ && <script src={`//${process.env.CLIENT_HOST}:${Number(process.env.CLIENT_PORT) + 1}/dist/app.js`} charSet='UTF-8' />}
 
           {!__DEVELOPMENT__ && <script src={assets.javascript.meta} charSet='UTF-8' />}
           {!__DEVELOPMENT__ && <script src={assets.javascript.vendor} charSet='UTF-8' />}
           {!__DEVELOPMENT__ && <script src={assets.javascript.main} charSet='UTF-8' />}
+
+          <script src='https://cdn.ravenjs.com/3.15.0/raven.min.js'></script>
         </body>
       </html>
     )

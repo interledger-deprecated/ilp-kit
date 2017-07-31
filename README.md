@@ -17,14 +17,13 @@ ILP wallet with hosted ledger and connector instances
 [heroku-deploy-url]: https://heroku.com/deploy?template=https://github.com/interledgerjs/ilp-kit/tree/release
 [circle-image]: https://circleci.com/gh/interledgerjs/ilp-kit.svg?style=shield&circle-token=65d802e1ea641aabcc95f8d28f2c6ade577716a9
 [circle-url]: https://circleci.com/gh/interledgerjs/ilp-kit
-[fossa-image]: https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Finterledgerjs%2Filp-kit.svg?type=shield
+[fossa-image]: https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Finterledgerjs%2Filp-kit.svg?type=small
 [fossa-url]: https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2Finterledgerjs%2Filp-kit?ref=badge_shield
 
 
 ## [Setup](https://github.com/interledgerjs/ilp-kit/blob/master/docs/SETUP.md)
 
 * The easy way: [with docker-compose](https://github.com/interledgerjs/ilp-kit-docker-compose)
-* The hard way: [ubuntu manual setup](https://github.com/interledgerjs/ilp-kit/blob/master/docs/SETUP.md)
 * On Google Cloud Engine: https://github.com/sappenin/ilpkit-google-cloud/tree/master/ilpkit-gce-single
 * On Heroku: https://heroku.com/deploy?template=https://github.com/interledgerjs/ilp-kit/tree/release
 
@@ -110,17 +109,18 @@ ILP kit UI comes with an "advanced mode" for developers and advanced users. You 
 
 ## Architecture
 ILP kit consists of:
-* a connector
-* a Five Bells ledger
-* a [Node.js](https://github.com/nodejs/node) (developed on v7.7.1) backend (REST API)
-* a proxy in front of that API, known as the 'wallet'.
-* a client built using [React](https://github.com/facebook/react).
+* a Five Bells ledger (the 'ledger' process)
+* a [Node.js](https://github.com/nodejs/node) (developed on v7.7.1) 'api' process, containing a connector and SPSP receivers
+* html+js+css statics, built using [React](https://github.com/facebook/react)
+* a 'server' process which serves the statics on example.com, the ledger on example.com/ledger, the api on example.com/api
+* an nginx instance in front the server process, which handles https termination
 
 ### Backend (REST API)
 The backend is responsible for communicating with the ILP ledger, creating accounts, sending payments and keeping the payment history.
 
 #### API docs
-[https://interledgerjs.github.io/ilp-kit/apidoc](https://interledgerjs.github.io/ilp-kit/apidoc/)
+- stable (`release` branch) - [https://interledgerjs.github.io/ilp-kit/apidoc](https://interledgerjs.github.io/ilp-kit/apidoc/)
+- latest (`master` branch)  - [https://interledgerjs.github.io/ilp-kit/apidoc/master](https://interledgerjs.github.io/ilp-kit/apidoc/master/)
 
 #### How it works
 

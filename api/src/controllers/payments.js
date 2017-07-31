@@ -28,59 +28,6 @@ function PaymentsControllerFactory (deps) {
     }
 
     /**
-     * @api {put} /payments/:id Make payment
-     * @apiName PutPayments
-     * @apiGroup Payment
-     * @apiVersion 1.0.0
-     *
-     * @apiDescription Make payment
-     *
-     * @apiParam {String} id generated payment uuid
-     * @apiParam {String} destination destination
-     * @apiParam {String} sourceAmount source amount
-     * @apiParam {String} destinationAmount destination amount
-     * @apiParam {String} memo text message for the destination
-     *
-     * @apiExample {shell} Make a payment
-     *    curl -X PUT -H "Authorization: Basic YWxpY2U6YWxpY2U=" -H "Content-Type: application/json" -d
-     *    '{
-     *        "destination": "bob@wallet.example",
-     *        "sourceAmount": "5",
-     *        "destinationAmount": "5",
-     *        "memo": "Some money for you!"
-     *    }'
-     *    https://wallet.example/payments/9efa70ec-08b9-11e6-b512-3e1d05defe78
-     *
-     * @apiSuccessExample {json} 200 Response:
-     *    HTTP/1.1 200 OK
-     *    {
-     *      "id": "a36e3447-8ca5-4bc4-a586-7769e3dea63a"
-     *      "destination": "bob@wallet.example",
-     *      "sourceAmount": "5",
-     *      "destinationAmount": "5",
-     *      "memo": "Some money for you!",
-     *    }
-     */
-
-    // TODO don't allow payments to self
-    static async putResource (ctx) {
-      const quote = ctx.body.quote
-      const destination = ctx.body.destination
-      const message = ctx.body.message
-
-      try {
-        await pay.pay({ user: ctx.req.user, quote, destination, message })
-      } catch (e) {
-        console.error(e)
-
-        throw new ServerError()
-      }
-
-      // TODO should be something more meaningful
-      ctx.status = 200
-    }
-
-    /**
      * @api {POST} /payments/quote Request a quote
      * @apiName Quote
      * @apiGroup Payment
@@ -88,7 +35,7 @@ function PaymentsControllerFactory (deps) {
      *
      * @apiDescription Request a quote
      *
-     * @apiParam {String} destination destination (email or a username)
+     * @apiParam {String} destination destination webfinger account
      * @apiParam {String} sourceAmount source amount (optional, used if destinationAmount is not provided)
      * @apiParam {String} destinationAmount destination amount (optional, used if sourceAmount is not provided)
      *
@@ -103,8 +50,27 @@ function PaymentsControllerFactory (deps) {
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
      *    {
-     *      "sourceAmount": "10",
-     *      "destinationAmount": "10"
+     *      "id": "406e6682-b18e-4e8b-8235-e88ad16a15a0",
+     *      "sourceAmount": "1",
+     *      "destinationAmount": "1",
+     *      "destinationAccount": "wallet.bob._1nG4HIOEdgsGt03lQnSA6Bqv9Ju55vtA",
+     *      "connectorAccount": "wallet.bob._1nG4HIOEdgsGt03lQnSA6Bqv9Ju55vtA",
+     *      "sourceExpiryDuration": "10",
+     *      "spsp": {
+     *        "destination_account": "wallet.bob._1nG4HIOEdgsGt03lQnSA6Bqv9Ju55vtA",
+     *        "shared_secret": "1pvx93ZEd8gTGHfiqKhD5w",
+     *        "maximum_destination_amount": "18446744073709552000",
+     *        "minimum_destination_amount": "1",
+     *        "ledger_info": {
+     *          "currency_code": "USD",
+     *          "currency_scale": 9
+     *        },
+     *        "receiver_info": {
+     *          "name": "",
+     *          "image_url": "https://wallet.example/api/users/bob/profilepic",
+     *          "identifier": "bob@wallet.example"
+     *        }
+     *      }
      *    }
      */
 
@@ -124,33 +90,77 @@ function PaymentsControllerFactory (deps) {
     }
 
     /**
-     * @api {POST} /receivers/:username Setup a payment
-     * @apiName Setup
-     * @apiGroup Receiver
+     * @api {put} /payments/:id Make payment
+     * @apiName PutPayments
+     * @apiGroup Payment
      * @apiVersion 1.0.0
      *
-     * @apiDescription Setup a payment
+     * @apiDescription Make payment
      *
-     * @apiParam {String} amount destination amount
-     * @apiParam {String} source_identifier sender identifier
-     * @apiParam {String} memo memo
+     * @apiParam {String} id generated payment uuid
+     * @apiParam {String} destination destination
+     * @apiParam {String} sourceAmount source amount
+     * @apiParam {String} destinationAmount destination amount
+     * @apiParam {String} memo text message for the destination
      *
-     * @apiExample {shell} Setup a payment
-     *    curl -X POST -H "Content-Type: application/json" -d
+     * @apiExample {shell} Make a payment
+     *    curl -X PUT -H "Authorization: Basic YWxpY2U6YWxpY2U=" -H "Content-Type: application/json" -d
      *    '{
-     *        "amount": "10",
-     *        "source_identifier": "alice@wallet1.example"
-     *        "memo": "Some money for you!"
+     *        "quote": {QuoteResponse},
+     *        "message": "Here's some money for you"
      *    }'
-     *    https://wallet2.example/api/receivers/alice
+     *    https://wallet.example/payments/9efa70ec-08b9-11e6-b512-3e1d05defe78
+     *
+     * @apiSuccessExample {json} 200 Response:
+     *    HTTP/1.1 204 OK
+     */
+
+    // TODO don't allow payments to self
+    static async putResource (ctx) {
+      const quote = ctx.body.quote
+      const message = ctx.body.message
+
+      try {
+        await pay.pay({ user: ctx.req.user, quote, message })
+      } catch (e) {
+        console.error(e)
+
+        throw new ServerError()
+      }
+
+      ctx.body = null
+    }
+
+    /**
+     * @api {POST} /spsp/:username SPSP query
+     * @apiName Query
+     * @apiGroup Payment
+     * @apiVersion 1.0.0
+     *
+     * @apiDescription SPSP Query
+     *
+     * @apiParam {String} username username
+     *
+     * @apiExample {shell} SPSP Query
+     *    curl -X POST -H "Content-Type: application/json"
+     *    https://wallet.example/api/spsp/alice
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
      *    {
-     *      "address": "wallet2.alice.~ipr.csWIkAxOSfo.3c51a836-6a2a-40b4-8905-a57e9806a1ac",
-     *      "amount": "10.00",
-     *      "expires_at": "2016-09-06T22:47:01.668Z",
-     *      "condition": "XcJRQrVJQKsXrXnpHIk1Nm7PBm5JfnFgmd8ocsexjO4"
+     *        "destination_account": "wallet.alice.iD4LnxavIqs4CKbwVkelHEluk5VTnH8Vw",
+     *        "shared_secret": "dwGaLn1pIrrOmmq6Xk362g",
+     *        "maximum_destination_amount": "18446744073709552000",
+     *        "minimum_destination_amount": "1",
+     *        "ledger_info": {
+     *            "currency_code": "USD",
+     *            "currency_scale": 9
+     *        },
+     *        "receiver_info": {
+     *            "name": "Alice Jan",
+     *            "image_url": "https://wallet.example/api/users/alice/profilepic",
+     *            "identifier": "alice@wallet.example"
+     *        }
      *    }
      */
     static async query (ctx) {

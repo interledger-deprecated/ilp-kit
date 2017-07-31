@@ -74,7 +74,9 @@ export default class SettlementPaypal extends Component {
 
     return (
       <div className={cx('SettlementPaypal')}>
-        <Helmet title={'Paypal - Settlement'} />
+        <Helmet>
+          <title>Paypal - Settlement</title>
+        </Helmet>
 
         {success &&
         <Alert bsStyle='success'>

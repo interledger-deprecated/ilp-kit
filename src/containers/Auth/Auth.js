@@ -45,8 +45,16 @@ export default class Home extends Component {
     this.setCurrentView()
   }
 
+  componentDidMount () {
+    document.getElementsByTagName('body')[0].className = 'guest'
+  }
+
   componentWillReceiveProps (nextProps) {
     this.setCurrentView(nextProps)
+  }
+
+  componentWillUnmount () {
+    document.getElementsByTagName('body')[0].className = ''
   }
 
   setCurrentView (props) {
@@ -74,7 +82,7 @@ export default class Home extends Component {
     const appConfig = this.props.config || {}
 
     return (
-      <div className={cx('Auth', 'container')}>
+      <div className={cx('Auth')}>
         <div>
           <div className={cx('header')}>
             <h1 className={cx('title')}>{appConfig.title}</h1>
@@ -104,12 +112,12 @@ export default class Home extends Component {
           {currentView === 'login' &&
           <div className={cx('switchBox')}>
             <span className={cx('label')}>Don't have an account?</span>
-            <Link to='/register' data-toggle='tab' role='tab' aria-expanded='true' className={cx('btnSwitch', 'btn', 'btn-default')}>Sign Up</Link>
+            <Link to='/register' data-toggle='tab' role='tab' aria-expanded='true' className={cx('btnSwitch', 'btn', 'btn-lg', 'btn-default')}>Sign Up</Link>
           </div>}
           {currentView === 'register' &&
           <div className={cx('switchBox')}>
             <span className={cx('label')}>Already have an account?</span>
-            <Link to='/login' data-toggle='tab' role='tab' aria-expanded='true' className={cx('btnSwitch', 'btn', 'btn-default')}>Login</Link>
+            <Link to='/login' data-toggle='tab' role='tab' aria-expanded='true' className={cx('btnSwitch', 'btn', 'btn-lg', 'btn-default')}>Login</Link>
           </div>}
         </div>
 

@@ -68,12 +68,13 @@ export default class LoginForm extends Component {
         </div>
         <div className='row'>
           <div className='col-sm-4'>
-            <button type='submit' className='btn btn-success btn-lg' disabled={pristine || invalid || submitting}>
+            <button type='submit' className='btn btn-success btn-lg btn-block' disabled={pristine || invalid || submitting}>
               {submitting ? ' Logging In...' : ' Login'}
             </button>
           </div>
           <div className={cx('col-sm-8', 'text-right', 'forgotPasswordLinkContainer')}>
-            <Link to='/forgot-password'>Forgot your password?</Link>
+            <Link to='/forgot-password' className={cx('btn', 'btn-default', 'btn-block', 'visible-xs-block')}>Forgot your password?</Link>
+            <Link to='/forgot-password' className={cx('hidden-xs')}>Forgot your password?</Link>
           </div>
         </div>
       </form>

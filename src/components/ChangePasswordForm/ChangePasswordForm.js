@@ -89,7 +89,7 @@ export default class ChangePasswordForm extends Component {
               label='Repeat Password'
               size='lg' />
           </div>
-          <div className='row'>
+          <div>
             <button type='submit' className='btn btn-success' disabled={pristine || (invalid && !submitFailed) || submitting}>
               {submitting ? ' Submitting...' : ' Submit'}
             </button>

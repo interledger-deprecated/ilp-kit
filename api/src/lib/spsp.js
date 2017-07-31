@@ -109,9 +109,8 @@ module.exports = class SPSP {
       this.listenerCache[user.username] = true
       await ILP.PSK.listen(receiver, { receiverSecret }, async function (params) {
         try {
-            // Store the payment in the wallet db
+          // Store the payment in the wallet db
           const payment = await self.Payment.createOrUpdate({
-              // TODO:BEFORE_DEPLOY source_identifier
             source_identifier: params.headers['source-identifier'],
             source_name: params.headers['source-name'],
             source_image_url: params.headers['source-image-url'],
@@ -122,15 +121,16 @@ module.exports = class SPSP {
             destination_identifier: user.identifier,
             destination_amount: parseFloat(params.transfer.amount) * Math.pow(10, -ledgerInfo.scale),
             transfer: params.transfer.id,
-              // TODO:BEFORE_DEPLOY message
             message: params.headers.message || null,
             execution_condition: params.transfer.executionCondition,
             state: 'success'
           })
 
-          await self.activity.processPayment(payment, user)
+          // Fulfill the payment
+          await params.fulfill()
 
-          return params.fulfill()
+          // Process payment for the local database (do it in the background, no need to wait)
+          self.activity.processPayment(payment, user)
         } catch (e) {
           debug('Error fulfilling SPSP payment', e)
           throw e
@@ -149,7 +149,8 @@ module.exports = class SPSP {
       },
       receiver_info: {
         name: user.name,
-        image_url: this.utils.userToImageUrl(user)
+        image_url: this.utils.userToImageUrl(user),
+        identifier: user.identifier
       }
     }
   }

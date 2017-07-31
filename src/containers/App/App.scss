@@ -2,11 +2,13 @@
 @import 'mixins';
 
 .App {
-  min-height: 100%;
   padding-bottom: 30px;
 
-  &.darkBg {
-    background: #333333;
+  @include mobile {
+    padding-bottom: 80px;
+  }
+
+  &.guest {
     padding-bottom: 0;
   }
 }

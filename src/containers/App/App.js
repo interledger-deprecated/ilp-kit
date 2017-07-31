@@ -17,13 +17,14 @@ import MenuItem from 'react-bootstrap/lib/MenuItem'
 import Label from 'react-bootstrap/lib/Label'
 
 import Amount from 'components/Amount/Amount'
+import PaymentHandler from 'containers/PaymentHandler/PaymentHandler'
 
 import hotkeys from 'decorators/hotkeys'
 
 import { isLoaded as isAuthLoaded, load as loadAuth, loadConfig, logout, updateBalance, verify, resendVerificationEmail } from 'redux/actions/auth'
 import { routeActions } from 'react-router-redux'
 import { addActivity } from 'redux/actions/activity'
-import { asyncConnect } from 'redux-async-connect'
+import { asyncConnect } from 'redux-connect'
 
 import classNames from 'classnames/bind'
 import styles from './App.scss'
@@ -89,16 +90,7 @@ export default class App extends Component {
   componentDidMount () {
     const params = this.props.params
 
-    // TODO socket stuff needs work
-    if (socket) {
-      socket.connect()
-      socket.on('activity', this.props.addActivity)
-      socket.on('balance', this.props.updateBalance)
-
-      if (this.props.user && this.props.user.username) {
-        socket.emit('subscribe', this.props.user.username)
-      }
-    }
+    this.connect()
 
     if (params.username) {
       // Email verification
@@ -106,15 +98,48 @@ export default class App extends Component {
         this.props.verify(params.username, params.verifyCode)
       }
     }
+
+    // Disable scaling
+    document.addEventListener('touchmove', function(event) {
+      event = event.originalEvent || event
+      if (event.scale !== 1) {
+        event.preventDefault()
+      }
+    }, false)
+
+    this.fixAppHeight()
   }
 
   componentWillReceiveProps (nextProps) {
     if (!this.props.user && nextProps.user) {
-      // login
+      // login or register
       this.props.pushState('/')
+      this.connect(nextProps)
     } else if (this.props.user && !nextProps.user) {
       // logout
       this.props.pushState('/')
+    }
+  }
+
+  fixAppHeight = () => {
+    // Viewport height
+    const height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
+    document.getElementsByClassName(cx('App'))[0].style['min-height'] = height + 'px'
+
+    window.addEventListener('resize', this.fixAppHeight, false)
+  }
+
+  connect = (props = this.props) => {
+    if (!props.user || !props.user.username) return
+
+    if (socket) {
+      socket.connect()
+
+      socket.on('activity', props.addActivity)
+      socket.on('balance', props.updateBalance)
+      socket.on('reconnect', () => socket.emit('subscribe', props.user.username))
+
+      socket.emit('subscribe', props.user.username)
     }
   }
 
@@ -143,22 +168,15 @@ export default class App extends Component {
     const { user, config = {}, advancedMode, verified, verificationEmailSent } = this.props
 
     return (
-      <div className={cx('App', !user && 'darkBg')}>
-        <Helmet
-          defaultTitle={config.title}
-          titleTemplate={config.title && '%s - ' + config.title}
-          meta={[
-            {'name': 'viewport', 'content': 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'},
-
-            {'property': 'og:type', 'content': 'website'},
-            {'property': 'og:title', 'content': config.title},
-
-            {'name': 'twitter:title', 'content': config.title},
-            {'name': 'twitter:card', 'content': 'summary'},
-
-            {'itemprop': 'name', 'content': config.title}
-          ]}
-        />
+      <div className={cx('App', !user && 'guest')}>
+        <Helmet defaultTitle={config.title} titleTemplate={config.title && '%s - ' + config.title}>
+          <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+          <meta property='og:type' content='website' />
+          <meta property='og:title' content={config.title} />
+          <meta name='twitter:title' content={config.title} />
+          <meta name='twitter:card' content='summary' />
+          <meta itemProp='name' content={config.title} />
+        </Helmet>
 
         <LoadingBar className={cx('loadingBar')} />
 
@@ -190,10 +208,19 @@ export default class App extends Component {
               <LinkContainer to='/peers'>
                 <NavItem onClick={this.onNavItemClick}>Peers</NavItem>
               </LinkContainer>}
+
               {user.isAdmin &&
-              <LinkContainer to='/settlement'>
-                <NavItem onClick={this.onNavItemClick}>Settlement</NavItem>
-              </LinkContainer>}
+              <NavDropdown id='settlementDropdown' title='Settlements'>
+                <LinkContainer to='/settlements/user'>
+                  <MenuItem>User Settlements</MenuItem>
+                </LinkContainer>
+                <LinkContainer to='/settlements/peer'>
+                  <MenuItem>Peer Settlements</MenuItem>
+                </LinkContainer>
+                <LinkContainer to='/settlements/settings'>
+                  <MenuItem>Configure</MenuItem>
+                </LinkContainer>
+              </NavDropdown>}
 
               <NavDropdown id='navDropdown' title={<span>{user.profile_picture && <img className={cx('profilePic')} src={user.profile_picture} />} {user.displayName}</span>}>
                 {!user.github_id &&
@@ -253,7 +280,9 @@ export default class App extends Component {
           </Link>
         </div>}
 
-        {advancedMode && <div className={cx('version')}>Version: {config.versions && config.versions.currentFull}</div>}
+        {user && <PaymentHandler />}
+
+        {advancedMode && <div className={cx('version')}>Version: {config.versions && (config.versions.current + '-' + config.versions.hash)}</div>}
       </div>
     )
   }

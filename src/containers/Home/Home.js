@@ -5,6 +5,7 @@ import ReactTooltip from 'react-tooltip'
 
 import { reload } from 'redux/actions/auth'
 
+import Alert from 'react-bootstrap/lib/Alert'
 import Dropdown from 'react-bootstrap/lib/Dropdown'
 import MenuItem from 'react-bootstrap/lib/MenuItem'
 
@@ -27,14 +28,16 @@ const cx = classNames.bind(styles)
     user: state.auth.user,
     activeTab: state.auth.activeTab,
     verified: state.auth.verified,
-    config: state.auth.config
+    config: state.auth.config,
+    webpaymentsEnabled: state.webpayments.enabled
   }),
   { reload })
 export default class Home extends Component {
   static propTypes = {
     user: PropTypes.object,
     reload: PropTypes.func.isRequired,
-    config: PropTypes.object
+    config: PropTypes.object,
+    webpaymentsEnabled: PropTypes.bool
   }
 
   state = {}
@@ -91,8 +94,12 @@ export default class Home extends Component {
     )
   }
 
+  handleRegisterHandler = () => {
+
+  }
+
   render () {
-    const { user, config } = this.props
+    const { user, config, webpaymentsEnabled } = this.props
     const { showStats, reloading } = this.state
 
     const showDepositWithdraw = !config.reload &&
@@ -176,6 +183,14 @@ export default class Home extends Component {
               <SendForm />
             </div>
           </div>
+
+          {/* Continue working on webpayments manual registration when webpayments become a thing on desktop browsers */}
+          {webpaymentsEnabled && false &&
+          <Alert bsStyle='info'>
+            Do you want to register {config.title} as a payment method in your browser? <a href="https://developers.google.com/web/updates/2016/07/payment-request">Read more</a>.
+            <br /><br />
+            <button className={cx('btn', 'btn-primary')} onClick={this.handleRegisterHandler}>Register</button>
+          </Alert>}
         </div>
 
         <ReactTooltip />

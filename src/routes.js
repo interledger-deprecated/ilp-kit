@@ -127,12 +127,28 @@ export default (store) => {
     }, 'peers')
   }
 
-  const getSettlement = (nextState, cb) => {
-    require.ensure(['./containers/Settlement/Settlement'], require => {
-      cb(null, require('./containers/Settlement/Settlement'))
+  const getSettlementSettings = (nextState, cb) => {
+    require.ensure(['./containers/SettlementSettings/SettlementSettings'], require => {
+      cb(null, require('./containers/SettlementSettings/SettlementSettings'))
 
       store.dispatch(locationUpdate())
-    }, 'settlement')
+    }, 'settlementSettings')
+  }
+
+  const getSettlementsUser = (nextState, cb) => {
+    require.ensure(['./containers/SettlementsUser/SettlementsUser'], require => {
+      cb(null, require('./containers/SettlementsUser/SettlementsUser'))
+
+      store.dispatch(locationUpdate())
+    }, 'settlementsUser')
+  }
+
+  const getSettlementsPeer = (nextState, cb) => {
+    require.ensure(['./containers/SettlementsPeer/SettlementsPeer'], require => {
+      cb(null, require('./containers/SettlementsPeer/SettlementsPeer'))
+
+      store.dispatch(locationUpdate())
+    }, 'settlementsPeer')
   }
 
   const getSettle = (nextState, cb) => {
@@ -167,6 +183,22 @@ export default (store) => {
     }, 'withdraw')
   }
 
+  const getPay = (nextState, cb) => {
+    require.ensure(['./containers/Pay/Pay'], require => {
+      cb(null, require('./containers/Pay/Pay'))
+
+      store.dispatch(locationUpdate())
+    }, 'pay')
+  }
+
+  const getWebPayment = (nextState, cb) => {
+    require.ensure(['./containers/WebPayment/WebPayment'], require => {
+      cb(null, require('./containers/WebPayment/WebPayment'))
+
+      store.dispatch(locationUpdate())
+    }, 'webpayment')
+  }
+
   /**
    * Please keep routes in alphabetical order
    */
@@ -198,7 +230,11 @@ export default (store) => {
           <Route path='users' getComponent={getUsers} />
           <Route path='withdrawals' getComponent={getWithdrawals} />
           <Route path='peers' getComponent={getPeers} />
-          <Route path='settlement' getComponent={getSettlement} />
+          <Route path='settlements'>
+            <Route path='user' getComponent={getSettlementsUser} />
+            <Route path='peer' getComponent={getSettlementsPeer} />
+            <Route path='settings' getComponent={getSettlementSettings} />
+          </Route>
         </Route>
 
         { /* Routes available to all */ }
@@ -207,6 +243,8 @@ export default (store) => {
         <Route path='settlement/:id' getComponent={getSettlementInfo} />
         <Route path='withdraw' getComponent={getWithdraw} />
         <Route path='verify/:username/:verifyCode' getComponent={rootComponent} />
+        <Route path='pay(/:username)' getComponent={getPay} />
+        <Route path='webpayment/:destination/:amount' getComponent={getWebPayment} />
 
         { /* Catch all route */ }
         <Route path='*' component={NotFound} status={404} />

@@ -30,7 +30,7 @@ export default class ForgotPasswordForm extends Component {
   }
 
   handleSubmit = (data) => {
-    this.props.submitAction(data)
+    return this.props.submitAction(data)
       .then(() => {
         this.props.permSuccess()
 
@@ -72,7 +72,7 @@ export default class ForgotPasswordForm extends Component {
               focus
               autoCapitalize='off' />
           </div>
-          <div className='row'>
+          <div>
             <button type='submit' className='btn btn-success btn-lg' disabled={pristine || (invalid && !submitFailed) || submitting}>
               {submitting ? ' Submitting...' : ' Submit'}
             </button>

@@ -73,7 +73,9 @@ export default class SettlementCustom extends Component {
 
     return (
       <div className={cx('SettlementCustom')}>
-        <Helmet title={'Custom - Settlement'} />
+        <Helmet>
+          <title>Custom - Settlement</title>
+        </Helmet>
 
         {success &&
         <Alert bsStyle='success'>

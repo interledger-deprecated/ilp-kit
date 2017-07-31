@@ -43,8 +43,13 @@ function PeersControllerFactory (deps) {
       const [ , authToken ] = auth.match(/^Bearer (.+)$/) || []
       const plugin = connector.getPlugin(prefix)
 
-      if (!authToken || !plugin || !plugin.isAuthorized || !plugin.isAuthorized(authToken)) {
+      if (!authToken || !plugin || !plugin.isAuthorized) {
         ctx.status = 401
+        return
+      }
+
+      if (!plugin.isAuthorized(authToken)) {
+        ctx.status = 403
         return
       }
 
@@ -60,8 +65,36 @@ function PeersControllerFactory (deps) {
       throw new NotFoundError()
     }
 
+    /**
+     * @api {GET} /peers Get all peers
+     * @apiName GetPeers
+     * @apiGroup Peer
+     * @apiVersion 1.0.0
+     * @apiPermission admin
+     *
+     * @apiDescription Get all peers
+     *
+     * @apiExample {shell} Get all peers
+     *    curl -X GET -H "Authorization: Basic YWxpY2U6YWxpY2U="
+     *    https://wallet.example/peers
+     *
+     * @apiSuccessExample {json} 200 Response:
+     *    HTTP/1.1 200 OK
+     *    [
+     *      {
+     *         "id": "963d89dc-a211-456c-8e9f-897d379aae2a",
+     *         "hostname": "wallet.example",
+     *         "limit": 100000000000,
+     *         "currencyCode": "USD",
+     *         "currencyScale": 9,
+     *         "destination": "269276",
+     *         "created_at": "2017-06-09T01:13:24.236Z",
+     *         "updated_at": "2017-06-09T01:13:24.236Z",
+     *         "online": true
+     *      }
+     *    ]
+     */
     static async getAll (ctx) {
-      console.log('peers reached')
       // TODO pagination
       const peers = await Peer.findAll({
         include: [{ all: true }],
@@ -91,6 +124,38 @@ function PeersControllerFactory (deps) {
       ctx.body = _.orderBy(peers, ['online', 'created_at'], ['desc', 'desc'])
     }
 
+    /**
+     * @api {post} /peers Add a peer
+     * @apiName PostPeers
+     * @apiGroup Peer
+     * @apiVersion 1.0.0
+     * @apiPermission admin
+     *
+     * @apiDescription Add a peer
+     *
+     * @apiExample {shell} Add a peer
+     *    curl -X POST -H "Authorization: Basic YWxpY2U6YWxpY2U=" -d
+     *    '{
+     *        "hostname": "wallet.example",
+     *        "limit": "100",
+     *        "currencyCode": "USD"
+     *    }'
+     *    https://wallet.example/peers
+     *
+     * @apiSuccessExample {json} 201 Response:
+     *    HTTP/1.1 201 OK
+     *    {
+     *       "id": "963d89dc-a211-456c-8e9f-897d379aae2a",
+     *       "hostname": "wallet.example",
+     *       "limit": 100000000000,
+     *       "currencyCode": "USD",
+     *       "currencyScale": 9,
+     *       "destination": "269276",
+     *       "created_at": "2017-06-09T01:13:24.236Z",
+     *       "updated_at": "2017-06-09T01:13:24.236Z",
+     *       "online": true
+     *    }
+     */
     static async postResource (ctx) {
       const peer = new Peer()
 
@@ -107,8 +172,41 @@ function PeersControllerFactory (deps) {
       await connector.connectPeer(peer)
 
       ctx.body = await peer.save()
+      ctx.status = 201
     }
 
+    /**
+     * @api {post} /peers/:id Update peer
+     * @apiName PutPeers
+     * @apiGroup Peer
+     * @apiVersion 1.0.0
+     * @apiPermission admin
+     *
+     * @apiDescription Update peer
+     *
+     * @apiParam {UUID} id Peer id
+     *
+     * @apiExample {shell} Update peer
+     *    curl -X PUT -H "Authorization: Basic YWxpY2U6YWxpY2U=" -d
+     *    '{
+     *        "limit": "200"
+     *    }'
+     *    https://wallet.example/peers/963d89dc-a211-456c-8e9f-897d379aae2a
+     *
+     * @apiSuccessExample {json} 200 Response:
+     *    HTTP/1.1 200 OK
+     *    {
+     *       "id": "963d89dc-a211-456c-8e9f-897d379aae2a",
+     *       "hostname": "wallet.example",
+     *       "limit": 200000000000,
+     *       "currencyCode": "USD",
+     *       "currencyScale": 9,
+     *       "destination": "269276",
+     *       "created_at": "2017-06-09T01:13:24.236Z",
+     *       "updated_at": "2017-06-09T01:13:24.236Z",
+     *       "online": true
+     *    }
+     */
     static async putResource (ctx) {
       const id = ctx.params.id
       let peer = await Peer.findOne({ where: { id } })
@@ -134,6 +232,34 @@ function PeersControllerFactory (deps) {
       ctx.body = peer
     }
 
+    /**
+     * @api {post} /peers/:id/settlement_methods Get peer settlement methods
+     * @apiName getSettlementMethods
+     * @apiGroup Peer
+     * @apiVersion 1.0.0
+     * @apiPermission admin
+     *
+     * @apiDescription Get peer settlement methods
+     *
+     * @apiParam {UUID} id Peer id
+     *
+     * @apiExample {shell} Get peer settlement methods
+     *    curl -X GET -H "Authorization: Basic YWxpY2U6YWxpY2U=" -d
+     *    https://wallet.example/peers/963d89dc-a211-456c-8e9f-897d379aae2a/settlement_methods
+     *
+     * @apiSuccessExample {json} 200 Response:
+     *    HTTP/1.1 200 OK
+     *    [
+     *      {
+     *        "id": "e985594e-5e39-45bc-b856-4d4550aaeb23",
+     *        "name": "Paypal",
+     *        "type": "paypal",
+     *        "description": null,
+     *        "uri": "https://wallet2.example/settle/paypal/122940?amount=2.00598",
+     *        "logo": "https://wallet2.example/paypal.png"
+     *      }
+     *    ]
+     */
     static async getSettlementMethods (ctx) {
       const id = ctx.params.id
       const peer = await Peer.findOne({ where: { id } })
@@ -147,6 +273,24 @@ function PeersControllerFactory (deps) {
       }
     }
 
+    /**
+     * @api {delete} /peers/:id Delete peer
+     * @apiName DeletePeers
+     * @apiGroup Peer
+     * @apiVersion 1.0.0
+     * @apiPermission admin
+     *
+     * @apiParam {UUID} id Peer id
+     *
+     * @apiDescription Delete peer
+     *
+     * @apiExample {shell} Delete peer
+     *    curl -X DELETE -H "Authorization: Basic YWxpY2U6YWxpY2U="
+     *    https://wallet.example/peers/963d89dc-a211-456c-8e9f-897d379aae2a
+     *
+     * @apiSuccessExample {json} 200 Response:
+     *    HTTP/1.1 204 OK
+     */
     static async deleteResource (ctx) {
       const id = ctx.params.id
       const peer = await Peer.findOne({ where: { id } })
@@ -157,7 +301,7 @@ function PeersControllerFactory (deps) {
 
       await peer.destroy()
 
-      ctx.body = ctx.params
+      ctx.body = null
     }
 
     static async rpc (ctx) {
@@ -165,8 +309,8 @@ function PeersControllerFactory (deps) {
       const method = ctx.query.method
       const params = ctx.body
 
-      if (!prefix) throw new InvalidBodyError('Prefix is not supplied')
-      if (!method) throw new InvalidBodyError('Method is not supplied')
+      if (typeof prefix !== 'string') throw new InvalidBodyError('Prefix must be string')
+      if (typeof method !== 'string') throw new InvalidBodyError('Method must be string')
 
       const plugin = connector.getPlugin(prefix)
 
@@ -181,7 +325,10 @@ function PeersControllerFactory (deps) {
         ctx.body = await plugin.receive(method, params)
       } catch (e) {
         ctx.statusCode = 422
-        ctx.body = e.message
+        ctx.body = {
+          id: e.name,
+          message: e.message
+        }
         log.err('connector.rpc() failed: ', e.stack)
       }
     }

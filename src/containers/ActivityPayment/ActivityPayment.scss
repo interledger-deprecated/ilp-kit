@@ -43,7 +43,7 @@ $screen-md: 992px;
 }
 .counterpartyContainer {
   font-size: 18px;
-  line-height: 22px;
+  padding: 6px 0;
 
   .counterparty {
     border-bottom: 1px dotted lighten($text-color, 40%);
@@ -56,7 +56,6 @@ $screen-md: 992px;
 }
 .counterpartyIdentifier {
   display: block;
-  margin-top: -5px;
   font-size: 10px;
 
   @include singleLinkColor($activity-date-text-color);
@@ -128,14 +127,6 @@ $screen-md: 992px;
   display: block;
   text-align: right;
   color: $activity-date-text-color;
-
-  a {
-    color: $activity-date-text-color !important;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
 }
 .transfersContainer {
   & > div {

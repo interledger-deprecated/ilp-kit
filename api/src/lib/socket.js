@@ -1,7 +1,7 @@
 'use strict'
 
 const _ = require('lodash')
-const IO = require('koa-socket')
+const IO = require('koa-socket-2')
 
 const Log = require('./log')
 const PaymentFactory = require('../models/payment')
@@ -102,7 +102,7 @@ module.exports = class Socket {
       // self.log.info('Disconnected ' + ctx.socket.id)
       // self.removeSubscription(ctx.socket.id)
     // })
-    app._io.on('connection', sock => {
+    this.io.on('connection', sock => {
       console.log('raw connection socket.io')
     })
     this.io.on('connection', function (ctx) {

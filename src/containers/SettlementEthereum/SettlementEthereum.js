@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 import classNames from 'classnames/bind'
-import styles from './SettlementEtherium.scss'
+import styles from './SettlementEthereum.scss'
 const cx = classNames.bind(styles)
 
 @connect(
@@ -11,16 +11,18 @@ const cx = classNames.bind(styles)
 
   }),
   {})
-export default class SettlementEtherium extends Component {
+export default class SettlementEthereum extends Component {
   static propTypes = {
   }
 
   render () {
     return (
-      <div className={cx('SettlementEtherium')}>
-        <Helmet title={'Etherium - Settlement'} />
+      <div className={cx('SettlementEthereum')}>
+        <Helmet>
+          <title>Ethereum - Settlement</title>
+        </Helmet>
 
-        Etherium
+        Ethereum
       </div>
     )
   }

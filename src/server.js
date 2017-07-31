@@ -17,7 +17,7 @@ import forceSSL from 'express-force-ssl'
 import url from 'url'
 
 import { match } from 'react-router'
-import { ReduxAsyncConnect, loadOnServer } from 'redux-async-connect'
+import { ReduxAsyncConnect, loadOnServer } from 'redux-connect'
 import createHistory from 'react-router/lib/createMemoryHistory'
 import {Provider} from 'react-redux'
 import getRoutes from './routes'
@@ -94,6 +94,17 @@ proxyApi.on('error', (error, req, res) => {
 // Proxy to ledger
 app.use('/ledger', (req, res) => {
   proxyLedger.web(req, res)
+})
+
+app.use('/manifest.json', (req, res) => {
+  res.json({
+    "name": process.env.CLIENT_TITLE,
+    "icons": [{
+      "src": "favicon.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    }]
+  })
 })
 
 // added the error handling to avoid https://github.com/nodejitsu/node-http-proxy/issues/527

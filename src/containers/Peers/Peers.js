@@ -76,7 +76,7 @@ export default class Peers extends Component {
           <div className={cx('col', 'hostnameBox')}>
             {peer.online && <i className={cx('online', 'fa', 'fa-circle', 'icon')} data-tip='Online' />}
             {!peer.online && <i className={cx('offline', 'fa', 'fa-circle', 'icon')} data-tip='Offline' />}
-            <span className={cx('label')}>{peer.currencyCode}</span> <a href={'http://' + peer.hostname}>{peer.hostname}</a>
+            <span className={cx('label')}>{peer.currencyCode}</span> <a href={'https://' + peer.hostname}>{peer.hostname}</a>
             {/* <div className={cx('destination')}>
               <HelpIcon text="Destination number is used for settlement" />{peer.destination}
             </div> */}
@@ -123,7 +123,9 @@ export default class Peers extends Component {
 
     return (
       <div className={cx('Peers')}>
-        <Helmet title={'Peers'} />
+        <Helmet>
+          <title>Peers</title>
+        </Helmet>
 
         {/* Add new */}
         {!showAddForm && peerState.list.length > 0 &&

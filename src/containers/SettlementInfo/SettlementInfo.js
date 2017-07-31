@@ -59,7 +59,7 @@ export default class SettlementInfo extends Component {
           <b>{info.amount} {info.currency}</b> settlement between <b>{hostname}</b> and <b>{info.peer}</b> has been completed!
         </h3>
 
-        <a href={`http://${info.peer}`} className={cx('goBack')}>
+        <a href={`https://${info.peer}`} className={cx('goBack')}>
           Back to {info.peer}
         </a>
       </div>

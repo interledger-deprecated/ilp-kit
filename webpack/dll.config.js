@@ -111,9 +111,8 @@ module.exports = {
       'react-router-bootstrap',
       'react-router-redux',
       'react-timeago',
-      'react-waypoint',
       'redux',
-      'redux-async-connect',
+      'redux-connect',
       'redux-form',
       'redux-pagination',
       'socket.io-client',
@@ -131,7 +130,7 @@ module.exports = {
     path: assetsPath,
     filename: '[name].dll.js',
     library: '[name]',
-    publicPath: 'http://' + host + ':' + (port - 1) + '/dist/'
+    publicPath: process.env.DEV_PROTOCOL + '://' + host + ':' + (port - 1) + '/dist/'
   },
   module: {
     loaders: [

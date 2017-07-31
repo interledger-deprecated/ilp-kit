@@ -177,9 +177,6 @@ function UsersControllerFactory (deps) {
 
           if (invite) {
             dbUser.invite_code = invite.code
-            invite.user_id = dbUser.id
-            // throws if the user identified by user_id has already claimed another invite
-            await invite.save(opts)
           } else if (!config.data.get('registration')) {
             throw new InvalidBodyError('The invite code is wrong')
           }
@@ -189,6 +186,12 @@ function UsersControllerFactory (deps) {
         try {
           dbUser = await dbUser.save(opts)
           dbUser = User.fromDatabaseModel(dbUser)
+
+          if (invite) {
+            invite.user_id = dbUser.id
+            // throws if the user identified by user_id has already claimed another invite
+            await invite.save(opts)
+          }
         } catch (e) {
           let errorMsg = e.errors && e.errors[0] && e.errors[0].message
           if (errorMsg === 'username must be unique') {
@@ -516,7 +519,7 @@ function UsersControllerFactory (deps) {
      *      "currency_code": "USD",
      *      "currency_scale": 2,
      *      "name": "Alice Faye",
-     *      "image_url": "http://server.example/picture.jpg"
+     *      "image_url": "https://server.example/picture.jpg"
      *    }
      */
     static async getReceiver (ctx) {

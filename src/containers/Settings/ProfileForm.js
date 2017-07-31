@@ -150,7 +150,7 @@ export default class ProfileForm extends Component {
           })()}
         </Alert>}
 
-        <div className={cx('row', 'row-sm')}>
+        <div className={cx('row')}>
           <div className={cx('col-sm-3')}>
             <div className={cx('profilePicBox')}>
               <img src={user.profile_picture || require('../../../static/placeholder.png')} className={cx('profilePic')} />
@@ -201,9 +201,13 @@ export default class ProfileForm extends Component {
                 type='password'
                 size='lg' />
 
-              <button type='submit' className='btn btn-success' disabled={pristine || (invalid && !submitFailed) || submitting}>
-                {submitting ? ' Saving...' : ' Save'}
-              </button>
+              <div className={cx('row')}>
+                <div className={cx('col-sm-offset-8','col-sm-4')}>
+                  <button type='submit' className='btn btn-success btn-lg btn-block' disabled={pristine || (invalid && !submitFailed) || submitting}>
+                    {submitting ? ' Saving...' : ' Save'}
+                  </button>
+                </div>
+              </div>
             </form>
           </div>
         </div>
