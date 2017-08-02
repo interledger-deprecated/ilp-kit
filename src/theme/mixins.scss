@@ -1,0 +1,32 @@
+@mixin singleLinkColor($color) {
+  color: $color;
+
+  &:link, &:hover, &:active, &:visited {
+    color: $color;
+  }
+}
+
+// Responsiveness
+@mixin mobile {
+  @media (max-width: 768px) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: 769px) {
+    @content;
+  }
+}
+
+@mixin mobileHide {
+  @include mobile {
+    display: none !important;
+  }
+}
+
+@mixin desktopHide {
+  @include desktop {
+    display: none !important;
+  }
+}

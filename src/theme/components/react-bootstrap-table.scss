@@ -1,0 +1,11 @@
+@import 'react-bootstrap-table/css/react-bootstrap-table';
+@import 'variables';
+
+.react-bs-table {
+  margin: 0;
+  border: 0;
+
+  .table > tbody > tr > td{
+    border-top: 1px solid $activity-payment-separator-color;
+  }
+}

@@ -1,0 +1,21 @@
+@import 'variables';
+
+//
+// Variables
+// --------------------------------------------------
+
+//== Colors
+$brand-primary:           $brand-color;
+
+//== Components
+$border-radius-base:      3px;
+$border-radius-large:     3px;
+
+//== Navs
+// Navbar links
+$navbar-default-link-hover-bg:          #fff;
+$navbar-default-link-active-bg:         #fff;
+
+$nav-link-padding:                      5px 15px;
+$nav-pills-active-link-hover-bg:        #fff;
+$nav-pills-active-link-hover-color:     #000;

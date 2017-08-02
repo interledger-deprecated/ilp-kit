@@ -1,0 +1,20 @@
+@import 'variables';
+
+// Pages
+@import 'pages/scss/color';
+@import 'pages/scss/var'; @import 'pages-extend/var';
+@import 'pages/scss/mixins';
+
+@import 'pages/scss/modules/z_index';
+@import 'pages/scss/modules/layout';          @import 'pages-extend/modules/layout';
+@import "pages/scss/modules/panels";          @import 'pages-extend/modules/panels';
+@import 'pages/scss/modules/typography';
+@import 'pages/scss/modules/buttons';         @import 'pages-extend/modules/buttons';
+@import "pages/scss/modules/tabs_accordian";
+@import "pages/scss/modules/form_elements";   @import 'pages-extend/modules/form_elements';
+
+// TODO:UX make it responsive
+
+// TODO:NICE these are not related to bootstrap, could be moved somewhere else
+@import 'components/components';
+@import 'theme';

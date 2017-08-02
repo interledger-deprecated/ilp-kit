@@ -1,0 +1,8 @@
+@import 'mixins';
+
+// Global Color
+
+// Lighter Grey colors
+$color-master-lighter: mix($color-master, #fff, 7%);
+
+$color-complete: $brand-color;

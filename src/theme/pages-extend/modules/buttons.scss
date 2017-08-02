@@ -1,0 +1,29 @@
+@import 'pages/scss/_var';
+
+.dropdown-menu {
+  min-width: 150px;
+  background: #fff;
+  box-shadow: 0 1px 1px 0 #d4d4d4 !important;
+
+  li:first-child, & li:last-child {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  li.active a, li.active a:hover {
+    background-color: transparent;
+    color: #000;
+  }
+}
+.btn-default, .btn-default:focus {
+  background-color: darken($color-master-lightest, 1%);
+}
+.btn-default {
+  &.active, &:active, &.active:focus, &:active:focus, &:active:hover{
+    background-color: darken($color-master-lighter, 2%);
+    border-color: darken($color-master-lighter, 5%);
+  }
+  &.hover, &:hover{
+    background-color: darken($color-master-lighter, 2%);
+    border-color: darken($color-master-lighter, 5%);
+  }
+}

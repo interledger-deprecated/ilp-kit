@@ -1,0 +1,20 @@
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px #fff inset !important;
+  -webkit-transition: box-shadow 0.2s ease !important;
+}
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px $color-master-lighter inset !important;
+  -webkit-transition: box-shadow 0.2s ease !important;
+}
+input.error:-webkit-autofill,
+input.error:-webkit-autofill:focus,
+.has-error input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px #F9E9E9 inset !important;
+  -webkit-transition: box-shadow 0.2s ease !important;
+}
+
+@media (max-width: 767px) {
+  .form-group-default, .input-group .form-control {
+    border: 1px solid rgba($color-black, .15);
+  }
+}

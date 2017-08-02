@@ -1,0 +1,48 @@
+@import 'mixins';
+
+.navbar-inverse {
+  top: 0;
+  border-radius: 0;
+  border: 0;
+}
+.navbar-active {
+  background: #fff;
+  border-color: #e7e7e7;
+}
+.navbar-collapse {
+  background: #222 !important;
+}
+.navbar-nav > li {
+  padding: 0;
+
+  & > a {
+    font-weight: bold;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background: transparent;
+
+    &:hover, &:active, &:focus {
+      background: transparent !important;
+    }
+  }
+  &.active {
+    & > a {
+      background: transparent !important;
+    }
+  }
+  .dropdown-menu {
+    border: 1px solid #e7e7e7;
+    border-top: none;
+    box-shadow: none !important;
+  }
+}
+
+.navbar-brand {
+  @include desktop {
+    padding-top: 20px;
+  }
+}
+
+.copyright{
+  border-top: none;
+}
