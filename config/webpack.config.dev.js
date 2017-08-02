@@ -50,6 +50,7 @@ module.exports = {
     require.resolve('react-error-overlay'),
     // Bootstrap
     'bootstrap-loader',
+    './src/theme/bootstrap.overrides.scss',
     // Finally, this is your app's code:
     paths.appIndexJs,
     // We include the app code last so that if there is a runtime error during
@@ -78,7 +79,7 @@ module.exports = {
     // We placed these paths second because we want `node_modules` to "win"
     // if there are any conflicts. This matches Node resolution mechanism.
     // https://github.com/facebookincubator/create-react-app/issues/253
-    modules: ['node_modules', paths.appNodeModules].concat(
+    modules: ['node_modules', paths.appNodeModules, 'src'].concat(
       // It is guaranteed to exist because we tweak it in `env.js`
       process.env.NODE_PATH.split(path.delimiter).filter(Boolean)
     ),
@@ -214,11 +215,13 @@ module.exports = {
               ],
             },
           },
+          require.resolve('resolve-url-loader'),
           {
             loader: require.resolve('sass-loader'),
             options: {
               outputStyle: 'expanded',
-              sourceMap: true
+              sourceMap: true,
+              includePaths: [path.resolve(__dirname, '../src/theme'), 'node_modules']
             },
           }
         ],

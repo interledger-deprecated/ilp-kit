@@ -1,0 +1,23 @@
+@import 'variables';
+
+.stat {
+  margin: 5px 0;
+
+  &.header {
+    font-weight: bold;
+    border-bottom: 1px solid $box-border-color;
+    margin: 0 0 5px;
+    padding: 0 0 5px;
+  }
+
+  span {
+    display: inline-block;
+
+    &.sourceName, &.destinationName {
+      width: 26%;
+    }
+    &.sourceAmount, &.destinationAmount, &.transfersCount, &.recentDate {
+      width: 12%;
+    }
+  }
+}

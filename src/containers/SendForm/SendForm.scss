@@ -1,0 +1,71 @@
+@import 'variables';
+@import 'mixins';
+
+.pathFindAmount {
+  font-size: 15px;
+  padding: 15px;
+}
+.amounts {
+  height: 120px;
+}
+.advanced {
+  margin: 10px 0 0 0;
+
+  .description {
+    margin: 0 0 10px;
+  }
+}
+.advancedLink {
+  text-align: right;
+  font-size: 10px;
+  line-height: 35px;
+
+  a {
+    color: $muted-text-color;
+    border-bottom: 1px dashed lighten($muted-text-color, 15%);
+  }
+}
+.notification {
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+
+  &.show {
+    max-height: 100vh;
+    opacity: 1;
+  }
+
+  i {
+    display: none;
+  }
+
+  @include mobile {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+    left: 0;
+    transition: all .5s;
+    background: #10cfbd;
+    text-align: center;
+
+    &.show {
+      height: 100vh;
+    }
+
+    & > div {
+      margin: 0;
+      padding: calc(50vh - 22vh) 23px;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 20px;
+    }
+
+    i {
+      display: block;
+      font-size: 30vh;
+      margin-bottom: 5vh;
+    }
+  }
+}

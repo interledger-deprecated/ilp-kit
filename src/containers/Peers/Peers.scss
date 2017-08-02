@@ -1,0 +1,138 @@
+@import 'pages/scss/_var';
+@import 'variables';
+@import 'mixins';
+
+.header {
+  margin-bottom: 20px;
+
+  h3 {
+    margin: 0;
+  }
+}
+.peersStatus {
+  text-align: center;
+
+  i {
+    font-size: 50px;
+    margin: 10px 0 10px;
+  }
+}
+.peer {
+  position: relative;
+  border-top: 1px solid $activity-payment-separator-color;
+  padding: 15px 0;
+
+  .hostnameBox {
+    width: 30%;
+    line-height: 35px;
+
+    .destination i {
+      width: 15px;
+      margin: 0 8px 0 0;
+    }
+    a {
+      margin: 0 0 0 5px;
+    }
+  }
+  .limitBox {
+    width: 10%;
+    // To avoid RIENumber jumpiness
+    height: 40px;
+  }
+  .balanceBox {
+    width: 45%;
+    overflow: hidden;
+
+    .minBalance {
+      float: left;
+      text-align: right;
+      width: 20%;
+      padding: 0 5px 0 0;
+      line-height: 35px;
+    }
+    .maxBalance {
+      float: left;
+      text-align: left;
+      width: 25%;
+      padding: 0 0 0 5px;
+      line-height: 35px;
+    }
+
+    .graph {
+      position: relative;
+      float: left;
+      width: 55%;
+      height: 35px;
+
+      .balance {
+        background: $color-master-lightest;
+        text-align: center;
+        line-height: 33px;
+        border: 1px solid darken($color-master-lightest, 3%);
+      }
+
+      .min, .current, .max {
+        position: absolute;
+        top: 0;
+        height: 35px;
+        width: 0;
+        display: inline-block;
+        line-height: 35px;
+      }
+      .min {
+        left: 0;
+      }
+      .current {
+        padding-left: 5px;
+        border-left: 3px solid darken($color-master-lightest, 30%);
+      }
+      .max {
+        right: 0;
+      }
+    }
+  }
+  .actionsBox {
+    width: 25%;
+    text-align: right;
+
+    .btn-delete {
+      margin-left: 10px;
+    }
+  }
+
+  .icon {
+    display: inline-block;
+    width: 15px;
+    margin: 0 5px 0 0;
+  }
+}
+.limit {
+  &.loading {
+    font-style: italic;
+  }
+  &.invalid {
+    color: #d9d9d9;
+  }
+}
+.limitInput {
+  width: 70px;
+  border: 1px solid #d9d9d9;
+  padding: 6px 3px;
+  margin: -3px 0;
+}
+span.limit {
+  cursor: pointer;
+  border-bottom: 1px dotted;
+}
+.lbl {
+  display: block;
+}
+.online {
+  color: $success;
+}
+.offline {
+  color: $danger;
+}
+.btn-add-lg {
+  margin: 20px 0;
+}

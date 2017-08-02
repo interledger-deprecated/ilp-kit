@@ -1,0 +1,17 @@
+@import 'variables';
+
+pre {
+  background-color: #f6f6f6;
+  border: none;
+  border-radius: 0;
+  padding: 10px;
+}
+.json-key {
+  color: brown;
+}
+.json-value {
+  color: navy;
+}
+.json-string {
+  color: olive;
+}

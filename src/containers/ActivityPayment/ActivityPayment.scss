@@ -1,0 +1,188 @@
+// TODO:UX include only one var file
+@import 'variables';
+@import 'pages/scss/var';
+@import 'mixins';
+
+$screen-md: 992px;
+
+.ActivityPayment {
+  border-top: 1px solid $activity-payment-separator-color;
+  padding: 15px;
+
+  @include mobile {
+    border-top: none;
+    border-bottom: 1px solid $activity-payment-separator-color;
+  }
+}
+.link, .link:hover, .link:active, .link:visited {
+  display: block;
+  color: $color-master;
+  padding: 15px 20px;
+}
+.link:hover {
+  background: darken($box-background-color, 3%);
+}
+.profilePic {
+  float: left;
+  width: 15%;
+  border-radius: 50px;
+
+  @include mobile {
+    width: 20%;
+  }
+}
+.description {
+  float: left;
+  width: 85%;
+  padding-left: 15px;
+
+  @include mobile {
+    width: 80%;
+    padding-left: 10px;
+  }
+}
+.counterpartyContainer {
+  font-size: 18px;
+  padding: 6px 0;
+
+  .counterparty {
+    border-bottom: 1px dotted lighten($text-color, 40%);
+    @include singleLinkColor($text-color);
+
+    &:hover {
+      color: darken($text-color, 20%);
+    }
+  }
+}
+.counterpartyIdentifier {
+  display: block;
+  font-size: 10px;
+
+  @include singleLinkColor($activity-date-text-color);
+}
+.message {
+  font-size: 15px;
+  line-height: 22px;
+}
+.date {
+  font-size: 13px;
+  line-height: 15px;
+  color: $activity-date-text-color;
+}
+.activeStream {
+  position: absolute;
+  top: calc(50% - 15px); // 15px is half of the font-size
+  font-size: 30px;
+  color: #10cfbd;
+}
+.amount {
+  display: block;
+  font-size: 22px;
+  text-align: right;
+  line-height: 37px;
+
+  @media (max-width: $screen-md) {
+    font-size: 20px;
+  }
+  transition: all .2s ease-in;
+
+  &.updating {
+    font-size: 30px;
+  }
+}
+.outgoing {
+  color: $activity-negative;
+}
+.outgoing:before {
+  content: "– ";
+}
+.incoming {
+  color: $activity-positive;
+}
+.incoming:before {
+  content: "+ ";
+  padding: 0 0 10px;
+}
+.expand {
+  a {
+    display: block;
+    margin: 0 0 0 -20px;
+    line-height: 40px;
+    font-size: 22px;
+    color: $activity-expand-text-color;
+    background: $activity-expand-background-color;
+    text-align: center;
+    border-radius: 3px;
+  }
+  a:hover, a:active, a:focus {
+    text-decoration: none;
+  }
+  a.active {
+    color: $text-color;
+    background: $container-background-color;
+  }
+}
+
+.transfersCount {
+  display: block;
+  text-align: right;
+  color: $activity-date-text-color;
+}
+.transfersContainer {
+  & > div {
+    max-height: 300px;
+    margin-top: 15px;
+    overflow: auto;
+
+    &:first-child {
+      padding-left: 12%;
+
+      @include mobile {
+        padding-left: 15%;
+      }
+    }
+  }
+
+  .date {
+    font-size: 15px;
+    line-height: 25px;
+  }
+  .amount {
+    font-size: 15px;
+    line-height: 25px;
+  }
+  .hash {
+    font-size: 15px;
+    line-height: 25px;
+  }
+
+  // Animation
+  .appear {
+    max-height: 0;
+    opacity: 0;
+    transition: all .3s ease-in;
+  }
+  .appearActive {
+    max-height: 300px;
+    opacity: 1;
+  }
+  .enter {
+    max-height: 0;
+    opacity: 0;
+    transition: all .3s ease-in;
+  }
+  .enterActive {
+    opacity: 1;
+    max-height: 300px;
+  }
+  .leave {
+    max-height: 300px;
+    opacity: 1;
+    transition: all .3s ease-out;
+  }
+  .leaveActive {
+    max-height: 0;
+    opacity: 0;
+  }
+}
+

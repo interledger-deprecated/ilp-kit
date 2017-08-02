@@ -1,0 +1,25 @@
+@import 'variables';
+@import 'mixins';
+
+.dropzoneLocal {
+  margin: 0 0 10px;
+}
+
+.logoField {
+  float: right;
+  width: calc(100% - 110px);
+
+  &.full {
+    width: calc(100%);
+  }
+}
+.logoBox {
+  float: left;
+  width: 100px;
+  margin: 0 10px 0 0;
+}
+.logo {
+  max-width: 100px;
+  height: 100px;
+  margin: 0 0 10px;
+}

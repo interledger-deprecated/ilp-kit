@@ -35,6 +35,7 @@
     "case-sensitive-paths-webpack-plugin": "2.1.1",
     "chalk": "1.1.3",
     "classnames": "^2.2.5",
+    "clipboard": "^1.7.1",
     "css-loader": "0.28.4",
     "dotenv": "4.0.0",
     "eslint": "3.19.0",
@@ -48,8 +49,10 @@
     "file-loader": "0.11.2",
     "font-awesome-webpack": "0.0.5-beta.2",
     "fs-extra": "3.0.1",
+    "history": "^4.6.3",
     "html-webpack-plugin": "2.29.0",
     "jest": "20.0.4",
+    "moment": "^2.18.1",
     "node-sass": "^4.5.3",
     "object-assign": "4.1.1",
     "postcss-flexbugs-fixes": "3.0.0",
@@ -57,23 +60,41 @@
     "promise": "7.1.1",
     "prop-types": "^15.5.10",
     "react": "^15.6.1",
+    "react-addons-css-transition-group": "^15.6.0",
+    "react-animate-on-change": "^1.0.0",
     "react-bootstrap": "^0.31.2",
+    "react-bootstrap-table": "^3.5.1",
     "react-dev-utils": "^3.0.2",
     "react-dom": "^15.6.1",
+    "react-dropzone-component": "^2.0.0",
     "react-error-overlay": "^1.0.9",
+    "react-fittext": "^1.0.0",
+    "react-ga": "^2.2.0",
     "react-helmet": "^5.1.3",
+    "react-hotkeys": "^0.10.0",
+    "react-paginate": "^4.4.3",
     "react-redux": "^5.0.5",
     "react-redux-loading-bar": "^2.9.2",
+    "react-router": "^4.1.2",
     "react-router-bootstrap": "^0.24.2",
     "react-router-dom": "^4.1.2",
+    "react-router-redux": "^5.0.0-alpha.6",
+    "react-timeago": "^3.4.3",
+    "react-tooltip": "^3.3.0",
+    "react-transition-group": "^2.2.0",
     "redux": "^3.7.2",
     "redux-devtools-extension": "^2.13.2",
+    "redux-form": "^7.0.3",
+    "redux-pagination": "^0.2.0",
     "resolve-url-loader": "^2.1.0",
+    "riek": "^1.1.0",
     "sass-loader": "^6.0.6",
+    "socket.io-client": "^2.0.3",
     "style-loader": "0.18.2",
     "superagent": "^3.5.2",
     "sw-precache-webpack-plugin": "0.11.3",
     "url-loader": "0.5.9",
+    "uuid4": "^1.0.0",
     "webpack": "2.6.1",
     "webpack-dev-server": "2.5.0",
     "webpack-manifest-plugin": "1.1.0",
@@ -114,12 +135,16 @@
   "babel": {
     "presets": [
       "react-app"
+    ],
+    "plugins": [
+      "transform-decorators-legacy"
     ]
   },
   "eslintConfig": {
     "extends": "react-app"
   },
   "devDependencies": {
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
     "bootstrap-sass": "^3.3.7"
   }
 }

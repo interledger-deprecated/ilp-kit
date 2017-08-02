@@ -1,0 +1,33 @@
+@import 'variables';
+@import 'mixins';
+
+.SettlementMethod {
+  border-top: 1px solid $activity-payment-separator-color;
+  padding: 15px 0;
+
+  > div {
+    line-height: 35px;
+  }
+
+  .logoBox {
+    img {
+      height: 35px;
+    }
+  }
+}
+.disabled {
+  color: $muted-text-color;
+}
+.enableBox {
+  margin-bottom: 20px;
+}
+.title {
+  padding-top: 10px;
+  font-size: 20px;
+}
+.form {
+  margin: 20px 0;
+  padding: 20px;
+  border: 1px solid #eaeaea;
+  background: #fbfbfb;
+}

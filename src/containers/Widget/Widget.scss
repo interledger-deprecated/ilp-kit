@@ -1,0 +1,41 @@
+@import 'variables';
+
+.container {
+  position: fixed;
+  top: 20%;
+  left: 38%;
+  width: 350px;
+  height: 460px;
+  text-align: center;
+  border-radius: 5px;
+  border: 1px solid $box-border-color;
+  background: #fff;
+  padding: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+
+  .title {
+    display: block;
+    margin: -20px -20px 15px -20px;
+    padding: 12px 0;
+    font-size: 16px;
+    font-weight: bold;
+    text-shadow: 0 1px 0 #fff;
+    background: #e4e4e6;
+    border-bottom: 1px solid #d3d3d4;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+  }
+  .description {
+    margin: 0 0 20px;
+  }
+
+  .close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    color: #7f7f7f;
+  }
+  .close:hover {
+    text-decoration: none;
+  }
+}

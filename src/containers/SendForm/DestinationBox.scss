@@ -1,0 +1,30 @@
+@import 'variables';
+
+.inputBox {
+  position: relative;
+
+  input {
+    height: 50px !important;
+  }
+
+  &.hasError input {
+    height: 30px !important;
+  }
+
+  &.hasName input {
+    height: 30px !important;
+  }
+
+  &.hasImage input {
+    padding-right: 75px;
+  }
+
+  img {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+  }
+}

@@ -1,0 +1,55 @@
+@import 'variables';
+@import 'mixins';
+
+.header {
+  margin-bottom: 20px;
+
+  h3 {
+    margin: 0;
+  }
+
+  @include mobileHide()
+}
+.balanceContainer {
+  text-align: center;
+  padding: 20px;
+
+  .balanceDescription {
+    margin: 0;
+  }
+  .balance {
+    font-size: 40px;
+    line-height: 80px;
+    white-space: nowrap;
+  }
+  .but {
+    font-size: 17px;
+    vertical-align: top;
+    line-height: 50px;
+  }
+}
+.balanceFake {
+  color: $faded-text-color;
+  font-size: 12px;
+  margin: 10px 0;
+}
+.settlementButtonBox {
+  div {
+    width: 100%;
+  }
+
+  .options {
+    padding: 0;
+
+    a {
+      padding: 10px 20px;
+
+      &:hover {
+        background: $success-background;
+      }
+    }
+  }
+  .logo {
+    height: 12px;
+  }
+}

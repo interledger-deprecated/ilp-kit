@@ -1,0 +1,16 @@
+.fade {
+  .enter {
+    opacity: 0;
+  }
+  .enterActive {
+    opacity: 1;
+    transition: all 1s;
+  }
+  .leave {
+    opacity: 1;
+  }
+  .leaveActive {
+    opacity: 0;
+    transition: all .5s;
+  }
+}

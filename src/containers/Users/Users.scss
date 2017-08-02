@@ -1,0 +1,27 @@
+@import 'variables';
+@import 'mixins';
+
+.Users {
+  .header th {
+    border-bottom: 0;
+  }
+  .tr {
+    height: 57px;
+
+    td{
+      line-height: 40px;
+      white-space: nowrap;
+    }
+  }
+}
+.header {
+  margin-bottom: 20px;
+
+  h3 {
+    margin: 0;
+  }
+}
+.profilePic {
+  width: 40px;
+  border-radius: 50px;
+}

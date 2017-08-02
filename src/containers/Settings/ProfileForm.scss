@@ -1,0 +1,26 @@
+@import 'variables';
+
+.header h3 {
+  margin-top: 0;
+}
+.profilePicBox {
+  margin: 0 0 10px;
+}
+.profilePic {
+  margin: 0 0 10px 0;
+  width: 100%;
+  border-radius: 3px;
+}
+.dropzone {
+  width: 100%;
+  border: 1px dashed $box-border-color;
+  padding: 26px 10px;
+  height: 100px;
+  margin: 0 0 10px;
+  cursor: pointer;
+  text-align: center;
+
+  &:hover {
+    background-color: $box-alternate-background-color;
+  }
+}

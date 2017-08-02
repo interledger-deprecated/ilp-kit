@@ -1,0 +1,43 @@
+@import 'variables';
+@import 'mixins';
+
+.header {
+  margin-bottom: 20px;
+
+  h3 {
+    margin: 0;
+  }
+}
+.addButtonBox {
+  text-align: right;
+
+  .options {
+    padding: 0;
+
+    a {
+      padding: 10px 20px;
+      width: 212px;
+
+      &:hover {
+        background: $success-background;
+        border-radius: 0;
+      }
+    }
+  }
+  .logo {
+    height: 12px;
+  }
+}
+.list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.noResults {
+  text-align: center;
+
+  i {
+    font-size: 50px;
+    margin: 10px 0 10px;
+  }
+}

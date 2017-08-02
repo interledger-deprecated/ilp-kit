@@ -1,0 +1,14 @@
+@import 'variables';
+
+.SettlementCancel {
+  text-align: center;
+
+  h3 {
+    margin-bottom: 30px;
+  }
+}
+.icon {
+  margin: 20px 0 30px;
+  font-size: 250px;
+  color: $danger;
+}
