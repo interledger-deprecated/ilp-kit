@@ -148,7 +148,7 @@
     "hoist-non-react-statics": "^1.0.3",
     "http-proxy": "^1.12.0",
     "ilp": "^11.2.0",
-    "ilp-connector": "^21.1.7",
+    "ilp-connector": "^21.1.8",
     "ilp-kit-cli": "^11.4.1",
     "ilp-plugin-bells": "^15.0.0",
     "ilp-plugin-settlement-adapter": "https://github.com/interledgerjs/ilp-plugin-settlement-adapter.git",
