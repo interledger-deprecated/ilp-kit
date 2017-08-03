@@ -1,4 +1,4 @@
-FROM node:7-slim
+FROM node:8-slim
 
 RUN apt-get update && apt-get install -y python postgresql libpq-dev build-essential libpq5 git
 
