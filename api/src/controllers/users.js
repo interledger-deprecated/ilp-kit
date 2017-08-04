@@ -85,7 +85,7 @@ function UsersControllerFactory (deps) {
      *
      * @apiExample {shell} Get user
      *    curl -X GET -H "Authorization: Basic YWxpY2U6YWxpY2U="
-     *    https://wallet.example/users/alice
+     *    https://wallet.example/api/users/alice
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
@@ -127,7 +127,7 @@ function UsersControllerFactory (deps) {
      *    '{
      *        "password": "alice"
      *    }'
-     *    https://wallet.example/users/alice
+     *    https://wallet.example/api/users/alice
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 201 OK
@@ -337,7 +337,7 @@ function UsersControllerFactory (deps) {
      *        "email": "alice@example.com"
      *        "name": "Alice Faye"
      *    }'
-     *    https://wallet.example/users/alice
+     *    https://wallet.example/api/users/alice
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
@@ -437,7 +437,7 @@ function UsersControllerFactory (deps) {
      *    '{
      *        "code": "1f7aade2946667fac85ebaf7259182ead6b1fe062b5e8bb0ffa1b9d417431acb"
      *    }'
-     *    https://wallet.example/users/alice/verify
+     *    https://wallet.example/api/users/alice/verify
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
@@ -477,7 +477,7 @@ function UsersControllerFactory (deps) {
      *
      * @apiExample {shell} Resend verification email
      *    curl -X POST
-     *    https://wallet.example/users/alice/resend-verification
+     *    https://wallet.example/api/users/alice/resend-verification
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
@@ -509,7 +509,7 @@ function UsersControllerFactory (deps) {
      *
      * @apiExample {shell} Get receiver details
      *    curl -X GET
-     *    https://wallet.example/receivers/alice
+     *    https://wallet.example/api/receivers/alice
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
