@@ -59,7 +59,7 @@ export default class Home extends Component {
 
   setCurrentView (props) {
     const prps = props || this.props
-    const fullPath = prps.route.path
+    const fullPath = prps.match.path
     let currentView = fullPath && fullPath.match(/[a-zA-Z-]*/i)[0]
 
     if (currentView === 'verify') currentView = 'login'

@@ -2,8 +2,6 @@
 
 import * as types from '../actionTypes'
 
-export const isLoaded = globalState => globalState.auth && globalState.auth.loaded
-
 export const register = data => ({
   types: [types.REGISTER, types.REGISTER_SUCCESS, types.REGISTER_FAIL],
   promise: client => client.post('/users/' + data.username, { data })

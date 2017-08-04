@@ -6,7 +6,7 @@ import loginValidation from './LoginValidation'
 
 import Alert from 'react-bootstrap/lib/Alert'
 
-import { successable } from 'decorators'
+import successable from 'decorators/successable'
 
 import Input from 'components/Input/Input'
 

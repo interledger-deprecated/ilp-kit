@@ -7,7 +7,8 @@ import { create } from 'redux/actions/invite'
 
 import inviteValidation from './InviteValidation'
 
-import { successable, resetFormOnSuccess } from 'decorators'
+import successable from 'decorators/successable'
+import resetFormOnSuccess from 'decorators/resetFormOnSuccess'
 
 import Alert from 'react-bootstrap/lib/Alert'
 

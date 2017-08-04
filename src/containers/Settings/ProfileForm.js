@@ -11,7 +11,8 @@ import * as actions from 'redux/actions/auth'
 
 import validate from './ProfileValidation'
 
-import { successable, resetFormOnSuccess } from 'decorators'
+import successable from 'decorators/successable'
+import resetFormOnSuccess from 'decorators/resetFormOnSuccess'
 
 import Input from 'components/Input/Input'
 

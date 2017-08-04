@@ -7,7 +7,8 @@ import { reduxForm, Field } from 'redux-form'
 import { validate, asyncValidate } from './SendValidation'
 import * as sendActions from 'redux/actions/send'
 
-import { successable, resetFormOnSuccess } from 'decorators'
+import successable from 'decorators/successable'
+import resetFormOnSuccess from 'decorators/resetFormOnSuccess'
 
 import Alert from 'react-bootstrap/lib/Alert'
 

@@ -7,7 +7,8 @@ import { add } from 'redux/actions/peer'
 
 import { validate } from './PeerValidation'
 
-import { successable, resetFormOnSuccess } from 'decorators'
+import successable from 'decorators/successable'
+import resetFormOnSuccess from 'decorators/resetFormOnSuccess'
 
 import Alert from 'react-bootstrap/lib/Alert'
 

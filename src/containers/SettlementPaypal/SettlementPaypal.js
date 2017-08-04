@@ -10,7 +10,7 @@ import styles from './SettlementPaypal.scss'
 import Input from 'components/Input/Input'
 import InputRaw from 'components/InputRaw/InputRaw'
 
-import { successable } from 'decorators'
+import successable from 'decorators/successable'
 
 import Alert from 'react-bootstrap/lib/Alert'
 

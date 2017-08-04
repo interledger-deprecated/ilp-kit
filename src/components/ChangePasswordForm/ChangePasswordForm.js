@@ -9,7 +9,7 @@ import Alert from 'react-bootstrap/lib/Alert'
 
 import Input from 'components/Input/Input'
 
-import { successable } from 'decorators'
+import successable from 'decorators/successable'
 
 @reduxForm({
   form: 'changePassword',

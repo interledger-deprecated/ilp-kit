@@ -8,7 +8,7 @@ import DropzoneComponent from 'react-dropzone-component'
 import Alert from 'react-bootstrap/lib/Alert'
 import Input from 'components/Input/Input'
 
-import { successable } from 'decorators'
+import successable from 'decorators/successable'
 
 import classNames from 'classnames/bind'
 import styles from './SettlementCustom.scss'

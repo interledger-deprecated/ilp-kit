@@ -6,7 +6,7 @@ import registerValidation from './RegisterValidation'
 
 import Alert from 'react-bootstrap/lib/Alert'
 
-import { successable } from 'decorators'
+import successable from 'decorators/successable'
 import Input from 'components/Input/Input'
 
 import { loadCode } from 'redux/actions/invite'
