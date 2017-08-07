@@ -110,6 +110,22 @@ Finally, create the `ilpkit` database while logged in as the `postgres` user.
 
 ```sh
 postgres$ createdb ilpkit
+```
+
+For redundancy of data you may want to run this on a crontab. Outputing the file to
+to a Cloud mounted file directory like Amazon Cloud Drive or Google Drive is a good idea. 
+To backup your database use. 
+```
+postgres$ sudo mkdir ~/yourcloudmountedfolder
+postgres$ pg_dump ilpkit > ~/yourcloudmountedfolder/ilpkitdb.backup
+```
+To restore your ilpkit backup use
+```
+postgres$ psql ilpkit < ilpkitdb.backup
+```
+
+Exit as postgres user when done
+```
 postgres$ exit
 ```
 
