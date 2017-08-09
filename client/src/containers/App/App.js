@@ -7,7 +7,7 @@ import { Helmet } from 'react-helmet'
 import { Link } from 'react-router-dom'
 import { push } from 'react-router-redux'
 import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap'
-import LoadingBar from 'react-redux-loading-bar'
+// import LoadingBar from 'react-redux-loading-bar'
 
 import ReactFitText from 'react-fittext'
 import Alert from 'react-bootstrap/lib/Alert'
@@ -164,7 +164,7 @@ export default class App extends Component {
           <meta itemProp='name' content={config.title} />
         </Helmet>
 
-        <LoadingBar className={cx('loadingBar')} />
+        {/*<LoadingBar className={cx('loadingBar')} />*/}
 
         {user &&
         <Navbar inverse expanded={this.state.navExpanded} onToggle={this.onNavbarToggle}>

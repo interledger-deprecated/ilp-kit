@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux'
 import { routerReducer } from 'react-router-redux'
 import { reducer as form } from 'redux-form'
-import { loadingBarReducer } from 'react-redux-loading-bar'
+// import { loadingBarReducer } from 'react-redux-loading-bar'
 
 import auth from './reducers/auth'
 import send from './reducers/send'
@@ -17,7 +17,7 @@ import webpayments from './reducers/webpayments'
 
 export default combineReducers({
   router: routerReducer,
-  loadingBar: loadingBarReducer,
+  // loadingBar: loadingBarReducer,
   form,
 
   auth,

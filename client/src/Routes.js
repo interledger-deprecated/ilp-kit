@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Switch, Route, Redirect } from 'react-router-dom'
+import { withRouter } from 'react-router'
 import { load } from 'redux/actions/auth'
 
 import Home from 'containers/Home/Home'
@@ -49,7 +50,7 @@ class Routes extends Component {
   )
 
   AdminRoute = ({ component: Component, ...rest }) => (
-    <Route {...rest} render={props => ((this.props.user && props.user.isAdmin) ? <Component {...props} /> : <Redirect to='/' />)}/>
+    <Route {...rest} render={props => ((this.props.user && this.props.user.isAdmin) ? <Component {...props} /> : <Redirect to='/' />)}/>
   )
 
   render() {
@@ -96,4 +97,4 @@ class Routes extends Component {
   }
 }
 
-export default Routes
+export default withRouter(Routes)

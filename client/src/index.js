@@ -22,7 +22,7 @@ global.tracker = new Tracker()
 const history = createHistory()
 
 ReactDOM.render(
-  <Provider store={createFinalStore(new ApiClient())}>
+  <Provider store={createFinalStore(new ApiClient(), history)}>
     <ConnectedRouter history={history}>
       <Route path='/' component={App} />
     </ConnectedRouter>
