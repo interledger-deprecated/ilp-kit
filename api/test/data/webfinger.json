@@ -1,0 +1,29 @@
+{
+  "subject": "acct:alice@localhost",
+  "links": [
+    {
+      "rel": "https://interledger.org/rel/ledgerUri",
+      "href": "http://localhost/ledger"
+    },
+    {
+      "rel": "https://interledger.org/rel/socketIOUri",
+      "href": "http://localhost/api/socket.io"
+    },
+    {
+      "rel": "https://interledger.org/rel/ilpAddress",
+      "href": "localhost.alice"
+    },
+    {
+      "rel" : "https://interledger.org/rel/sender/payment",
+      "href" : "http://localhost/api/payments"
+    },
+    {
+      "rel" : "https://interledger.org/rel/sender/quote",
+      "href" : "http://localhost/api/payments/quote"
+    },
+    {
+      "rel" : "https://interledger.org/rel/spsp/v2",
+      "href" : "http://localhost/api/spsp/alice"
+    }
+  ]
+}

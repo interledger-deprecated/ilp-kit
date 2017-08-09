@@ -1,0 +1,34 @@
+{
+  "accounts": {
+    "admin": {
+      "id": 1,
+      "name": null,
+      "username": "admin",
+      "balance": 0,
+      "github_id": null,
+      "profile_picture": null,
+      "email": null,
+      "email_verified": null
+    },
+    "alice": {
+      "id": 1,
+      "name": null,
+      "username": "alice",
+      "balance": 1000,
+      "github_id": null,
+      "profile_picture": null,
+      "email": null,
+      "email_verified": null
+    },
+    "bob": {
+      "id": 1,
+      "name": null,
+      "username": "bob",
+      "balance": 1000,
+      "github_id": null,
+      "profile_picture": null,
+      "email": null,
+      "email_verified": null
+    }
+  }
+}
