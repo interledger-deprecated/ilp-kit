@@ -8,7 +8,6 @@
     "url": "https://github.com/interledgerjs/ilp-kit"
   },
   "author": "Interledger Team <info@interledger.org>",
-  "homepage": "https://github.com/interledgerjs/ilp-kit",
   "keywords": [
     "five-bells",
     "ilp",
@@ -50,6 +49,7 @@
     "extract-text-webpack-plugin": "2.1.2",
     "file-loader": "0.11.2",
     "font-awesome-webpack": "0.0.5-beta.2",
+    "fs-extra": "^4.0.1",
     "history": "^4.6.3",
     "html-webpack-plugin": "2.29.0",
     "jest": "20.0.4",
