@@ -55,6 +55,9 @@ class Routes extends Component {
 
   render() {
     const { GuestRoute, UserRoute, AdminRoute } = this
+    const { loaded } = this.props
+
+    if (!loaded) return null
 
     return (
       <Switch>

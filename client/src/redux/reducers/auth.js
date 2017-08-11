@@ -39,7 +39,7 @@ export default function reducer (state = initialState, action = {}) {
       return {
         ...state,
         loading: false,
-        loaded: false,
+        loaded: true,
         error: action.error
       }
     case types.AUTH_UPDATE_PIC:

@@ -96,17 +96,6 @@ export default class App extends Component {
     this.fixAppHeight()
   }
 
-  componentWillReceiveProps (nextProps) {
-    if (!this.props.user && nextProps.user) {
-      // login or register
-      this.props.pushState('/')
-      this.connect(nextProps)
-    } else if (this.props.user && !nextProps.user) {
-      // logout
-      this.props.pushState('/')
-    }
-  }
-
   fixAppHeight = () => {
     // Viewport height
     const height = Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
