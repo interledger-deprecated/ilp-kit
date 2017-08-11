@@ -55,9 +55,9 @@ class Routes extends Component {
 
   render() {
     const { GuestRoute, UserRoute, AdminRoute } = this
-    const { loaded } = this.props
 
-    if (!loaded) return null
+    // Wait before the auth is loaded to avoid flickering
+    if (!this.props.loaded) return null
 
     return (
       <Switch>

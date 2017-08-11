@@ -21,12 +21,23 @@ global.tracker = new Tracker()
 
 const history = createHistory()
 
-ReactDOM.render(
-  <Provider store={createFinalStore(new ApiClient(), history)}>
-    <ConnectedRouter history={history}>
-      <Route path='/' component={App} />
-    </ConnectedRouter>
-  </Provider>,
-  document.getElementById('root'))
+const render = Component => {
+  ReactDOM.render(
+    <Provider store={createFinalStore(new ApiClient(), history)}>
+      <ConnectedRouter history={history}>
+        <Route path='/' component={Component} />
+      </ConnectedRouter>
+    </Provider>,
+    document.getElementById('root'))
+}
+
+render(App)
+
+if (module.hot) {
+  module.hot.accept('containers/App/App', () => {
+    const NextApp = require('containers/App/App').default
+    render(NextApp)
+  });
+}
 
 registerServiceWorker()
