@@ -108,7 +108,7 @@ function MiscControllerFactory (deps) {
       const isGithubAuthEnabled = Boolean(
         typeof githubClientId === 'string' &&
         githubClientId.length > 0 &&
-        typeof githubClientScret === 'string' &&
+        typeof githubClientSecret === 'string' &&
         githubClientSecret.length > 0
       )
 
