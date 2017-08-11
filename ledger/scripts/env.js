@@ -103,8 +103,6 @@ function normalizeEnv (noExit) {
     envVars.API_PROTOCOL = API_PUBLIC_HTTPS ? 'https:' : 'http:'
     envVars.API_LEDGER_URI = 'http://' + (getVar('API_PRIVATE_HOSTNAME') || getVar('LEDGER_HOSTNAME')) + ':' + getVar('LEDGER_PORT')
     envVars.API_LEDGER_PUBLIC_URI = envVars.API_PROTOCOL + '//' + getVar('LEDGER_HOSTNAME') + ledgerPublicPort + '/' + getVar('LEDGER_PUBLIC_PATH')
-
-    envVars.DEV_PROTOCOL = Config.castBool(getVar('DEV_HTTPS')) ? 'https' : 'http'
   }
 
   // Set envVars in environment
