@@ -5,6 +5,7 @@ node_modules
 ledger/node_modules
 api/node_modules
 client/node_modules
+webserver/node_modules
 
 # testing
 client/coverage
