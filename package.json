@@ -1,0 +1,27 @@
+{
+  "name": "ilp-kit",
+  "version": "4.0.0",
+  "description": "ILP kit",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/interledgerjs/ilp-kit"
+  },
+  "author": "Interledger Team <info@interledger.org>",
+  "homepage": "https://github.com/interledgerjs/ilp-kit",
+  "keywords": [
+    "five-bells",
+    "ilp",
+    "ledger",
+    "wallet",
+    "ui",
+    "payments",
+    "finance"
+  ],
+  "scripts": {
+    "configure": "./node_modules/ilp-kit-cli/bin/configure.js"
+  },
+  "dependencies": {
+    "ilp-kit-cli": "^11.4.1"
+  }
+}

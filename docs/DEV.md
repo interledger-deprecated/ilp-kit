@@ -2,7 +2,9 @@
 
 ```bash
 git clone git@github.com:interledgerjs/ilp-kit.git
-cd ilp-kit/ledger
+cd ilp-kit
+npm install
+cd ledger
 npm install
 cd ../api
 npm install
