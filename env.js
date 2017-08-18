@@ -52,7 +52,7 @@ function normalizeEnv (noExit) {
 
   // make sure versioning matches between file and this kit
   const version = getVar('ILP_KIT_CLI_VERSION', '0.0.0')
-  const supportedVersion = require('../package.json')
+  const supportedVersion = require('./package.json')
     .dependencies['ilp-kit-cli']
     .replace(/^[\^\~]/, '')
 
@@ -74,7 +74,7 @@ function normalizeEnv (noExit) {
   }
 
   // Add this so it can be announced in webfinger
-  envVars.ILP_KIT_VERSION = require('../package.json').version
+  envVars.ILP_KIT_VERSION = require('./package.json').version
 
   // Secrets
   const secret = getVar('API_SECRET', 'secret') // 'secret' for tests

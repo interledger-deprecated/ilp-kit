@@ -4,7 +4,6 @@
     "start": "node scripts/ledger.js"
   },
   "dependencies": {
-    "five-bells-ledger": "^21.2.1",
-    "ilp-kit-cli": "^11.4.1"
+    "five-bells-ledger": "^21.2.1"
   }
 }

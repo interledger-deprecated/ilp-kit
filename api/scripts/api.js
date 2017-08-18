@@ -9,5 +9,5 @@ if (process.env.NODE_ENV !== 'production') {
   }
 }
 
-require('./env').normalizeEnv()
+require('../../env').normalizeEnv()
 require('../app')

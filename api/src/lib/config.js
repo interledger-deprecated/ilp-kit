@@ -6,7 +6,7 @@ const Config = require('five-bells-shared').Config
 const envPrefix = 'api'
 const crypto = require('crypto')
 const generatePublicKey = require('ilp-plugin-virtual').generatePublicKey
-const changeAdminPass = require('../../scripts/env').changeAdminPass
+const changeAdminPass = require('../../../env').changeAdminPass
 
 module.exports = class WalletConfig {
   constructor () {
