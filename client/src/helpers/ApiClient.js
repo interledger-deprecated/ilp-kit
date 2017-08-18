@@ -1,3 +1,5 @@
+/* globals config */
+
 import superagent from 'superagent'
 
 const methods = ['get', 'post', 'put', 'patch', 'del']
@@ -9,7 +11,7 @@ function formatUrl (path) {
   const adjustedPath = path[0] !== '/' ? '/' + path : path
 
   // Prepend `/api` to relative URL, to proxy to API server.
-  return process.env.REACT_APP_API_URL + adjustedPath
+  return config.apiUrl + adjustedPath
 }
 
 export default class ApiClient {

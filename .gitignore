@@ -11,6 +11,7 @@ client/coverage
 # production
 client/build
 client/.env
+client/public/config.js
 
 # misc
 .DS_Store
@@ -18,7 +19,6 @@ client/.env
 .env.development.local
 .env.test.local
 .env.production.local
-client/
 
 npm-debug.log*
 yarn-debug.log*
