@@ -556,7 +556,7 @@ function UsersControllerFactory (deps) {
       let filePath = path.resolve(__dirname, '../placeholder.png')
 
       if (user.profile_picture) {
-        filePath = path.resolve(__dirname, '../../../uploads/', user.profile_picture)
+        filePath = path.resolve(__dirname, '../../uploads/', user.profile_picture)
       }
 
       if (!fs.existsSync(filePath)) {

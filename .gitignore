@@ -28,4 +28,4 @@ yarn-error.log*
 .idea
 env.list
 
-uploads
+api/uploads

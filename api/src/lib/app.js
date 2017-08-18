@@ -41,7 +41,7 @@ module.exports = class App {
 
     const app = this.app = new Koa()
 
-    const uploadDir = path.resolve(__dirname, '../../../uploads')
+    const uploadDir = path.resolve(__dirname, '../../uploads')
 
     // Create uploads folder
     try {
@@ -77,7 +77,7 @@ module.exports = class App {
       maxAge: 2592000000
     }, app))
 
-    app.use(require('koa-static')(path.resolve(__dirname, '../../../uploads')))
+    app.use(require('koa-static')(path.resolve(__dirname, '../../uploads')))
 
     this.auth.attach(app)
 
