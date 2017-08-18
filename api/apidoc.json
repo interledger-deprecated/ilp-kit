@@ -1,0 +1,10 @@
+{
+  "title": "ILP kit",
+  "url": "https://wallet.example",
+  "order": [
+    "User",
+    "Payment",
+    "Misc",
+    "Auth"
+  ]
+}
