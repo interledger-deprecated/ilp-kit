@@ -9,6 +9,7 @@ npm install
 cd ../api
 npm install
 cd ../client
+cp public/config.example.js public/config.js
 npm install
 ```
 
@@ -16,44 +17,6 @@ To run the ILP kit you will need to specify all of the required environment vari
 
 ```bash
 npm run configure
-```
-
-## Run the integration tests with Docker
-We have a docker image which is useful for running the integration tests. The following command (when run from the
-ilp-kit repo root) mounts your code into the container (in its currenct state, so changes made inside the container will be available for committing them after you exit) and lets you run the integration tests inside a container:
-
-```sh
-mv node_modules node_modules-host
-docker pull michielbdejong/five-bells-integration-test # check for updates
-docker run -it -v `pwd`:/app/integration-test/ilp-kit michielbdejong/five-bells-integration-test /bin/bash
-```
-
-Once you're inside the container (unless your host system also runs ubuntu), rebuild the dependencies:
-```sh
-$ cd integration-test/ilp-kit
-$ ls
-$ npm install
-$ npm rebuild node-sass && npm run build # this postinstall hook is skipped when npm install is run as root
-$ cd /app ; ls # /app contains https://github.com/interledgerjs/five-bells-integration-test
-$ ls integration-test/ilp-kit # this is mounted from `pwd` by the `docker run` command above
-$ ls integration-test/node_modules # master branch of various modules from when this Dockerfile was last built
-```
-
-Now, you can run a test suite:
-```sh
-$ src/bin/integration test index
-```
-
-Or run multiple:
-```sh
-$ killall node # in case earlier suite runs didn't stop properly
-$ src/bin/integration test connector_first ilp-kit
-```
-
-Or run all integration test suites:
-```sh
-$ killall node # in case earlier suite runs didn't stop properly
-$ src/bin/integration test
 ```
 
 ## Run a development server without Docker
@@ -92,6 +55,44 @@ Below are the guides to setting up 2 virtual hosts for nginx and apache
 - [Apache](https://github.com/interledgerjs/ilp-kit/blob/master/docs/apache.md)
 
 > Note: You can use self signed certificates.
+
+## Run the integration tests with Docker
+We have a docker image which is useful for running the integration tests. The following command (when run from the
+ilp-kit repo root) mounts your code into the container (in its currenct state, so changes made inside the container will be available for committing them after you exit) and lets you run the integration tests inside a container:
+
+```sh
+mv node_modules node_modules-host
+docker pull michielbdejong/five-bells-integration-test # check for updates
+docker run -it -v `pwd`:/app/integration-test/ilp-kit michielbdejong/five-bells-integration-test /bin/bash
+```
+
+Once you're inside the container (unless your host system also runs ubuntu), rebuild the dependencies:
+```sh
+$ cd integration-test/ilp-kit
+$ ls
+$ npm install
+$ npm rebuild node-sass && npm run build # this postinstall hook is skipped when npm install is run as root
+$ cd /app ; ls # /app contains https://github.com/interledgerjs/five-bells-integration-test
+$ ls integration-test/ilp-kit # this is mounted from `pwd` by the `docker run` command above
+$ ls integration-test/node_modules # master branch of various modules from when this Dockerfile was last built
+```
+
+Now, you can run a test suite:
+```sh
+$ src/bin/integration test index
+```
+
+Or run multiple:
+```sh
+$ killall node # in case earlier suite runs didn't stop properly
+$ src/bin/integration test connector_first ilp-kit
+```
+
+Or run all integration test suites:
+```sh
+$ killall node # in case earlier suite runs didn't stop properly
+$ src/bin/integration test
+```
 
 ## Using Redux DevTools
 
