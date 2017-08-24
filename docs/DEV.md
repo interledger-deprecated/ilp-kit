@@ -1,50 +1,52 @@
-# Development Setup
+# Setup
 
+Clone the repo
 ```bash
 git clone git@github.com:interledgerjs/ilp-kit.git
+```
+
+Configure the environment
+```bash
 cd ilp-kit
 npm install
+npm run configure
+```
+
+Setup the ledger
+```bash
 cd ledger
 npm install
+```
+
+Setup the api
+```bash
 cd ../api
 npm install
+```
+
+Setup the client
+```bash
 cd ../client
 cp public/config.example.js public/config.js
 npm install
 ```
 
-To run the ILP kit you will need to specify all of the required environment variables. `ilp-kit-cli` simplifies this by guiding you through the environment variables and creates an `env.list` which will be run automatically by the kit.
-
-```bash
-npm run configure
-```
-
-## Run a development server without Docker
-
-Note: development server assumes you have `bunyan` installed globally.
-
-```bash
-npm run start
-```
-
-### Hosts file
-
-Edit your hosts file (`/private/etc/hosts` on OSX). Add these two lines
+Edit your hosts file (`/private/etc/hosts` on OSX). Add this line.
 
 ```
 127.0.0.1   wallet1.com
-127.0.0.1   wallet2.com
 ```
 
 ### Port forwarding (simple)
 
 > NOTE: Current webfinger implementation will not work if the public ports 443 and 80 don't point to the development server.
 
-``` sh
-npm run dev-with-proxy
+```bash
+cd webserver
+npm run start-dev
 ```
 
-### Virtual hosts
+### Port forwarding (Virtual hosts)
 
 If you would like to set up two ILP Kits on the same host, it's a good idea to use nginx or apache for the virtual host handling.
 
@@ -55,6 +57,25 @@ Below are the guides to setting up 2 virtual hosts for nginx and apache
 - [Apache](https://github.com/interledgerjs/ilp-kit/blob/master/docs/apache.md)
 
 > Note: You can use self signed certificates.
+
+# Running
+
+There are 3 processes that need to be run. Ledger, Api and the Client.
+
+```bash
+cd ledger
+npm run start
+```
+
+```bash
+cd api
+npm run start
+```
+
+```bash
+cd client
+npm run start
+```
 
 ## Run the integration tests with Docker
 We have a docker image which is useful for running the integration tests. The following command (when run from the
@@ -114,11 +135,3 @@ API_SENTRY_API_KEY=your-sentry-api-key
 ```
 
 Note: API KEY can be generated [here](https://sentry.io/api/).
-
-## Note
-
-It seems you may need to run:
-```
-psql ilpkit -f node_modules/five-bells-ledger/src/sql/pg/1-2.sql
-```
-but that's unconfirmed
