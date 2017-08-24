@@ -2,34 +2,40 @@
 
 Clone the repo
 ```bash
-git clone git@github.com:interledgerjs/ilp-kit.git
+git clone -b v4 git@github.com:interledgerjs/ilp-kit.git
 ```
 
 Configure the environment
 ```bash
 cd ilp-kit
-npm install
+npm run install-all
+```
+
+> **Note:** `npm install-all` will run the following commands:
+>
+> ```bash
+> npm install
+> cd ledger; npm install; cd ..
+> cd api; npm install; cd ..
+> cd client; npm install; cd ..
+> cd webserver; npm install; cd ..
+> ```
+
+Configure your installation:
+
+```bash
 npm run configure
+cp client/public/config.example.js client/public/config.js
 ```
 
-Setup the ledger
-```bash
-cd ledger
-npm install
-```
+> **Note:** Use `wallet1.com` as your hostname when asked by `npm run configure`.
 
-Setup the api
-```bash
-cd ../api
-npm install
-```
-
-Setup the client
-```bash
-cd ../client
-cp public/config.example.js public/config.js
-npm install
-```
+> **Hint:** If you don't have Postgres running already, but you have Docker, you can start a development database with the following commands:
+>
+> ```bash
+> docker pull postgres
+> docker run -it --rm -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=ilpkit --name ilpkitpostgres -p 5432:5432 postgres
+> ```
 
 Edit your hosts file (`/private/etc/hosts` on OSX). Add this line.
 
@@ -37,7 +43,9 @@ Edit your hosts file (`/private/etc/hosts` on OSX). Add this line.
 127.0.0.1   wallet1.com
 ```
 
-### Port forwarding (simple)
+## Port forwarding
+
+### Option A: Port forwarding (simple)
 
 > NOTE: Current webfinger implementation will not work if the public ports 443 and 80 don't point to the development server.
 
@@ -46,7 +54,13 @@ cd webserver
 npm run start-dev
 ```
 
-### Port forwarding (Virtual hosts)
+> **Hint:** In order to run the proxy, you may need *sudo*:
+>
+> ```bash
+> sudo npm run start-dev
+> ```
+
+### Option B: Port forwarding (Virtual hosts)
 
 If you would like to set up two ILP Kits on the same host, it's a good idea to use nginx or apache for the virtual host handling.
 
@@ -76,6 +90,8 @@ npm run start
 cd client
 npm run start
 ```
+
+Congratulations, your development instance is up and running! Go to https://wallet1.com and bypass the certificate warning in order to access your development ILP Kit.
 
 ## Run the integration tests with Docker
 We have a docker image which is useful for running the integration tests. The following command (when run from the
