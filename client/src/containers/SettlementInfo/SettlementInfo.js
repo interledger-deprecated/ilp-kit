@@ -18,7 +18,7 @@ const cx = classNames.bind(styles)
 }), { get })
 export default class SettlementInfo extends Component {
   static propTypes = {
-    params: PropTypes.object,
+    match: PropTypes.object.isRequired,
     get: PropTypes.func.isRequired,
     info: PropTypes.object
   }
@@ -26,7 +26,7 @@ export default class SettlementInfo extends Component {
   state = {}
 
   componentWillMount () {
-    this.props.get(this.props.params.id)
+    this.props.get(this.props.match.params.id)
   }
 
   componentDidMount () {

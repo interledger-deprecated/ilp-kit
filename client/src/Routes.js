@@ -66,7 +66,7 @@ class Routes extends Component {
 
         { /* Pages only available to guests */ }
         <GuestRoute path='/login' component={Auth} />
-        <GuestRoute path='/register(/:inviteCode)' component={Auth} />
+        <GuestRoute path='/register/:inviteCode?' component={Auth} />
         <GuestRoute path='/forgot-password' component={Auth} />
         <GuestRoute path='/change-password/:username/:passwordChangeCode' component={Auth} />
 
@@ -90,7 +90,7 @@ class Routes extends Component {
         <Route path='/settlement/:id' component={SettlementInfo} />
         <Route path='/withdraw' component={Withdraw} />
         <Route path='/verify/:username/:verifyCode' component={Home} />
-        <Route path='/pay(/:username)' component={Pay} />
+        <Route path='/pay/:username?' component={Pay} />
         <Route path='/webpayment/:destination/:amount' component={WebPayment} />
 
         { /* Catch all route */ }

@@ -20,7 +20,7 @@ const cx = classNames.bind(styles)
 export default class Pay extends Component {
   static propTypes = {
     // Props
-    params: PropTypes.object.isRequired,
+    match: PropTypes.object.isRequired,
 
     // State
     user: PropTypes.object,
@@ -34,7 +34,7 @@ export default class Pay extends Component {
   state = {}
 
   componentDidMount () {
-    const params = this.props.params
+    const params = this.props.match.params
 
     if (!params.amount || !params.destination) return
 
@@ -46,8 +46,8 @@ export default class Pay extends Component {
   }
 
   handlePay = () => {
-    const amount = this.props.params.amount
-    const destination = this.props.params.destination
+    const amount = this.props.match.params.amount
+    const destination = this.props.match.params.destination
 
     this.setState({
       sending: true

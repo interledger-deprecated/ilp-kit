@@ -40,7 +40,7 @@ class AmountInput extends Component {
 export default class Pay extends Component {
   static propTypes = {
     // Props
-    params: PropTypes.object.isRequired,
+    match: PropTypes.object.isRequired,
 
     // Form
     invalid: PropTypes.bool.isRequired,
@@ -53,7 +53,7 @@ export default class Pay extends Component {
   }
 
   componentDidMount () {
-    this.props.getUser(this.props.params.username)
+    this.props.getUser(this.props.match.params.username)
   }
 
   handlePay = data => {

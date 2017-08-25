@@ -16,7 +16,7 @@ const cx = classNames.bind(styles)
 }), { getDestination, settle })
 export default class Settle extends Component {
   static propTypes = {
-    params: PropTypes.object.isRequired,
+    match: PropTypes.object.isRequired,
     location: PropTypes.object.isRequired,
     getDestination: PropTypes.func.isRequired,
     destination: PropTypes.object,
@@ -26,7 +26,7 @@ export default class Settle extends Component {
   state = {}
 
   componentWillMount () {
-    this.props.getDestination(this.props.params.destination)
+    this.props.getDestination(this.props.match.params.destination)
   }
 
   componentDidMount () {
@@ -46,7 +46,7 @@ export default class Settle extends Component {
     })
 
     // TODO handle exceptions
-    this.props.settle(this.props.params.destination, {amount: this.refs.amount.value})
+    this.props.settle(this.props.match.params.destination, {amount: this.refs.amount.value})
       .then(response => {
         location.href = response.approvalLink // eslint-disable-line no-restricted-globals
       })

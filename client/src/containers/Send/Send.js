@@ -8,6 +8,6 @@ export default class Send extends Component {
   }
 
   render () {
-    return <SendForm params={this.props.location.query} />
+    return <SendForm params={this.props.match.params} />
   }
 }

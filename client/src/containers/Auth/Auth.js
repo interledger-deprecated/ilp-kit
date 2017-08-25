@@ -34,7 +34,7 @@ export default class Home extends Component {
     pushState: PropTypes.func.isRequired,
 
     // User verification
-    params: PropTypes.object,
+    match: PropTypes.object,
     verified: PropTypes.bool,
 
     // Password change
@@ -59,8 +59,8 @@ export default class Home extends Component {
 
   setCurrentView (props) {
     const prps = props || this.props
-    const fullPath = prps.match.path
-    let currentView = fullPath && fullPath.match(/[a-zA-Z-]*/i)[0]
+    const fullPath = prps.match.url
+    let currentView = fullPath && fullPath.match(/\/([a-zA-Z-]*)/i)[1]
 
     if (currentView === 'verify') currentView = 'login'
 
@@ -76,7 +76,7 @@ export default class Home extends Component {
   }
 
   render () {
-    const {authFail, login, register, forgot, changePassword, verified, params, config} = this.props
+    const {authFail, login, register, forgot, changePassword, verified, match: { params }, config} = this.props
     const {currentView} = this.state
 
     const appConfig = this.props.config || {}

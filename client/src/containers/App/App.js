@@ -51,7 +51,7 @@ export default class App extends Component {
     addActivity: PropTypes.func.isRequired,
     updateBalance: PropTypes.func.isRequired,
     pushState: PropTypes.func.isRequired,
-    params: PropTypes.object,
+    match: PropTypes.object,
     // TODO:UI add loading screen
     advancedMode: PropTypes.bool,
     loadConfig: PropTypes.func,
