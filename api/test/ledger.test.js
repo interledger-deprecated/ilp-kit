@@ -2,7 +2,7 @@
 
 // Due to https://github.com/interledgerjs/ilp-kit/blob/master/bin/normalizeEnv.js#L24
 // this will end up loading ../../test.env.list if process.env.NODE_ENV === 'test':
-require('../../../env').normalizeEnv()
+require('../../env').normalizeEnv()
 
 const reduct = require('reduct')
 const Ledger = require('../src/lib/ledger')

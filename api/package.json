@@ -19,6 +19,7 @@
     "finance"
   ],
   "scripts": {
+    "test": "NODE_ENV=test node scripts/test.js",
     "apidoc": "apidoc -i api/src/controllers/ -o apidoc-out",
     "version-check": "echo 'Scanning psql version'; chmod +x ./scripts/postgres_version_check.sh; if [ $(bash ./scripts/postgres_version_check.sh) = 'false' ]; then echo 'Postgres PSQL Version out of date, please upgrade to 9.5 or newer'; exit 126; fi;",
     "start": "npm run version-check && node scripts/api.js"
@@ -65,5 +66,12 @@
     "umzug": "^2.0.1",
     "uuid4": "^1.0.0",
     "webfinger.js": "^2.6.5"
+  },
+  "devDependencies": {
+    "chai": "^4.1.1",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.5.0",
+    "nock": "^9.0.14",
+    "sqlite3": "^3.1.9"
   }
 }
