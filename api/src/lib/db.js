@@ -13,8 +13,13 @@ module.exports = class Database extends AbstractDatabase {
     const config = deps(Config)
     const log = deps(Log)
 
+    // Only log the sql
+    const sequelizeLog = (sql, details) => {
+      return log('sequelize').debug(sql)
+    }
+
     super(config.data.getIn(['db', 'uri']), {
-      logging: log('sequelize').debug,
+      logging: sequelizeLog,
       omitNull: true
     })
 
