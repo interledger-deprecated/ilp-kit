@@ -223,7 +223,7 @@ export default class App extends Component {
           </div>
         </Alert>}
 
-        {user && user.isAdmin && config.versions && config.versions.current !== config.versions.latest &&
+        {user && user.isAdmin && config.versions && config.versions.outdated &&
         <Alert bsStyle={'info'} className={cx('topNotificationBox')}>
           <div className={cx('container')}>
             Your ILP Kit (v. {config.versions.current}) is outdated. Please upgrade to the <a href='https://github.com/interledgerjs/ilp-kit/tree/release' target='_blank' rel='noopener noreferrer'>latest version</a> (v. {config.versions.latest}).

@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "apidoc": "^0.17.6",
+    "compare-versions": "^3.0.1",
     "currency-symbol-map": "^4.0.1",
     "ejs": "^2.5.7",
     "email-templates": "^2.6.0",
@@ -57,6 +58,7 @@
     "passport-http": "^0.3.0",
     "passport-local": "^1.0.0",
     "pg": "^6.4.2",
+    "pg-native": "^2.0.1",
     "piping": "^1.0.0-rc.4",
     "reduct": "^3.1.0",
     "request-ip": "^2.0.2",

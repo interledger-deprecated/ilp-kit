@@ -5,6 +5,7 @@ const exec = require('child_process').exec
 const Config = require('five-bells-shared').Config
 const envPrefix = 'api'
 const crypto = require('crypto')
+const compareVersions = require('compare-versions')
 const generatePublicKey = require('ilp-plugin-virtual').generatePublicKey
 const changeAdminPass = require('../../../env').changeAdminPass
 
@@ -121,12 +122,14 @@ module.exports = class WalletConfig {
       })
     })
 
-    const latest = await superagent.get('https://raw.githubusercontent.com/interledgerjs/ilp-kit/release/package.json')
+    const latestPackage = await superagent.get('https://raw.githubusercontent.com/interledgerjs/ilp-kit/release/package.json')
+    const latest = JSON.parse(latestPackage.text).version
 
     this.versions = {
       current,
       hash,
-      latest: JSON.parse(latest.text).version
+      latest,
+      outdated: compareVersions(latest, current) > 0
     }
 
     return this.versions
