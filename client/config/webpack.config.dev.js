@@ -147,6 +147,7 @@ module.exports = {
           /\.gif$/,
           /\.jpe?g$/,
           /\.png$/,
+          /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?$/
         ],
         loader: require.resolve('file-loader'),
         options: {
@@ -157,7 +158,7 @@ module.exports = {
       // smaller than specified limit in bytes as data URLs to avoid requests.
       // A missing `test` is equivalent to a match.
       {
-        test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
+        test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/, /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?$/],
         loader: require.resolve('url-loader'),
         options: {
           limit: 10000,
@@ -226,6 +227,13 @@ module.exports = {
           }
         ],
       },
+      {
+        test: /font-awesome\.config\.js/,
+        use: [
+          { loader: 'style-loader' },
+          { loader: 'font-awesome-loader' },
+        ],
+      }
       // ** STOP ** Are you adding a new loader?
       // Remember to add the new extension(s) to the "file" loader exclusion list.
     ],

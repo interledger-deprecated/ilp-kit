@@ -9,6 +9,10 @@ import { Route } from 'react-router-dom'
 import { ConnectedRouter } from 'react-router-redux'
 import Tracker from './tracker'
 
+// Font awesome
+import 'font-awesome/scss/font-awesome.scss'
+import 'theme/font-awesome.config'
+
 import createFinalStore from './redux/store'
 import ApiClient from './helpers/ApiClient'
 
