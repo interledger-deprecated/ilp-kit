@@ -52,6 +52,8 @@ module.exports = class App {
     }
 
     this.socket.attach(app)
+    this.connector.attach(app)
+
     app.use(body({
       multipart: false,
       strict: false

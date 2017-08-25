@@ -1,7 +1,10 @@
 'use strict'
 
+const _ = require('lodash')
 const request = require('superagent')
 const connector = require('ilp-connector')
+const websockify = require('koa-websocket')
+const makeRouter = require('koa-router')
 const Log = require('./log')
 const Config = require('./config')
 const Utils = require('./utils')
@@ -19,6 +22,7 @@ module.exports = class Connector {
     this.SettlementMethod = deps(SettlementMethodFactory)
     this.log = deps(Log)('connector')
     this.peers = {}
+    this.plugins = {}
     this.peerDestinations = {} // { connectorAccount ⇒ peer.destination }
     this.instance = connector
     connector.registerRequestHandler(this._handleRequestMessage.bind(this))
@@ -49,6 +53,20 @@ module.exports = class Connector {
         }
       }
     }, 5000)
+  }
+
+  attach (app) {
+    const router = makeRouter()
+    websockify(app, { maxPayload: 64 * 1024 })
+
+    app.ws.use(router.all('/peers/rpc', ctx => {
+      // TODO:SECURITY Auth
+      try {
+        _.map(this.plugins, plugin => {
+          plugin.addSocket(ctx.websocket)
+        })
+      } catch (err) { console.log(err) }
+    }))
   }
 
   async waitForLedger () {
@@ -142,6 +160,8 @@ module.exports = class Connector {
     }
 
     const plugin = connector.getPlugin(hostInfo.ledgerName)
+
+    this.plugins[hostInfo.ledgerName] = plugin
     this.peerDestinations[plugin.getAccount()] = peer.destination
 
     try {
@@ -207,7 +227,7 @@ module.exports = class Connector {
     if (!peerInfo || !peerInfo.ledgerName) return
 
     const online = peerInfo.online
-    const plugin = connector.getPlugin(peerInfo.ledgerName)
+    const plugin = this.plugins[peerInfo.ledgerName]
 
     const balance = online && (await plugin.getBalance())
     const minBalance = online && (await plugin.getLimit())
@@ -221,7 +241,7 @@ module.exports = class Connector {
 
   async getSettlementMethods (peer) {
     const peerInfo = this.peers[peer.destination]
-    const plugin = connector.getPlugin(peerInfo.ledgerName)
+    const plugin = this.plugins[peerInfo.ledgerName]
 
     if (!peerInfo.online) return Promise.reject(new Error('Peer not online'))
 
@@ -241,7 +261,7 @@ module.exports = class Connector {
   }
 
   getPlugin (prefix) {
-    return connector.getPlugin(prefix)
+    return this.plugins[prefix]
   }
 
   async _handleRequestMessage (message) {

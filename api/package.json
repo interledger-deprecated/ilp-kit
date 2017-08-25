@@ -50,6 +50,7 @@
     "koa-session": "^5.5.0",
     "koa-socket-2": "^1.0.13",
     "koa-static": "^4.0.1",
+    "koa-websocket": "^4.0.0",
     "lodash": "^4.17.4",
     "mag": "^0.9.1",
     "mag-hub": "^0.1.1",
