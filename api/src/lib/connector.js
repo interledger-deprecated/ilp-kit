@@ -37,7 +37,7 @@ module.exports = class Connector {
 
     this.log.info('Starting the connector...')
 
-    connector.listen()
+    await connector.listen()
 
     // Get the peers from the database
     const peers = await self.Peer.findAll()

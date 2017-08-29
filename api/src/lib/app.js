@@ -98,7 +98,7 @@ module.exports = class App {
     const adminAccount = await this.user.setupAdminAccount()
     const connectorAccount = await this.user.setupConnectorAccount()
 
-    this.listen()
+    this.app.listen(this.config.data.getIn(['server', 'port']))
 
     await this.connector.start()
 
@@ -118,10 +118,6 @@ module.exports = class App {
         message: 'Initial connector funding'
       })
     }
-  }
-
-  listen () {
-    this.app.listen(this.config.data.getIn(['server', 'port']))
     this.log.info('wallet listening on ' + this.config.data.getIn(['server', 'bind_ip']) +
       ':' + this.config.data.getIn(['server', 'port']))
     this.log.info('public at ' + this.config.data.getIn(['server', 'base_uri']))
