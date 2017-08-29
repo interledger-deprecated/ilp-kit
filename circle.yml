@@ -8,8 +8,8 @@ dependencies:
 
 test:
   override:
-    - npm run install-all
     - ./node_modules/.bin/integration-loader && ./node_modules/.bin/integration setup
+    - (cd integration-test/node_modules/ilp-kit && npm run install-all)
     - ./node_modules/.bin/integration test ilp-kit
 
 deployment:
