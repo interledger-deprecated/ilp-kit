@@ -19,6 +19,7 @@
     "finance"
   ],
   "scripts": {
+    "start": "./start-all.sh",
     "configure": "./node_modules/ilp-kit-cli/bin/configure.js"
   },
   "dependencies": {
