@@ -157,7 +157,7 @@ function PeersControllerFactory (deps) {
      *    }
      */
     static async postResource (ctx) {
-      const peer = new Peer()
+      let peer = new Peer()
 
       if (!ctx.body.hostname || !ctx.body.limit || !ctx.body.currencyCode) {
         throw new InvalidBodyError('At least one of the required fields is missing')
@@ -168,10 +168,16 @@ function PeersControllerFactory (deps) {
       peer.currencyScale = parseInt(ctx.body.currencyScale) || PeerFactory.DEFAULT_CURRENCY_SCALE
       peer.limit = ctx.body.limit * Math.pow(10, peer.currencyScale)
       peer.destination = parseInt(Math.random() * 1000000)
+      peer = Peer.fromDatabaseModel(await peer.save())
 
       await connector.connectPeer(peer)
 
-      ctx.body = await peer.save()
+      const peerInfo = await connector.getPeer(peer)
+      peer.balance = peerInfo.balance
+      peer.minBalance = peerInfo.minBalance
+      peer.online = peerInfo.online
+
+      ctx.body = peer
       ctx.status = 201
     }
 
@@ -289,7 +295,10 @@ function PeersControllerFactory (deps) {
      *    https://wallet.example/peers/963d89dc-a211-456c-8e9f-897d379aae2a
      *
      * @apiSuccessExample {json} 200 Response:
-     *    HTTP/1.1 204 OK
+     *    HTTP/1.1 200 OK
+     *    {
+     *       "id": "963d89dc-a211-456c-8e9f-897d379aae2a"
+     *    }
      */
     static async deleteResource (ctx) {
       const id = ctx.params.id
@@ -301,7 +310,7 @@ function PeersControllerFactory (deps) {
 
       await peer.destroy()
 
-      ctx.body = null
+      ctx.body = {id}
     }
 
     static async rpc (ctx) {
