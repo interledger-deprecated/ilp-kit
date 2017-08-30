@@ -172,6 +172,7 @@ export default class SendForm extends Component {
             {(() => {
               switch (err.id) {
                 case 'LedgerInsufficientFundsError': return 'You have insufficient funds to make the payment'
+                case 'InsufficientLiquidityError': return err.message
                 default: return 'Something went wrong'
               }
             })()}
