@@ -9,6 +9,7 @@ const UserFactory = require('../models/user')
 const PaymentFactory = require('../models/payment')
 const NotFoundError = require('../errors/not-found-error')
 const ServerError = require('../errors/server-error')
+const InsufficientLiquidityError = require('../errors/insufficient-liquidity-error')
 const NoQuote = require('../errors/no-quote-error')
 
 function PaymentsControllerFactory (deps) {
@@ -124,7 +125,10 @@ function PaymentsControllerFactory (deps) {
         await pay.pay({ user: ctx.req.user, quote, message })
       } catch (e) {
         console.error(e)
-
+        if (e.code === 'T04') {
+          throw new InsufficientLiquidityError('The connector ' +
+            e.triggered_by + ' has insufficient liquidity to make the payment')
+        }
         throw new ServerError()
       }
 
