@@ -5,21 +5,24 @@ Clone the repo
 git clone -b v4 git@github.com:interledgerjs/ilp-kit.git
 ```
 
-Configure the environment
+Install dependencies
 ```bash
 cd ilp-kit
-npm run install-all
+npm install
 ```
 
-> **Note:** `npm install-all` will run the following commands:
+> **Note:** `npm install` will automatically install the dependencies of each of
+> the subcomponents by running the following commands:
 >
 > ```bash
-> npm install
 > cd ledger; npm install; cd ..
 > cd api; npm install; cd ..
 > cd client; npm install; cd ..
 > cd webserver; npm install; cd ..
 > ```
+>
+> If you don't want to run these commands for some reason, you can use
+> `npm install --ignore-scripts` instead.
 
 Configure your installation:
 

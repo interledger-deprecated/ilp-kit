@@ -20,7 +20,7 @@
   ],
   "scripts": {
     "configure": "./node_modules/ilp-kit-cli/bin/configure.js",
-    "install-all": "npm install ; cd ledger; npm install; cd .. ; cd api; npm install; cd .. ; cd client; npm install; cd .. ; cd webserver; npm install"
+    "postinstall": "cd ledger; npm install; cd .. ; cd api; npm install; cd .. ; cd client; npm install; cd .. ; cd webserver; npm install"
   },
   "dependencies": {
     "five-bells-shared": "^25.1.1",
