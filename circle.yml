@@ -6,6 +6,11 @@ dependencies:
   cache_directories:
     - node_modules
 
+test:
+  override:
+    - ./node_modules/.bin/integration-loader && ./node_modules/.bin/integration setup
+    - ./node_modules/.bin/integration test ilp-kit
+
 deployment:
   development:
     branch: master
