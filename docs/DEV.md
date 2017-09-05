@@ -81,17 +81,17 @@ There are 3 processes that need to be run. Ledger, Api and the Client.
 
 ```bash
 cd ledger
-npm run start
+npm start
 ```
 
 ```bash
 cd api
-npm run start
+npm start
 ```
 
 ```bash
 cd client
-npm run start
+npm start
 ```
 
 Congratulations, your development instance is up and running! Go to https://wallet1.com and bypass the certificate warning in order to access your development ILP Kit.
