@@ -18,9 +18,8 @@ LoadModule ssl_module libexec/apache2/mod_ssl.so
 LoadModule rewrite_module libexec/apache2/mod_rewrite.so
 ```
 
-Make sure Apache is listening on port 80 and 443:
+Make sure Apache is listening on port 443:
 ```
-Listen 80
 Listen 443
 ```
 
@@ -30,13 +29,17 @@ Listen 443
 
   RewriteEngine On
   RewriteCond %{HTTP:Connection} Upgrade [NC]
-  RewriteRule /(.*) ws://wallet.com:3000/$1 [P,L]
+  RewriteRule /ledger/(.*) ws://wallet.com:3001/$1 [P,L]
 
   ProxyRequests Off
-  ProxyPass /ledger/websocket ws://localhost:3101/websocket
-
-  ProxyPass / http://wallet.com:3000/ retry=0
-  ProxyPassReverse / http://wallet.com:3000/
+  ProxyPass /ledger "http://wallet.example:3001" retry=0
+  ProxyPassReverse /ledger "http://wallet.example:3001"
+  ProxyPass /api "http://wallet.example:3000" retry=0
+  ProxyPassReverse /api "http://wallet.example:3000"
+  ProxyPass /.well-known/webfinger "http://wallet.example:3000/webfinger" retry=0
+  ProxyPassReverse /.well-known/webfinger "http://wallet.example:3000/webfinger"
+  ProxyPass / http://wallet.com:3010/ retry=0
+  ProxyPassReverse / http://wallet.com:3010/
 
   SSLEngine on
   SSLCertificateFile /etc/apache2/ssl/wallet.com.crt
@@ -46,59 +49,45 @@ Listen 443
 
 ### Apache Virtual Hosts
 
-> Note: The wallet instances are running on port 80, but we also need to setup virtual hosts on port 443 for the webfinger lookups (issue mentioned above).
-
 ```
-<VirtualHost *:80>
+<VirtualHost *:443>
   ServerName wallet1.com
 
   RewriteEngine On
   RewriteCond %{HTTP:Connection} Upgrade [NC]
-  RewriteRule /(.*) ws://wallet1.com:3010/$1 [P,L]
+  RewriteRule /ledger/(.*) ws://wallet1.com:3001/$1 [P,L]
 
   ProxyRequests Off
-  ProxyPass /ledger/websocket ws://localhost:3101/websocket
-
-  ProxyPass / http://wallet1.com:3010/ retry=0
-  ProxyPassReverse / http://wallet1.com:3010/
-</VirtualHost>
-
-<VirtualHost *:443>
-  ServerName wallet1.com
-  ProxyPass / http://wallet1.com:3010/ retry=0
-  ProxyPassReverse / http://wallet1.com:3010/
-  RedirectMatch ^/$ https://wallet1.com
-
-  ProxyRequests Off
-  ProxyPass /ledger/websocket ws://localhost:3101/websocket
+  ProxyPass /ledger "http://wallet1.example:3001" retry=0
+  ProxyPassReverse /ledger "http://wallet1.example:3001"
+  ProxyPass /api "http://wallet1.example:3000" retry=0
+  ProxyPassReverse /api "http://wallet1.example:3000"
+  ProxyPass /.well-known/webfinger "http://wallet1.example:3000/webfinger" retry=0
+  ProxyPassReverse /.well-known/webfinger "http://wallet1.example:3000/webfinger"
+  ProxyPass / "http://wallet1.com:3010/" retry=0
+  ProxyPassReverse / "http://wallet1.com:3010/"
 
   SSLEngine on
   SSLCertificateFile /etc/apache2/ssl/wallet1.com.crt
   SSLCertificateKeyFile /etc/apache2/ssl/wallet1.com.key
 </VirtualHost>
 
-<VirtualHost *:80>
+<VirtualHost *:443>
   ServerName wallet2.com
 
   RewriteEngine On
   RewriteCond %{HTTP:Connection} Upgrade [NC]
-  RewriteRule /(.*) ws://wallet2.com:3020/$1 [P,L]
+  RewriteRule /ledger/(.*) ws://wallet2.com:3101/$1 [P,L]
 
   ProxyRequests Off
-  ProxyPass /ledger/websocket ws://localhost:3101/websocket
-
-  ProxyPass / http://wallet2.com:3020/ retry=0
-  ProxyPassReverse / http://wallet2.com:3020/
-</VirtualHost>
-
-<VirtualHost *:443>
-  ServerName wallet2.com
-  ProxyPass / http://wallet2.com:3020/ retry=0
-  ProxyPassReverse / http://wallet2.com:3020/
-  RedirectMatch ^/$ https://wallet2.com
-
-  ProxyRequests Off
-  ProxyPass /ledger/websocket ws://localhost:3101/websocket
+  ProxyPass /ledger "http://wallet2.example:3101" retry=0
+  ProxyPassReverse /ledger "http://wallet2.example:3101"
+  ProxyPass /api "http://wallet2.example:3100" retry=0
+  ProxyPassReverse /api "http://wallet2.example:3100"
+  ProxyPass /.well-known/webfinger "http://wallet2.example:3100/webfinger" retry=0
+  ProxyPassReverse /.well-known/webfinger "http://wallet2.example:3100/webfinger"
+  ProxyPass / "http://wallet2.com:3110/" retry=0
+  ProxyPassReverse / "http://wallet2.com:3110/"
 
   SSLEngine on
   SSLCertificateFile /etc/apache2/ssl/wallet2.com.crt
