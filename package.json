@@ -19,7 +19,8 @@
     "finance"
   ],
   "scripts": {
-    "configure": "./node_modules/ilp-kit-cli/bin/configure.js"
+    "configure": "./node_modules/ilp-kit-cli/bin/configure.js",
+    "postinstall": "cd ledger; npm install; cd .. ; cd api; npm install; cd .. ; cd client; npm install; cd .. ; cd webserver; npm install"
   },
   "dependencies": {
     "five-bells-shared": "^25.1.1",
