@@ -20,6 +20,7 @@ const User = require('../models/user')
 const Socket = require('./socket')
 const Pay = require('./pay')
 const Connector = require('./connector')
+const WebsocketRpcController = require('../controllers/websocket_rpc')
 
 module.exports = class App {
   constructor (deps) {
@@ -36,6 +37,7 @@ module.exports = class App {
     const log = deps(Log)
     this.log = log('app')
     this.connector = deps(Connector)
+    this.websocketRpc = deps(WebsocketRpcController)
 
     this.validator.loadSchemasFromDirectory(path.resolve(__dirname, '../../schemas'))
 
@@ -121,7 +123,9 @@ module.exports = class App {
   }
 
   listen () {
-    this.app.listen(this.config.data.getIn(['server', 'port']))
+    const server = this.app.listen(this.config.data.getIn(['server', 'port']))
+    this.websocketRpc.init(server)
+
     this.log.info('wallet listening on ' + this.config.data.getIn(['server', 'bind_ip']) +
       ':' + this.config.data.getIn(['server', 'port']))
     this.log.info('public at ' + this.config.data.getIn(['server', 'base_uri']))
