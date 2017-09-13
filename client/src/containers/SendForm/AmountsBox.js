@@ -112,7 +112,7 @@ export default class AmountsBox extends Component {
       (quoting && this.lastQuotingField !== type)
 
     const sourceCurrency = config.currencySymbol
-    const destinationCurrency = (destinationInfo && destinationInfo.currencySymbol) || destinationInfo.currencyCode || config.currencySymbol
+    const destinationCurrency = destinationInfo && destinationInfo.currencySymbol
 
     return (
       <div className='col-xs-6 form-group'>
@@ -126,7 +126,8 @@ export default class AmountsBox extends Component {
           { disabled: isAmountDisabled },
           { focused: meta.active }
         )}>
-          <span className='input-group-addon'>{ type === 'source' ? sourceCurrency : destinationCurrency }</span>
+          {(type !== 'destination' || destinationCurrency) &&
+          <span className='input-group-addon'>{ type === 'source' ? sourceCurrency : destinationCurrency }</span>}
           <Input
             {...this.props}
             ref='field'
