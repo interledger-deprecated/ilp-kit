@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "title": "Payment",
+  "description": "Payment",
+  "type": "object",
+  "properties": {
+    "destination": {
+      "description": "Destination",
+      "type": "string"
+    },
+    "sourceAmount": {
+      "description": "Source amount",
+      "type": "number"
+    },
+    "destinationAmount": {
+      "description": "Destination amount",
+      "type": "number"
+    }
+  },
+  "required": ["destination"],
+  "anyOf": [
+    {"required": ["sourceAmount"]},
+    {"required": ["destinationAmount"]}
+  ]
+}
