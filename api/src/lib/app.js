@@ -41,7 +41,7 @@ module.exports = class App {
 
     const app = this.app = new Koa()
 
-    const uploadDir = path.resolve(__dirname, '../../../uploads')
+    const uploadDir = path.resolve(__dirname, '../../uploads')
 
     // Create uploads folder
     try {
@@ -52,6 +52,8 @@ module.exports = class App {
     }
 
     this.socket.attach(app)
+    this.connector.attach(app)
+
     app.use(body({
       multipart: false,
       strict: false
@@ -77,7 +79,7 @@ module.exports = class App {
       maxAge: 2592000000
     }, app))
 
-    app.use(require('koa-static')(path.resolve(__dirname, '../../../uploads')))
+    app.use(require('koa-static')(path.resolve(__dirname, '../../uploads')))
 
     this.auth.attach(app)
 
@@ -96,7 +98,7 @@ module.exports = class App {
     const adminAccount = await this.user.setupAdminAccount()
     const connectorAccount = await this.user.setupConnectorAccount()
 
-    this.app.listen(this.config.data.getIn(['server', 'port']))
+    this.listen()
 
     await this.connector.start()
 
@@ -116,6 +118,10 @@ module.exports = class App {
         message: 'Initial connector funding'
       })
     }
+  }
+
+  listen () {
+    this.app.listen(this.config.data.getIn(['server', 'port']))
     this.log.info('wallet listening on ' + this.config.data.getIn(['server', 'bind_ip']) +
       ':' + this.config.data.getIn(['server', 'port']))
     this.log.info('public at ' + this.config.data.getIn(['server', 'base_uri']))

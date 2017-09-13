@@ -102,7 +102,7 @@ function AuthControllerFactory (deps) {
         body({
           multipart: true,
           formidable: {
-            uploadDir: path.resolve(__dirname, '../../../uploads')
+            uploadDir: path.resolve(__dirname, '../../uploads')
           }
         }),
         auth.checkAuth,

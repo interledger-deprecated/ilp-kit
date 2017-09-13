@@ -1,0 +1,9 @@
+{
+  "version": "4.0.0",
+  "scripts": {
+    "start": "node scripts/ledger.js"
+  },
+  "dependencies": {
+    "five-bells-ledger": "^21.2.1"
+  }
+}

@@ -1,1 +1,0 @@
-web: CLIENT_PORT=$PORT DB_URI=$DATABASE_URL npm start

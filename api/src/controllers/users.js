@@ -553,10 +553,10 @@ function UsersControllerFactory (deps) {
         return
       }
 
-      let filePath = path.resolve(__dirname, '../../../static/placeholder.png')
+      let filePath = path.resolve(__dirname, '../placeholder.png')
 
       if (user.profile_picture) {
-        filePath = path.resolve(__dirname, '../../../uploads/', user.profile_picture)
+        filePath = path.resolve(__dirname, '../../uploads/', user.profile_picture)
       }
 
       if (!fs.existsSync(filePath)) {

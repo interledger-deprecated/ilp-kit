@@ -1,26 +1,10 @@
 machine:
   node:
     version: 7.7.1
-  services:
-    - docker
 
 dependencies:
   cache_directories:
     - node_modules
-
-test:
-  override:
-#   - npm run lint
-    - npm test
-    - npm run test-mocha
-    - ./node_modules/.bin/integration-loader && ./node_modules/.bin/integration setup
-    - ./node_modules/.bin/integration test index
-    - ./node_modules/.bin/integration test advanced
-    - ./node_modules/.bin/integration test connector_first
-    - ./node_modules/.bin/integration test ilp-kit
-  post:
-    - docker build -t interledgerjs/ilp-kit:latest .
-    - docker tag interledgerjs/ilp-kit:latest interledgerjs/ilp-kit:"$(git describe --tags)"
 
 deployment:
   development:
@@ -30,16 +14,12 @@ deployment:
       - git config --global user.email "info@circleci.com"
       - git config --global user.name "CircleCI"
       - git config --global push.default simple
-      - node scripts/publish_web.js
+      - node api/scripts/publish_web.js
   production:
     branch: release
     commands:
-      # Push Docker image tagged latest and tagged with commit descriptor
-      - sed "s/<AUTH>/${DOCKER_TOKEN}/" < "dockercfg-template" > ~/.dockercfg
-      - docker push interledgerjs/ilp-kit:latest
-      - docker push interledgerjs/ilp-kit:"$(git describe --tags)"
       # Publish spec
       - git config --global user.email "info@circleci.com"
       - git config --global user.name "CircleCI"
       - git config --global push.default simple
-      - node scripts/publish_web.js
+      - node api/scripts/publish_web.js

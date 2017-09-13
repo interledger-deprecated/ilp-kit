@@ -89,7 +89,7 @@ Name | Example | Description |
 `CLIENT_PUBLIC_PORT` | `80` | Client public port (if different from `CLIENT_PORT`)
 `CLIENT_TITLE` | `ILP Kit` | Browser title and logo
 
-##### Default five-bells-ledger environment variables 
+##### Default five-bells-ledger environment variables
 (used if the `API_LEDGER_URI` is not specified). You can read more about these variables in the [five-bells-ledger readme](https://github.com/interledgerjs/five-bells-ledger#step-3-run-it).
 
 Name | Default |
@@ -105,15 +105,14 @@ Name | Default |
 `LEDGER_CURRENCY_SYMBOL` | `$`
 
 ## Advanced Mode
-ILP kit UI comes with an "advanced mode" for developers and advanced users. You can activate it with a hot-key: `option+d` on Mac or `alt+d` on Windows. 
+ILP kit UI comes with an "advanced mode" for developers and advanced users. You can activate it with a hot-key: `option+d` on Mac or `alt+d` on Windows.
 
 ## Architecture
 ILP kit consists of:
 * a Five Bells ledger (the 'ledger' process)
 * a [Node.js](https://github.com/nodejs/node) (developed on v7.7.1) 'api' process, containing a connector and SPSP receivers
 * html+js+css statics, built using [React](https://github.com/facebook/react)
-* a 'server' process which serves the statics on example.com, the ledger on example.com/ledger, the api on example.com/api
-* an nginx instance in front the server process, which handles https termination
+* an nginx instance for serving the html files and proxying requests to ledger and api
 
 ### Backend (REST API)
 The backend is responsible for communicating with the ILP ledger, creating accounts, sending payments and keeping the payment history.
@@ -143,13 +142,13 @@ roll back if the money cannot be safely delivered.
 ##### Webfinger
 Webfinger is used to lookup account/user identifiers.
 
-Example request 
+Example request
 ```bash
 curl -X GET
 https://wallet.example/.well-known/webfinger?resource=acct:alice@wallet.example
 ```
 
-Example response 
+Example response
 ```bash
 HTTP/1.1 200 OK
 {

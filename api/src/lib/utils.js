@@ -29,8 +29,7 @@ module.exports = class Utils {
 
   isWebfinger (destination) {
     // TODO better email style checking
-    return ( destination.search('@') > -1
-       && destination.search('@'+this.localHost) < 0)
+    return destination.search('@') > -1
   }
 
   userToImageUrl (user) {

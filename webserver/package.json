@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "start": "NODE_ENV=production node ./webserver.js",
+    "start-dev": "node ./webserver.js"
+  },
+  "dependencies": {
+    "express": "^4.15.4",
+    "http-proxy": "^1.16.2"
+  }
+}
