@@ -5,10 +5,11 @@ RUN apt-get update && apt-get install -y python postgresql libpq-dev build-essen
 COPY . /usr/src/app
 WORKDIR /usr/src/app
 
+RUN npm install
 RUN cd api && npm install
 RUN cd ledger && npm install
 RUN cd client && npm install && npm run build
 
 EXPOSE 3010
 
-CMD 
+CMD npm start
