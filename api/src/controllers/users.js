@@ -101,7 +101,7 @@ function UsersControllerFactory (deps) {
       request.validateUriParameter('username', username, 'Identifier')
       username = username.toLowerCase()
 
-      if (ctx.req.user.username !== username) {
+      if (ctx.req.user.username !== username && ctx.req.user.username !== config.data.getIn(['ledger', 'admin', 'user'])) {
         // TODO throw exception
         ctx.status = 404
         return
