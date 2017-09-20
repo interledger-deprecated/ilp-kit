@@ -18,7 +18,7 @@ function HealthControllerFactory () {
      *
      * @apiExample {shell} Health check
      *    curl -X GET
-     *    https://wallet.example/health
+     *    https://wallet.example/api/health
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK

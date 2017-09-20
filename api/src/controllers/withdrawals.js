@@ -50,7 +50,7 @@ function WithdrawalsControllerFactory (deps) {
      *    '{
      *        "amount": 10
      *    }'
-     *    https://wallet.example/withdrawals/23163cfd-cc83-4991-9b10-f89d1b2fc095
+     *    https://wallet.example/api/withdrawals/23163cfd-cc83-4991-9b10-f89d1b2fc095
      *
      * @apiSuccessExample {json} 201 Response:
      *    HTTP/1.1 201 OK
@@ -79,7 +79,7 @@ function WithdrawalsControllerFactory (deps) {
      *
      * @apiExample {shell} Get all withdrawals
      *    curl -X GET -H "Authorization: Basic YWxpY2U6YWxpY2U="
-     *    https://wallet.example/withdrawals
+     *    https://wallet.example/api/withdrawals
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
@@ -157,7 +157,7 @@ function WithdrawalsControllerFactory (deps) {
      *    '{
      *        "status": "complete"
      *    }'
-     *    https://wallet.example/withdrawals/23163cfd-cc83-4991-9b10-f89d1b2fc095
+     *    https://wallet.example/api/withdrawals/23163cfd-cc83-4991-9b10-f89d1b2fc095
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK

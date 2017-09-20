@@ -76,7 +76,7 @@ function PeersControllerFactory (deps) {
      *
      * @apiExample {shell} Get all peers
      *    curl -X GET -H "Authorization: Basic YWxpY2U6YWxpY2U="
-     *    https://wallet.example/peers
+     *    https://wallet.example/api/peers
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
@@ -140,7 +140,7 @@ function PeersControllerFactory (deps) {
      *        "limit": "100",
      *        "currencyCode": "USD"
      *    }'
-     *    https://wallet.example/peers
+     *    https://wallet.example/api/peers
      *
      * @apiSuccessExample {json} 201 Response:
      *    HTTP/1.1 201 OK
@@ -197,7 +197,7 @@ function PeersControllerFactory (deps) {
      *    '{
      *        "limit": "200"
      *    }'
-     *    https://wallet.example/peers/963d89dc-a211-456c-8e9f-897d379aae2a
+     *    https://wallet.example/api/peers/963d89dc-a211-456c-8e9f-897d379aae2a
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
@@ -251,7 +251,7 @@ function PeersControllerFactory (deps) {
      *
      * @apiExample {shell} Get peer settlement methods
      *    curl -X GET -H "Authorization: Basic YWxpY2U6YWxpY2U=" -d
-     *    https://wallet.example/peers/963d89dc-a211-456c-8e9f-897d379aae2a/settlement_methods
+     *    https://wallet.example/api/peers/963d89dc-a211-456c-8e9f-897d379aae2a/settlement_methods
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
@@ -292,7 +292,7 @@ function PeersControllerFactory (deps) {
      *
      * @apiExample {shell} Delete peer
      *    curl -X DELETE -H "Authorization: Basic YWxpY2U6YWxpY2U="
-     *    https://wallet.example/peers/963d89dc-a211-456c-8e9f-897d379aae2a
+     *    https://wallet.example/api/peers/963d89dc-a211-456c-8e9f-897d379aae2a
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK

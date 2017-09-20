@@ -54,7 +54,7 @@ function SettlementMethodsControllerFactory (deps) {
      *
      * @apiExample {shell} Get all settlement methods
      *    curl -X GET -H "Authorization: Basic YWxpY2U6YWxpY2U="
-     *    https://wallet.example/settlement_methods
+     *    https://wallet.example/api/settlement_methods
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
@@ -106,7 +106,7 @@ function SettlementMethodsControllerFactory (deps) {
      *    '{
      *        "type": "Paypal"
      *    }'
-     *    https://wallet.example/peers
+     *    https://wallet.example/api/peers
      *
      * @apiSuccessExample {json} 201 Response:
      *    HTTP/1.1 201 OK
@@ -181,7 +181,7 @@ function SettlementMethodsControllerFactory (deps) {
      *    '{
      *        "enabled": true
      *    }'
-     *    https://wallet.example/settlement_methods/2e0e85a6-64f1-4c57-aee4-898237a27486
+     *    https://wallet.example/api/settlement_methods/2e0e85a6-64f1-4c57-aee4-898237a27486
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
@@ -242,7 +242,7 @@ function SettlementMethodsControllerFactory (deps) {
      *
      * @apiExample {shell} Delete Settlement Method
      *    curl -X DELETE -H "Authorization: Basic YWxpY2U6YWxpY2U="
-     *    https://wallet.example/settlement_methods/2e0e85a6-64f1-4c57-aee4-898237a27486
+     *    https://wallet.example/api/settlement_methods/2e0e85a6-64f1-4c57-aee4-898237a27486
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 204 OK

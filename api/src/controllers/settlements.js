@@ -69,7 +69,7 @@ function SettlementsControllerFactory (deps) {
      *
      * @apiExample {shell} Get destination
      *    curl -X GET
-     *    https://wallet.example/destinations/813133
+     *    https://wallet.example/api/destinations/813133
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
@@ -161,7 +161,7 @@ function SettlementsControllerFactory (deps) {
      *        "currency": "USD",
      *        "settlement_method": "7b4a73b0-19c5-46ed-8905-febeae2b0a05"
      *    }'
-     *    https://wallet.example/settlements/813133
+     *    https://wallet.example/api/settlements/813133
      *
      * @apiSuccessExample {json} 204 Response:
      *    HTTP/1.1 204 OK
@@ -201,7 +201,7 @@ function SettlementsControllerFactory (deps) {
      *
      * @apiExample {shell} Get destination
      *    curl -X POST
-     *    https://wallet.example/settlements/813133/paypal
+     *    https://wallet.example/api/settlements/813133/paypal
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
@@ -270,7 +270,7 @@ function SettlementsControllerFactory (deps) {
      *
      * @apiExample {shell} Get destination
      *    curl -X GET
-     *    https://wallet.example/settlements/da978aa3-93c1-4899-8507-6888cb4ce8ca
+     *    https://wallet.example/api/settlements/da978aa3-93c1-4899-8507-6888cb4ce8ca
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
@@ -314,7 +314,7 @@ function SettlementsControllerFactory (deps) {
      *
      * @apiExample {shell} Get destination
      *    curl -X GET -H "Authorization: Basic YWxpY2U6YWxpY2U="
-     *    https://wallet.example/settlements
+     *    https://wallet.example/api/settlements
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK

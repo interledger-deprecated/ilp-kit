@@ -31,7 +31,7 @@ function MiscControllerFactory (deps) {
      *
      * @apiExample {shell} Parse a destination
      *    curl -X GET
-     *    https://wallet.example/parse/destination?destination=alice@wallet.example
+     *    https://wallet.example/api/parse/destination?destination=alice@wallet.example
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
@@ -66,7 +66,7 @@ function MiscControllerFactory (deps) {
      *
      * @apiExample {shell} Get wallet config
      *    curl -X GET
-     *    https://wallet.example/config
+     *    https://wallet.example/api/config
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK

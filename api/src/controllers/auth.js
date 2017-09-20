@@ -39,7 +39,7 @@ function AuthControllerFactory (deps) {
        *        "username": "alice",
        *        "password": "alice"
        *    }'
-       *    https://wallet.example/auth/login
+       *    https://wallet.example/api/auth/login
        *
        * @apiSuccessExample {json} 200 Response:
        *    HTTP/1.1 200 OK
@@ -123,7 +123,7 @@ function AuthControllerFactory (deps) {
      *
      * @apiExample {shell} Load
      *    curl -X GET
-     *    https://wallet.example/auth/load
+     *    https://wallet.example/api/auth/load
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
@@ -169,7 +169,7 @@ function AuthControllerFactory (deps) {
      *
      * @apiExample {shell} Forgot Password
      *    curl -X POST
-     *    https://wallet.example/auth/forgot-password
+     *    https://wallet.example/api/auth/forgot-password
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
@@ -217,7 +217,7 @@ function AuthControllerFactory (deps) {
      *
      * @apiExample {shell} Change Password
      *    curl -X POST
-     *    https://wallet.example/auth/change-password
+     *    https://wallet.example/api/auth/change-password
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
@@ -279,7 +279,7 @@ function AuthControllerFactory (deps) {
      *
      * @apiExample {shell} Change Password
      *    curl -X POST
-     *    https://wallet.example/auth/profilepic
+     *    https://wallet.example/api/auth/profilepic
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
@@ -352,7 +352,7 @@ function AuthControllerFactory (deps) {
      *
      * @apiExample {shell} Logout
      *    curl -X POST
-     *    https://wallet.example/auth/logout
+     *    https://wallet.example/api/auth/logout
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK

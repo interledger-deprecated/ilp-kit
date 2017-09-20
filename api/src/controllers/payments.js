@@ -46,7 +46,7 @@ function PaymentsControllerFactory (deps) {
      *        "destination": "bob@wallet.example",
      *        "destinationAmount": "10"
      *    }'
-     *    https://wallet.example/payments/quote
+     *    https://wallet.example/api/payments/quote
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
@@ -110,7 +110,7 @@ function PaymentsControllerFactory (deps) {
      *        "quote": {QuoteResponse},
      *        "message": "Here's some money for you"
      *    }'
-     *    https://wallet.example/payments/9efa70ec-08b9-11e6-b512-3e1d05defe78
+     *    https://wallet.example/api/payments/9efa70ec-08b9-11e6-b512-3e1d05defe78
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 204 OK

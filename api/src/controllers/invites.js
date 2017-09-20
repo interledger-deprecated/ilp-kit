@@ -45,7 +45,7 @@ function InvitesControllerFactory (deps) {
      *
      * @apiExample {shell} Get all invite codes
      *    curl -X GET -H "Authorization: Basic YWxpY2U6YWxpY2U="
-     *    https://wallet.example/invites
+     *    https://wallet.example/api/invites
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
@@ -88,7 +88,7 @@ function InvitesControllerFactory (deps) {
      *
      * @apiExample {shell} Get an invite code
      *    curl -X GET
-     *    https://wallet.example/invites/6a6a7ebc-0e18-49d3-8c9c-646caa56f213
+     *    https://wallet.example/api/invites/6a6a7ebc-0e18-49d3-8c9c-646caa56f213
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 200 OK
@@ -130,7 +130,7 @@ function InvitesControllerFactory (deps) {
      *    '{
      *        "amount": "1000"
      *    }'
-     *    https://wallet.example/invites
+     *    https://wallet.example/api/invites
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 201 OK
@@ -163,7 +163,7 @@ function InvitesControllerFactory (deps) {
      *
      * @apiExample {shell} Delete invite code
      *    curl -X DELETE -H "Authorization: Basic YWxpY2U6YWxpY2U="
-     *    https://wallet.example/invites/eaee4ea6-d5a4-4cd8-b78e-97a34374352c
+     *    https://wallet.example/api/invites/eaee4ea6-d5a4-4cd8-b78e-97a34374352c
      *
      * @apiSuccessExample {json} 200 Response:
      *    HTTP/1.1 204 OK

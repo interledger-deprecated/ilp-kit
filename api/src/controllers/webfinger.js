@@ -52,15 +52,15 @@ function WebfingerControllerFactory (deps) {
      *        },
      *        {
      *          "rel": "https://interledger.org/rel/sender/payment",
-     *          "href": "https://wallet.example/payments"
+     *          "href": "https://wallet.example/api/payments"
      *        },
      *        {
      *          "rel": "https://interledger.org/rel/sender/quote",
-     *          "href": "https://wallet.example/payments/quote"
+     *          "href": "https://wallet.example/api/payments/quote"
      *        },
      *        {
      *          "rel": "https://interledger.org/rel/spsp/v2",
-     *          "href": "https://wallet.example/spsp/alice"
+     *          "href": "https://wallet.example/api/spsp/alice"
      *        }
      *      ]
      *    }
