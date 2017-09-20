@@ -76,8 +76,6 @@ export default class App extends Component {
   componentDidMount () {
     const params = this.props.match.params
 
-    this.connect()
-
     if (params.username) {
       // Email verification
       if (params.verifyCode) {
@@ -94,6 +92,10 @@ export default class App extends Component {
     }, false)
 
     this.fixAppHeight()
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (!this.props.user && nextProps.user) this.connect(nextProps)
   }
 
   fixAppHeight = () => {
