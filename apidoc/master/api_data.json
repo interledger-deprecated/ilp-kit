@@ -49,7 +49,7 @@
     "examples": [
       {
         "title": "Change Password",
-        "content": "curl -X POST\nhttps://wallet.example/auth/change-password",
+        "content": "curl -X POST\nhttps://wallet.example/api/auth/change-password",
         "type": "shell"
       }
     ],
@@ -62,7 +62,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/auth.js",
+    "filename": "src/controllers/auth.js",
     "groupTitle": "Auth"
   },
   {
@@ -94,7 +94,7 @@
     "examples": [
       {
         "title": "Change Password",
-        "content": "curl -X POST\nhttps://wallet.example/auth/profilepic",
+        "content": "curl -X POST\nhttps://wallet.example/api/auth/profilepic",
         "type": "shell"
       }
     ],
@@ -107,7 +107,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/auth.js",
+    "filename": "src/controllers/auth.js",
     "groupTitle": "Auth"
   },
   {
@@ -134,7 +134,7 @@
     "examples": [
       {
         "title": "Forgot Password",
-        "content": "curl -X POST\nhttps://wallet.example/auth/forgot-password",
+        "content": "curl -X POST\nhttps://wallet.example/api/auth/forgot-password",
         "type": "shell"
       }
     ],
@@ -147,7 +147,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/auth.js",
+    "filename": "src/controllers/auth.js",
     "groupTitle": "Auth"
   },
   {
@@ -158,7 +158,7 @@
     "group": "Auth",
     "version": "1.0.0",
     "description": "<p>Github OAuth (used for cookie based auth)</p>",
-    "filename": "api/src/controllers/auth.js",
+    "filename": "src/controllers/auth.js",
     "groupTitle": "Auth"
   },
   {
@@ -169,7 +169,7 @@
     "group": "Auth",
     "version": "1.0.0",
     "description": "<p>Github Auth Callback (used for cookie based auth)</p>",
-    "filename": "api/src/controllers/auth.js",
+    "filename": "src/controllers/auth.js",
     "groupTitle": "Auth"
   },
   {
@@ -188,7 +188,7 @@
     "examples": [
       {
         "title": "Load",
-        "content": "curl -X GET\nhttps://wallet.example/auth/load",
+        "content": "curl -X GET\nhttps://wallet.example/api/auth/load",
         "type": "shell"
       }
     ],
@@ -201,7 +201,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/auth.js",
+    "filename": "src/controllers/auth.js",
     "groupTitle": "Auth"
   },
   {
@@ -215,7 +215,7 @@
     "examples": [
       {
         "title": "Login",
-        "content": "curl -X POST -H \"Content-Type: application/json\" -d\n'{\n    \"username\": \"alice\",\n    \"password\": \"alice\"\n}'\nhttps://wallet.example/auth/login",
+        "content": "curl -X POST -H \"Content-Type: application/json\" -d\n'{\n    \"username\": \"alice\",\n    \"password\": \"alice\"\n}'\nhttps://wallet.example/api/auth/login",
         "type": "shell"
       }
     ],
@@ -228,7 +228,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/auth.js",
+    "filename": "src/controllers/auth.js",
     "groupTitle": "Auth"
   },
   {
@@ -242,7 +242,7 @@
     "examples": [
       {
         "title": "Logout",
-        "content": "curl -X POST\nhttps://wallet.example/auth/logout",
+        "content": "curl -X POST\nhttps://wallet.example/api/auth/logout",
         "type": "shell"
       }
     ],
@@ -255,7 +255,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/auth.js",
+    "filename": "src/controllers/auth.js",
     "groupTitle": "Auth"
   },
   {
@@ -287,7 +287,7 @@
     "examples": [
       {
         "title": "Delete invite code",
-        "content": "curl -X DELETE -H \"Authorization: Basic YWxpY2U6YWxpY2U=\"\nhttps://wallet.example/invites/eaee4ea6-d5a4-4cd8-b78e-97a34374352c",
+        "content": "curl -X DELETE -H \"Authorization: Basic YWxpY2U6YWxpY2U=\"\nhttps://wallet.example/api/invites/eaee4ea6-d5a4-4cd8-b78e-97a34374352c",
         "type": "shell"
       }
     ],
@@ -300,7 +300,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/invites.js",
+    "filename": "src/controllers/invites.js",
     "groupTitle": "Invites"
   },
   {
@@ -314,7 +314,7 @@
     "examples": [
       {
         "title": "Get an invite code",
-        "content": "curl -X GET\nhttps://wallet.example/invites/6a6a7ebc-0e18-49d3-8c9c-646caa56f213",
+        "content": "curl -X GET\nhttps://wallet.example/api/invites/6a6a7ebc-0e18-49d3-8c9c-646caa56f213",
         "type": "shell"
       }
     ],
@@ -327,7 +327,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/invites.js",
+    "filename": "src/controllers/invites.js",
     "groupTitle": "Invites"
   },
   {
@@ -346,7 +346,7 @@
     "examples": [
       {
         "title": "Get all invite codes",
-        "content": "curl -X GET -H \"Authorization: Basic YWxpY2U6YWxpY2U=\"\nhttps://wallet.example/invites",
+        "content": "curl -X GET -H \"Authorization: Basic YWxpY2U6YWxpY2U=\"\nhttps://wallet.example/api/invites",
         "type": "shell"
       }
     ],
@@ -359,7 +359,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/invites.js",
+    "filename": "src/controllers/invites.js",
     "groupTitle": "Invites"
   },
   {
@@ -378,7 +378,7 @@
     "examples": [
       {
         "title": "Create an invite code",
-        "content": "curl -X POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\n'{\n    \"amount\": \"1000\"\n}'\nhttps://wallet.example/invites",
+        "content": "curl -X POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\n'{\n    \"amount\": \"1000\"\n}'\nhttps://wallet.example/api/invites",
         "type": "shell"
       }
     ],
@@ -391,7 +391,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/invites.js",
+    "filename": "src/controllers/invites.js",
     "groupTitle": "Invites"
   },
   {
@@ -405,7 +405,7 @@
     "examples": [
       {
         "title": "Get wallet config",
-        "content": "curl -X GET\nhttps://wallet.example/config",
+        "content": "curl -X GET\nhttps://wallet.example/api/config",
         "type": "shell"
       }
     ],
@@ -418,7 +418,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/misc.js",
+    "filename": "src/controllers/misc.js",
     "groupTitle": "Misc"
   },
   {
@@ -440,12 +440,12 @@
       "examples": [
         {
           "title": "200 Response:",
-          "content": "HTTP/1.1 200 OK\n{\n  \"subject\": \"acct:alice@wallet.example\",\n  \"links\": [\n    {\n      \"rel\": \"https://interledger.org/rel/ledgerUri\",\n      \"href\": \"https://wallet.example/ledger\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/socketIOUri\",\n      \"href\": \"https://wallet.example/socket.io\"\n    },\n    {\n      'rel': 'https://interledger.org/rel/ilpAddress',\n      'href': \"alice.wallet\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/sender/payment\",\n      \"href\": \"https://wallet.example/payments\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/sender/quote\",\n      \"href\": \"https://wallet.example/payments/quote\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/spsp/v2\",\n      \"href\": \"https://wallet.example/spsp/alice\"\n    }\n  ]\n}",
+          "content": "HTTP/1.1 200 OK\n{\n  \"subject\": \"acct:alice@wallet.example\",\n  \"links\": [\n    {\n      \"rel\": \"https://interledger.org/rel/ledgerUri\",\n      \"href\": \"https://wallet.example/ledger\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/socketIOUri\",\n      \"href\": \"https://wallet.example/socket.io\"\n    },\n    {\n      'rel': 'https://interledger.org/rel/ilpAddress',\n      'href': \"alice.wallet\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/sender/payment\",\n      \"href\": \"https://wallet.example/api/payments\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/sender/quote\",\n      \"href\": \"https://wallet.example/api/payments/quote\"\n    },\n    {\n      \"rel\": \"https://interledger.org/rel/spsp/v2\",\n      \"href\": \"https://wallet.example/api/spsp/alice\"\n    }\n  ]\n}",
           "type": "json"
         }
       ]
     },
-    "filename": "api/src/controllers/webfinger.js",
+    "filename": "src/controllers/webfinger.js",
     "groupTitle": "Misc"
   },
   {
@@ -459,7 +459,7 @@
     "examples": [
       {
         "title": "Parse a destination",
-        "content": "curl -X GET\nhttps://wallet.example/parse/destination?destination=alice@wallet.example",
+        "content": "curl -X GET\nhttps://wallet.example/api/parse/destination?destination=alice@wallet.example",
         "type": "shell"
       }
     ],
@@ -472,7 +472,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/misc.js",
+    "filename": "src/controllers/misc.js",
     "groupTitle": "Misc"
   },
   {
@@ -486,7 +486,7 @@
     "examples": [
       {
         "title": "Health check",
-        "content": "curl -X GET\nhttps://wallet.example/health",
+        "content": "curl -X GET\nhttps://wallet.example/api/health",
         "type": "shell"
       }
     ],
@@ -499,7 +499,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/health.js",
+    "filename": "src/controllers/health.js",
     "groupTitle": "Misc"
   },
   {
@@ -554,7 +554,7 @@
     "examples": [
       {
         "title": "Make a payment",
-        "content": "curl -X PUT -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"quote\": {QuoteResponse},\n    \"message\": \"Here's some money for you\"\n}'\nhttps://wallet.example/payments/9efa70ec-08b9-11e6-b512-3e1d05defe78",
+        "content": "curl -X PUT -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"quote\": {QuoteResponse},\n    \"message\": \"Here's some money for you\"\n}'\nhttps://wallet.example/api/payments/9efa70ec-08b9-11e6-b512-3e1d05defe78",
         "type": "shell"
       }
     ],
@@ -567,7 +567,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/payments.js",
+    "filename": "src/controllers/payments.js",
     "groupTitle": "Payment"
   },
   {
@@ -607,7 +607,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/payments.js",
+    "filename": "src/controllers/payments.js",
     "groupTitle": "Payment"
   },
   {
@@ -648,7 +648,7 @@
     "examples": [
       {
         "title": "Request a quote",
-        "content": "curl -X POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"destination\": \"bob@wallet.example\",\n    \"destinationAmount\": \"10\"\n}'\nhttps://wallet.example/payments/quote",
+        "content": "curl -X POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"destination\": \"bob@wallet.example\",\n    \"destinationAmount\": \"10\"\n}'\nhttps://wallet.example/api/payments/quote",
         "type": "shell"
       }
     ],
@@ -661,7 +661,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/payments.js",
+    "filename": "src/controllers/payments.js",
     "groupTitle": "Payment"
   },
   {
@@ -693,7 +693,7 @@
     "examples": [
       {
         "title": "Delete peer",
-        "content": "curl -X DELETE -H \"Authorization: Basic YWxpY2U6YWxpY2U=\"\nhttps://wallet.example/peers/963d89dc-a211-456c-8e9f-897d379aae2a",
+        "content": "curl -X DELETE -H \"Authorization: Basic YWxpY2U6YWxpY2U=\"\nhttps://wallet.example/api/peers/963d89dc-a211-456c-8e9f-897d379aae2a",
         "type": "shell"
       }
     ],
@@ -701,12 +701,12 @@
       "examples": [
         {
           "title": "200 Response:",
-          "content": "HTTP/1.1 204 OK",
+          "content": "HTTP/1.1 200 OK\n{\n   \"id\": \"963d89dc-a211-456c-8e9f-897d379aae2a\"\n}",
           "type": "json"
         }
       ]
     },
-    "filename": "api/src/controllers/peers.js",
+    "filename": "src/controllers/peers.js",
     "groupTitle": "Peer"
   },
   {
@@ -725,7 +725,7 @@
     "examples": [
       {
         "title": "Get all peers",
-        "content": "curl -X GET -H \"Authorization: Basic YWxpY2U6YWxpY2U=\"\nhttps://wallet.example/peers",
+        "content": "curl -X GET -H \"Authorization: Basic YWxpY2U6YWxpY2U=\"\nhttps://wallet.example/api/peers",
         "type": "shell"
       }
     ],
@@ -738,7 +738,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/peers.js",
+    "filename": "src/controllers/peers.js",
     "groupTitle": "Peer"
   },
   {
@@ -757,7 +757,7 @@
     "examples": [
       {
         "title": "Add a peer",
-        "content": "curl -X POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\n'{\n    \"hostname\": \"wallet.example\",\n    \"limit\": \"100\",\n    \"currencyCode\": \"USD\"\n}'\nhttps://wallet.example/peers",
+        "content": "curl -X POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\n'{\n    \"hostname\": \"wallet.example\",\n    \"limit\": \"100\",\n    \"currencyCode\": \"USD\"\n}'\nhttps://wallet.example/api/peers",
         "type": "shell"
       }
     ],
@@ -770,7 +770,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/peers.js",
+    "filename": "src/controllers/peers.js",
     "groupTitle": "Peer"
   },
   {
@@ -802,7 +802,7 @@
     "examples": [
       {
         "title": "Update peer",
-        "content": "curl -X PUT -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\n'{\n    \"limit\": \"200\"\n}'\nhttps://wallet.example/peers/963d89dc-a211-456c-8e9f-897d379aae2a",
+        "content": "curl -X PUT -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\n'{\n    \"limit\": \"200\"\n}'\nhttps://wallet.example/api/peers/963d89dc-a211-456c-8e9f-897d379aae2a",
         "type": "shell"
       }
     ],
@@ -815,7 +815,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/peers.js",
+    "filename": "src/controllers/peers.js",
     "groupTitle": "Peer"
   },
   {
@@ -847,7 +847,7 @@
     "examples": [
       {
         "title": "Get peer settlement methods",
-        "content": "curl -X GET -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\nhttps://wallet.example/peers/963d89dc-a211-456c-8e9f-897d379aae2a/settlement_methods",
+        "content": "curl -X GET -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\nhttps://wallet.example/api/peers/963d89dc-a211-456c-8e9f-897d379aae2a/settlement_methods",
         "type": "shell"
       }
     ],
@@ -860,7 +860,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/peers.js",
+    "filename": "src/controllers/peers.js",
     "groupTitle": "Peer"
   },
   {
@@ -886,7 +886,7 @@
     "examples": [
       {
         "title": "Get receiver details",
-        "content": "curl -X GET\nhttps://wallet.example/receivers/alice",
+        "content": "curl -X GET\nhttps://wallet.example/api/receivers/alice",
         "type": "shell"
       }
     ],
@@ -899,7 +899,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/users.js",
+    "filename": "src/controllers/users.js",
     "groupTitle": "Receiver"
   },
   {
@@ -926,7 +926,7 @@
     "examples": [
       {
         "title": "Get destination",
-        "content": "curl -X GET\nhttps://wallet.example/settlements/da978aa3-93c1-4899-8507-6888cb4ce8ca",
+        "content": "curl -X GET\nhttps://wallet.example/api/settlements/da978aa3-93c1-4899-8507-6888cb4ce8ca",
         "type": "shell"
       }
     ],
@@ -939,7 +939,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/settlements.js",
+    "filename": "src/controllers/settlements.js",
     "groupTitle": "Settlement"
   },
   {
@@ -971,7 +971,7 @@
     "examples": [
       {
         "title": "Get destination",
-        "content": "curl -X GET -H \"Authorization: Basic YWxpY2U6YWxpY2U=\"\nhttps://wallet.example/settlements",
+        "content": "curl -X GET -H \"Authorization: Basic YWxpY2U6YWxpY2U=\"\nhttps://wallet.example/api/settlements",
         "type": "shell"
       }
     ],
@@ -984,7 +984,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/settlements.js",
+    "filename": "src/controllers/settlements.js",
     "groupTitle": "Settlement"
   },
   {
@@ -1011,7 +1011,7 @@
     "examples": [
       {
         "title": "Get destination",
-        "content": "curl -X GET\nhttps://wallet.example/destinations/813133",
+        "content": "curl -X GET\nhttps://wallet.example/api/destinations/813133",
         "type": "shell"
       }
     ],
@@ -1024,7 +1024,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/settlements.js",
+    "filename": "src/controllers/settlements.js",
     "groupTitle": "Settlement"
   },
   {
@@ -1056,7 +1056,7 @@
     "examples": [
       {
         "title": "Delete Settlement Method",
-        "content": "curl -X DELETE -H \"Authorization: Basic YWxpY2U6YWxpY2U=\"\nhttps://wallet.example/settlement_methods/2e0e85a6-64f1-4c57-aee4-898237a27486",
+        "content": "curl -X DELETE -H \"Authorization: Basic YWxpY2U6YWxpY2U=\"\nhttps://wallet.example/api/settlement_methods/2e0e85a6-64f1-4c57-aee4-898237a27486",
         "type": "shell"
       }
     ],
@@ -1069,7 +1069,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/settlement_methods.js",
+    "filename": "src/controllers/settlement_methods.js",
     "groupTitle": "SettlementMethod"
   },
   {
@@ -1088,7 +1088,7 @@
     "examples": [
       {
         "title": "Get all settlement methods",
-        "content": "curl -X GET -H \"Authorization: Basic YWxpY2U6YWxpY2U=\"\nhttps://wallet.example/settlement_methods",
+        "content": "curl -X GET -H \"Authorization: Basic YWxpY2U6YWxpY2U=\"\nhttps://wallet.example/api/settlement_methods",
         "type": "shell"
       }
     ],
@@ -1101,7 +1101,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/settlement_methods.js",
+    "filename": "src/controllers/settlement_methods.js",
     "groupTitle": "SettlementMethod"
   },
   {
@@ -1120,7 +1120,7 @@
     "examples": [
       {
         "title": "Add a settlement method",
-        "content": "curl -X POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\n'{\n    \"type\": \"Paypal\"\n}'\nhttps://wallet.example/peers",
+        "content": "curl -X POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\n'{\n    \"type\": \"Paypal\"\n}'\nhttps://wallet.example/api/peers",
         "type": "shell"
       }
     ],
@@ -1133,7 +1133,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/settlement_methods.js",
+    "filename": "src/controllers/settlement_methods.js",
     "groupTitle": "SettlementMethod"
   },
   {
@@ -1165,7 +1165,7 @@
     "examples": [
       {
         "title": "Update settlement method",
-        "content": "curl -X PUT -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\n'{\n    \"enabled\": true\n}'\nhttps://wallet.example/settlement_methods/2e0e85a6-64f1-4c57-aee4-898237a27486",
+        "content": "curl -X PUT -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\n'{\n    \"enabled\": true\n}'\nhttps://wallet.example/api/settlement_methods/2e0e85a6-64f1-4c57-aee4-898237a27486",
         "type": "shell"
       }
     ],
@@ -1178,7 +1178,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/settlement_methods.js",
+    "filename": "src/controllers/settlement_methods.js",
     "groupTitle": "SettlementMethod"
   },
   {
@@ -1205,7 +1205,7 @@
     "examples": [
       {
         "title": "Get destination",
-        "content": "curl -X POST\nhttps://wallet.example/settlements/813133/paypal",
+        "content": "curl -X POST\nhttps://wallet.example/api/settlements/813133/paypal",
         "type": "shell"
       }
     ],
@@ -1218,7 +1218,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/settlements.js",
+    "filename": "src/controllers/settlements.js",
     "groupTitle": "Settlement"
   },
   {
@@ -1250,7 +1250,7 @@
     "examples": [
       {
         "title": "Settle",
-        "content": "curl -X POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\n'{\n    \"amount\": \"10\",\n    \"currency\": \"USD\",\n    \"settlement_method\": \"7b4a73b0-19c5-46ed-8905-febeae2b0a05\"\n}'\nhttps://wallet.example/settlements/813133",
+        "content": "curl -X POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\n'{\n    \"amount\": \"10\",\n    \"currency\": \"USD\",\n    \"settlement_method\": \"7b4a73b0-19c5-46ed-8905-febeae2b0a05\"\n}'\nhttps://wallet.example/api/settlements/813133",
         "type": "shell"
       }
     ],
@@ -1263,7 +1263,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/settlements.js",
+    "filename": "src/controllers/settlements.js",
     "groupTitle": "Settlement"
   },
   {
@@ -1277,7 +1277,7 @@
     "examples": [
       {
         "title": "Get user",
-        "content": "curl -X GET -H \"Authorization: Basic YWxpY2U6YWxpY2U=\"\nhttps://wallet.example/users/alice",
+        "content": "curl -X GET -H \"Authorization: Basic YWxpY2U6YWxpY2U=\"\nhttps://wallet.example/api/users/alice",
         "type": "shell"
       }
     ],
@@ -1290,7 +1290,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/users.js",
+    "filename": "src/controllers/users.js",
     "groupTitle": "User"
   },
   {
@@ -1323,7 +1323,7 @@
     "examples": [
       {
         "title": "Post user",
-        "content": "curl -X POST -H \"Content-Type: application/json\" -d\n'{\n    \"password\": \"alice\"\n}'\nhttps://wallet.example/users/alice",
+        "content": "curl -X POST -H \"Content-Type: application/json\" -d\n'{\n    \"password\": \"alice\"\n}'\nhttps://wallet.example/api/users/alice",
         "type": "shell"
       }
     ],
@@ -1336,7 +1336,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/users.js",
+    "filename": "src/controllers/users.js",
     "groupTitle": "User"
   },
   {
@@ -1362,7 +1362,7 @@
     "examples": [
       {
         "title": "Update user email",
-        "content": "curl -X PUT -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"email\": \"alice@example.com\"\n    \"name\": \"Alice Faye\"\n}'\nhttps://wallet.example/users/alice",
+        "content": "curl -X PUT -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"email\": \"alice@example.com\"\n    \"name\": \"Alice Faye\"\n}'\nhttps://wallet.example/api/users/alice",
         "type": "shell"
       }
     ],
@@ -1375,7 +1375,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/users.js",
+    "filename": "src/controllers/users.js",
     "groupTitle": "User"
   },
   {
@@ -1401,7 +1401,7 @@
     "examples": [
       {
         "title": "Resend verification email",
-        "content": "curl -X POST\nhttps://wallet.example/users/alice/resend-verification",
+        "content": "curl -X POST\nhttps://wallet.example/api/users/alice/resend-verification",
         "type": "shell"
       }
     ],
@@ -1414,7 +1414,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/users.js",
+    "filename": "src/controllers/users.js",
     "groupTitle": "User"
   },
   {
@@ -1447,7 +1447,7 @@
     "examples": [
       {
         "title": "Verify user email address",
-        "content": "curl -X PUT -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"code\": \"1f7aade2946667fac85ebaf7259182ead6b1fe062b5e8bb0ffa1b9d417431acb\"\n}'\nhttps://wallet.example/users/alice/verify",
+        "content": "curl -X PUT -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -H \"Content-Type: application/json\" -d\n'{\n    \"code\": \"1f7aade2946667fac85ebaf7259182ead6b1fe062b5e8bb0ffa1b9d417431acb\"\n}'\nhttps://wallet.example/api/users/alice/verify",
         "type": "shell"
       }
     ],
@@ -1460,7 +1460,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/users.js",
+    "filename": "src/controllers/users.js",
     "groupTitle": "User"
   },
   {
@@ -1479,7 +1479,7 @@
     "examples": [
       {
         "title": "Get all withdrawals",
-        "content": "curl -X GET -H \"Authorization: Basic YWxpY2U6YWxpY2U=\"\nhttps://wallet.example/withdrawals",
+        "content": "curl -X GET -H \"Authorization: Basic YWxpY2U6YWxpY2U=\"\nhttps://wallet.example/api/withdrawals",
         "type": "shell"
       }
     ],
@@ -1492,7 +1492,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/withdrawals.js",
+    "filename": "src/controllers/withdrawals.js",
     "groupTitle": "Withdrawal"
   },
   {
@@ -1524,7 +1524,7 @@
     "examples": [
       {
         "title": "Withdraw",
-        "content": "curl -X POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\n'{\n    \"amount\": 10\n}'\nhttps://wallet.example/withdrawals/23163cfd-cc83-4991-9b10-f89d1b2fc095",
+        "content": "curl -X POST -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\n'{\n    \"amount\": 10\n}'\nhttps://wallet.example/api/withdrawals/23163cfd-cc83-4991-9b10-f89d1b2fc095",
         "type": "shell"
       }
     ],
@@ -1537,7 +1537,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/withdrawals.js",
+    "filename": "src/controllers/withdrawals.js",
     "groupTitle": "Withdrawal"
   },
   {
@@ -1569,7 +1569,7 @@
     "examples": [
       {
         "title": "Update withdrawal",
-        "content": "curl -X PUT -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\n'{\n    \"status\": \"complete\"\n}'\nhttps://wallet.example/withdrawals/23163cfd-cc83-4991-9b10-f89d1b2fc095",
+        "content": "curl -X PUT -H \"Authorization: Basic YWxpY2U6YWxpY2U=\" -d\n'{\n    \"status\": \"complete\"\n}'\nhttps://wallet.example/api/withdrawals/23163cfd-cc83-4991-9b10-f89d1b2fc095",
         "type": "shell"
       }
     ],
@@ -1582,7 +1582,7 @@
         }
       ]
     },
-    "filename": "api/src/controllers/withdrawals.js",
+    "filename": "src/controllers/withdrawals.js",
     "groupTitle": "Withdrawal"
   }
 ]
