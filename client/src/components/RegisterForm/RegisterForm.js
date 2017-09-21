@@ -280,7 +280,7 @@ export default class RegisterForm extends Component {
           </div>}
         </div>
         <button type='submit' className='btn btn-success btn-lg btn-block' disabled={pristine || invalid || submitting}>
-          {submitting ? ' Registering...' : ' Register'}
+          {submitting ? ' Creating...' : ' Create Account'}
         </button>
       </form>
     )

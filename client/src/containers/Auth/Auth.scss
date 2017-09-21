@@ -26,46 +26,31 @@
     width: 90vw;
     margin: 0 0 20px;
   }
-}
-.oauthBox {
-  color: #d9d9d9;
-  padding: 15px 25px;
-  line-height: 35px;
 
-  div {
-    margin: 0 0 0 10px;
+  .windowTitle {
+    margin: 0 0 10px 0;
+    font-size: 18px;
   }
 }
-.switchBox {
-  background: #333333;
-  padding: 20px;
-  border-radius: 5px;
-  text-align: right;
+.alternateAction {
+  position: relative;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: darken(#fff, 40%);
+  margin: 8px 0 0 0;
+  border-radius: 3px;
 
-  .label {
-    color: #d9d9d9;
-    line-height: 35px;
-
-    @include mobile {
-      display: none;
-    }
+  &:hover, &:active, &:focus {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
   }
-  .btnSwitch {
-    color: #d9d9d9;
-    border: 1px solid #d9d9d9;
-    background: transparent;
-    margin: 0 0 0 10px;
-    transition: all .3s;
 
-    &:hover {
-      color: #696969;
-      background: #fff;
-    }
-
-    @include mobile {
-      width: 100%;
-      margin: 0;
-    }
+  .icon {
+    font-size: 25px;
+    position: absolute;
+    top: 9px;
+    left: 12px;
   }
 }
 .closeButton {

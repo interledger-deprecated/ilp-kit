@@ -103,22 +103,24 @@ export default class Home extends Component {
             <ChangePasswordForm submitAction={changePassword} username={params.username} code={params.passwordChangeCode} fail={authFail} />}
           </div>
           {currentView === 'login' && config.githubAuth &&
-          <div className={cx('oauthBox', 'clearfix')}>
-            <div className='pull-right'>
-              <a href='/api/auth/github' className='btn btn-default'>Github</a>
-            </div>
-            <div className='pull-right'>Or login using</div>
+          <div>
+            <a href='/api/auth/github' className={cx('btn', 'btn-lg', 'btn-block', 'alternateAction')}>
+              <i className={cx('fa', 'fa-github', 'icon')} /> Github Login
+            </a>
           </div>}
-          {currentView === 'login' &&
-          <div className={cx('switchBox')}>
-            <span className={cx('label')}>Don't have an account?</span>
-            <Link to='/register' data-toggle='tab' role='tab' aria-expanded='true' className={cx('btnSwitch', 'btn', 'btn-lg', 'btn-default')}>Sign Up</Link>
-          </div>}
-          {currentView === 'register' &&
-          <div className={cx('switchBox')}>
-            <span className={cx('label')}>Already have an account?</span>
-            <Link to='/login' data-toggle='tab' role='tab' aria-expanded='true' className={cx('btnSwitch', 'btn', 'btn-lg', 'btn-default')}>Login</Link>
-          </div>}
+
+          <div>
+            {(currentView === 'register' || currentView === 'forgot-password') &&
+            <Link to='/login' data-toggle='tab' role='tab' aria-expanded='true'
+                  className={cx('btn', 'btn-lg', 'btn-block', 'alternateAction')}>
+              <i className={cx('fa', 'fa-sign-in', 'icon')} /> Login
+            </Link>}
+            {(currentView === 'login' || currentView === 'forgot-password') &&
+            <Link to='/register' data-toggle='tab' role='tab' aria-expanded='true'
+                  className={cx('btn', 'btn-lg', 'btn-block', 'alternateAction')}>
+              <i className={cx('fa', 'fa-user-plus', 'icon')} /> Create Account
+            </Link>}
+          </div>
         </div>
 
         {(currentView === 'forgot-password' || currentView === 'change-password') &&

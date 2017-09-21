@@ -76,7 +76,7 @@ export default class ForgotPasswordForm extends Component {
           </div>
           <div>
             <button type='submit' className='btn btn-success btn-lg' disabled={pristine || (invalid && !submitFailed) || submitting}>
-              {submitting ? ' Submitting...' : ' Submit'}
+              {submitting ? ' Sending you an email...' : ' Recover my password'}
             </button>
           </div>
         </div>}
