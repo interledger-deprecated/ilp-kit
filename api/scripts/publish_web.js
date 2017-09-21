@@ -29,7 +29,7 @@ exec('wget https://github.com/interledger/apidoc-template/archive/master.tar.gz 
 // Push changes
 console.log('\n# Pushing web branch')
 cwd = path.resolve(cwd, 'web')
-exec('cd web')
+exec('cd api/web')
 exec('git add --all', { cwd })
 
 const status = exec('git status --porcelain', { cwd }).toString('utf8')
