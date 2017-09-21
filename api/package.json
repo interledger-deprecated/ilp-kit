@@ -20,7 +20,7 @@
   ],
   "scripts": {
     "test": "NODE_ENV=test node scripts/test.js",
-    "apidoc": "apidoc -i api/src/controllers/ -o apidoc-out",
+    "apidoc": "apidoc -i src/controllers/ -o apidoc-out",
     "version-check": "echo 'Scanning psql version'; chmod +x ./scripts/postgres_version_check.sh; if [ $(bash ./scripts/postgres_version_check.sh) = 'false' ]; then echo 'Postgres PSQL Version out of date, please upgrade to 9.5 or newer'; exit 126; fi;",
     "start": "npm run version-check && node scripts/api.js"
   },
