@@ -6,10 +6,13 @@ require.config({
         handlebarsExtended: './utils/handlebars_helper',
         jquery: './vendor/jquery.min',
         locales: './locales/locale',
-        lodash: './vendor/lodash.min',
+        lodash: './vendor/lodash.custom.min',
         pathToRegexp: './vendor/path-to-regexp/index',
         prettify: './vendor/prettify/prettify',
+        semver: './vendor/semver.min',
         utilsSampleRequest: './utils/send_sample_request',
+        webfontloader: './vendor/webfontloader',
+        list: './vendor/list.min'
     },
     shim: {
         bootstrap: {
@@ -42,9 +45,12 @@ require([
     './api_data.js',
     'prettify',
     'utilsSampleRequest',
+    'semver',
+    'webfontloader',
     'bootstrap',
-    'pathToRegexp'
-], function($, _, locale, Handlebars, apiProject, apiData, prettyPrint, sampleRequest) {
+    'pathToRegexp',
+    'list'
+], function($, _, locale, Handlebars, apiProject, apiData, prettyPrint, sampleRequest, semver, WebFont) {
 
     // load google web fonts
     loadGoogleFontCss();
@@ -155,7 +161,7 @@ require([
 
     // sort versions DESC
     apiVersions = Object.keys(apiVersions);
-    apiVersions.sort();
+    apiVersions.sort(semver.compare);
     apiVersions.reverse();
 
     //
@@ -197,24 +203,77 @@ require([
         });
     });
 
+    /**
+     * Add navigation items by analyzing the HTML content and searching for h1 and h2 tags
+     * @param nav Object the navigation array
+     * @param content string the compiled HTML content
+     * @param index where to insert items
+     * @return boolean true if any good-looking (i.e. with a group identifier) <h1> tag was found
+     */
+    function add_nav(nav, content, index) {
+        var found_level1 = false;
+        if ( ! content) {
+          return found_level1;
+        }
+        var topics = content.match(/<h(1|2).*?>(.+?)<\/h(1|2)>/gi);
+        if ( topics ) {
+          topics.forEach(function(entry) {
+              var level = entry.substring(2,3);
+              var title = entry.replace(/<.+?>/g, '');    // Remove all HTML tags for the title
+              var entry_tags = entry.match(/id="api-([^\-]+)(?:-(.+))?"/);    // Find the group and name in the id property
+              var group = (entry_tags ? entry_tags[1] : null);
+              var name = (entry_tags ? entry_tags[2] : null);
+              if (level==1 && title && group)  {
+                  nav.splice(index, 0, {
+                      group: group,
+                      isHeader: true,
+                      title: title,
+                      isFixed: true
+                  });
+                  index++;
+                  found_level1 = true;
+              }
+              if (level==2 && title && group && name)    {
+                  nav.splice(index, 0, {
+                      group: group,
+                      name: name,
+                      isHeader: false,
+                      title: title,
+                      isFixed: false,
+                      version: '1.0'
+                  });
+                  index++;
+              }
+          });
+        }
+        return found_level1;
+    }
+
     // Mainmenu Header entry
     if (apiProject.header) {
-        nav.unshift({
-            group: '_',
-            isHeader: true,
-            title: (apiProject.header.title == null) ? locale.__('General') : apiProject.header.title,
-            isFixed: true
-        });
+        var found_level1 = add_nav(nav, apiProject.header.content, 0); // Add level 1 and 2 titles
+        if (!found_level1) {    // If no Level 1 tags were found, make a title
+            nav.unshift({
+                group: '_',
+                isHeader: true,
+                title: (apiProject.header.title == null) ? locale.__('General') : apiProject.header.title,
+                isFixed: true
+            });
+        }
     }
 
     // Mainmenu Footer entry
-    if (apiProject.footer && apiProject.footer.title != null) {
-        nav.push({
-            group: '_footer',
-            isHeader: true,
-            title: apiProject.footer.title,
-            isFixed: true
-        });
+    if (apiProject.footer) {
+        var last_nav_index = nav.length;
+        var found_level1 = add_nav(nav, apiProject.footer.content, nav.length); // Add level 1 and 2 titles
+        if (!found_level1 && apiProject.footer.title != null) {    // If no Level 1 tags were found, make a title
+            nav.splice(last_nav_index, 0, {
+                group: '_footer',
+                isHeader: true,
+                title: apiProject.footer.title,
+                isFixed: true
+            });
+        }
     }
 
     // render pagetitle
@@ -264,9 +323,9 @@ require([
                     // determine versions
                     api.forEach(function(versionEntry) {
                         if (groupEntry === versionEntry.group && entry.name === versionEntry.name) {
-                            if ( ! articleVersions[entry.group][entry.name])
+                            if ( ! articleVersions[entry.group].hasOwnProperty(entry.name) ) {
                                 articleVersions[entry.group][entry.name] = [];
-
+                            }
                             articleVersions[entry.group][entry.name].push(versionEntry.version);
                         }
                     });
@@ -316,40 +375,10 @@ require([
     $('#sections').append( content );
 
     // Bootstrap Scrollspy
-    var $scrollSpy = $(this).scrollspy({ target: '#scrollingNav', offset: 18 });
-    $('[data-spy="scroll"]').each(function () {
-        $scrollSpy('refresh');
-    });
-
-    //Dark theme
-    $(function() {
-
-      var darkTheme = false;
-
-      $(".onoffswitch-label").click(function() {
-
-        darkTheme = !darkTheme;
-
-        if(darkTheme) {
-          $('body').toggleClass('dark');
-          localStorage.setItem('theme', 'dark');
-         } else {
-          $('body').toggleClass('dark');
-          localStorage.removeItem('theme');
-         }
-       });
-
-      if (localStorage['theme'] == "dark") {
-        $('.onoffswitch-label')[0].click();
-        $('body').addClass('dark');
-      }
-
-    });
-
-
+    $(this).scrollspy({ target: '#scrollingNav', offset: 18 });
 
     // Content-Scroll on Navigation click.
-    $('.sidenav').find('li a').on('click', function(e) {
+    $('.sidenav').find('a').on('click', function(e) {
         e.preventDefault();
         var id = $(this).attr('href');
         if ($(id).length > 0)
@@ -374,8 +403,7 @@ require([
     function _hasTypeInFields(fields) {
         var result = false;
         $.each(fields, function(name) {
-            if (_.any(fields[name], function(item) { return item.type; }) )
-                result = true;
+            result = result || _.some(fields[name], function(item) { return item.type; });
         });
         return result;
     }
@@ -384,13 +412,10 @@ require([
      * On Template changes, recall plugins.
      */
     function initDynamic() {
-        // bootstrap popover
-        $('a[data-toggle=popover]')
-            .popover()
-            .click(function(e) {
-                e.preventDefault();
-            })
-        ;
+        // Bootstrap popover
+        $('button[data-toggle="popover"]').popover().click(function(e) {
+            e.preventDefault();
+        });
 
         var version = $('#version strong').html();
         $('#sidenav li').removeClass('is-new');
@@ -418,6 +443,9 @@ require([
             $(name).addClass('hide');
             $(this).parent().next(name).removeClass('hide');
         });
+
+        // call scrollspy refresh method
+        $(window).scrollspy('refresh');
 
         // init modules
         sampleRequest.initDynamic();
@@ -447,14 +475,25 @@ require([
             var name = $(this).data('name');
             var version = $(this).data('version');
 
-            if (version <= selectedVersion) {
-                if($('article[data-group=\'' + group + '\'][data-name=\'' + name + '\']:visible').length === 0) {
+            if (semver.lte(version, selectedVersion)) {
+                if ($('article[data-group=\'' + group + '\'][data-name=\'' + name + '\']:visible').length === 0) {
                     // enable Article
                     $('article[data-group=\'' + group + '\'][data-name=\'' + name + '\'][data-version=\'' + version + '\']').removeClass('hide');
                     // enable Navigation
                     $('#sidenav li[data-group=\'' + group + '\'][data-name=\'' + name + '\'][data-version=\'' + version + '\']').removeClass('hide');
                     $('#sidenav li.nav-header[data-group=\'' + group + '\']').removeClass('hide');
                 }
+            }
+        });
+
+        // show 1st equal or lower Version of each entry
+        $('article[data-version]').each(function(index) {
+            var group = $(this).data('group');
+            $('section#api-' + group).removeClass('hide');
+            if ($('section#api-' + group + ' article:visible').length === 0) {
+                $('section#api-' + group).addClass('hide');
+            } else {
+                $('section#api-' + group).removeClass('hide');
             }
         });
 
@@ -483,6 +522,37 @@ require([
             $('html,body').animate({ scrollTop: parseInt($(id).offset().top) - 18 }, 0);
         }
     }
+
+    /**
+     * Initialize search
+     */
+    var options = {
+      valueNames: [ 'nav-list-item' ]
+    };
+    var endpointsList = new List('scrollingNav', options);
+
+    /**
+     * Set initial focus to search input
+     */
+    $('#scrollingNav .sidenav-search input.search').focus();
+
+    /**
+     * Detect ESC key to reset search
+     */
+    $(document).keyup(function(e) {
+      if (e.keyCode === 27) $('span.search-reset').click();
+    });
+
+    /**
+     * Search reset
+     */
+    $('span.search-reset').on('click', function() {
+      $('#scrollingNav .sidenav-search input.search')
+        .val("")
+        .focus()
+      ;
+      endpointsList.search();
+    });
 
     /**
      * Change version of an article to compare it to an other version.
@@ -602,6 +672,37 @@ require([
     }
 
     /**
+     * Sort the fields.
+     */
+    function sortFields(fields_object) {
+        $.each(fields_object, function (key, fields) {
+
+            var reversed = fields.slice().reverse()
+
+            var max_dot_count = Math.max.apply(null, reversed.map(function (item) {
+                return item.field.split(".").length - 1;
+            }))
+
+            for (var dot_count = 1; dot_count <= max_dot_count; dot_count++) {
+                reversed.forEach(function (item, index) {
+                    var parts = item.field.split(".");
+                    if (parts.length - 1 == dot_count) {
+                        var fields_names = fields.map(function (item) { return item.field; });
+                        if (parts.slice(1).length  >= 1) {
+                            var prefix = parts.slice(0, parts.length - 1).join(".");
+                            var prefix_index = fields_names.indexOf(prefix);
+                            if (prefix_index > -1) {
+                                fields.splice(fields_names.indexOf(item.field), 1);
+                                fields.splice(prefix_index + 1, 0, item);
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    /**
      * Add article settings.
      */
     function addArticleSettings(fields, entry) {
@@ -610,20 +711,30 @@ require([
         fields.id = fields.article.group + '-' + fields.article.name + '-' + fields.article.version;
         fields.id = fields.id.replace(/\./g, '_');
 
-        if (entry.header && entry.header.fields)
+        if (entry.header && entry.header.fields) {
+            sortFields(entry.header.fields);
             fields._hasTypeInHeaderFields = _hasTypeInFields(entry.header.fields);
+        }
 
-        if (entry.parameter && entry.parameter.fields)
+        if (entry.parameter && entry.parameter.fields) {
+            sortFields(entry.parameter.fields);
             fields._hasTypeInParameterFields = _hasTypeInFields(entry.parameter.fields);
+        }
 
-        if (entry.error && entry.error.fields)
+        if (entry.error && entry.error.fields) {
+            sortFields(entry.error.fields);
             fields._hasTypeInErrorFields = _hasTypeInFields(entry.error.fields);
+        }
 
-        if (entry.success && entry.success.fields)
+        if (entry.success && entry.success.fields) {
+            sortFields(entry.success.fields);
             fields._hasTypeInSuccessFields = _hasTypeInFields(entry.success.fields);
+        }
 
-        if (entry.info && entry.info.fields)
+        if (entry.info && entry.info.fields) {
+            sortFields(entry.info.fields);
             fields._hasTypeInInfoFields = _hasTypeInFields(entry.info.fields);
+        }
 
         // add template settings
         fields.template = apiProject.template;
@@ -671,17 +782,15 @@ require([
      * Load google fonts.
      */
     function loadGoogleFontCss() {
-        var host = document.location.hostname.toLowerCase();
-        var protocol = document.location.protocol.toLowerCase();
-        var googleCss = '//fonts.googleapis.com/css?family=Source+Code+Pro|Source+Sans+Pro:400,600,700';
-        if (host == 'localhost' || !host.length || protocol === 'file:')
-            googleCss = 'http:' + googleCss;
-
-        $('<link/>', {
-            rel: 'stylesheet',
-            type: 'text/css',
-            href: googleCss
-        }).appendTo('head');
+        WebFont.load({
+            active: function() {
+                // Update scrollspy
+                $(window).scrollspy('refresh')
+            },
+            google: {
+                families: ['Source Code Pro', 'Source Sans Pro:n4,n6,n7']
+            }
+        });
     }
 
     /**
