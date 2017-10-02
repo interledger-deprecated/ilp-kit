@@ -46,8 +46,10 @@ export default class Pay extends Component {
   }
 
   handlePay = () => {
-    const amount = this.props.match.params.amount
-    const destination = this.props.match.params.destination
+    const params = this.props.match.params
+
+    const amount = params.amount
+    const destination = params.destination
 
     this.setState({
       sending: true
@@ -86,7 +88,7 @@ export default class Pay extends Component {
   }
 
   render () {
-    const { params, quote } = this.props
+    const { match: { params }, quote } = this.props
     const { sending } = this.state
 
     return (
