@@ -23,6 +23,7 @@ const PasswordsDontMatchError = require('../errors/passwords-dont-match-error')
 const InvalidVerification = require('../errors/invalid-verification-error')
 const ServerError = require('../errors/server-error')
 const InvalidBodyError = require('../errors/invalid-body-error')
+const NotFoundError = require('../errors/not-found-error')
 
 const USERNAME_REGEX = /^[a-z0-9]([a-z0-9]|[-](?!-)){0,18}[a-z0-9]$/
 
@@ -545,27 +546,21 @@ function UsersControllerFactory (deps) {
     }
 
     static async getProfilePicture (ctx) {
-      const user = await User.findOne({where: {username: ctx.params.username}})
+      const user = await User.findOne({ where: { username: ctx.params.username } })
 
-      if (!user) {
-        // TODO throw exception
-        ctx.status = 404
-        return
-      }
+      if (!user) throw new NotFoundError()
 
       let filePath = path.resolve(__dirname, '../placeholder.png')
 
       if (user.profile_picture) {
-        filePath = path.resolve(__dirname, '../../uploads/', user.profile_picture)
+        const profilePic = path.resolve(__dirname, '../../uploads/', user.profile_picture)
+
+        if (fs.existsSync(profilePic)) {
+          filePath = profilePic
+        }
       }
 
-      if (!fs.existsSync(filePath)) {
-        ctx.status = 422
-        return
-      }
-
-      const img = fs.readFileSync(filePath)
-      ctx.body = img
+      ctx.body = fs.readFileSync(filePath)
     }
   }
 }
