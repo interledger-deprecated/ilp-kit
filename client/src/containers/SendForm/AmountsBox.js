@@ -114,6 +114,8 @@ export default class AmountsBox extends Component {
     const sourceCurrency = config.currencySymbol
     const destinationCurrency = destinationInfo && destinationInfo.currencySymbol
 
+    const addon = type !== 'destination' || destinationCurrency
+
     return (
       <div className='col-xs-6 form-group'>
         {
@@ -122,12 +124,11 @@ export default class AmountsBox extends Component {
           : <label>They Receive</label>
         }
 
-        <div className={cx('input-group',
+        <div className={cx(addon && 'input-group',
           { disabled: isAmountDisabled },
           { focused: meta.active }
         )}>
-          {(type !== 'destination' || destinationCurrency) &&
-          <span className='input-group-addon'>{ type === 'source' ? sourceCurrency : destinationCurrency }</span>}
+          {addon && <span className='input-group-addon'>{ type === 'source' ? sourceCurrency : destinationCurrency }</span>}
           <Input
             {...this.props}
             ref='field'

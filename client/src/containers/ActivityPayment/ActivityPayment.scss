@@ -143,6 +143,15 @@ $screen-md: 992px;
     }
   }
 
+  a {
+    color: $text-color;
+    border-bottom: 1px dotted $text-color;
+
+    &:hover {
+      color: darken($text-color, 10%);
+    }
+  }
+
   .date {
     font-size: 15px;
     line-height: 25px;

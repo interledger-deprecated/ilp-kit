@@ -45,6 +45,7 @@
   background: #fff;
   border-radius: 3px;
   padding: 25px;
+  box-shadow: 1px 1px 1px 0px #222;
 
   @include mobile {
     width: 90vw;

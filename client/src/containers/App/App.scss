@@ -25,6 +25,10 @@
   color: #fff !important;
   cursor: default;
 
+  a {
+    color: #fff !important;
+  }
+
   @include mobile {
     width: 100%;
     text-align: center;
@@ -46,7 +50,10 @@
   border-radius: 20px;
 }
 .version {
-  margin: 0 0 20px;
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+  font-size: 12px;
   text-align: center;
 }
 .mobileHeader {

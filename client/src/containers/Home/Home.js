@@ -114,7 +114,7 @@ export default class Home extends Component {
       <div className='row'>
         <div className={cx('col-sm-8', 'activityBox')}>
           {/* Onboarding */}
-          <Onboarding />
+          {user.isAdmin && <Onboarding />}
 
           {/* Activity */}
           {/* <div>
@@ -165,12 +165,12 @@ export default class Home extends Component {
               </div>}
             {config.reload &&
             <div>
-              <a className='btn btn-success btn-lg'
-                onClick={!user.isAdmin && this.reload} disabled={user.isAdmin}
+              <button className='btn btn-success btn-lg'
+                onClick={!user.isAdmin && this.reload} disabled={reloading}
                 data-tip={user.isAdmin && 'You have enough, you\'re the admin'}>
                 {!reloading && 'Get More'}
                 {reloading && 'Getting...'}
-              </a>
+              </button>
               <div className={cx('balanceFake')}>* Don't get too excited, this is fake money</div>
             </div>}
           </div>

@@ -163,7 +163,7 @@ export default class App extends Component {
         <Navbar inverse expanded={this.state.navExpanded} onToggle={this.onNavbarToggle}>
           <Navbar.Header>
             <Navbar.Brand className={cx('brand')}>
-              {config.title} {advancedMode && <Label bsStyle='warning'>Advanced Mode</Label>}
+              <Link to='/'>{config.title}</Link> {advancedMode && <Label bsStyle='warning'>Advanced Mode</Label>}
             </Navbar.Brand>
           </Navbar.Header>
           <Navbar.Collapse>
