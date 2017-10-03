@@ -26,7 +26,7 @@ import PaymentHandler from 'containers/PaymentHandler/PaymentHandler'
 
 import hotkeys from 'decorators/hotkeys'
 
-import { loadConfig, logout, updateBalance, verify, resendVerificationEmail } from 'redux/actions/auth'
+import { loadConfig, logout, updateBalance, verify, resendVerificationEmail, advancedModeToggle } from 'redux/actions/auth'
 import { addActivity } from 'redux/actions/activity'
 
 import classNames from 'classnames/bind'
@@ -41,7 +41,7 @@ const cx = classNames.bind(styles)
     advancedMode: state.auth.advancedMode,
     verificationEmailSent: state.auth.verificationEmailSent
   }),
-  {logout, pushState: push, addActivity, updateBalance, verify, loadConfig, resendVerificationEmail})
+  {logout, pushState: push, addActivity, updateBalance, verify, loadConfig, resendVerificationEmail, advancedModeToggle})
 @hotkeys()
 export default class App extends Component {
   static propTypes = {
@@ -60,7 +60,9 @@ export default class App extends Component {
     verified: PropTypes.bool,
     verify: PropTypes.func,
     verificationEmailSent: PropTypes.bool,
-    resendVerificationEmail: PropTypes.func
+    resendVerificationEmail: PropTypes.func,
+
+    advancedModeToggle: PropTypes.func
   }
 
   state = {
@@ -142,7 +144,7 @@ export default class App extends Component {
   }
 
   render() {
-    const { user, config = {}, advancedMode, verified, verificationEmailSent } = this.props
+    const { user, config = {}, advancedMode, verified, verificationEmailSent, advancedModeToggle } = this.props
 
     return (
       <div className={cx('App', !user && 'guest')}>
@@ -205,6 +207,9 @@ export default class App extends Component {
                   <MenuItem>Settings</MenuItem>
                 </LinkContainer>}
                 <MenuItem href='https://interledgerjs.github.io/ilp-kit/apidoc/' target='_blank' rel='noopener noreferrer'>API Docs</MenuItem>
+                <MenuItem divider/>
+                <MenuItem onClick={advancedModeToggle}>Turn Advanced Mode {advancedMode ? 'Off' : 'On'}</MenuItem>
+                <MenuItem divider/>
                 <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
               </NavDropdown>
             </Nav>
