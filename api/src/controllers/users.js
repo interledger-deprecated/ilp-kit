@@ -62,8 +62,7 @@ function UsersControllerFactory (deps) {
         return next()
       }
 
-      // TODO throw exception
-      ctx.status = 404
+      throw new NotFoundError()
     }
 
     static async getAll (ctx) {
@@ -102,11 +101,7 @@ function UsersControllerFactory (deps) {
       request.validateUriParameter('username', username, 'Identifier')
       username = username.toLowerCase()
 
-      if (ctx.req.user.username !== username && ctx.req.user.username !== config.data.getIn(['ledger', 'admin', 'user'])) {
-        // TODO throw exception
-        ctx.status = 404
-        return
-      }
+      if (ctx.req.user.username !== username && ctx.req.user.username !== config.data.getIn(['ledger', 'admin', 'user'])) throw new NotFoundError()
 
       const dbUser = await User.findOne({where: {username: username}})
       const user = await dbUser.appendLedgerAccount()
@@ -404,9 +399,8 @@ function UsersControllerFactory (deps) {
         })
         ctx.body = user.getDataExternal()
       } catch (e) {
-        // TODO throw an exception
-        ctx.status = 500
         log.warn(e)
+        throw new ServerError()
       }
     }
 
@@ -527,11 +521,7 @@ function UsersControllerFactory (deps) {
       const ledgerPrefix = config.data.getIn(['ledger', 'prefix'])
       let user = await User.findOne({where: {username: ctx.params.username}})
 
-      if (!user) {
-        // TODO throw exception
-        ctx.status = 404
-        return
-      }
+      if (!user) throw new NotFoundError('User does not exist')
 
       user = user.getDataExternal()
 

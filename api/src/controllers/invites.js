@@ -100,13 +100,9 @@ function InvitesControllerFactory (deps) {
     static async getResource (ctx) {
       const code = ctx.params.code
 
-      const invite = await Invite.findOne({ where: {code} })
+      const invite = await Invite.findOne({ where: { code } })
 
-      // TODO throw exception
-      if (!invite) {
-        ctx.status = 404
-        return
-      }
+      if (!invite) throw new NotFoundError('Invite code does not exist')
 
       ctx.body = {
         code: invite.code,

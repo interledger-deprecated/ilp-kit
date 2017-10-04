@@ -66,11 +66,7 @@ function WebfingerControllerFactory (deps) {
      *    }
      */
     static async load (ctx) {
-      if (!ctx.query || !ctx.query.resource) {
-        // TODO throw exception
-        ctx.status = 400
-        return
-      }
+      if (!ctx.query || !ctx.query.resource) throw new NotFoundError()
 
       // TODO rel support
       const parsed = url.parse(ctx.query.resource)
