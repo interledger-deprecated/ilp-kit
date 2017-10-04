@@ -40,7 +40,7 @@ export default function reducer (state = initialState, action = {}) {
     case types.UPDATE_PEER_SUCCESS:
       return {
         ...state,
-        list: state.list.map((peer) => {
+        list: state.list.map(peer => {
           if (peer.id !== action.result.id) return peer
 
           return action.result

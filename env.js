@@ -33,7 +33,7 @@ function normalizeEnv (noExit) {
     const envFile = fs.readFileSync(file)
     const fileLines = envFile.toString().split('\n')
 
-    fileLines.forEach((line) => {
+    fileLines.forEach(line => {
       if (!line) return
 
       const keyPairArray = line.split('=')

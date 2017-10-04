@@ -191,7 +191,6 @@ function AuthControllerFactory (deps) {
 
       log.info('password link %s', link)
 
-      // TODO Send the email
       await mailer.forgotPassword({
         name: dbUser.username,
         to: dbUser.email,

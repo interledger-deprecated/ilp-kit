@@ -13,7 +13,7 @@ class InvalidBodyError extends BaseError {
     log.debug(indent + '-- ' + validationError)
     log.debug(indent + '   ' + validationError.schemaPath)
     if (validationError.subErrors) {
-      validationError.subErrors.forEach((subError) => {
+      validationError.subErrors.forEach(subError => {
         this.debugPrint(log, subError, '  ' + indent)
       })
     }

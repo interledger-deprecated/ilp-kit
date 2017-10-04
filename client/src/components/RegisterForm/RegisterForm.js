@@ -94,7 +94,7 @@ export default class RegisterForm extends Component {
     this.handleAddInviteCode(inviteCode)
   }
 
-  handleAddInviteCodeClick = (e) => {
+  handleAddInviteCodeClick = e => {
     e.preventDefault()
 
     this.setState({
@@ -104,7 +104,7 @@ export default class RegisterForm extends Component {
   }
 
   // TODO:UX Invite code async validation
-  handleAddInviteCode = (input) => {
+  handleAddInviteCode = input => {
     const inviteCode = input.value !== undefined ? input.value : input
 
     // redux-form onChange needs to happen first
@@ -124,7 +124,7 @@ export default class RegisterForm extends Component {
     }, 50)
   }
 
-  register = (data) => {
+  register = data => {
     return this.props.register(data)
       .then(this.props.permSuccess)
       .catch(this.props.permFail)

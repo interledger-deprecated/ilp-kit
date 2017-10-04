@@ -1,6 +1,6 @@
 import * as types from '../actionTypes'
 
-const extendUser = (user) => {
+const extendUser = user => {
   const extendedUser = {
     ...user,
     displayName: user.username

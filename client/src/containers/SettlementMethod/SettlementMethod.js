@@ -48,7 +48,7 @@ export default class SettlementMethod extends Component {
   }
 
   dropzoneEventHandlers = {
-    init: (dropzone) => {
+    init: dropzone => {
       this.dropzone = dropzone
     },
     addedfile: () => {
@@ -60,10 +60,10 @@ export default class SettlementMethod extends Component {
         this.props.updateLogo(response)
       }, 1000)
     },
-    complete: (file) => {
+    complete: file => {
       this.dropzone.removeFile(file)
     },
-    maxfilesexceeded: (file) => {
+    maxfilesexceeded: file => {
       this.removeAllFiles()
       this.addFile(file)
     }

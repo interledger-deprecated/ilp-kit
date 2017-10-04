@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize')
 
 module.exports = {
-  up: (sequelize) => {
+  up: sequelize => {
     return sequelize.queryInterface.createTable('Peers', {
       id: {
         type: Sequelize.UUID,
@@ -24,7 +24,7 @@ module.exports = {
       }
     })
   },
-  down: (sequelize) => {
+  down: sequelize => {
     return sequelize.queryInterface.dropTable('Peers')
   }
 }

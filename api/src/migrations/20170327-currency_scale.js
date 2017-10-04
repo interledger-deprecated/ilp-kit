@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize')
 
 module.exports = {
-  up: (sequelize) => {
+  up: sequelize => {
     // create the new currencyScale column; previously, currencyScale was always zero
     return sequelize.queryInterface.addColumn('Peers', 'currencyScale', {
       type: Sequelize.INTEGER,
@@ -17,7 +17,7 @@ module.exports = {
       return sequelize.queryInterface.renameColumn('Peers', 'currency', 'currencyCode')
     })
   },
-  down: (sequelize) => {
+  down: sequelize => {
     // reverse of the above process
     // before scaling back the limit, make the column a float type again
     return sequelize.queryInterface.changeColumn('Peers', 'limit', Sequelize.FLOAT)

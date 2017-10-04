@@ -3,7 +3,7 @@ import { destinationChange } from 'redux/actions/send'
 
 export const validate = (values, props) => {
   // Destination
-  const notSelf = (destination) => {
+  const notSelf = destination => {
     if (destination === props.user.identifier || destination === props.user.username) {
       return 'So you want to send money to yourself?'
     }

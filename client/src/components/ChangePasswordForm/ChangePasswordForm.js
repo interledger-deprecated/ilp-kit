@@ -34,7 +34,7 @@ export default class ChangePasswordForm extends Component {
     success: PropTypes.bool
   }
 
-  handleSubmit = (formData) => {
+  handleSubmit = formData => {
     const data = {
       ...formData,
       username: this.props.username,
@@ -47,7 +47,7 @@ export default class ChangePasswordForm extends Component {
 
         tracker.track('Change password')
       })
-      .catch((error) => {
+      .catch(error => {
         throw new SubmissionError({_error: error})
       })
   }

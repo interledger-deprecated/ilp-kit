@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 
 // Always use after @connect it uses the success prop
 export default function successable () {
-  return (DecoratedComponent) => {
+  return DecoratedComponent => {
     return class extends Component {
       state = {
         success: false,
@@ -25,7 +25,7 @@ export default function successable () {
         }, 5000) // Hide in 5 seconds
       }
 
-      success = (temp) => {
+      success = temp => {
         this.setState({
           success: true,
           fail: false
@@ -47,8 +47,8 @@ export default function successable () {
 
       permSuccess = () => this.success()
       tempSuccess = () => this.success(true)
-      permFail = (error) => this.fail(error)
-      tempFail = (error) => this.fail(error, true)
+      permFail = error => this.fail(error)
+      tempFail = error => this.fail(error, true)
       reset = () => this.setState({success: false, fail: false})
 
       render () {

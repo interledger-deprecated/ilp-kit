@@ -41,7 +41,7 @@ export default class InviteCreateForm extends Component {
     reset: PropTypes.func
   }
 
-  handleSubmit = (data) => {
+  handleSubmit = data => {
     return this.props.create(data).then(() => {
       this.props.tempSuccess()
       this.props.reset()

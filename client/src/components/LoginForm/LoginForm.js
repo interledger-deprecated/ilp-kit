@@ -33,7 +33,7 @@ export default class LoginForm extends Component {
     fail: PropTypes.any
   }
 
-  login = (data) => {
+  login = data => {
     return this.props.login(data)
       .then(this.props.permSuccess)
       .catch(this.props.permFail)

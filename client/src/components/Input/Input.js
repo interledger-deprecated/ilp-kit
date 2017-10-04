@@ -35,7 +35,7 @@ export default class Input extends Component {
   }
 
   // Default event, if onChange is not specified
-  onChange = (event) => {
+  onChange = event => {
     const self = this
 
     this.props.input.onChange(event)

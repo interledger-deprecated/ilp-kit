@@ -22,7 +22,7 @@ export default class PayButton extends Component {
     })
   }
 
-  makePayment = (event) => {
+  makePayment = event => {
     event.preventDefault()
 
     navigator.requestPayment(['interledger'], {

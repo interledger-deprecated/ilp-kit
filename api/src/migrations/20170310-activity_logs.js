@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize')
 
 module.exports = {
-  up: (sequelize) => {
+  up: sequelize => {
     return sequelize.queryInterface.createTable('ActivityLogsItems', {
       id: {
         type: Sequelize.INTEGER,
@@ -50,7 +50,7 @@ module.exports = {
       })
     ))
   },
-  down: (sequelize) => {
+  down: sequelize => {
     return sequelize.queryInterface.dropTable('ActivityLogsItems')
       .then(() => (sequelize.queryInterface.dropTable('ActivityLogs')))
   }

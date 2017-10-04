@@ -11,13 +11,13 @@ const map = {
 
 @connect(null, { advancedModeToggle })
 export default function hotkeys () {
-  return (DecoratedComponent) => {
+  return DecoratedComponent => {
     return class extends Component {
       static propTypes = {
         advancedModeToggle: PropTypes.func
       }
 
-      overrideMousetrap = (hotkeys) => {
+      overrideMousetrap = hotkeys => {
         if (!hotkeys) return
 
         // define previous stopCallback handler for mousetrap

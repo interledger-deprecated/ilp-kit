@@ -74,14 +74,14 @@ export default class ProfileForm extends Component {
     }
   }
 
-  save = (data) => {
+  save = data => {
     return this.props.save({username: this.props.user.username}, data)
       .then(() => {
         this.props.tempSuccess()
 
         tracker.track('Profile change', {status: 'success'})
       })
-      .catch((error) => {
+      .catch(error => {
         tracker.track('Profile change', {status: 'fail', error: error})
 
         throw new SubmissionError({_error: error})
@@ -96,7 +96,7 @@ export default class ProfileForm extends Component {
   }
 
   dropzoneEventHandlers = {
-    init: (dropzone) => {
+    init: dropzone => {
       this.dropzone = dropzone
     },
     addedfile: () => {
@@ -113,10 +113,10 @@ export default class ProfileForm extends Component {
     error: (file, error) => {
       this.props.permFail(error)
     },
-    complete: (file) => {
+    complete: file => {
       this.dropzone.removeFile(file)
     },
-    maxfilesexceeded: (file) => {
+    maxfilesexceeded: file => {
       this.removeAllFiles()
       this.addFile(file)
     }

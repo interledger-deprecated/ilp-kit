@@ -61,7 +61,7 @@ export default class Invites extends Component {
     this.props.remove(code)
   }
 
-  renderCode = (invite) => {
+  renderCode = invite => {
     const config = this.props.config
 
     return (

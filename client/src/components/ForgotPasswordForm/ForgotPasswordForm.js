@@ -31,14 +31,14 @@ export default class ForgotPasswordForm extends Component {
     success: PropTypes.bool
   }
 
-  handleSubmit = (data) => {
+  handleSubmit = data => {
     return this.props.submitAction(data)
       .then(() => {
         this.props.permSuccess()
 
         tracker.track('Forgot password')
       })
-      .catch((error) => {
+      .catch(error => {
         throw new SubmissionError({_error: error})
       })
   }

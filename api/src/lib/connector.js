@@ -230,7 +230,7 @@ module.exports = class Connector {
     const plugin = this.plugins[peerInfo.ledgerName]
 
     const balance = online && (await plugin.getBalance())
-    const minBalance = online && (await plugin.getLimit().catch((err) => {
+    const minBalance = online && (await plugin.getLimit().catch(err => {
       // The other plugin probably doesn't have us as a peer.
       this.log.warn('Error getting peer limit', err)
     }))

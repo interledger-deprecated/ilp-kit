@@ -64,7 +64,7 @@ export default class Home extends Component {
       })
   }
 
-  toggleStats = (event) => {
+  toggleStats = event => {
     this.setState({
       ...this.state,
       showStats: !this.state.showStats

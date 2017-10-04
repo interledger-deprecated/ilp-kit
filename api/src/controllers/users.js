@@ -72,7 +72,7 @@ function UsersControllerFactory (deps) {
         return agg
       }, {})
 
-      ctx.body = (await User.findAll()).map((user) =>
+      ctx.body = (await User.findAll()).map(user =>
         Object.assign({}, user, { balance: balances[user.username] }))
     }
 

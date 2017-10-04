@@ -98,7 +98,7 @@ export default class SendForm extends Component {
 
   stopRepeatedPayments = () => {}
 
-  handleSubmit = (data) => {
+  handleSubmit = data => {
     tracker.track('payment')
 
     // TODO should also work if no interval is provided
@@ -113,7 +113,7 @@ export default class SendForm extends Component {
     }
 
     // Repeated payments
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       this.stopRepeatedPayments = () => {
         setTimeout(() => {
           resolve()
@@ -136,7 +136,7 @@ export default class SendForm extends Component {
     })
   }
 
-  toggleAdvanced = (event) => {
+  toggleAdvanced = event => {
     if (this.state.showAdvanced) {
       this.props.change('repeats', '')
       this.props.change('interval', '')

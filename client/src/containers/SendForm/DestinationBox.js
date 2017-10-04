@@ -45,7 +45,7 @@ export default class DestinationBox extends Component {
     }
   }
 
-  onChange = (e) => {
+  onChange = e => {
     if (!e.value) {
       this.props.destinationReset()
     }

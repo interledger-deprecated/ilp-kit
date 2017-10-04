@@ -1,10 +1,10 @@
 const Sequelize = require('sequelize')
 
 module.exports = {
-  up: (sequelize) => {
+  up: sequelize => {
     return sequelize.queryInterface.removeColumn('Peers', 'broker')
   },
-  down: (sequelize) => {
+  down: sequelize => {
     return sequelize.queryInterface.addColumn('Peers', 'broker', Sequelize.STRING)
   }
 }

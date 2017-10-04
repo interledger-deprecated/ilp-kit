@@ -130,14 +130,14 @@ export default class App extends Component {
     this.setState({ navExpanded: !this.state.navExpanded })
   }
 
-  handleLogout = (event) => {
+  handleLogout = event => {
     event.preventDefault()
     // TODO don't disconnect, just unsubscribe
     socket.disconnect()
     this.props.logout()
   }
 
-  resendVerification = (event) => {
+  resendVerification = event => {
     event.preventDefault()
 
     this.props.resendVerificationEmail(this.props.user.username)

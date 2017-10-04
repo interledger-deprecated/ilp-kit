@@ -3,7 +3,7 @@ import * as types from '../actionTypes'
 
 export const load = () => ({
   types: [types.LOAD_SETTLEMENT_METHODS, types.LOAD_SETTLEMENT_METHODS_SUCCESS, types.LOAD_SETTLEMENT_METHODS_FAIL],
-  promise: (client) => client.get('/settlement_methods')
+  promise: client => client.get('/settlement_methods')
 })
 
 export const get = id => (dispatch, getState) => dispatch(() => {

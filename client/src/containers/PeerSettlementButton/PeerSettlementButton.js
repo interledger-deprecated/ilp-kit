@@ -18,7 +18,7 @@ export default class Peers extends Component {
 
   state = {}
 
-  handleToggle = (isOpen) => {
+  handleToggle = isOpen => {
     if (!isOpen) return
 
     this.props.getSettlementMethods(this.props.peer.id)

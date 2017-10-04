@@ -46,7 +46,7 @@ export default class PeerAddForm extends Component {
     fail: PropTypes.any
   }
 
-  handleSubmit = (data) => {
+  handleSubmit = data => {
     return this.props.add(data)
       .then(() => {
         this.props.tempSuccess()

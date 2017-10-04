@@ -40,7 +40,7 @@ module.exports = class Socket {
     const self = this
 
     // TODO should socket be aware of the ledger? may need to move this somewhere else
-    self.ledger.on('transfer_' + username, (transfer) => {
+    self.ledger.on('transfer_' + username, transfer => {
       self.transfer(username, transfer)
     })
 
@@ -86,7 +86,7 @@ module.exports = class Socket {
   emitToUser (username, event, data) {
     if (!this.users[username]) return
 
-    _.map(this.users[username].subscriptions, (subscription) => {
+    _.map(this.users[username].subscriptions, subscription => {
       subscription.emit(event, data)
     })
   }

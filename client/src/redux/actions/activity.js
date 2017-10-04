@@ -2,7 +2,7 @@ import * as types from '../actionTypes'
 
 // TODO shouldn't ask for transfer link
 export const toggleJson = (id, transfer) => (dispatch, getState) => {
-  const payment = getState().activity.list.filter((item) => {
+  const payment = getState().activity.list.filter(item => {
     return item.id === id
   })[0]
 
@@ -22,7 +22,7 @@ export const toggleJson = (id, transfer) => (dispatch, getState) => {
   // Load the json
   return dispatch({
     types: [types.PAYMENT_JSON_LOADING, types.PAYMENT_JSON_SUCCESS, types.PAYMENT_JSON_FAIL],
-    promise: (client) => client.get(transfer),
+    promise: client => client.get(transfer),
     id
   })
 }
