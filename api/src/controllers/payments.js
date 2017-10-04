@@ -7,10 +7,12 @@ const SPSP = require('../lib/spsp')
 const Pay = require('../lib/pay')
 const UserFactory = require('../models/user')
 const PaymentFactory = require('../models/payment')
-const NotFoundError = require('../errors/not-found-error')
+
 const ServerError = require('../errors/server-error')
 const InsufficientLiquidityError = require('../errors/insufficient-liquidity-error')
+const NotFoundError = require('../errors/not-found-error')
 const NoQuote = require('../errors/no-quote-error')
+const InvalidBodyError = require('../errors/invalid-body-error')
 
 function PaymentsControllerFactory (deps) {
   const auth = deps(Auth)
@@ -75,8 +77,10 @@ function PaymentsControllerFactory (deps) {
      *    }
      */
 
-    // TODO handle not supplied params
     static async quote (ctx) {
+      if (!ctx.body.destination) throw new InvalidBodyError('Request body misses the "destination" field')
+      if (!ctx.body.sourceAmount && !ctx.body.destinationAmount) throw new InvalidBodyError('Request body needs to have one of "sourceAmount" or "destinationAmount"')
+
       try {
         ctx.body = await spsp.quote({
           user: ctx.req.user,
