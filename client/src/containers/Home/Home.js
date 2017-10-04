@@ -166,7 +166,7 @@ export default class Home extends Component {
             {config.reload &&
             <div>
               <button className='btn btn-success btn-lg'
-                onClick={!user.isAdmin && this.reload} disabled={reloading}
+                onClick={!user.isAdmin && this.reload} disabled={reloading || user.isAdmin}
                 data-tip={user.isAdmin && 'You have enough, you\'re the admin'}>
                 {!reloading && 'Get More'}
                 {reloading && 'Getting...'}
