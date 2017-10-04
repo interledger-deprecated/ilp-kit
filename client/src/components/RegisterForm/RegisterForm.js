@@ -44,7 +44,6 @@ export default class RegisterForm extends Component {
     change: PropTypes.func.isRequired,
 
     // Successable
-    permSuccess: PropTypes.func,
     permFail: PropTypes.func,
     fail: PropTypes.any
   }
@@ -126,7 +125,6 @@ export default class RegisterForm extends Component {
 
   register = data => {
     return this.props.register(data)
-      .then(this.props.permSuccess)
       .catch(this.props.permFail)
   }
 

@@ -134,7 +134,6 @@ module.exports = class Socket {
 
     self.log.info('balance update for ' + username)
 
-    // TODO signup click reload, gets you an exception
     self.emitToUser(username, 'balance', balance)
   }
 }

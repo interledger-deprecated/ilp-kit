@@ -97,7 +97,6 @@ function WebfingerControllerFactory (deps) {
           'subject': 'acct:' + ledgerUser.name + '@' + parsed.hostname,
           'links': [
             {
-              // TODO decide on rel names
               'rel': 'https://interledger.org/rel/ledgerUri',
               'href': config.data.getIn(['ledger', 'public_uri'])
             },
