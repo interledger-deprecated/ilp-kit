@@ -53,7 +53,7 @@ export default function reducer (state = initialState, action = {}) {
     case types.REMOVE_INVITE_SUCCESS:
       return {
         ...state,
-        list: state.list.filter(invite => invite.code !== action.result.code)
+        list: state.list.filter(invite => invite.code !== action.result)
       }
     default:
       return state

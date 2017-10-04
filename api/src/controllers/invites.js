@@ -30,8 +30,7 @@ function InvitesControllerFactory (deps) {
         return next()
       }
 
-      // TODO throw exception
-      ctx.status = 404
+      throw new NotFoundError()
     }
 
     /**
@@ -177,7 +176,7 @@ function InvitesControllerFactory (deps) {
 
       await code.destroy()
 
-      ctx.body = null
+      ctx.status = 204
     }
   }
 }
