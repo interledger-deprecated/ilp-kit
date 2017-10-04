@@ -168,7 +168,7 @@ function InvitesControllerFactory (deps) {
         code: ctx.params.code
       }})
 
-      if (!code) throw new NotFoundError("Code doesn't exist")
+      if (!code) throw new NotFoundError('Invite code does not exist')
 
       await code.destroy()
 
