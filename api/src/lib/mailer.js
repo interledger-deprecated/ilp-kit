@@ -23,7 +23,12 @@ module.exports = class Mailer {
     }
 
     // create reusable transporter object using the default SMTP transport
-    this.transporter = nodemailer.createTransport(mg(auth))
+    if (auth.auth.api_key) {
+      this.transporter = nodemailer.createTransport(mg(auth))
+    }
+    else {
+      this.log.info('Cannot send mails. If you wish to send mails, please configure mailgun API key.')
+    }
   }
 
   sendWelcome (params) {
@@ -68,6 +73,8 @@ module.exports = class Mailer {
 
   async send (params) {
     const self = this
+
+    if (!this.transporter) return
 
     const senderName = this.config.data.getIn(['email', 'sender_name'])
     const senderAddress = this.config.data.getIn(['email', 'sender_address'])
