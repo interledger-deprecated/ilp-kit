@@ -105,7 +105,7 @@ function PaymentsControllerFactory (deps) {
      * @apiParam {String} id generated payment uuid
      * @apiParam {String} destination destination
      * @apiParam {String} sourceAmount source amount
-     * @apiParam {String} destinationAmount destination amount
+     * @apiParam {String} destinationAmount (optional) destination amount
      * @apiParam {String} memo text message for the destination
      *
      * @apiExample {shell} Make a payment
