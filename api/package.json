@@ -35,6 +35,7 @@
     "ilp": "^11.2.2",
     "ilp-connector": "^21.1.9",
     "ilp-plugin-bells": "^15.0.1",
+    "ilp-plugin-xrp-paychan": "michielbdejong/ilp-plugin-xrp-paychan#mj-fix-18",
     "ilp-plugin-settlement-adapter": "^1.0.0",
     "ilp-plugin-virtual": "^16.0.1",
     "jimp": "^0.2.28",
