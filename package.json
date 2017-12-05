@@ -20,7 +20,7 @@
   ],
   "scripts": {
     "start": "./start-all.sh",
-    "postinstall": "./install-all.sh",
+    "postinstall": "sh ./install-all.sh",
     "configure": "./node_modules/ilp-kit-cli/bin/configure.js"
   },
   "dependencies": {
