@@ -9,7 +9,9 @@ RUN npm install
 RUN cd api && npm install
 RUN cd ledger && npm install
 RUN cd client && npm install && npm run build
+RUN cd webserver && npm install
 
+ENV NODE_ENV production
 EXPOSE 3010
 
 CMD npm start
