@@ -22,7 +22,7 @@ const setupProxy = (path, target) => {
       console.error('proxy error', error)
     }
 
-    json = {error: 'server_error', reason: (path || 'client') + ' is unavailable'}
+    json = {error: 'server_error', reason: (path || 'client') + ' is unavailable', path, target}
     res.end(JSON.stringify(json))
   })
 
