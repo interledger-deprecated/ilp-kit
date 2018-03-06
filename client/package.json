@@ -54,7 +54,7 @@
     "history": "^4.6.3",
     "html-webpack-plugin": "2.30.1",
     "jest": "20.0.4",
-    "moment": "^2.18.1",
+    "moment": "^2.19.3",
     "node-sass": "^4.5.3",
     "object-assign": "4.1.1",
     "piping": "^1.0.0-rc.4",
