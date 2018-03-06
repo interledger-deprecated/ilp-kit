@@ -52,7 +52,7 @@
     "lodash": "^4.17.4",
     "mag": "^0.9.1",
     "mag-hub": "^0.1.1",
-    "moment": "^2.18.1",
+    "moment": "^2.19.3",
     "nodemailer": "^4.0.1",
     "nodemailer-mailgun-transport": "^1.3.5",
     "passport-github": "^1.1.0",
