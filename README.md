@@ -1,3 +1,5 @@
+**Notice**: ILP kit does not support the new features introduced by [ILPv4](https://github.com/interledger/rfcs/blob/master/0027-interledger-protocol-4/0027-interledger-protocol-4.md). Use [moneyd](https://github.com/interledgerjs/moneyd-xrp) to try out ILPv4.
+
 <h1 align="center">
   <a href="https://interledger.org"><img src="https://interledger.org/assets/ilp_logo.svg" width="150"></a>
   <br>
