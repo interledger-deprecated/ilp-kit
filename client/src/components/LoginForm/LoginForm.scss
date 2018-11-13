@@ -1,9 +1,0 @@
-@import 'mixins';
-
-.forgotPasswordLinkContainer {
-  line-height: 45px;
-
-  @include mobile {
-    margin: 10px 0 0 0;
-  }
-}

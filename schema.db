@@ -1,0 +1,4 @@
+CREATE TABLE users (id INT, name VARCHAR, secretHash VARCHAR);
+CREATE TYPE tdirection AS ENUM('incoming', 'outgoing');
+CREATE TYPE tstatus AS ENUM('pending', 'accepted', 'rejected');
+CREATE TABLE ledger (user_id INT, direction tdirection, msgId INT, amount INT, status tstatus, requested_at timestamp, responded_at timestamp, request_json VARCHAR, response_json VARCHAR);
