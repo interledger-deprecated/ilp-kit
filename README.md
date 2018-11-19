@@ -11,6 +11,9 @@ sudo su - postgres
 | createdb -O snap snap
 | exit
 psql postgresql://snap:snap@localhost/snap < schema.db
+psql postgresql://snap:snap@localhost/snap < fixture.db
 npm install
 DATABASE_URL=postgresql://snap:snap@localhost/snap npm start
 ```
+
+Then browse to http://localhost:3000 and log in as michiel / qwer
