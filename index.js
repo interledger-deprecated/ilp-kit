@@ -123,6 +123,14 @@ function checkPass(username, password)  {
   });
 }
 
+hubbie.on('peer', (eventObj) => {
+  console.log('hubbie peer!', eventObj);
+});
+
+hubbie.on('message', (peerName, message, userName) => {
+  console.log('hubbie message!', { peerName, message, userName });
+});
+
 hubbie.listen({
   port: process.env.PORT || 3000,
   multiUser: true,
