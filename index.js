@@ -1,18 +1,16 @@
+const Hubbie =  require('hubbie');
 const static = require('node-static');
 const bcrypt = require('bcrypt');
 const atob = require('atob');
 const { Pool } = require('pg');
-let pool;
-if (typeof process.env.DATABASE_URL == 'string') {
-  pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-    ssl: true
-  });
-}
+let pool = new Pool({
+  connectionString: process.env.DATABASE_URL || 'postgresql://snap:snap@localhost/snap',
+  ssl: true
+});
 
 const file = new static.Server('./public');
  
-require('http').createServer(function (req, res) {
+function handler (req, res) {
   let body = '';
   req.on('data', (chunk) => {
      body += chunk;
@@ -72,7 +70,9 @@ require('http').createServer(function (req, res) {
       };
     };
   });
-}).listen(process.env.PORT || 3000);
+}
+
+const hubbie = new Hubbie();
 
 async function runSql(query, params) {
   if (!pool) {
@@ -123,6 +123,11 @@ function checkPass(username, password)  {
   });
 }
 
+hubbie.listen({
+  port: process.env.PORT || 3000,
+  multiUser: true,
+  handler
+});
 runSql('SELECT now();').then(result => {
   console.log({ result });
 });

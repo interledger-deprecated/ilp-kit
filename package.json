@@ -27,6 +27,7 @@
   "dependencies": {
     "atob": "^2.1.2",
     "bcrypt": "^3.0.2",
+    "hubbie": "^4.1.0",
     "node-static": "^0.7.11",
     "pg": "^7.6.1"
   }
