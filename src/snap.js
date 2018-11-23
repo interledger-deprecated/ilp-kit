@@ -97,9 +97,28 @@ async function snapIn (peerName, message, userName, hubbie) {
       let preimage;
       try {
         if (obj.condition) {
-          preimage = await getValue('SELECT preimage AS value FROM preimages WHERE user_id = $1 AND hash = $2', [ user.id, obj.condition ]);
-          if (!preimage) {
-            throw new Error('conditional proposal received, but I do not have the preimage');
+          try {
+            preimage = await getValue('SELECT preimage AS value FROM preimages WHERE user_id = $1 AND hash = $2', [ user.id, obj.condition ]);
+          } catch (e) {
+            console.log('preimage  not found!~');
+            // select a different peer at random:
+            const forwardPeer = await getObject('SELECT id, name FROM contacts WHERE user_id = $1 AND name != $2', [
+              user.id,
+              peerName
+            ]);
+            console.log({ forwardPeer });
+            await runSql('INSERT INTO forwards (user_id, incoming_peer_id, outgoing_peer_id, hash) VALUES ($1, $2, $3, $4)', [
+              user.id,
+              contact.id,
+              forwardPeer.id,
+              obj.condition
+            ]);
+            snapOut(user.id, {
+              contactName: forwardPeer.name,
+              condition: obj.condition,
+              description: 'DEBUG: multi-hop to ' + peerName,
+              amount: obj.amount
+            }, hubbie);
           }
         }
         console.log({ preimage });
