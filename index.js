@@ -85,7 +85,7 @@ async function runSql(query, params) {
     console.log('query', query, params);
     const result = await client.query(query, params);
     const results = (result && result.rowCount) ? result.rows : null;
-    console.log('sql results', result, results);
+    // console.log('sql results', result, results);
     client.release();
     return results;
   } catch (err) {
@@ -125,6 +125,12 @@ function checkPass(username, password)  {
 
 hubbie.on('peer', (eventObj) => {
   console.log('hubbie peer!', eventObj);
+  return runSql('select c.token from users u join contacts c on u.id=c.user_id where u.name= $1 and c.name= $2', [
+    eventObj.userName,
+    eventObj.peerName,
+  ]).then(results => {
+    return results && results.length && eventObj.peerSecret == results[0].token;
+  });
 });
 
 hubbie.on('message', (peerName, message, userName) => {
