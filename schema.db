@@ -1,5 +1,5 @@
-CREATE TABLE users (id INT, name VARCHAR, secretHash VARCHAR);
+CREATE TABLE users (id SERIAL PRIMARY KEY, name VARCHAR, secretHash VARCHAR);
 CREATE TYPE tdirection AS ENUM('IN', 'OUT');
 CREATE TYPE tstatus AS ENUM('pending', 'accepted', 'rejected');
-CREATE TABLE transactions (user_id INT, direction tdirection, msgId INT, amount INT, description VARCHAR, status tstatus, requested_at timestamp, responded_at timestamp, request_json VARCHAR, response_json VARCHAR);
-CREATE TABLE contacts (user_id INT, name VARCHAR, url VARCHAR, token VARCHAR, min INT, payable INT, current INT, receivable INT, max INT);
+CREATE TABLE transactions (id SERIAL PRIMARY KEY, user_id INT, contact_id INT, direction tdirection, msgId INT, amount INT, description VARCHAR, status tstatus, requested_at timestamp, responded_at timestamp, request_json VARCHAR, response_json VARCHAR);
+CREATE TABLE contacts (id SERIAL PRIMARY KEY, user_id INT, name VARCHAR, url VARCHAR, token VARCHAR, min INT, payable INT, current INT, receivable INT, max INT);

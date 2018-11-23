@@ -1,3 +1,11 @@
-INSERT INTO users (id, name, secrethash) VALUES(0, 'michiel', '$2b$10$pTGosvo8lbEw/gemaNSc/ej4.lPjzmH0hbQ1as/yVQiKn926YTkk6');
-INSERT INTO contacts (user_id, name, url, token, min, payable, current, receivable, max) VALUES (0, 'Edward', 'https://ledgerloops-testnet-1.herokuapp.com/snap/edward', '45yga3iuhewp3oi3w4j', -5, 0, 2, 5, 10);
-INSERT INTO transactions (user_id, requested_at, description,  direction, amount) VALUES (0, '12-11-2018', 'Beers after squash game', 'IN', 25);
+-- create user 1  with user 2 as a contact:
+INSERT INTO users (name, secrethash) VALUES('michiel', '$2b$10$tmznzb0z6FTgb4RNRd5NYOp1WR2SHYvnZuDzawF6BHZPNygsFZ8me');
+INSERT INTO contacts (user_id, name, url, token, min, payable, current, receivable, max) VALUES (1, 'Eddie', 'http://localhost:3000/edward/Micky', '45yga3iuhewp3oi3w4j', -5, 0, 2, 5, 10);
+
+-- create user 2  with user 1 as a contact:
+INSERT INTO users (name, secrethash) VALUES('edward', '$2b$10$GuyyjgXJqoSYaalD/lFJFug4ikCUhHjcjMaZoQjVC/XLT8FdaDkTG');
+INSERT INTO contacts (user_id, name, url, token, min, payable, current, receivable, max) VALUES (2, 'Micky', 'http://localhost:3000/michiel/Eddie', '45yga3iuhewp3oi3w4j', -5, 5, -2, 0, 10);
+
+-- two copies of transaction from user 1 to user 2
+INSERT INTO transactions (user_id, contact_id, requested_at, description, direction, amount) VALUES (1, 1, '12-11-2018', 'Beers after squash game', 'OUT', 25);
+INSERT INTO transactions (user_id, contact_id, requested_at, description, direction, amount) VALUES (2, 2, '12-11-2018', 'Beers after squash game', 'IN', 25);

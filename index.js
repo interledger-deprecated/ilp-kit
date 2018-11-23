@@ -7,8 +7,43 @@ let pool = new Pool({
   connectionString: process.env.DATABASE_URL || 'postgresql://snap:snap@localhost/snap',
   ssl: true
 });
-function snapOut(obj) {
+function snapOut(userId, obj) {
   console.log('snapOut', obj);
+  return runSql('SELECT id, url, token, min, payable, current, receivable, max FROM contacts WHERE user_id= $1  AND name = $2', [ userId, obj.contactName ]).then(results1 =>  {
+    if (!results1 || !results1.length) {
+      throw new Error('contact not found');
+    }
+    // their current balance will go up by amount
+    if (results1[0].current + results1[0].receivable + obj.amount > results1[0].max) {
+      throw new Error('peer could hit max balance');
+    }
+    // in case of neg amount:
+    if (results1[0].current + results1[0].receivable + obj.amount < results1[0].min) {
+      throw new Error('peer could hit min balance');
+    }
+    return runSql('INSERT INTO transactions (user_id, contact_id, requested_at, description,  direction, amount) ' +
+                  'VALUES                   ($1,      $2,         $3,           $4,           $5,         $6) RETURNING id', [
+      userId,
+      results1[0].id,
+      new Date(),
+      obj.description,
+      'OUT',
+      obj.amount
+    ]).then((results2) => {
+      if (!results2 || !results2.length) {
+        throw new Error('insert failed');
+      }
+      console.log('hubbie send', obj, results1, results2);
+      const peerName = userId + ':' + obj.contactName;
+      hubbie.addClient({ peerUrl: results1[0].url, myName:/*fixme: hubbie should omit myName before mySecret in outgoing url*/ results1[0].token, peerName });
+      return hubbie.send(peerName, JSON.stringify({
+        msgType: 'PROPOSE',
+        msgId: results2[0].id,
+        amount: obj.amount,
+        description: obj.description
+      }));
+    });
+  });
 }
 
 const file = new static.Server('./public');
@@ -38,11 +73,11 @@ function handler (req, res) {
           console.log(req.headers);
           const [ username, password ] = atob(req.headers.authorization.split(' ')[1]).split(':');
           return checkPass(username, password);
-        }).then((user_id) => {
-          if (user_id === false) {
+        }).then((userId) => {
+          if (userId === false) {
             throw new Error('auth fail');
           }
-          return snapOut(JSON.parse(body));
+          return snapOut(userId, JSON.parse(body));
         }).then((transactionId) => {
           res.end(JSON.stringify({  transactionId }));
         }).catch((e) => {
