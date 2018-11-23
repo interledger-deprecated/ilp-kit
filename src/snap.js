@@ -64,7 +64,8 @@ async function snapOut(userId, obj, hubbie) {
     msgType: 'PROPOSE',
     msgId: obj.msgId,
     amount: obj.amount,
-    description: obj.description
+    description: obj.description,
+    condition: obj.condition
   }));
 }
 
@@ -93,7 +94,15 @@ async function snapIn (peerName, message, userName, hubbie) {
       const contact = await getObject('SELECT id, url, token, min, max FROM contacts WHERE user_id= $1  AND name = $2', [ user.id, peerName ]);
       let inserted;
       let result = 'ACCEPT';
+      let preimage;
       try {
+        if (obj.condition) {
+          preimage = await getValue('SELECT preimage AS value FROM preimages WHERE user_id = $1 AND hash = $2', [ user.id, obj.condition ]);
+          if (!preimage) {
+            throw new Error('conditional proposal received, but I do not have the preimage');
+          }
+        }
+        console.log({ preimage });
         console.log('snapIn try start');
         inserted = await newTransaction(user.id, contact, obj, 'IN', hubbie);
         // TODO: could also do these two sql queries in one
@@ -116,6 +125,7 @@ async function snapIn (peerName, message, userName, hubbie) {
       return hubbie.send(peerName, JSON.stringify({
         msgType: result,
         msgId: obj.msgId,
+        preimage
       }), userName);
       break;
     };
