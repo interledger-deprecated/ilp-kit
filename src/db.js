@@ -54,4 +54,17 @@ function checkPass(username, password)  {
   });
 }
 
-module.exports = { runSql, checkPass };
+function getObject(query, params) {
+  return runSql(query, params).then(results => {
+     if (!results || !results.length) {
+       throw new Error('db row not found');
+     }
+     return results[0];
+  });
+}
+
+function getValue(query, params) {
+  return getObject(query, params).then(obj => obj.value);
+}
+
+module.exports = { runSql, checkPass, getObject, getValue };

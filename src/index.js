@@ -56,14 +56,14 @@ function handler (req, res) {
               const obj = JSON.parse(body);
               console.log('saving', resource, index, obj);
               if (resource == 'contacts') {
-                runSql('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max", "current", "payable", "receivable") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);', [user_id, obj.name, obj.url, obj.token, obj.min, obj.max, obj.current, obj.payable, obj.receivable ]);
+                runSql('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max") VALUES ($1, $2, $3, $4, $5, $6);', [user_id, obj.name, obj.url, obj.token, obj.min, obj.max ]);
               }
               if (resource == 'transactions') {
                 runSql('INSERT INTO transactions ("user_id", "requested_at", "description", "direction", "amount") VALUES ($1, $2, $3, $4, $5);', [user_id, obj.date, obj.description, obj.direction, obj.amount]);
               }
             }
             const columns  = {
-              contacts: '"user_id", "name", "url", "token", "min", "payable", "current", "receivable", "max"',
+              contacts: '"user_id", "name", "url", "token", "min", "max"',
               transactions: '"user_id", "requested_at", "description", "direction", "amount"'
             };
             runSql(`SELECT ${columns[resource]} FROM ${resource} WHERE user_id = $1;`, [ user_id ]).then(data => {

@@ -1,43 +1,74 @@
-const  { runSql } = require('./db');
+const  { runSql, getObject, getValue } = require('./db');
 
-function snapOut(userId, obj, hubbie) {
-  console.log('snapOut', obj);
-  return runSql('SELECT id, url, token, min, payable, current, receivable, max FROM contacts WHERE user_id= $1  AND name = $2', [ userId, obj.contactName ]).then(results1 =>  {
-    if (!results1 || !results1.length) {
-      throw new Error('contact not found');
-    }
+async function newTransaction(userId, contact, transaction, direction, hubbie) {
+  console.log('newTransaction', userId, contact, transaction, direction);
+  function getPendingBalance(direction) {
+    return getValue('SELECT SUM(amount) AS value FROM transactions WHERE user_id = $1 AND contact_id = $2 AND direction = $3 AND status = \'pending\'', [ userId, contact.id, direction ]).then(val => parseInt(val || 0));
+  }
+
+  const receivable = await getPendingBalance('IN');
+  const payable = await getPendingBalance('OUT');
+  const current = parseInt(await getValue('SELECT SUM(amount * CASE direction WHEN \'IN\' THEN 1 WHEN \'OUT\' THEN -1 END) AS value FROM transactions WHERE user_id = $1 AND contact_id = $2 AND status = \'accepted\'', [ userId, contact.id ]) || 0);
+  if (direction === 'IN') {
     // their current balance will go up by amount
-    if (results1[0].current + results1[0].receivable + obj.amount > results1[0].max) {
-      throw new Error('peer could hit max balance');
+    console.log(`CHECK1] ${current} + ${receivable} + ${transaction.amount} ?> ${contact.max}`);
+    if (current + receivable + transaction.amount > contact.max) {
+      console.log(current, typeof current, receivable, typeof receivable, transaction, typeof transaction.amount, contact, typeof contact.max);
+      throw new Error('peer could hit max balance (IN)');
     }
     // in case of neg amount:
-    if (results1[0].current + results1[0].receivable + obj.amount < results1[0].min) {
-      throw new Error('peer could hit min balance');
+    console.log(`CHECK2] ${current} - ${payable} + ${transaction.amount} ?< ${contact.min}`);
+    if (current -  payable + transaction.amount < contact.min) {
+      throw new Error('peer could hit min balance (IN)');
     }
-    return runSql('INSERT INTO transactions (user_id, contact_id, requested_at, description,  direction, amount, status) ' +
-                  'VALUES                   ($1,      $2,         now (),       $3,           \'OUT\',    $4,     \'pending\') RETURNING id', [
-      userId,
-      results1[0].id,
-      obj.description,
-      obj.amount
-    ]).then((results2) => {
-      if (!results2 || !results2.length) {
-        throw new Error('insert failed');
-      }
-      console.log('hubbie send', obj, results1, results2);
-      const peerName = userId + ':' + obj.contactName;
-      hubbie.addClient({ peerUrl: results1[0].url, myName:/*fixme: hubbie should omit myName before mySecret in outgoing url*/ results1[0].token, peerName });
-      return hubbie.send(peerName, JSON.stringify({
-        msgType: 'PROPOSE',
-        msgId: results2[0].id,
-        amount: obj.amount,
-        description: obj.description
-      }));
-    });
-  });
+  }
+  if (direction === 'OUT') {
+    // their current balance will go down by amount
+    console.log(`CHECK3] ${current} - ${payable} - ${transaction.amount} ?< ${contact.min}`);
+    if (current -  payable - transaction.amount < contact.min) {
+      throw new Error('peer could hit min balance (OUT)');
+    }
+    // in case of neg amount:
+    console.log(`CHECK4] ${current} + ${receivable} - ${transaction.amount} ?> ${contact.max}`);
+    if (current + receivable - transaction.amount > contact.max) {
+      throw new Error('peer could hit max balance (OUT)');
+    }
+  }
+  return getValue('INSERT INTO transactions ' +
+      '(user_id, contact_id, msgid, requested_at, description,  direction, amount, status) VALUES ' +
+      '($1,      $2,         $3,    now (),       $4,           $5,        $6,     \'pending\') RETURNING id AS value', [
+    userId,
+    contact.id,
+    transaction.msgId,
+    transaction.description,
+    direction,
+    transaction.amount
+  ]);
 }
 
-function snapIn (peerName, message, userName, hubbie) {
+async function snapOut(userId, obj, hubbie) {
+  const maxId = await getValue('SELECT MAX(msgId) AS value FROM transactions', []);
+  obj.msgId = (maxId || 0) + 1;
+  const contact = await getObject('SELECT id, url, token, min, max FROM contacts WHERE user_id= $1  AND name = $2', [ userId, obj.contactName ]);
+  let inserted;
+  try {
+    inserted = await newTransaction(userId, contact, obj, 'OUT', hubbie);
+  } catch (e) {
+    console.error('snapOut fail', e.message);
+    throw e;
+  }
+  console.log('hubbie send out', userId, contact, inserted, obj);
+  const peerName = userId + ':' + obj.contactName;
+  hubbie.addClient({ peerUrl: contact.url, myName:/*fixme: hubbie should omit myName before mySecret in outgoing url*/ contact.token, peerName });
+  return hubbie.send(peerName, JSON.stringify({
+    msgType: 'PROPOSE',
+    msgId: obj.msgId,
+    amount: obj.amount,
+    description: obj.description
+  }));
+}
+
+async function snapIn (peerName, message, userName, hubbie) {
   console.log('hubbie message!', { peerName, message, userName });
   let obj;
   try {
@@ -45,74 +76,47 @@ function snapIn (peerName, message, userName, hubbie) {
   } catch(e) {
     throw  new Error('message not json');
   }
-
-  function updateStatus(newStatus) {
-    let userId;
-    let contactId; 
-    runSql('SELECT id FROM users WHERE name = $1', [ userName ]).then((results1) => {
-      if (!results1 || !results1.length) {
-        throw new Error('userName for incoming message not found');
-      }
-      userId = results1[0].id;
-      return runSql('SELECT id FROM contacts WHERE user_id = $1 AND name = $2', [ userId, peerName ]);
-    }).then((results2) => {
-      if (!results2 || !results2.length) {
-        throw new Error('peerName for incoming message not found');
-      }
-      contactId = results2[0].id;
-      return runSql('UPDATE transactions SET status = $1, responded_at = now() WHERE id = $2 AND user_id = $3 AND contact_id = $4 AND direction = \'OUT\' AND status = \'pending\'',
-          [ newStatus, obj.msgId, userId, contactId  ]);
-    });
+  console.log('snapIn message parsed', message);
+  async function updateStatus(newStatus, direction) {
+    const userId = await getValue('SELECT id AS value FROM users WHERE name = $1', [ userName ]);
+    const contactId = await getValue('SELECT id AS value FROM contacts WHERE user_id = $1 AND name = $2', [ userId, peerName ]);
+    return runSql('UPDATE transactions SET status = $1, responded_at = now() WHERE ' +
+        'msgid = $2 AND user_id = $3 AND contact_id = $4 AND direction = $5 AND status = \'pending\'',
+        [ newStatus, obj.msgId, userId, contactId, direction ]);
   }
 
   switch (obj.msgType) {
-    case 'ACCEPT': { updateStatus('accepted'); break; };
-    case 'REJECT': { updateStatus('rejected'); break; };
+    case 'ACCEPT': { console.log('ACCEPT received', userName, peerName, obj); updateStatus('accepted', 'OUT'); break; };
+    case 'REJECT': { console.log('REJECT received', userName, peerName, obj); updateStatus('rejected', 'OUT'); break; };
     case  'PROPOSE': {
-      let userId;
-      let status = 'accepted';
+      const user = await getObject('SELECT id FROM users WHERE name = $1', [ userName ]);
+      const contact = await getObject('SELECT id, url, token, min, max FROM contacts WHERE user_id= $1  AND name = $2', [ user.id, peerName ]);
+      let inserted;
+      let result = 'ACCEPT';
+      try {
+        console.log('snapIn try start');
+        inserted = await newTransaction(user.id, contact, obj, 'IN', hubbie);
+        // TODO: could also do these two sql queries in one
+         console.log('incoming proposal accepted');
+        await updateStatus('accepted', 'IN');
+        console.log('snapIn try end');
+      } catch (e) {
+        console.error('snapIn fail', e.message);
+        // TODO: could also do these two sql queries in one
+        await updateStatus('rejected', 'IN');
+        console.log('incoming proposal rejected');
+        result = 'REJECT';
+      }
       let channelName; // see FIXME comment below
-      // resolve userName to userId
-      runSql('SELECT id FROM users WHERE name = $1', [ userName ]).then(results1 =>  {
-        if (!results1 || !results1.length) {
-          throw new Error('userName for incoming snap message not found');
-        }
-        userId = results1[0].id;
-        return runSql('SELECT id, url, token, min, payable, current, receivable, max FROM contacts WHERE user_id= $1  AND name = $2', [ userId, peerName ]);
-      }).then(results2 =>  {
-        if (!results2 || !results2.length) {
-          throw new Error('peerName for incoming message not found');
-        }
-        // their current balance will go down by amount
-        if (results2[0].current + results2[0].receivable - obj.amount < results2[0].min) {
-          status = 'rejected';
-        }
-        // in case of neg amount:
-        if (results2[0].current + results2[0].receivable - obj.amount > results2[0].max) {
-          status = 'rejected';
-        }
-        // FIXME: even when using http, maybe this peer should already exist if a message is being received from them?
-        channelName = userName + '/' + peerName; // match behavior of hubbie's internal channelName function
-        hubbie.addClient({ peerUrl: results2[0].url, myName:/*fixme: hubbie should omit myName before mySecret in outgoing url*/ results2[0].token, peerName: channelName });
-        return runSql('INSERT INTO transactions (user_id, contact_id, responded_at, description,  direction, amount, status) ' +
-                      'VALUES                   ($1,      $2,         now (),       $3,           \'IN\',    $4,     $5) RETURNING id', [
-          userId,
-          results2[0].id,
-          obj.description,
-          obj.amount,
-          status
-        ]);
-      }).then((results3) => {
-        if (!results3 || !results3.length) {
-          throw new Error('insert failed');
-        }
-        console.log('hubbie send', obj, results3,  userId, status);
-        // see FIXME comment above about peerBackName
-        return hubbie.send(peerName, JSON.stringify({
-          msgType: (status === 'accepted' ?  'ACCEPT' : 'REJECT'),
-          msgId: obj.msgId,
-        }), userName);
-      });
+      // FIXME: even when using http, maybe this peer should already exist if a message is being received from them?
+      channelName = userName + '/' + peerName; // match behavior of hubbie's internal channelName function
+      hubbie.addClient({ peerUrl: contact.url, myName:/*fixme: hubbie should omit myName before mySecret in outgoing url*/ contact.token, peerName: channelName });
+      console.log('hubbie send back out', obj, channelName, user.id);
+      // see FIXME comment above about peerBackName
+      return hubbie.send(peerName, JSON.stringify({
+        msgType: result,
+        msgId: obj.msgId,
+      }), userName);
       break;
     };
   }
