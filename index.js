@@ -7,6 +7,9 @@ let pool = new Pool({
   connectionString: process.env.DATABASE_URL || 'postgresql://snap:snap@localhost/snap',
   ssl: true
 });
+function snapOut(obj) {
+  console.log('snapOut', obj);
+}
 
 const file = new static.Server('./public');
  
@@ -28,6 +31,23 @@ function handler (req, res) {
         } catch(e) {
           res.end(JSON.stringify({  ok: false, error: e.message }));
         }
+        break;
+      };
+      case 'pay': {
+        Promise.resolve().then(() => {
+          console.log(req.headers);
+          const [ username, password ] = atob(req.headers.authorization.split(' ')[1]).split(':');
+          return checkPass(username, password);
+        }).then((user_id) => {
+          if (user_id === false) {
+            throw new Error('auth fail');
+          }
+          return snapOut(JSON.parse(body));
+        }).then((transactionId) => {
+          res.end(JSON.stringify({  transactionId }));
+        }).catch((e) => {
+          res.end(JSON.stringify({  ok: false, error: e.message }));
+        });
         break;
       };
       case 'contacts':
