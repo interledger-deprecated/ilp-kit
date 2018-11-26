@@ -1,3 +1,4 @@
+const hashlocks = require('hashlocks');
 const  { runSql, getObject, getValue } = require('./db');
 
 async function newTransaction(userId, contact, transaction, direction, hubbie) {
@@ -83,6 +84,31 @@ async function snapOut(userId, obj, hubbie) {
   }));
 }
 
+async function usePreimage (obj, userName, hubbie) {
+  const userId = await getValue('SELECT id AS value FROM users WHERE name = $1', [ userName ]);
+  const hash = hashlocks.sha256(Buffer.from(obj.preimage, 'hex')).toString('hex');
+  console.log('usePreimage', hash, obj);
+  const backPeer = await runSql('SELECT incoming_peer_id, incoming_msg_id FROM forwards WHERE user_id =  $1 AND hash = $2', [
+              userId,
+              hash
+            ]);
+  if (!backPeer  || !backPeer.length) {
+    console.log('ALAS, no backpeer found - or maybe I was the loop initiator')
+    return;
+  }
+  const contact = await getObject('SELECT id, url, token, min, max FROM contacts WHERE user_id= $1  AND id = $2', [ userId, backPeer[0].incoming_peer_id]);
+  console.log('using in backwarded ACCEPT', contact[0], {
+    msgType: 'ACCEPT',
+    msgId:  backPeer[0].incoming_msg_id,
+    preimage: obj.preimage
+  }, userId);
+  return hubbie.send(backPeer[0].incoming_peer_id, {
+    msgType: 'ACCEPT',
+    msgId:  backPeer[0].incoming_msg_id,
+    preimage: obj.preimage
+  }, userId);
+}
+
 async function snapIn (peerName, message, userName, hubbie) {
   console.log('hubbie message!', { peerName, message, userName });
   let obj;
@@ -101,8 +127,19 @@ async function snapIn (peerName, message, userName, hubbie) {
   }
 
   switch (obj.msgType) {
-    case 'ACCEPT': { console.log('ACCEPT received', userName, peerName, obj); updateStatus('accepted', 'OUT'); break; };
-    case 'REJECT': { console.log('REJECT received', userName, peerName, obj); updateStatus('rejected', 'OUT'); break; };
+    case 'ACCEPT': {
+      console.log('ACCEPT received', userName, peerName, obj);
+      updateStatus('accepted', 'OUT');
+      if (obj.preimage) {
+        usePreimage(obj, userName, hubbie);
+      }
+      break;
+    };
+    case 'REJECT': {
+      console.log('REJECT received', userName, peerName, obj);
+      updateStatus('rejected', 'OUT');
+      break;
+    };
     case  'PROPOSE': {
       const user = await getObject('SELECT id FROM users WHERE name = $1', [ userName ]);
       const contact = await getObject('SELECT id, url, token, min, max FROM contacts WHERE user_id= $1  AND name = $2', [ user.id, peerName ]);
@@ -121,9 +158,10 @@ async function snapIn (peerName, message, userName, hubbie) {
               peerName
             ]);
             console.log({ forwardPeer });
-            await runSql('INSERT INTO forwards (user_id, incoming_peer_id, outgoing_peer_id, hash) VALUES ($1, $2, $3, $4)', [
+            await runSql('INSERT INTO forwards (user_id, incoming_peer_id, incoming_msg_id, outgoing_peer_id, hash) VALUES ($1, $2, $3, $4, $5)', [
               user.id,
               contact.id,
+              obj.msgId,
               forwardPeer.id,
               obj.condition
             ]);
