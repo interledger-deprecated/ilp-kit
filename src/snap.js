@@ -1,3 +1,4 @@
+const hashlocks = require('hashlocks');
 const  { runSql, getObject, getValue } = require('./db');
 
 async function newTransaction(userId, contact, transaction, direction, hubbie) {
@@ -47,8 +48,22 @@ async function newTransaction(userId, contact, transaction, direction, hubbie) {
 }
 
 async function snapOut(userId, obj, hubbie) {
+  if (typeof userId !== 'number') {
+    throw new Error('snapOut: userId not a number');
+  }
+  if (typeof obj !== 'object') {
+    throw new Error('snapOut: obj not an object');
+  }
+  if (typeof obj.amount !== 'number') {
+    throw new Error('snapOut: obj.amount not a number');
+  }
+  if (typeof obj.contactName !== 'string') {
+    throw new Error('snapOut: obj.contactName not a string');
+  }
   const maxId = await getValue('SELECT MAX(msgId) AS value FROM transactions', []);
   obj.msgId = (maxId || 0) + 1;
+  console.log('snapOut', userId, obj);
+  console.log('will create transaction with msgId', obj.msgId);
   const contact = await getObject('SELECT id, url, token, min, max FROM contacts WHERE user_id= $1  AND name = $2', [ userId, obj.contactName ]);
   let inserted;
   try {
@@ -58,6 +73,14 @@ async function snapOut(userId, obj, hubbie) {
     throw e;
   }
   console.log('hubbie send out', userId, contact, inserted, obj);
+  // in server-to-server http cross post,
+  // the existence of a contact allows incoming http but also outgoing
+  // a useful common practice is if the username+token is the same in both directions
+  // when that happens, hubbie channels can be used in both directions.
+  // When not, you would use two hubbie channels, one dedicated for incoming, and one
+  // for outgoing. Not a big deal, but unnecessarily confusing.
+  // Only downside: you need to give your peer a URL that ends in the name they have in your addressbook.
+  // For now, we use a special hubbie channel to make the outgoing call:
   const peerName = userId + ':' + obj.contactName;
   hubbie.addClient({ peerUrl: contact.url, myName:/*fixme: hubbie should omit myName before mySecret in outgoing url*/ contact.token, peerName });
   return hubbie.send(peerName, JSON.stringify({
@@ -67,6 +90,26 @@ async function snapOut(userId, obj, hubbie) {
     description: obj.description,
     condition: obj.condition
   }));
+}
+
+async function usePreimage (obj, userName, hubbie) {
+  const userId = await getValue('SELECT id AS value FROM users WHERE name = $1', [ userName ]);
+  const hash = hashlocks.sha256(Buffer.from(obj.preimage, 'hex')).toString('hex');
+  console.log('usePreimage', hash, obj);
+  const backPeer = await getObject('SELECT incoming_peer_id, incoming_msg_id FROM forwards WHERE user_id =  $1 AND hash = $2', [
+    userId,
+    hash
+  ]);
+  const contact = await getObject('SELECT name, url, token, min, max FROM contacts WHERE user_id= $1  AND id = $2', [ userId, backPeer.incoming_peer_id]);
+  console.log('using in backwarded ACCEPT', contact, backPeer)
+  const peerName = userId + ':' + contact.name;
+  hubbie.addClient({ peerUrl: contact.url, myName:/*fixme: hubbie should omit myName before mySecret in outgoing url*/ contact.token, peerName });
+  return hubbie.send(peerName, JSON.stringify({
+    msgType: 'ACCEPT',
+    msgId:  backPeer.incoming_msg_id,
+    preimage: obj.preimage
+  }));
+  // TODO: store preimages in case backPeer repeats the PROPOSE, and then delete preimage rows once ACCEPT was ACKed and e.g. a week has passed
 }
 
 async function snapIn (peerName, message, userName, hubbie) {
@@ -87,8 +130,23 @@ async function snapIn (peerName, message, userName, hubbie) {
   }
 
   switch (obj.msgType) {
-    case 'ACCEPT': { console.log('ACCEPT received', userName, peerName, obj); updateStatus('accepted', 'OUT'); break; };
-    case 'REJECT': { console.log('REJECT received', userName, peerName, obj); updateStatus('rejected', 'OUT'); break; };
+    case 'ACCEPT': {
+      console.log('ACCEPT received', userName, peerName, obj);
+      updateStatus('accepted', 'OUT');
+      if (obj.preimage) {
+        try {
+          await usePreimage(obj, userName, hubbie);
+        } catch (e) {
+          console.log('ALAS, no backpeer found - or maybe I was the loop initiator')
+        }
+      }
+      break;
+    };
+    case 'REJECT': {
+      console.log('REJECT received', userName, peerName, obj);
+      updateStatus('rejected', 'OUT');
+      break;
+    };
     case  'PROPOSE': {
       const user = await getObject('SELECT id FROM users WHERE name = $1', [ userName ]);
       const contact = await getObject('SELECT id, url, token, min, max FROM contacts WHERE user_id= $1  AND name = $2', [ user.id, peerName ]);
@@ -97,9 +155,29 @@ async function snapIn (peerName, message, userName, hubbie) {
       let preimage;
       try {
         if (obj.condition) {
-          preimage = await getValue('SELECT preimage AS value FROM preimages WHERE user_id = $1 AND hash = $2', [ user.id, obj.condition ]);
-          if (!preimage) {
-            throw new Error('conditional proposal received, but I do not have the preimage');
+          try {
+            preimage = await getValue('SELECT preimage AS value FROM preimages WHERE user_id = $1 AND hash = $2', [ user.id, obj.condition ]);
+          } catch (e) {
+            console.log('preimage  not found!~');
+            // select a different peer at random:
+            const forwardPeer = await getObject('SELECT id, name FROM contacts WHERE user_id = $1 AND name != $2', [
+              user.id,
+              peerName
+            ]);
+            console.log({ forwardPeer });
+            await runSql('INSERT INTO forwards (user_id, incoming_peer_id, incoming_msg_id, outgoing_peer_id, hash) VALUES ($1, $2, $3, $4, $5)', [
+              user.id,
+              contact.id,
+              obj.msgId,
+              forwardPeer.id,
+              obj.condition
+            ]);
+            snapOut(user.id, {
+              contactName: forwardPeer.name,
+              condition: obj.condition,
+              description: 'DEBUG: multi-hop to ' + peerName,
+              amount: obj.amount
+            }, hubbie);
           }
         }
         console.log({ preimage });
