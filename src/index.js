@@ -28,7 +28,7 @@ function handler (req, res) {
       };
       case 'pay': {
         Promise.resolve().then(() => {
-          console.log(req.headers);
+          console.log(req.headers, body);
           const [ username, password ] = atob(req.headers.authorization.split(' ')[1]).split(':');
           return checkPass(username, password);
         }).then((userId) => {

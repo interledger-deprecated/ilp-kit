@@ -47,8 +47,22 @@ async function newTransaction(userId, contact, transaction, direction, hubbie) {
 }
 
 async function snapOut(userId, obj, hubbie) {
+  if (typeof userId !== 'number') {
+    throw new Error('snapOut: userId not a number');
+  }
+  if (typeof obj !== 'object') {
+    throw new Error('snapOut: obj not an object');
+  }
+  if (typeof obj.amount !== 'number') {
+    throw new Error('snapOut: obj.amount not a number');
+  }
+  if (typeof obj.contactName !== 'string') {
+    throw new Error('snapOut: obj.contactName not a string');
+  }
   const maxId = await getValue('SELECT MAX(msgId) AS value FROM transactions', []);
   obj.msgId = (maxId || 0) + 1;
+  console.log('snapOut', userId, obj);
+  console.log('will create transaction with msgId', obj.msgId);
   const contact = await getObject('SELECT id, url, token, min, max FROM contacts WHERE user_id= $1  AND name = $2', [ userId, obj.contactName ]);
   let inserted;
   try {

@@ -16,4 +16,4 @@ INSERT INTO transactions (user_id, contact_id, requested_at, description, direct
 INSERT INTO transactions (user_id, contact_id, requested_at, description, direction, amount) VALUES (2, 2, '12-11-2018', 'Beers after squash game', 'IN', 25);
 
 -- preimage
-INSERT INTO preimages (user_id, hash, preimage) VALUES (2, 'bc21571c5f1968c083c5740bb0879bde3f61c787e3c41540cd3290604f70bbed', '36d0589ec033779c31b50a8cff4aeeacaece3c0ecfe0d8a300b307fd29cf59a3');
+INSERT INTO preimages (user_id, hash, preimage) VALUES (3, 'bc21571c5f1968c083c5740bb0879bde3f61c787e3c41540cd3290604f70bbed', '36d0589ec033779c31b50a8cff4aeeacaece3c0ecfe0d8a300b307fd29cf59a3');
