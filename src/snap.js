@@ -1,4 +1,5 @@
 const hashlocks = require('hashlocks');
+const { storeRoutes } = require('./routing');
 const  { runSql, getObject, getValue } = require('./db');
 
 async function newTransaction(userId, contact, transaction, direction, hubbie) {
@@ -205,6 +206,10 @@ async function snapIn (peerName, message, userName, hubbie) {
         msgId: obj.msgId,
         preimage
       }), userName);
+      break;
+    };
+    case 'ROUTING': {
+      storeRoutes(userName, peerName, obj);
       break;
     };
   }

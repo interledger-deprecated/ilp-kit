@@ -5,3 +5,4 @@ CREATE TABLE transactions (id SERIAL PRIMARY KEY, user_id INT, contact_id INT, d
 CREATE TABLE contacts (id SERIAL PRIMARY KEY, user_id INT, name VARCHAR, url VARCHAR, token VARCHAR, min INT, max INT);
 CREATE TABLE preimages (user_id INT, hash VARCHAR, preimage VARCHAR);
 CREATE TABLE forwards (user_id INT, incoming_peer_id INT, incoming_msg_id INT, outgoing_peer_id INT, hash VARCHAR);
+CREATE TABLE routes (user_id INT, contact_id INT, landmark VARCHAR, amount INT);

@@ -12,8 +12,9 @@ sudo su - postgres
 | | Enter it again: snap
 | createdb -O snap snap
 | exit
-psql postgresql://snap:snap@localhost/snap < schema.db
-psql postgresql://snap:snap@localhost/snap < fixture.db
+psql postgresql://snap:snap@localhost/snap < drop.sql
+psql postgresql://snap:snap@localhost/snap < schema.sql
+psql postgresql://snap:snap@localhost/snap < fixture.sql
 npm install
 DATABASE_URL=postgresql://snap:snap@localhost/snap npm start
 curl -H 'Authorization: Basic bWljaGbDpxd2Vy' -X'PUT' http://localhost:3000/pay -d '{"contactName":"Eddie","amount":1,"condition":"bc21571c5f1968c083c5740bb0879bde3f61c787e3c41540cd3290604f70bbed"}'
