@@ -63,8 +63,13 @@ function getObject(query, params) {
   });
 }
 
-function getValue(query, params) {
-  return getObject(query, params).then(obj => obj.value);
+function getValue(query, params, defaultVal) {
+  return getObject(query, params).then(obj => obj.value).catch(e => {
+    if (e.message === 'db row not found' && defaultVal !== undefined) {
+      return defaultVal;
+    }
+    throw e;
+  });
 }
 
 module.exports = { runSql, checkPass, getObject, getValue };

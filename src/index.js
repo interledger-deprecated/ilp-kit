@@ -3,6 +3,7 @@ const static = require('node-static');
 const atob = require('atob');
 const  { runSql, checkPass } = require('./db');
 const  { snapOut, snapIn } = require('./snap');
+const  { loop } = require('./loops');
 const routing = require('./routing');
 
 const file = new static.Server('./public');
@@ -39,6 +40,23 @@ function handler (req, res) {
           return snapOut(userId, JSON.parse(body), hubbie);
         }).then((transactionId) => {
           res.end(JSON.stringify({  transactionId }));
+        }).catch((e) => {
+          res.end(JSON.stringify({  ok: false, error: e.message }));
+        });
+        break;
+      };
+      case 'topup': {
+        Promise.resolve().then(() => {
+          console.log(req.headers, body);
+          const [ username, password ] = atob(req.headers.authorization.split(' ')[1]).split(':');
+          return checkPass(username, password);
+        }).then((userId) => {
+          if (userId === false) {
+            throw new Error('auth fail');
+          }
+          return loop(userId, JSON.parse(body), hubbie);
+        }).then((result) => {
+          res.end(JSON.stringify({ ok: true, result }));
         }).catch((e) => {
           res.end(JSON.stringify({  ok: false, error: e.message }));
         });

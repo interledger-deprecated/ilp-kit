@@ -17,7 +17,19 @@ psql postgresql://snap:snap@localhost/snap < schema.sql
 psql postgresql://snap:snap@localhost/snap < fixture.sql
 npm install
 DATABASE_URL=postgresql://snap:snap@localhost/snap npm start
-curl -H 'Authorization: Basic bWljaGbDpxd2Vy' -X'PUT' http://localhost:3000/pay -d '{"contactName":"Eddie","amount":1,"condition":"bc21571c5f1968c083c5740bb0879bde3f61c787e3c41540cd3290604f70bbed"}'
+
+# michiel -> edward:
+curl -H 'Authorization: Basic bWljaGllbDpxd2Vy' -X'PUT' http://localhost:3000/sendroutes -d '1'
+# edward  -> donald:
+curl -H 'Authorization: Basic ZWR3YXJkOnF3ZXI=' -X'PUT' http://localhost:3000/sendroutes -d '4'
+# donald -> michiel:
+curl -H 'Authorization: Basic ZG9uYWxkOnF3ZXI=' -X'PUT' http://localhost:3000/sendroutes -d '6'
+
+# topup:
+curl -H 'Authorization: Basic bWljaGllbDpxd2Vy' -X'PUT' http://localhost:3000/topup -d '{"contactName":"Eddie","amount":5}'
+
+# pay:
+curl -H 'Authorization: Basic bWljaGllbDpxd2Vy' -X'PUT' http://localhost:3000/pay -d '{"contactName":"Eddie","amount":1,"condition":"bc21571c5f1968c083c5740bb0879bde3f61c787e3c41540cd3290604f70bbed"}'
 ```
 
 Ability to do this from the GUI instead of via curl coming soon.
