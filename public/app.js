@@ -87,22 +87,34 @@ let app = new Vue({
          }
       });
     },
-    doPay: function (index) {
+    doPay: async function (index) {
       console.log('paying '+index+' '+this.payAmount + ' (balance '+
           this.contacts[index].current+')');
-      // FIXME: this PUT should be a POST
+      const amount = parseInt(this.payAmount);
+      const topup = amount - this.contacts[index].current;
+      
+      // FIXME: these PUTs should be POSTs
       // (blocked on https://github.com/ledgerloops/hubbie/issues/20)
-      post('/pay', {
+      if (topup > 0) {
+        console.log('topup needed first!', { amount, topup });
+        const topupResult = await post('/topup', {
+          contactName: this.contacts[index].name,
+          amount: topup
+        }, this.username + ':' + this.password, 'PUT')
+        console.log({ topupResult });
+      } else {
+        console.log('no topup needed!', { amount, topup });
+      }
+      const data = await post('/pay', {
         contactName: this.contacts[index].name,
         amount: parseInt(this.payAmount)
-      }, this.username + ':' + this.password, 'PUT').then(data =>  {
-        if (data.contacts) {
-          this.contacts = data.contacts;
-        }
-        if (data.transactions) {
-          this.transactions = data.transactions;
-        }
-      });
+      }, this.username + ':' + this.password, 'PUT');
+      if (data.contacts) {
+        this.contacts = data.contacts;
+      }
+      if (data.transactions) {
+        this.transactions = data.transactions;
+      }
     }
   }
 });
