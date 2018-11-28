@@ -9,9 +9,9 @@ function get(resource, creds) {
   })
 }
 
-function post(resource, data, creds) {
+function post(resource, data, creds, method = 'POST') {
   return fetch(resource, {
-    method: 'POST',
+    method,
     headers:  {
       Authorization: 'Basic ' + btoa(creds)
     },
@@ -32,6 +32,8 @@ let app = new Vue({
     repeat: null,
     tab: 'profile',
     edit:  -1,
+    pay: -1,
+    payAmount: 0,
     contacts: [],
     transactions: [],
   },
@@ -83,6 +85,17 @@ let app = new Vue({
         if (data[resource]) {
           this[resource] = data[resource];
          }
+      });
+    },
+    doPay: function (index) {
+      console.log('paying  '+index+' '+this.payAmount);
+      // FIXME: this PUT should be a POST
+      // (blocked on https://github.com/ledgerloops/hubbie/issues/20)
+      post('/pay', {
+        contactName: this.contacts[index].name,
+        amount: parseInt(this.payAmount)
+      }, this.username + ':' + this.password, 'PUT').then(data =>  {
+        console.log(data);
       });
     }
   }

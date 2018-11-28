@@ -72,8 +72,18 @@
             Done
           </a>
         </div>
+
+        <!-- contacts tab, pay: -->
+        <div v-if="tab == 'contacts' && pay>-1">
+          (paying {{ contacts[pay].name }})
+          <p>Name: <input v-model="contacts[pay].name" placeholder="Contact name"></p>
+          <p>Amount: <input v-model="payAmount" placeholder="amount in UCR"></p>
+          <a class="button is-success" v-on:click="doPay(pay);pay=-1">
+            Done
+          </a>
+        </div>
         <!-- contacts tab, list: -->
-        <div v-if="tab  ==  'contacts' && edit==-1">
+        <div v-if="tab  ==  'contacts' && edit==-1 && pay==-1">
           <section class="section">
             <div class="container">
               
