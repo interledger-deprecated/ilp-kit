@@ -91,8 +91,11 @@ let app = new Vue({
       console.log('paying '+index+' '+this.payAmount + ' (balance '+
           this.contacts[index].current+')');
       const amount = parseInt(this.payAmount);
-      const topup = amount - this.contacts[index].current;
-      
+      const topup = this.contacts[index].current
+          + this.contacts[index].receivable
+          + amount
+          - this.contacts[index].max;
+
       // FIXME: these PUTs should be POSTs
       // (blocked on https://github.com/ledgerloops/hubbie/issues/20)
       if (topup > 0) {
