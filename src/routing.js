@@ -3,9 +3,9 @@ const db = require('./db');
 async function storeRoutes(userName, peerName, obj) {
   const user = await db.getObject('SELECT id FROM users WHERE name = $1', [ userName ]);
   const contact = await db.getObject('SELECT id, url, token, min, max FROM contacts WHERE user_id= $1  AND name = $2', [ user.id, peerName ]);
-  const receivable = await balances.getReceivable(user.id, contact.id);
-  const payable = await balances.getPayable(user.id, contact.id);
-  const current = await balances.getCurrent(user.id, contact.id);
+  const receivable = await balances.getMyReceivable(user.id, contact.id);
+  const payable = await balances.getMyPayable(user.id, contact.id);
+  const current = await balances.getMyCurrent(user.id, contact.id);
     console.log(`CHECK3] ${current} - ${payable} - ${contact.min}`);
   const limit  = (current -  payable - contact.min);
   for (let landmark in obj.canRoute) {

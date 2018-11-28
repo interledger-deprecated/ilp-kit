@@ -6,9 +6,9 @@ const balances = require('./balances');
 async function newTransaction(userId, contact, transaction, direction, hubbie) {
   console.log('newTransaction', userId, contact, transaction, direction);
 
-  const receivable = await balances.getReceivable(userId, contact.id);
-  const payable = await balances.getPayable(userId, contact.id);
-  const current = await balances.getCurrent(userId, contact.id);
+  const receivable = await balances.getMyReceivable(userId, contact.id);
+  const payable = await balances.getMyPayable(userId, contact.id);
+  const current = await balances.getMyCurrent(userId, contact.id);
   if (direction === 'IN') {
     // their current balance will go up by amount
     console.log(`CHECK1] ${current} + ${receivable} + ${transaction.amount} ?> ${contact.max}`);

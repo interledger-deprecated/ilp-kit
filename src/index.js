@@ -12,9 +12,9 @@ const file = new static.Server('./public');
 async function mixInBalances(contacts) {
   for (let i=0; i<contacts.length; i++) {
     console.log(contacts[i]);
-    contacts[i].payable = await balances.getPayable(contacts[i].user_id, contacts[i].id);
-    contacts[i].receivable = await balances.getReceivable(contacts[i].user_id, contacts[i].id);
-    contacts[i].current =  await balances.getCurrent(contacts[i].user_id, contacts[i].id);
+    contacts[i].payable = await balances.getTheirPayable(contacts[i].user_id, contacts[i].id);
+    contacts[i].receivable = await balances.getTheirReceivable(contacts[i].user_id, contacts[i].id);
+    contacts[i].current =  await balances.getTheirCurrent(contacts[i].user_id, contacts[i].id);
   }
   return contacts;
 }
