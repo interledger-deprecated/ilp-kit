@@ -88,14 +88,20 @@ let app = new Vue({
       });
     },
     doPay: function (index) {
-      console.log('paying  '+index+' '+this.payAmount);
+      console.log('paying '+index+' '+this.payAmount + ' (balance '+
+          this.contacts[index].current+')');
       // FIXME: this PUT should be a POST
       // (blocked on https://github.com/ledgerloops/hubbie/issues/20)
       post('/pay', {
         contactName: this.contacts[index].name,
         amount: parseInt(this.payAmount)
       }, this.username + ':' + this.password, 'PUT').then(data =>  {
-        console.log(data);
+        if (data.contacts) {
+          this.contacts = data.contacts;
+        }
+        if (data.transactions) {
+          this.transactions = data.transactions;
+        }
       });
     }
   }

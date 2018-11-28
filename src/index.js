@@ -18,6 +18,18 @@ async function mixInBalances(contacts) {
   }
   return contacts;
 }
+function getData(user_id, resource) {
+  const columns  = {
+    contacts: '"id", "user_id", "name", "url", "token", "min", "max"',
+    transactions: '"user_id", "requested_at", "description", "direction", "amount"'
+  };
+  return runSql(`SELECT ${columns[resource]} FROM ${resource} WHERE user_id = $1;`, [ user_id ]).then(data => {
+    if (resource  == 'contacts') {
+      return mixInBalances(data);
+    }
+    return data;
+  });
+}
 
 function handler (req, res) {
   let body = '';
@@ -44,13 +56,17 @@ function handler (req, res) {
           console.log(req.headers, body);
           const [ username, password ] = atob(req.headers.authorization.split(' ')[1]).split(':');
           return checkPass(username, password);
-        }).then((userId) => {
+        }).then(async function (userId) {
           if (userId === false) {
             throw new Error('auth fail');
           }
-          return snapOut(userId, JSON.parse(body), hubbie);
-        }).then((transactionId) => {
-          res.end(JSON.stringify({  transactionId }));
+          const transactionId = await snapOut(userId, JSON.parse(body), hubbie);
+          res.end(JSON.stringify({
+            ok: true,
+            transactionId,
+            contacts: await getData(userId, 'contacts'),
+            transactions: await getData(userId, 'transactions')
+          }));
         }).catch((e) => {
           res.end(JSON.stringify({  ok: false, error: e.message }));
         });
@@ -109,16 +125,7 @@ function handler (req, res) {
                 runSql('INSERT INTO transactions ("user_id", "requested_at", "description", "direction", "amount") VALUES ($1, $2, $3, $4, $5);', [user_id, obj.date, obj.description, obj.direction, obj.amount]);
               }
             }
-            const columns  = {
-              contacts: '"id", "user_id", "name", "url", "token", "min", "max"',
-              transactions: '"user_id", "requested_at", "description", "direction", "amount"'
-            };
-            runSql(`SELECT ${columns[resource]} FROM ${resource} WHERE user_id = $1;`, [ user_id ]).then(data => {
-              if (resource  == 'contacts') {
-                return mixInBalances(data);
-              }
-              return data;
-            }).then(data => {
+            getData(user_id, resource).then(data => {
               res.end(JSON.stringify({
                 ok: true,
                 [resource]: data

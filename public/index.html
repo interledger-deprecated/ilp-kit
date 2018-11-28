@@ -57,7 +57,10 @@
             To join the network, trust some people on the contacts tab.
           </div>
           <div>
-            To use the network, add transactions on the ledger tab.
+            To use the network, pay your contacts.
+          </div>
+          <div>
+            See transactions on the ledger tab.
           </div>
         </div>
 
@@ -89,6 +92,9 @@
               
               <a class="button is-success" v-on:click="edit=contacts.length; contacts.push({})">
                 Add new contact
+              </a>
+              <a class="button is-primary" v-on:click="fetchData('contacts')">
+                Refresh
               </a>
             </div>
           </section>
@@ -133,8 +139,8 @@
         <div v-if="tab == 'ledger' && edit==-1">
           <section class="section">
             <div class="container">
-              <a class="button is-success" v-on:click="edit=transactions.length; transactions.push({})">
-                Add new transaction
+              <a class="button is-primary" v-on:click="fetchData('transactions')">
+                Refresh
               </a>
             </div>
           </section>
@@ -154,7 +160,7 @@
                 <td>{{ transaction.description }}</td>
                 <td>{{ transaction.direction }}</td>
                 <td>{{ transaction.amount }}</td>
-                <td><a class="button" v-on:click="expand=index">Details</a> <a class="button" v-on:click="edit=index">Edit</a></td>
+                <td><a class="button" v-on:click="expand=index">Details</a></td>
               </tr>
             </tbody>
           </table>
