@@ -5,9 +5,20 @@ const  { runSql, checkPass } = require('./db');
 const  { snapOut, snapIn } = require('./snap');
 const  { loop } = require('./loops');
 const routing = require('./routing');
+const balances = require('./balances');
 
 const file = new static.Server('./public');
- 
+
+async function mixInBalances(contacts) {
+  for (let i=0; i<contacts.length; i++) {
+    console.log(contacts[i]);
+    contacts[i].payable = await balances.getPayable(contacts[i].user_id, contacts[i].id);
+    contacts[i].receivable = await balances.getReceivable(contacts[i].user_id, contacts[i].id);
+    contacts[i].current =  await balances.getCurrent(contacts[i].user_id, contacts[i].id);
+  }
+  return contacts;
+}
+
 function handler (req, res) {
   let body = '';
   req.on('data', (chunk) => {
@@ -99,10 +110,15 @@ function handler (req, res) {
               }
             }
             const columns  = {
-              contacts: '"user_id", "name", "url", "token", "min", "max"',
+              contacts: '"id", "user_id", "name", "url", "token", "min", "max"',
               transactions: '"user_id", "requested_at", "description", "direction", "amount"'
             };
             runSql(`SELECT ${columns[resource]} FROM ${resource} WHERE user_id = $1;`, [ user_id ]).then(data => {
+              if (resource  == 'contacts') {
+                return mixInBalances(data);
+              }
+              return data;
+            }).then(data => {
               res.end(JSON.stringify({
                 ok: true,
                 [resource]: data

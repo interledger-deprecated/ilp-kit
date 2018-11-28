@@ -1,16 +1,14 @@
 const hashlocks = require('hashlocks');
 const { storeRoutes } = require('./routing');
 const  { runSql, getObject, getValue } = require('./db');
+const balances = require('./balances');
 
 async function newTransaction(userId, contact, transaction, direction, hubbie) {
   console.log('newTransaction', userId, contact, transaction, direction);
-  function getPendingBalance(direction) {
-    return getValue('SELECT SUM(amount) AS value FROM transactions WHERE user_id = $1 AND contact_id = $2 AND direction = $3 AND status = \'pending\'', [ userId, contact.id, direction ]).then(val => parseInt(val || 0));
-  }
 
-  const receivable = await getPendingBalance('IN');
-  const payable = await getPendingBalance('OUT');
-  const current = parseInt(await getValue('SELECT SUM(amount * CASE direction WHEN \'IN\' THEN 1 WHEN \'OUT\' THEN -1 END) AS value FROM transactions WHERE user_id = $1 AND contact_id = $2 AND status = \'accepted\'', [ userId, contact.id ]) || 0);
+  const receivable = await balances.getReceivable(userId, contact.id);
+  const payable = await balances.getPayable(userId, contact.id);
+  const current = await balances.getCurrent(userId, contact.id);
   if (direction === 'IN') {
     // their current balance will go up by amount
     console.log(`CHECK1] ${current} + ${receivable} + ${transaction.amount} ?> ${contact.max}`);

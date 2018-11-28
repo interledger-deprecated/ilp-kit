@@ -3,12 +3,9 @@ const db = require('./db');
 async function storeRoutes(userName, peerName, obj) {
   const user = await db.getObject('SELECT id FROM users WHERE name = $1', [ userName ]);
   const contact = await db.getObject('SELECT id, url, token, min, max FROM contacts WHERE user_id= $1  AND name = $2', [ user.id, peerName ]);
-  function getPendingBalance(direction) {
-    return db.getValue('SELECT SUM(amount) AS value FROM transactions WHERE user_id = $1 AND contact_id = $2 AND direction = $3 AND status = \'pending\'', [ user.id, contact.id, direction ]).then(val => parseInt(val || 0));
-  }
-  const payable = await getPendingBalance('OUT');
-  // calculate their current-payable-min balance as a max of how much you want to route through them
-  const current = parseInt(await db.getValue('SELECT SUM(amount * CASE direction WHEN \'IN\' THEN 1 WHEN \'OUT\' THEN -1 END) AS value FROM transactions WHERE user_id = $1 AND contact_id = $2 AND status = \'accepted\'', [ user.id, contact.id ]) || 0);
+  const receivable = await balances.getReceivable(user.id, contact.id);
+  const payable = await balances.getPayable(user.id, contact.id);
+  const current = await balances.getCurrent(user.id, contact.id);
     console.log(`CHECK3] ${current} - ${payable} - ${contact.min}`);
   const limit  = (current -  payable - contact.min);
   for (let landmark in obj.canRoute) {
