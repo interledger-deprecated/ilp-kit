@@ -57,10 +57,11 @@ function makeHandler(hubbie) {
           try {
             // console.log(req.headers, body);
             const [username, password] = atob(req.headers.authorization.split(' ')[1]).split(':');
-            const userId = checkPass(username, password);
+            const userId = await checkPass(username, password);
             if (userId === false) {
               throw new Error('auth fail');
             }
+            // console.log('calling  snapOut',  userId, body);
             const transactionId = await snapOut(userId, JSON.parse(body), hubbie);
             const response = {
               ok: true,
