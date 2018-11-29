@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const { Pool } = require('pg');
 
 let pool;
+let client;
 
 async function runSql(query, params) {
   if (!pool) {
@@ -9,10 +10,11 @@ async function runSql(query, params) {
       connectionString: process.env.DATABASE_URL || 'postgresql://snap:snap@localhost/dev',
       ssl: true,
     });
+    client = await pool.connect();
   }
   // console.log('running sql', query, params);
   try {
-    const result = await pool.query(query, params);
+    const result = await client.query(query, params);
     const results = (result && result.rowCount) ? result.rows : null;
     return results;
   } catch (err) {
@@ -63,6 +65,8 @@ function getValue(query, params, defaultVal) {
 
 module.exports = {
   runSql, checkPass, getObject, getValue, close: () => {
+    client.release();
+    client = null;
     return pool.end().then(() => {
       pool = null;
     });

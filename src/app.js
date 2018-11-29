@@ -108,7 +108,7 @@ function makeHandler(hubbie) {
               if (user_id === false) {
                 throw new Error('auth error');
               }
-              if (req.method === 'POST' && !Number.isNaN(index)) {
+              if (req.method === 'POST') {
                 const obj = JSON.parse(body);
                 // console.log('saving', resource, index, obj);
                 if (resource === 'contacts') {
