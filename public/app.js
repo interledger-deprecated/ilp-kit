@@ -27,6 +27,7 @@ let app = new Vue({
     session:  null,
     loggingin: false,
     registering:  false,
+    ready: false,
     username: null,
     password: null,
     repeat: null,
@@ -71,7 +72,10 @@ let app = new Vue({
           }, 0);
           this.fetchData('contacts');
           this.fetchData('transactions');
+          this.ready = true;
         }
+      }).catch((e) => {
+        this.ready = true;
       });
     },
     fetchData: function(resource) {

@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="bulma.min.css">
     <script defer src="fontawesome.min.js"></script>
     <script src="vue.min.js"></script>
+    <style>
+      [v-cloak] { display: none; }
+    </style>
   </head>
   <body>
     <div id="app">
@@ -23,7 +26,7 @@
       </div>
       
       <!-- not logged in -->
-      <div v-if="!session && !loggingin && !registering">
+      <div v-if="ready && !session && !loggingin && !registering" v-cloak>
         <section class="section">
           <div class="container">
             <a class="button is-large is-info" v-on:click="loggingin=true">Login</a>
@@ -33,7 +36,7 @@
       </div>
 
       <!-- registration -->
-      <div v-if="registering">
+      <div v-if="registering" v-cloak>
         <p>Username: <input v-model="username" placeholder="Pick a username"></p>
         <p>Password: <input v-model="password" type="password" placeholder="Pick a password"></p>
         <p>Repeat: <input v-model="repeat" type="password" placeholder="Repeat your password"></p>
@@ -41,14 +44,14 @@
       </div>
 
       <!-- login -->
-      <div v-if="loggingin">
+      <div v-if="loggingin" v-cloak>
         <p>Username: <input v-model="username" placeholder="Your username"></p>
         <p>Password: <input v-model="password" type="password" placeholder="Your password"></p>
         <p><a class="button is-large is-info" v-on:click="login">Login</a></p>
       </div>
 
       <!-- main gui tabs -->
-      <div v-if="session">
+      <div v-if="session" v-cloak>
 
         <!-- profile tab -->
         <div v-if="tab  ==  'profile'">
