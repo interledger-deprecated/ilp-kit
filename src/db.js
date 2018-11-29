@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const { Pool } = require('pg');
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || 'postgresql://snap:snap@localhost/snap',
+  connectionString: process.env.DATABASE_URL || 'postgresql://snap:snap@localhost/dev',
   ssl: true,
 });
 
@@ -17,13 +17,13 @@ async function runSql(query, params) {
     // console.log('query', query, params);
     const result = await client.query(query, params);
     const results = (result && result.rowCount) ? result.rows : null;
-    // // console.log('sql results', result, results);
+    // console.log('sql results', results);
     client.release();
     return results;
   } catch (err) {
-    // console.log('DATABASE ERROR!');
-    // console.error(err);
-    // throw err;
+    console.log('DATABASE ERROR!');
+    console.error(err);
+    throw err;
   }
   return undefined; // eslint requires this
 }

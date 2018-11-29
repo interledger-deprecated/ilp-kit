@@ -10,13 +10,15 @@ sudo su - postgres
 | createuser snap --pwprompt
 | | Enter password for new role: snap
 | | Enter it again: snap
-| createdb -O snap snap
+| createdb -O snap prod
+| createdb -O snap dev
+| createdb -O snap test
 | exit
-psql postgresql://snap:snap@localhost/snap < drop.sql
-psql postgresql://snap:snap@localhost/snap < schema.sql
-psql postgresql://snap:snap@localhost/snap < fixture.sql
+psql postgresql://snap:snap@localhost/dev < drop.sql
+psql postgresql://snap:snap@localhost/dev < schema.sql
+psql postgresql://snap:snap@localhost/dev < fixture.sql
 npm install
-DATABASE_URL=postgresql://snap:snap@localhost/snap npm start
+DATABASE_URL=postgresql://snap:snap@localhost/dev npm start
 
 # michiel -> edward:
 curl -H 'Authorization: Basic bWljaGllbDpxd2Vy' -X'PUT' http://localhost:3000/sendroutes -d '1'
