@@ -144,27 +144,19 @@ function handler (req, res) {
   });
 }
 
-const hubbie = new Hubbie();
-
-hubbie.on('peer', (eventObj) => {
-  console.log('hubbie peer!', eventObj);
-  return runSql('select c.token from users u join contacts c on u.id=c.user_id where u.name= $1 and c.name= $2', [
-    eventObj.userName,
-    eventObj.peerName,
-  ]).then(results => {
-    return results && results.length && eventObj.peerSecret == results[0].token;
+function initApp(hubbie) {
+  hubbie.on('peer', (eventObj) => {
+    console.log('hubbie peer!', eventObj);
+    return runSql('select c.token from users u join contacts c on u.id=c.user_id where u.name= $1 and c.name= $2', [
+      eventObj.userName,
+      eventObj.peerName,
+    ]).then(results => {
+      return results && results.length && eventObj.peerSecret == results[0].token;
+    });
   });
-});
-
-hubbie.on('message', (peerName, msg, userName) => {
-  return snapIn(peerName, msg, userName, hubbie);
-});
-
-hubbie.listen({
-  port: process.env.PORT || 3000,
-  multiUser: true,
-  handler
-});
-runSql('SELECT now();').then(result => {
-  console.log({ result });
-});
+  
+  hubbie.on('message', (peerName, msg, userName) => {
+    return snapIn(peerName, msg, userName, hubbie);
+  });
+}
+module.exports = { handler, initApp };

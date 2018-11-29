@@ -2,10 +2,11 @@
   "name": "nlt-kit",
   "version": "1.0.0",
   "description": "Network Ledger Technology (demo server)",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/server.js",
+    "test": "eslint src/**/*.js; eslint test/**/*.js; npm run unit",
+    "unit": "mocha  test/**/*.js"
   },
   "repository": {
     "type": "git",
@@ -32,5 +33,15 @@
     "node-static": "^0.7.11",
     "pg": "^7.6.1",
     "randombytes": "^2.0.6"
+  },
+  "devDependencies": {
+    "chai": "^4.1.1",
+    "eslint": "^4.2.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-node": "^5.1.0",
+    "eslint-plugin-promise": "^3.5.0",
+    "mocha": "^5.2.0"
   }
 }
