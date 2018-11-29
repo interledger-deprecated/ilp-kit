@@ -10,6 +10,4 @@ hubbie.listen({
   multiUser: true,
   handler: App.makeHandler(hubbie),
 });
-db.runSql('SELECT now();').then((result) => {
-  // console.log({ result });
-});
+db.runSql('SELECT now();'); // test db connection

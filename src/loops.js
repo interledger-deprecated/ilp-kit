@@ -3,32 +3,33 @@ const randomBytes = require('randombytes');
 const { runSql, getObject, getValue } = require('./db');
 const balances = require('./balances');
 
-async function newTransaction(userId, contact, transaction, direction, hubbie) {
-  console.log('newTransaction', userId, contact, transaction, direction);
+async function newTransaction(userId, contact, transaction, direction) {
+  // console.log('newTransaction', userId, contact, transaction, direction);
   const receivable = await balances.getMyReceivable(userId, contact.id);
   const payable = await balances.getMyPayable(userId, contact.id);
   const current = await balances.getMyCurrent(userId, contact.id);
   if (direction === 'IN') {
     // their current balance will go up by amount
-    console.log(`CHECK1] ${current} + ${receivable} + ${transaction.amount} ?> ${contact.max}`);
+    // console.log(`CHECK1] ${current} + ${receivable} + ${transaction.amount} ?> ${contact.max}`);
     if (current + receivable + transaction.amount > contact.max) {
-      console.log(current, typeof current, receivable, typeof receivable, transaction, typeof transaction.amount, contact, typeof contact.max);
+      // console.log(current, typeof current, receivable, typeof receivable,
+      //      transaction, typeof transaction.amount, contact, typeof contact.max);
       throw new Error('peer could hit max balance (IN)');
     }
     // in case of neg amount:
-    console.log(`CHECK2] ${current} - ${payable} + ${transaction.amount} ?< ${contact.min}`);
+    // console.log(`CHECK2] ${current} - ${payable} + ${transaction.amount} ?< ${contact.min}`);
     if (current - payable + transaction.amount < contact.min) {
       throw new Error('peer could hit min balance (IN)');
     }
   }
   if (direction === 'OUT') {
     // their current balance will go down by amount
-    console.log(`CHECK3] ${current} - ${payable} - ${transaction.amount} ?< ${contact.min}`);
+    // console.log(`CHECK3] ${current} - ${payable} - ${transaction.amount} ?< ${contact.min}`);
     if (current - payable - transaction.amount < contact.min) {
       throw new Error('peer could hit min balance (OUT)');
     }
     // in case of neg amount:
-    console.log(`CHECK4] ${current} + ${receivable} - ${transaction.amount} ?> ${contact.max}`);
+    // console.log(`CHECK4] ${current} + ${receivable} - ${transaction.amount} ?> ${contact.max}`);
     if (current + receivable - transaction.amount > contact.max) {
       throw new Error('peer could hit max balance (OUT)');
     }
@@ -58,11 +59,11 @@ async function loop(userId, obj, hubbie) {
   if (typeof obj.contactName !== 'string') {
     throw new Error('snapOut: obj.contactName not a string');
   }
-  console.log('snapOut', userId, obj);
-  console.log('will create transaction with msgId', obj.msgId);
+  // console.log('snapOut', userId, obj);
+  // console.log('will create transaction with msgId', obj.msgId);
   const landmark = await getValue('SELECT landmark FROM contacts WHERE user_id= $1  AND name = $2', [userId, obj.contactName]);
   const routes = await runSql('SELECT r.* FROM routes r INNER JOIN contacts c ON r.landmark = c.landmark WHERE r.user_id = $1 AND c.user_id = $1 AND c.name = $2', [userId, obj.contactName]);
-  console.log(routes);
+  // console.log(routes);
   const preimage = randomBytes(32);
   const hash = hashlocks.sha256(preimage);
   const condition = hash.toString('hex');
@@ -77,24 +78,28 @@ async function loop(userId, obj, hubbie) {
     condition,
   };
   const friend = await getObject('SELECT * FROM contacts WHERE user_id = $1 AND id = $2', [userId, friendId]);
-  let inserted;
   try {
-    inserted = await newTransaction(userId, friend, trans, 'OUT', hubbie);
+    await newTransaction(userId, friend, trans, 'OUT', hubbie);
   } catch (e) {
-    console.error('snapOut fail', e.message);
+    // console.error('snapOut fail', e.message);
     throw e;
   }
-  console.log('hubbie send out', userId, friend, inserted, trans);
+  // console.log('hubbie send out', userId, friend, inserted, trans);
   // in server-to-server http cross post,
   // the existence of a contact allows incoming http but also outgoing
   // a useful common practice is if the username+token is the same in both directions
   // when that happens, hubbie channels can be used in both directions.
   // When not, you would use two hubbie channels, one dedicated for incoming, and one
   // for outgoing. Not a big deal, but unnecessarily confusing.
-  // Only downside: you need to give your peer a URL that ends in the name they have in your addressbook.
+  // Only downside: you need to give your peer a URL that ends in the name they have
+  // in your addressbook.
   // For now, we use a special hubbie channel to make the outgoing call:
   const peerName = `${userId}:${friend.name}`;
-  hubbie.addClient({ peerUrl: friend.url, myName: /* fixme: hubbie should omit myName before mySecret in outgoing url */ friend.token, peerName });
+  hubbie.addClient({
+    peerUrl: friend.url,
+    myName: /* fixme: hubbie should omit myName before mySecret in outgoing url */ friend.token,
+    peerName,
+  });
   return hubbie.send(peerName, JSON.stringify(trans));
 }
 
