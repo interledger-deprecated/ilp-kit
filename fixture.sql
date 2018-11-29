@@ -2,6 +2,7 @@
 INSERT INTO users (name, secrethash) VALUES('michiel', '$2b$10$tmznzb0z6FTgb4RNRd5NYOp1WR2SHYvnZuDzawF6BHZPNygsFZ8me');
 INSERT INTO contacts (user_id, name, url, token, min, max, landmark) VALUES (1, 'Eddie', 'http://localhost:3000/edward/Micky', '45yga3iuhewp3oi3w4j', -10, 1000, 'michiel:edward');
 INSERT INTO contacts (user_id, name, url, token, min, max, landmark) VALUES (1, 'Donnie', 'http://localhost:3000/donald/Mike', '45yga3iuhewp3oi3w4j', -10, 1000, 'michiel:donald');
+INSERT INTO contacts (user_id, name, url, token, min, max, landmark) VALUES (1, 'contact-bob', null, 'some_token', -10, 1000, 'landmark');
 
 -- create user 2  with users 1 and 3 as contacts:
 INSERT INTO users (name, secrethash) VALUES('edward', '$2b$10$GuyyjgXJqoSYaalD/lFJFug4ikCUhHjcjMaZoQjVC/XLT8FdaDkTG');

@@ -22,7 +22,16 @@ describe('Pay', function () {
     await runSqlFile('./schema.sql');
     await runSqlFile('./fixture.sql');
     await db.runSql('DELETE FROM transactions');
-    this.hubbie = new Hubbie();
+    this.snapSent =  [];
+    this.hubbie = {
+      addClient: () => {
+      },
+      send: (peerName, msg, userId) => {
+        this.snapSent.push({ peerName, msg, userId });
+      },
+      on: (eventType, eventObj) => {
+      }
+    };
     App.initApp(this.hubbie);
     this.handler = App.makeHandler(this.hubbie);
     await new Promise(resolve => this.handler({
@@ -34,7 +43,7 @@ describe('Pay', function () {
       on: (eventName, eventHandler) => {
         if (eventName  == 'data') {
           setTimeout(() => eventHandler(JSON.stringify({
-            contactName: 'Eddie',
+            contactName: 'contact-bob',
             amount: 3
           })), 0);
         } else {
@@ -56,21 +65,29 @@ describe('Pay', function () {
     await db.close();
   });
 
-  it('pays a contact', async function () {
+  it('creates a transsaction', async function () {
     const firstTransaction = await db.getObject('SELECT * FROM transactions LIMIT 1');
-     assert.deepEqual(firstTransaction, {
-       "amount": 3,
-       "contact_id": 1,
-       "description": null,
-       "direction": "OUT",
-       "id": 3,
-       "msgid": 1,
-       "request_json": null,
-       "requested_at": new Date(firstTransaction.requested_at),
-       "responded_at": null,
-       "response_json": null,
-       "status": "pending",
-       "user_id": 1,
+    assert.deepEqual(firstTransaction, {
+      "amount": 3,
+      "contact_id": 3,
+      "description": null,
+      "direction": "OUT",
+      "id": 3,
+      "msgid": 1,
+      "request_json": null,
+      "requested_at": new Date(firstTransaction.requested_at),
+      "responded_at": null,
+      "response_json": null,
+      "status": "pending",
+      "user_id": 1,
     });
+  });
+
+  it('sends a snap message', async function () {
+    assert.deepEqual(this.snapSent, [ {
+      peerName:  '1:contact-bob',
+      msg:  '{"msgType":"PROPOSE","msgId":1,"amount":3}',
+      userId: undefined,
+    }]);
   });
 });
