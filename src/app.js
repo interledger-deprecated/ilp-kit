@@ -114,9 +114,6 @@ function makeHandler(hubbie) {
                 if (resource === 'contacts') {
                   runSql('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max") VALUES ($1, $2, $3, $4, $5, $6);', [user_id, obj.name, obj.url, obj.token, obj.min, obj.max]);
                 }
-                if (resource === 'transactions') {
-                  runSql('INSERT INTO transactions ("user_id", "requested_at", "description", "direction", "amount") VALUES ($1, $2, $3, $4, $5);', [user_id, obj.date, obj.description, obj.direction, obj.amount]);
-                }
               }
               getData(user_id, resource).then((data) => {
                 res.end(JSON.stringify({
