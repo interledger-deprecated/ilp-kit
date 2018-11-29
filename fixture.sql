@@ -17,5 +17,7 @@ INSERT INTO contacts (user_id, name, url, token, min, max, landmark) VALUES (3, 
 INSERT INTO transactions (user_id, contact_id, requested_at, description, direction, amount) VALUES (1, 1, '12-11-2018', 'Beers after squash game', 'OUT', 25);
 INSERT INTO transactions (user_id, contact_id, requested_at, description, direction, amount) VALUES (2, 2, '12-11-2018', 'Beers after squash game', 'IN', 25);
 
--- preimage
+-- preimage, forwards, routes:
 INSERT INTO preimages (user_id, hash, preimage) VALUES (3, 'bc21571c5f1968c083c5740bb0879bde3f61c787e3c41540cd3290604f70bbed', '36d0589ec033779c31b50a8cff4aeeacaece3c0ecfe0d8a300b307fd29cf59a3');
+INSERT INTO forwards (user_id, incoming_peer_id, incoming_msg_id, outgoing_peer_id, hash) VALUES (1, 1, 1, 2, 'asdf');
+INSERT INTO routes (user_id, contact_id, landmark, amount) VALUES (1, 1, 'asdf', 5);

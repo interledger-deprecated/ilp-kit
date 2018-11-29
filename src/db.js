@@ -1,24 +1,19 @@
 const bcrypt = require('bcrypt');
 const { Pool } = require('pg');
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || 'postgresql://snap:snap@localhost/dev',
-  ssl: true,
-});
+let pool;
 
 async function runSql(query, params) {
   if (!pool) {
-    // console.log('ERROR! NO DATABASE CONNECTION!');
-    return null;
+    pool = new Pool({
+      connectionString: process.env.DATABASE_URL || 'postgresql://snap:snap@localhost/dev',
+      ssl: true,
+    });
   }
   // console.log('running sql', query, params);
   try {
-    const client = await pool.connect();
-    // console.log('query', query, params);
-    const result = await client.query(query, params);
+    const result = await pool.query(query, params);
     const results = (result && result.rowCount) ? result.rows : null;
-    // console.log('sql results', results);
-    client.release();
     return results;
   } catch (err) {
     console.log('DATABASE ERROR!');
@@ -67,5 +62,9 @@ function getValue(query, params, defaultVal) {
 }
 
 module.exports = {
-  runSql, checkPass, getObject, getValue,
+  runSql, checkPass, getObject, getValue, close: () => {
+    return pool.end().then(() => {
+      pool = null;
+    });
+  }
 };
