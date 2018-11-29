@@ -32,6 +32,7 @@ let app = new Vue({
     repeat: null,
     tab: 'profile',
     edit:  -1,
+    expand: -1,
     pay: -1,
     payAmount: 0,
     contacts: [],

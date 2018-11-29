@@ -124,19 +124,19 @@
           </table>
         </div>
 
-        <!-- ledger tab, edit: -->
-        <div v-if="tab == 'ledger' && edit>-1">
-          (editing transaction {{ edit  }})
-          <p>Date: <input v-model="transactions[edit].date" placeholder="dd-mm-yyyy"></p>
-          <p>Description: <input v-model="transactions[edit].description"></p>
-          <p>Direction: <input v-model="transactions[edit].direction" placeholder="IN or OUT"></p>
-          <p>Amount: <input v-model="transactions[edit].amount"></p>
-          <a class="button is-success" v-on:click="save('transactions', edit); edit=-1">
-            Done
+        <!-- ledger tab, expand: -->
+        <div v-if="tab == 'ledger' && expand>-1">
+          (Details of transaction {{ expand }})
+          <p>Date: {{ transactions[expand].date }}</p>
+          <p>Description: {{ transactions[expand].description }}</p>
+          <p>Direction: {{ transactions[expand].direction }}</p>
+          <p>Amount: {{ transactions[expand].amount }} UCR</p>
+          <a class="button is-success" v-on:click="expand=-1">
+            Close
           </a>
         </div>
         <!-- ledger tab, list: -->
-        <div v-if="tab == 'ledger' && edit==-1">
+        <div v-if="tab == 'ledger' && edit==-1 && expand==-1">
           <section class="section">
             <div class="container">
               <a class="button is-primary" v-on:click="fetchData('transactions')">
