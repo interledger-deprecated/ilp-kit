@@ -8,8 +8,8 @@ App.initApp(hubbie);
 hubbie.listen({
   port: process.env.PORT || 3000,
   multiUser: true,
-  handler: App.handler,
+  handler: App.makeHandler(hubbie),
 });
 db.runSql('SELECT now();').then((result) => {
-  console.log({ result });
+  // console.log({ result });
 });
