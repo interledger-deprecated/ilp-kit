@@ -10,7 +10,7 @@ async function runSqlFile(filename) {
   }
 }
 
-describe('App', function () {
+describe('Database', function () {
   before(async function () {
     process.env.DATABASE_URL = 'postgresql://snap:snap@localhost/test';
   });
