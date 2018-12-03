@@ -18,11 +18,10 @@ async function runSql(query, params) {
     const results = (result && result.rowCount) ? result.rows : null;
     return results;
   } catch (err) {
-    console.log('DATABASE ERROR!');
-    console.error(err);
+    console.log('DATABASE ERROR!'); // eslint-disable-line no-console
+    console.error(err); // eslint-disable-line no-console
     throw err;
   }
-  return undefined; // eslint requires this
 }
 function checkPass(username, password) {
   // console.log('checking  password', username, password);
@@ -64,11 +63,15 @@ function getValue(query, params, defaultVal) {
 }
 
 module.exports = {
-  runSql, checkPass, getObject, getValue, close: () => {
+  runSql,
+  checkPass,
+  getObject,
+  getValue,
+  close: () => {
     client.release();
     client = null;
     return pool.end().then(() => {
       pool = null;
     });
-  }
+  },
 };

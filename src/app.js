@@ -40,7 +40,7 @@ function makeHandler(hubbie) {
       body += chunk;
     });
     async function handleReq() {
-      const [, resource, index] = req.url.split('/');
+      const [, resource] = req.url.split('/');
       switch (resource) {
         case 'session':
           try {
