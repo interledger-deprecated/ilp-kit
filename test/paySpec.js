@@ -17,7 +17,7 @@ describe('Pay', function () {
   });
 
   beforeEach(async function () {
-    await runSqlFile('./drop.sql');
+    // await runSqlFile('./drop.sql');
     await runSqlFile('./schema.sql');
     await runSqlFile('./fixture.sql');
     await db.runSql('DELETE FROM transactions');
@@ -57,7 +57,7 @@ describe('Pay', function () {
   });
 
   afterEach(async function () {
-    // await runSqlFile('./drop.sql');
+    await runSqlFile('./drop.sql');
   });
 
   after(async function () {

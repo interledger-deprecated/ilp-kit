@@ -62,7 +62,7 @@ describe('Contacts', function () {
     const firstContact = await db.getObject('SELECT * FROM contacts LIMIT 1');
     assert.deepEqual(firstContact, {
       user_id: 1,
-      id: 7,
+      id: 8,
       landmark: null,
       max: 10,
       min: 5,
