@@ -1,14 +1,14 @@
 const { assert } = require('chai');
 const fs = require('fs');
-const Hubbie =  require('hubbie');
+const Hubbie = require('hubbie');
 const db = require('../src/db');
-const App =  require('../src/app');
+const App = require('../src/app');
 
 async function runSqlFile(filename) {
   const file = fs.readFileSync(filename).toString().split('\r\n');
-  for (const line of file) {
+  for (const line of file) { // eslint-disable-line no-restricted-syntax
     // console.log(line);
-    await db.runSql(line);
+    await db.runSql(line); // eslint-disable-line no-await-in-loop
   }
 }
 
@@ -26,27 +26,27 @@ describe('Contacts', function () {
     this.handler = App.makeHandler(this.hubbie);
     await new Promise(resolve => this.handler({
       headers: {
-        authorization: 'Basic bWljaGllbDpxd2Vy'
+        authorization: 'Basic bWljaGllbDpxd2Vy',
       },
       url: '/contacts',
       method: 'POST',
       on: (eventName, eventHandler) => {
-        if (eventName  == 'data') {
+        if (eventName === 'data') {
           setTimeout(() => eventHandler(JSON.stringify({
             name: 'name',
-            url:  'url',
-            token:'some_token',
+            url: 'url',
+            token: 'some_token',
             min: 5,
-            max: 10
+            max: 10,
           })), 0);
         } else {
           setTimeout(() => eventHandler(), 0);
         }
       },
     }, {
-      end: (response) => {
+      end: () => {
         resolve();
-      }
+      },
     }));
   });
 
@@ -61,14 +61,14 @@ describe('Contacts', function () {
   it('creates a contact', async function () {
     const firstContact = await db.getObject('SELECT * FROM contacts LIMIT 1');
     assert.deepEqual(firstContact, {
-      "user_id": 1,
-      "id": 7,
-      "landmark": null,
-      "max": 10,
-      "min": 5,
-      "name": "name",
-      "token": "some_token",
-      "url": "url",
+      user_id: 1,
+      id: 7,
+      landmark: null,
+      max: 10,
+      min: 5,
+      name: 'name',
+      token: 'some_token',
+      url: 'url',
     });
   });
 });
