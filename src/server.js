@@ -3,7 +3,7 @@ const App = require('./app');
 const db = require('./db');
 
 const hubbie = new Hubbie();
-const port = process.env.PORT || 3000;
+const port = parseInt(process.env.PORT || 3000);
 console.log('binding to port', port); // eslint-disable-line no-console
 
 App.initApp(hubbie);
