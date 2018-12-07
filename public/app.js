@@ -72,8 +72,8 @@ let app = new Vue({
           }, 0);
           this.fetchData('contacts');
           this.fetchData('transactions');
-          this.ready = true;
         }
+        this.ready = true;
       }).catch((e) => {
         this.ready = true;
       });
@@ -130,6 +130,7 @@ let app = new Vue({
 setTimeout(() => {
   const creds = localStorage.getItem('creds');
   if (creds === null) {
+    this.ready = true;
     return;
   }
   const parts = creds.split(':');
