@@ -34,6 +34,15 @@ function getData(user_id, resource) {
 }
 
 function makeHandler(hubbie) {
+  hubbie.on('peer', eventObj => runSql(
+    'select c.token from users u join contacts c on u.id=c.user_id where u.name= $1 and c.name= $2', [
+      eventObj.userName,
+      eventObj.peerName,
+    ], // I think requiring this trailing comma is a bug in eslint
+  ).then(results => results && results.length && eventObj.peerSecret === results[0].token));
+
+  hubbie.on('message', (peerName, msg, userName) => snapIn(peerName, msg, userName, hubbie));
+
   return function handler(req, res) {
     let body = '';
     req.on('data', (chunk) => {
@@ -135,14 +144,4 @@ function makeHandler(hubbie) {
   };
 }
 
-function initApp(hubbie) {
-  hubbie.on('peer', eventObj => runSql(
-    'select c.token from users u join contacts c on u.id=c.user_id where u.name= $1 and c.name= $2', [
-      eventObj.userName,
-      eventObj.peerName,
-    ], // I think requiring this trailing comma is a bug in eslint
-  ).then(results => results && results.length && eventObj.peerSecret === results[0].token));
-
-  hubbie.on('message', (peerName, msg, userName) => snapIn(peerName, msg, userName, hubbie));
-}
-module.exports = { makeHandler, initApp };
+module.exports = { makeHandler };

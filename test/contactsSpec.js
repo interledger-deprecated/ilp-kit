@@ -22,7 +22,6 @@ describe('Contacts', function () {
     await runSqlFile('./fixture.sql');
     await db.runSql('DELETE FROM contacts');
     this.hubbie = new Hubbie();
-    App.initApp(this.hubbie);
     this.handler = App.makeHandler(this.hubbie);
     await new Promise(resolve => this.handler({
       headers: {

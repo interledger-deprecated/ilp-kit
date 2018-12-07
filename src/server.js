@@ -6,7 +6,6 @@ const hubbie = new Hubbie();
 const port = parseInt(process.env.PORT || 3000, 10);
 console.log('binding to port', port); // eslint-disable-line no-console
 
-App.initApp(hubbie);
 hubbie.listen({
   port,
   multiUser: true,

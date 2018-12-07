@@ -31,7 +31,6 @@ describe('Pay', function () {
       on: () => {
       },
     };
-    App.initApp(this.hubbie);
     this.handler = App.makeHandler(this.hubbie);
     await new Promise(resolve => this.handler({
       headers: {
