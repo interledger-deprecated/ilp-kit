@@ -22,6 +22,7 @@
           <li v-if="session" v-bind:class="{ 'is-active': tab  == 'profile' }" v-on:click="tab = 'profile'"><a>Profile</a></li> 
           <li v-if="session" v-bind:class="{ 'is-active': tab  == 'contacts' }" v-on:click="if (session) { tab = 'contacts' }"><a>Contacts</a></li> 
           <li v-if="session" v-bind:class="{ 'is-active': tab  == 'ledger' }" v-on:click="if (session) { tab = 'ledger' }"><a>Ledger</a></li> 
+          <li v-if="session" v-on:click="logout();"><a>Logout</a></li>
         </ul>
       </div>
       

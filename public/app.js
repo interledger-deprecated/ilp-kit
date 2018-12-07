@@ -127,6 +127,11 @@ let app = new Vue({
   }
 });
 
+function logout() {
+  localStorage.removeItem('creds');
+  app.session  = null;
+}
+
 setTimeout(() => {
   const creds = localStorage.getItem('creds');
   if (creds === null) {
