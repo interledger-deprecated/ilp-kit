@@ -86,7 +86,7 @@ let app = new Vue({
       });
     },
     save: function (resource, index) {
-      post('/' + resource +  '/' + index, this[resource][index], this.username + ':' + this.password).then(data =>  {
+      post('/' + resource +  '/' + index, this[resource][index], this.username + ':' + this.password, 'PUT').then(data =>  {
         if (data[resource]) {
           this[resource] = data[resource];
          }
@@ -126,11 +126,6 @@ let app = new Vue({
     }
   }
 });
-
-function logout() {
-  localStorage.removeItem('creds');
-  app.session  = null;
-}
 
 setTimeout(() => {
   const creds = localStorage.getItem('creds');

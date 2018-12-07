@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 const Static = require('node-static');
 const atob = require('atob');
+const randomBytes = require('randombytes');
 
 const db = require('./db');
 const { snapOut, snapIn } = require('./snap');
@@ -12,6 +13,9 @@ const friendForm = require('./friendForm');
 const file = new Static.Server('./public');
 
 function mixInBalances(contacts) {
+  if (!contacts || !contacts.length) {
+    return [];
+  }
   async function addBalances(contact) {
     return Object.assign(contact, {
       payable: await balances.getTheirPayable(contact.user_id, contact.id),
@@ -46,7 +50,7 @@ function makeHandler(hubbie) {
   hubbie.on('message', (peerName, msg, userName) => snapIn(peerName, msg, userName, hubbie));
 
   return function handler(req, res) {
-    // console.log('hubbie passed req to app\'s own handler', req.method, req.url);
+    console.log('hubbie passed req to app\'s own handler', req.method, req.url);
     let body = '';
     req.on('data', (chunk) => {
       body += chunk;
@@ -119,20 +123,37 @@ function makeHandler(hubbie) {
         case 'contacts':
         case 'transactions':
           try {
-            // console.log(resource, req.headers.authorization, req.method, body);
+            console.log(resource, req.headers.authorization, req.method, body);
             const [username, password] = atob(req.headers.authorization.split(' ')[1]).split(':');
-            db.checkPass(username, password).then((user_id) => {
+            console.log('checkpass', username, password);
+            await db.checkPass(username, password).then((user_id) => {
+              console.log(user_id, req.method);
               if (user_id === false) {
                 throw new Error('auth error');
               }
-              if (req.method === 'POST') {
+              if (req.method === 'PUT') {
+                console.log('yes', resource, body);
                 const obj = JSON.parse(body);
-                // console.log('saving', resource, index, obj);
+                console.log('saving', resource, obj);
                 if (resource === 'contacts') {
-                  db.runSql('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max") VALUES ($1, $2, $3, $4, $5, $6);', [user_id, obj.name, obj.url, obj.token, obj.min, obj.max]);
+                  const myName = randomBytes(12).toString('hex');
+                  const token = randomBytes(12).toString('hex');
+                  db.runSql('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max") VALUES ($1, $2, $3, $4, $5, $6);', [user_id, obj.name, obj.url + '/' + myName, token, obj.min, obj.max]);
+                  const channelName = `${username}/${obj.name}`;
+                  hubbie.addClient({
+                    peerUrl: obj.url + '/' + myName,
+                    /* fixme: hubbie should omit myName before mySecret in outgoing url */
+                    myName: token,
+                    peerName: channelName,
+                  });
+                  return hubbie.send(obj.name /* part of channelName */, JSON.stringify({
+                    msgType: 'FRIEND-REQUEST',
+                    url: hubbie.myBaseUrl + '/' + username +  '/' + obj.name,
+                    token,
+                  }), username /* other part of channelName */); 
                 }
               }
-              getData(user_id, resource).then((data) => {
+              return getData(user_id, resource).then((data) => {
                 res.end(JSON.stringify({
                   ok: true,
                   [resource]: data,
@@ -140,6 +161,7 @@ function makeHandler(hubbie) {
               });
             });
           } catch (e) {
+            console.error(e.message);
             res.end(JSON.stringify({ ok: false, error: e.message }));
           }
           break;

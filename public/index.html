@@ -71,9 +71,8 @@
         <!-- contacts tab, edit: -->
         <div v-if="tab == 'contacts' && edit>-1">
           (editing contact {{ edit }})
-          <p>Name: <input v-model="contacts[edit].name" placeholder="Contact name"></p>
+          <p>Display Name: <input v-model="contacts[edit].name" placeholder="Contact name"></p>
           <p>URL: <input v-model="contacts[edit].url" placeholder="URL"></p>
-          <p>Token: <input v-model="contacts[edit].token" placeholder="A shared secret"></p>
           <p>Amount you trust them for: <input v-model="contacts[edit].max" placeholder="max"></p>
           <a class="button is-success" v-on:click="save('contacts', edit);edit=-1">
             Done
