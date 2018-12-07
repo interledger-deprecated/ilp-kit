@@ -130,7 +130,7 @@ let app = new Vue({
 setTimeout(() => {
   const creds = localStorage.getItem('creds');
   if (creds === null) {
-    this.ready = true;
+    app.ready = true;
     return;
   }
   const parts = creds.split(':');
