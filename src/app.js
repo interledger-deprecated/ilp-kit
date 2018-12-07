@@ -136,12 +136,13 @@ function makeHandler(hubbie) {
                 const obj = JSON.parse(body);
                 console.log('saving', resource, obj);
                 if (resource === 'contacts') {
-                  const myName = randomBytes(12).toString('hex');
+                  const myRemoteName = randomBytes(12).toString('hex');
                   const token = randomBytes(12).toString('hex');
-                  db.runSql('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max") VALUES ($1, $2, $3, $4, $5, $6);', [user_id, obj.name, obj.url + '/' + myName, token, obj.min, obj.max]);
                   const channelName = `${username}/${obj.name}`;
+                  const landmark = `${username}:${obj.name}`;
+                  db.runSql('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max", "landmark") VALUES ($1, $2, $3, $4, $5, $6, $7);', [user_id, obj.name, obj.url + '/' + myRemoteName, token, obj.min, obj.max, landmark]);
                   hubbie.addClient({
-                    peerUrl: obj.url + '/' + myName,
+                    peerUrl: obj.url + '/' + myRemoteName,
                     /* fixme: hubbie should omit myName before mySecret in outgoing url */
                     myName: token,
                     peerName: channelName,
