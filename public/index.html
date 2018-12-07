@@ -150,6 +150,7 @@
           <table  class="table">
             <thead>
               <tr>
+                <th>Contact</th>
                 <th>Date</th>
                 <th>Description</th>
                 <th>Direction</th>
@@ -159,6 +160,7 @@
             </thead>
             <tbody>
               <tr v-for="(transaction, index) in transactions">
+                <td>{{ transaction.peerName }}</td>
                 <td>{{ transaction.date }}</td>
                 <td>{{ transaction.description }}</td>
                 <td>{{ transaction.direction }}</td>

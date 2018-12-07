@@ -26,14 +26,30 @@ function mixInBalances(contacts) {
   return Promise.all(contacts.map(addBalances));
 }
 
+function mixInContactNames(transactions) {
+  if (!transactions || !transactions.length) {
+    return [];
+  }
+  async function addContactName(transaction) {
+    console.log('adding contact name', transaction);
+    return Object.assign(transaction, {
+      peerName: await db.getValue('SELECT name AS value FROM contacts WHERE id = $1 AND user_id = $2', [ transaction.contact_id, transaction.user_id ]),
+    });
+  }
+  return Promise.all(transactions.map(addContactName));
+}
+
 function getData(user_id, resource) {
   const columns = {
     contacts: '"id", "user_id", "name", "url", "token", "min", "max"',
-    transactions: '"user_id", "requested_at", "description", "direction", "amount"',
+    transactions: '"user_id", "contact_id", "requested_at", "description", "direction", "amount"',
   };
   return db.runSql(`SELECT ${columns[resource]} FROM ${resource} WHERE user_id = $1;`, [user_id]).then((data) => {
     if (resource === 'contacts') {
       return mixInBalances(data);
+    }
+    if (resource === 'transactions') {
+      return mixInContactNames(data);
     }
     return data;
   });
