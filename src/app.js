@@ -1,11 +1,13 @@
 /* eslint-disable camelcase */
 const Static = require('node-static');
 const atob = require('atob');
-const { runSql, checkPass } = require('./db');
+
+const db = require('./db');
 const { snapOut, snapIn } = require('./snap');
 const { loop } = require('./loops');
 const routing = require('./routing');
 const balances = require('./balances');
+const friendForm = require('./friendForm');
 
 const file = new Static.Server('./public');
 
@@ -25,7 +27,7 @@ function getData(user_id, resource) {
     contacts: '"id", "user_id", "name", "url", "token", "min", "max"',
     transactions: '"user_id", "requested_at", "description", "direction", "amount"',
   };
-  return runSql(`SELECT ${columns[resource]} FROM ${resource} WHERE user_id = $1;`, [user_id]).then((data) => {
+  return db.runSql(`SELECT ${columns[resource]} FROM ${resource} WHERE user_id = $1;`, [user_id]).then((data) => {
     if (resource === 'contacts') {
       return mixInBalances(data);
     }
@@ -34,7 +36,7 @@ function getData(user_id, resource) {
 }
 
 function makeHandler(hubbie) {
-  hubbie.on('peer', eventObj => runSql(
+  hubbie.on('peer', eventObj => db.runSql(
     'select c.token from users u join contacts c on u.id=c.user_id where u.name= $1 and c.name= $2', [
       eventObj.userName,
       eventObj.peerName,
@@ -44,18 +46,19 @@ function makeHandler(hubbie) {
   hubbie.on('message', (peerName, msg, userName) => snapIn(peerName, msg, userName, hubbie));
 
   return function handler(req, res) {
+    // console.log('hubbie passed req to app\'s own handler', req.method, req.url);
     let body = '';
     req.on('data', (chunk) => {
       body += chunk;
     });
     async function handleReq() {
-      const [, resource] = req.url.split('/');
+      const [, resource, who] = req.url.split('/');
       switch (resource) {
         case 'session':
           try {
             // console.log(req.headers);
             const [username, password] = atob(req.headers.authorization.split(' ')[1]).split(':');
-            checkPass(username, password).then((user_id) => {
+            db.checkPass(username, password).then((user_id) => {
               res.end(JSON.stringify({ username, ok: (user_id !== false) }));
             });
           } catch (e) {
@@ -66,7 +69,7 @@ function makeHandler(hubbie) {
           try {
             // console.log(req.headers, body);
             const [username, password] = atob(req.headers.authorization.split(' ')[1]).split(':');
-            const userId = await checkPass(username, password);
+            const userId = await db.checkPass(username, password);
             if (userId === false) {
               throw new Error('auth fail');
             }
@@ -86,7 +89,7 @@ function makeHandler(hubbie) {
         case 'topup':
           try {
             const [username, password] = atob(req.headers.authorization.split(' ')[1]).split(':');
-            const userId = await checkPass(username, password);
+            const userId = await db.checkPass(username, password);
             if (userId === false) {
               throw new Error('auth fail');
             }
@@ -99,7 +102,7 @@ function makeHandler(hubbie) {
         case 'sendroutes':
           try {
             const [username, password] = atob(req.headers.authorization.split(' ')[1]).split(':');
-            const userId = await checkPass(username, password);
+            const userId = await db.checkPass(username, password);
             if (userId === false) {
               throw new Error('auth fail');
             }
@@ -109,12 +112,16 @@ function makeHandler(hubbie) {
             res.end(JSON.stringify({ ok: false, error: e.message }));
           }
           break;
+        case 'profile': {
+          res.end(friendForm(who));
+          break;
+        }
         case 'contacts':
         case 'transactions':
           try {
             // console.log(resource, req.headers.authorization, req.method, body);
             const [username, password] = atob(req.headers.authorization.split(' ')[1]).split(':');
-            checkPass(username, password).then((user_id) => {
+            db.checkPass(username, password).then((user_id) => {
               if (user_id === false) {
                 throw new Error('auth error');
               }
@@ -122,7 +129,7 @@ function makeHandler(hubbie) {
                 const obj = JSON.parse(body);
                 // console.log('saving', resource, index, obj);
                 if (resource === 'contacts') {
-                  runSql('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max") VALUES ($1, $2, $3, $4, $5, $6);', [user_id, obj.name, obj.url, obj.token, obj.min, obj.max]);
+                  db.runSql('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max") VALUES ($1, $2, $3, $4, $5, $6);', [user_id, obj.name, obj.url, obj.token, obj.min, obj.max]);
                 }
               }
               getData(user_id, resource).then((data) => {

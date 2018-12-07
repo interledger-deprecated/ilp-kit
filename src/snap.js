@@ -1,6 +1,8 @@
 const hashlocks = require('hashlocks');
+const randomBytes = require('randombytes');
+
 const { storeRoutes } = require('./routing');
-const { runSql, getObject, getValue } = require('./db');
+const db = require('./db');
 const balances = require('./balances');
 
 async function newTransaction(userId, contact, transaction, direction) {
@@ -35,7 +37,7 @@ async function newTransaction(userId, contact, transaction, direction) {
       throw new Error('peer could hit max balance (OUT)');
     }
   }
-  return getValue('INSERT INTO transactions '
+  return db.getValue('INSERT INTO transactions '
       + '(user_id, contact_id, msgid, requested_at, description,  direction, amount, status) VALUES '
       + '($1,      $2,         $3,    now (),       $4,           $5,        $6,     \'pending\') RETURNING id AS value', [
     userId,
@@ -60,13 +62,13 @@ async function snapOut(userId, objIn, hubbie) {
   if (typeof objIn.contactName !== 'string') {
     throw new Error('snapOut: obj.contactName not a string');
   }
-  const maxId = await getValue('SELECT MAX(msgId) AS value FROM transactions', []);
+  const maxId = await db.getValue('SELECT MAX(msgId) AS value FROM transactions', []);
   const obj = Object.assign(objIn, {
     msgId: (maxId || 0) + 1,
   });
   // console.log('snapOut', userId, obj);
   // console.log('will create transaction with msgId', obj.msgId);
-  const contact = await getObject('SELECT id, url, token, min, max FROM contacts WHERE user_id= $1  AND name = $2', [userId, obj.contactName]);
+  const contact = await db.getObject('SELECT id, url, token, min, max FROM contacts WHERE user_id= $1  AND name = $2', [userId, obj.contactName]);
   try {
     await newTransaction(userId, contact, obj, 'OUT', hubbie);
   } catch (e) {
@@ -99,14 +101,14 @@ async function snapOut(userId, objIn, hubbie) {
 }
 
 async function usePreimage(obj, userName, hubbie) {
-  const userId = await getValue('SELECT id AS value FROM users WHERE name = $1', [userName]);
+  const userId = await db.getValue('SELECT id AS value FROM users WHERE name = $1', [userName]);
   const hash = hashlocks.sha256(Buffer.from(obj.preimage, 'hex')).toString('hex');
   // console.log('usePreimage', hash, obj);
-  const backPeer = await getObject('SELECT incoming_peer_id, incoming_msg_id FROM forwards WHERE user_id =  $1 AND hash = $2', [
+  const backPeer = await db.getObject('SELECT incoming_peer_id, incoming_msg_id FROM forwards WHERE user_id =  $1 AND hash = $2', [
     userId,
     hash,
   ]);
-  const contact = await getObject('SELECT name, url, token, min, max FROM contacts WHERE user_id= $1  AND id = $2', [userId, backPeer.incoming_peer_id]);
+  const contact = await db.getObject('SELECT name, url, token, min, max FROM contacts WHERE user_id= $1  AND id = $2', [userId, backPeer.incoming_peer_id]);
   // console.log('using in backwarded ACCEPT', contact, backPeer);
   const peerName = `${userId}:${contact.name}`;
   hubbie.addClient({
@@ -133,9 +135,9 @@ async function snapIn(peerName, message, userName, hubbie) {
   }
   // console.log('snapIn message parsed', message);
   async function updateStatus(newStatus, direction) {
-    const userId = await getValue('SELECT id AS value FROM users WHERE name = $1', [userName]);
-    const contactId = await getValue('SELECT id AS value FROM contacts WHERE user_id = $1 AND name = $2', [userId, peerName]);
-    return runSql('UPDATE transactions SET status = $1, responded_at = now() WHERE '
+    const userId = await db.getValue('SELECT id AS value FROM users WHERE name = $1', [userName]);
+    const contactId = await db.getValue('SELECT id AS value FROM contacts WHERE user_id = $1 AND name = $2', [userId, peerName]);
+    return db.runSql('UPDATE transactions SET status = $1, responded_at = now() WHERE '
         + 'msgid = $2 AND user_id = $3 AND contact_id = $4 AND direction = $5 AND status = \'pending\'',
     [newStatus, obj.msgId, userId, contactId, direction]);
   }
@@ -159,23 +161,23 @@ async function snapIn(peerName, message, userName, hubbie) {
       break;
     }
     case 'PROPOSE': {
-      const user = await getObject('SELECT id FROM users WHERE name = $1', [userName]);
-      const contact = await getObject('SELECT id, url, token, min, max FROM contacts WHERE user_id= $1  AND name = $2', [user.id, peerName]);
+      const user = await db.getObject('SELECT id FROM users WHERE name = $1', [userName]);
+      const contact = await db.getObject('SELECT id, url, token, min, max FROM contacts WHERE user_id= $1  AND name = $2', [user.id, peerName]);
       let result = 'ACCEPT';
       let preimage;
       try {
         if (obj.condition) {
           try {
-            preimage = await getValue('SELECT preimage AS value FROM preimages WHERE user_id = $1 AND hash = $2', [user.id, obj.condition]);
+            preimage = await db.getValue('SELECT preimage AS value FROM preimages WHERE user_id = $1 AND hash = $2', [user.id, obj.condition]);
           } catch (e) {
             // console.log('preimage  not found!~');
             // select a different peer at random:
-            const forwardPeer = await getObject('SELECT id, name FROM contacts WHERE user_id = $1 AND name != $2', [
+            const forwardPeer = await db.getObject('SELECT id, name FROM contacts WHERE user_id = $1 AND name != $2', [
               user.id,
               peerName,
             ]);
             // console.log({ forwardPeer });
-            await runSql('INSERT INTO forwards (user_id, incoming_peer_id, incoming_msg_id, outgoing_peer_id, hash) VALUES ($1, $2, $3, $4, $5)', [
+            await db.runSql('INSERT INTO forwards (user_id, incoming_peer_id, incoming_msg_id, outgoing_peer_id, hash) VALUES ($1, $2, $3, $4, $5)', [
               user.id,
               contact.id,
               obj.msgId,
@@ -224,6 +226,13 @@ async function snapIn(peerName, message, userName, hubbie) {
     }
     case 'ROUTING': {
       storeRoutes(userName, peerName, obj);
+      break;
+    }
+    case 'FRIEND-REQUEST': {
+      const user = await db.getObject('SELECT id FROM users WHERE name = $1', [userName]);
+      // console.log('friend request received', user, peerName, obj);
+      const token = randomBytes(16).toString('hex');
+      await db.runSql('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max", "landmark") VALUES ($1, $2, $3, $4, $5, $6, $7)', [user.id, peerName, obj.url, token, 0, 0, `${userName}:${peerName}`]);
       break;
     }
     default:
