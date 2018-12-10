@@ -142,43 +142,41 @@ function makeHandler(hubbie) {
             // console.log(resource, req.headers.authorization, req.method, body);
             const [username, password] = atob(req.headers.authorization.split(' ')[1]).split(':');
             // console.log('checkpass', username, password);
-            await db.checkPass(username, password).then((user_id) => {
-              // console.log(user_id, req.method);
-              if (user_id === false) {
-                throw new Error('auth error');
+            const user_id = await db.checkPass(username, password);
+            // console.log(user_id, req.method);
+            if (user_id === false) {
+              throw new Error('auth error');
+            }
+            if (req.method === 'PUT') {
+              // console.log('yes', resource, body);
+              const obj = JSON.parse(body);
+              // console.log('saving', resource, obj);
+              if (resource === 'contacts') {
+                const myRemoteName = randomBytes(12).toString('hex');
+                const token = randomBytes(12).toString('hex');
+                const channelName = `${username}/${obj.name}`;
+                const landmark = `${username}:${obj.name}`;
+                const contactId = await db.getValue('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max", "landmark") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id AS value;', [user_id, obj.name, `${obj.url}/${myRemoteName}`, token, -obj.trust, 0, landmark]);
+                hubbie.addClient({
+                  peerUrl: `${obj.url}/${myRemoteName}`,
+                  /* fixme: hubbie should omit myName before mySecret in outgoing url */
+                  myName: token,
+                  peerName: channelName,
+                });
+                await hubbie.send(obj.name /* part of channelName */, JSON.stringify({
+                  msgType: 'FRIEND-REQUEST',
+                  url: `${hubbie.myBaseUrl}/${username}/${obj.name}`,
+                  trust: obj.trust,
+                  token,
+                }), username /* other part of channelName */);
+                await routing.sendRoutes(user_id, contactId, hubbie);
               }
-              return Promise.resolve().then(() => { // eslint-disable-line consistent-return
-                if (req.method === 'PUT') {
-                  // console.log('yes', resource, body);
-                  const obj = JSON.parse(body);
-                  // console.log('saving', resource, obj);
-                  if (resource === 'contacts') {
-                    const myRemoteName = randomBytes(12).toString('hex');
-                    const token = randomBytes(12).toString('hex');
-                    const channelName = `${username}/${obj.name}`;
-                    const landmark = `${username}:${obj.name}`;
-                    db.runSql('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max", "landmark") VALUES ($1, $2, $3, $4, $5, $6, $7);', [user_id, obj.name, `${obj.url}/${myRemoteName}`, token, -obj.trust, 0, landmark]);
-                    hubbie.addClient({
-                      peerUrl: `${obj.url}/${myRemoteName}`,
-                      /* fixme: hubbie should omit myName before mySecret in outgoing url */
-                      myName: token,
-                      peerName: channelName,
-                    });
-                    return hubbie.send(obj.name /* part of channelName */, JSON.stringify({
-                      msgType: 'FRIEND-REQUEST',
-                      url: `${hubbie.myBaseUrl}/${username}/${obj.name}`,
-                      trust: obj.trust,
-                      token,
-                    }), username /* other part of channelName */);
-                  }
-                }
-              }).then(() => getData(user_id, resource)).then((data) => {
-                res.end(JSON.stringify({
-                  ok: true,
-                  [resource]: data,
-                }));
-              });
-            });
+            }
+            const data = await getData(user_id, resource);
+            res.end(JSON.stringify({
+              ok: true,
+              [resource]: data,
+            }));
           } catch (e) {
             console.error(e.message); // eslint-disable-line no-console
             res.end(JSON.stringify({ ok: false, error: e.message }));

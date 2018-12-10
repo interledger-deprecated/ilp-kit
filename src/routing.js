@@ -21,6 +21,7 @@ async function storeRoutes(userName, peerName, obj) {
 }
 
 async function sendRoutes(userId, contactId, hubbie) {
+  // console.log('async function sendRoutes', userId, contactId, hubbie);
   const receivable = await balances.getMyReceivable(userId, contactId);
   const current = await balances.getMyCurrent(userId, contactId);
   const contact = await db.getObject('SELECT * FROM contacts WHERE user_id= $1  AND id = $2', [userId, contactId]);
