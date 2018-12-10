@@ -92,7 +92,7 @@ describe('Database', function () {
   it('has a routes table', async function () {
     const firstRoute = await db.getObject('SELECT * FROM routes LIMIT 1');
     assert.deepEqual(firstRoute, {
-      amount: 5,
+      amount: 51,
       contact_id: 1,
       landmark: 'asdf',
       user_id: 1,

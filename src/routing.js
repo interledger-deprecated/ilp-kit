@@ -26,29 +26,30 @@ async function sendRoutes(userId, contactId, hubbie) {
   const current = await balances.getMyCurrent(userId, contactId);
   const contact = await db.getObject('SELECT * FROM contacts WHERE user_id= $1  AND id = $2', [userId, contactId]);
   // console.log(`CHECK1] ${contact.max} - ${current} - ${receivable}`);
-  const limit = (contact.max - current - receivable);
+  const limit = (-contact.min - current - receivable);
   const list = await db.runSql('SELECT * FROM routes WHERE user_id = $1 AND contact_id != $2', [userId, contactId]);
   // const randomString = randomBytes(8).toString('hex');
   const canRoute = {
     [contact.landmark]: limit,
   };
   if (list) {
-    Object.keys(list).map((entry) => {
-      canRoute[entry.landmark] = Math.max(limit, canRoute[entry.landmark], entry.amount);
+    list.map((entry) => {
+      canRoute[entry.landmark] = Math.min(limit, entry.amount);
       return undefined;
     });
   }
-  const peerName = `${userId}:${contact.name}`;
+  const user = await db.getObject('SELECT name FROM users WHERE id = $1', [userId]); // FIXME: use only id's, not names
+  const channelName = `{$user.name}/${contact.name}`;
   hubbie.addClient({
     peerUrl: contact.url,
     /* fixme: hubbie should omit myName before mySecret in outgoing url */
     myName: contact.token,
-    peerName,
+    peerName: channelName,
   });
-  return hubbie.send(peerName, JSON.stringify({
+  return hubbie.send(contact.name, JSON.stringify({
     msgType: 'ROUTING',
     canRoute,
-  }));
+  }), user.name);
 }
 
 module.exports = { storeRoutes, sendRoutes };

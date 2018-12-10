@@ -66,14 +66,30 @@ describe('Contacts', function () {
 
   it('creates a contact', async function () {
     const firstContact = await db.getObject('SELECT * FROM contacts LIMIT 1');
-    assert.equal(this.snapSent[0].peerName, 'name');
-    assert.equal(this.snapSent[0].msg, JSON.stringify({
-      msgType: 'FRIEND-REQUEST',
-      url: 'undefined/michiel/name',
-      trust: 5,
-      token: JSON.parse(this.snapSent[0].msg).token,
-    }));
-    assert.equal(this.snapSent[0].userId, 'michiel');
+    // console.log(this.snapSent);
+    const expectedFriendRequest = {
+      peerName: 'name',
+      msg: JSON.stringify({
+        msgType: 'FRIEND-REQUEST',
+        url: 'undefined/michiel/name',
+        trust: 5,
+        token: JSON.parse(this.snapSent[0].msg).token,
+      }),
+      userId: 'michiel',
+    };
+    const expectedLandmarkAnnouncement = {
+      peerName: 'name',
+      msg: JSON.stringify({
+        msgType: 'ROUTING',
+        canRoute: {
+          'michiel:name': 5,
+          asdf: 5,
+        },
+      }),
+      userId: 'michiel',
+    };
+    assert.deepEqual(this.snapSent[0], expectedFriendRequest);
+    assert.deepEqual(this.snapSent[1], expectedLandmarkAnnouncement);
     assert.deepEqual(firstContact, {
       user_id: 1,
       id: 8,
