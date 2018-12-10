@@ -1,38 +1,36 @@
+/* global Vue */
+
 function get(resource, creds) {
   return fetch(resource, {
     method: 'GET',
-    headers:  {
-      Authorization: 'Basic ' + btoa(creds)
-    }
-  }).then((response) => {
-    return response.json();
-  })
+    headers: {
+      Authorization: `Basic ${btoa(creds)}`,
+    },
+  }).then(response => response.json());
 }
 
 function post(resource, data, creds, method = 'POST') {
   return fetch(resource, {
     method,
-    headers:  {
-      Authorization: 'Basic ' + btoa(creds)
+    headers: {
+      Authorization: `Basic ${btoa(creds)}`,
     },
-    body: JSON.stringify(data)
-  }).then((response) => {
-    return response.json();
-  })
+    body: JSON.stringify(data),
+  }).then(response => response.json());
 }
 
-let app = new Vue({
+const app = new Vue({
   el: '#app',
   data: {
-    session:  null,
+    session: null,
     loggingin: false,
-    registering:  false,
+    registering: false,
     ready: false,
     username: null,
     password: null,
     repeat: null,
     tab: 'profile',
-    edit:  -1,
+    edit: -1,
     expand: -1,
     pay: -1,
     payAmount: 0,
@@ -40,28 +38,28 @@ let app = new Vue({
     transactions: [],
   },
   methods: {
-    register: function(event) {
-      if (this.repeat == this.password) {
+    register() {
+      if (this.repeat === this.password) {
         this.checkSession();
       } else {
-        window.alert('Passwords don\'t  match!');
+        window.alert('Passwords don\'t  match!'); // eslint-disable-line no-alert
       }
     },
-    login: function(event) {
+    login() {
       this.checkSession();
     },
-    logout: function(event) {
-      this.session  = null;
-      this.username =  null;
-      this.password  = null;
+    logout() {
+      this.session = null;
+      this.username = null;
+      this.password = null;
       this.repeat = null;
       setTimeout(() => {
         localStorage.removeItem('creds');
       }, 0);
     },
-    checkSession:  function() {
-      const creds = this.username + ':' + this.password; // make a copy of the model values to avoid race conditions
-      get('/session', creds).then(data => {
+    checkSession() {
+      const creds = `${this.username}:${this.password}`; // make a copy of the model values to avoid race conditions
+      get('/session', creds).then((data) => {
         if (data.ok) {
           this.loggingin = false;
           this.registering = false;
@@ -74,57 +72,56 @@ let app = new Vue({
           this.fetchData('transactions');
         }
         this.ready = true;
-      }).catch((e) => {
+      }).catch(() => {
         this.ready = true;
       });
     },
-    fetchData: function(resource) {
-      get('/' + resource, this.username + ':' + this.password).then(data =>  {
+    fetchData(resource) {
+      get(`/${resource}`, `${this.username}:${this.password}`).then((data) => {
         if (data[resource]) {
           this[resource] = data[resource];
-         }
+        }
       });
     },
-    save: function (resource, index) {
-      post('/' + resource +  '/' + index, this[resource][index], this.username + ':' + this.password, 'PUT').then(data =>  {
+    save(resource, index) {
+      post(`/${resource}/${index}`, this[resource][index], `${this.username}:${this.password}`, 'PUT').then((data) => {
         if (data[resource]) {
           this[resource] = data[resource];
-         }
+        }
       });
     },
-    doPay: async function (index) {
-      console.log('paying '+index+' '+this.payAmount + ' (balance '+
-          this.contacts[index].current+')');
-      const amount = parseInt(this.payAmount);
+    async doPay(index) {
+      // console.log('paying '+index+' '+this.payAmount);
+      // console.log(' (balance '+ this.contacts[index].current+')');
+      const amount = parseInt(this.payAmount, 10);
       const topup = this.contacts[index].current
-          + this.contacts[index].receivable
-          + amount
-          - this.contacts[index].max;
+        + this.contacts[index].receivable
+        + amount
+        - this.contacts[index].max;
 
       // FIXME: these PUTs should be POSTs
       // (blocked on https://github.com/ledgerloops/hubbie/issues/20)
       if (topup > 0) {
-        console.log('topup needed first!', { amount, topup });
-        const topupResult = await post('/topup', {
+        // console.log('topup needed first!', { amount, topup });
+        await post('/topup', {
           contactName: this.contacts[index].name,
-          amount: topup
-        }, this.username + ':' + this.password, 'PUT')
-        console.log({ topupResult });
+          amount: topup,
+        }, `${this.username}:${this.password}`, 'PUT');
       } else {
-        console.log('no topup needed!', { amount, topup });
+        // console.log('no topup needed!', { amount, topup });
       }
       const data = await post('/pay', {
         contactName: this.contacts[index].name,
-        amount: parseInt(this.payAmount)
-      }, this.username + ':' + this.password, 'PUT');
+        amount: parseInt(this.payAmount, 10),
+      }, `${this.username}:${this.password}`, 'PUT');
       if (data.contacts) {
         this.contacts = data.contacts;
       }
       if (data.transactions) {
         this.transactions = data.transactions;
       }
-    }
-  }
+    },
+  },
 });
 
 setTimeout(() => {
@@ -134,7 +131,6 @@ setTimeout(() => {
     return;
   }
   const parts = creds.split(':');
-  app.username = parts[0];
-  app.password = parts[1];
+  [app.username, app.password] = parts;
   app.checkSession();
 }, 0);

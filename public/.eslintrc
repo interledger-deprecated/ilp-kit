@@ -1,0 +1,5 @@
+globals:
+  fetch: false
+  btoa: false
+  localStorage: false
+  window: false
