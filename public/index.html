@@ -73,7 +73,7 @@
           (editing contact {{ edit }})
           <p>Display Name: <input v-model="contacts[edit].name" placeholder="Contact name"></p>
           <p>URL: <input v-model="contacts[edit].url" placeholder="URL"></p>
-          <p>Amount you trust them for: <input v-model="contacts[edit].max" placeholder="max"></p>
+          <p>Amount you trust them for: <input v-model="contacts[edit].trust" placeholder="amount in UCR"></p>
           <a class="button is-success" v-on:click="save('contacts', edit);edit=-1">
             Done
           </a>

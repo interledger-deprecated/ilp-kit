@@ -43,8 +43,7 @@ describe('Contacts', function () {
             name: 'name',
             url: 'url',
             token: 'some_token',
-            min: 5,
-            max: 10,
+            trust: 5,
           })), 0);
         } else {
           setTimeout(() => eventHandler(), 0);
@@ -71,6 +70,7 @@ describe('Contacts', function () {
     assert.equal(this.snapSent[0].msg, JSON.stringify({
       msgType: 'FRIEND-REQUEST',
       url: 'undefined/michiel/name',
+      trust: 5,
       token: JSON.parse(this.snapSent[0].msg).token,
     }));
     assert.equal(this.snapSent[0].userId, 'michiel');
@@ -78,8 +78,8 @@ describe('Contacts', function () {
       user_id: 1,
       id: 8,
       landmark: 'michiel:name',
-      max: 10,
-      min: 5,
+      max: 0,
+      min: -5,
       name: 'name',
       token: firstContact.token,
       url: firstContact.url,

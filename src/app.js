@@ -157,7 +157,7 @@ function makeHandler(hubbie) {
                     const token = randomBytes(12).toString('hex');
                     const channelName = `${username}/${obj.name}`;
                     const landmark = `${username}:${obj.name}`;
-                    db.runSql('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max", "landmark") VALUES ($1, $2, $3, $4, $5, $6, $7);', [user_id, obj.name, `${obj.url}/${myRemoteName}`, token, obj.min, obj.max, landmark]);
+                    db.runSql('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max", "landmark") VALUES ($1, $2, $3, $4, $5, $6, $7);', [user_id, obj.name, `${obj.url}/${myRemoteName}`, token, -obj.trust, 0, landmark]);
                     hubbie.addClient({
                       peerUrl: `${obj.url}/${myRemoteName}`,
                       /* fixme: hubbie should omit myName before mySecret in outgoing url */
@@ -167,6 +167,7 @@ function makeHandler(hubbie) {
                     return hubbie.send(obj.name /* part of channelName */, JSON.stringify({
                       msgType: 'FRIEND-REQUEST',
                       url: `${hubbie.myBaseUrl}/${username}/${obj.name}`,
+                      trust: obj.trust,
                       token,
                     }), username /* other part of channelName */);
                   }
