@@ -2,24 +2,6 @@
 const db = require('./db');
 const balances = require('./balances');
 
-async function storeRoutes(userName, peerName, obj) {
-  const user = await db.getObject('SELECT id FROM users WHERE name = $1', [userName]);
-  const contact = await db.getObject('SELECT id, url, token, min, max FROM contacts WHERE user_id= $1  AND name = $2', [user.id, peerName]);
-  // const receivable = await balances.getMyReceivable(user.id, contact.id);
-  const payable = await balances.getMyPayable(user.id, contact.id);
-  const current = await balances.getMyCurrent(user.id, contact.id);
-  // console.log(`CHECK3] ${current} - ${payable} - ${contact.min}`);
-  const limit = (current - payable - contact.min);
-  Object.keys(obj.canRoute).map(landmark => db.runSql(
-    'INSERT INTO routes (user_id, contact_id, landmark, amount) VALUES ($1, $2, $3, $4)', [
-      user.id,
-      contact.id,
-      landmark,
-      Math.min(obj.canRoute[landmark], limit),
-    ],
-  ));
-}
-
 async function sendRoutes(userId, contactId, hubbie) {
   // console.log('async function sendRoutes', userId, contactId, hubbie);
   const receivable = await balances.getMyReceivable(userId, contactId);
@@ -52,4 +34,28 @@ async function sendRoutes(userId, contactId, hubbie) {
   }), user.name);
 }
 
-module.exports = { storeRoutes, sendRoutes };
+async function storeAndForwardRoutes(userName, peerName, obj, hubbie) {
+  const user = await db.getObject('SELECT id FROM users WHERE name = $1', [userName]);
+  const contacts = await db.runSql('SELECT id, url, token, min, max FROM contacts WHERE user_id= $1', [user.id]);
+  return contacts.map(async (contact) => {
+    if (contact.name === peerName) {
+      // const receivable = await balances.getMyReceivable(user.id, contact.id);
+      const payable = await balances.getMyPayable(user.id, contact.id);
+      const current = await balances.getMyCurrent(user.id, contact.id);
+      // console.log(`CHECK3] ${current} - ${payable} - ${contact.min}`);
+      const limit = (current - payable - contact.min);
+      Object.keys(obj.canRoute).map(landmark => db.runSql(
+        'INSERT INTO routes (user_id, contact_id, landmark, amount) VALUES ($1, $2, $3, $4)', [
+          user.id,
+          contact.id,
+          landmark,
+          Math.min(obj.canRoute[landmark], limit),
+        ],
+      ));
+    } else {
+      sendRoutes(user.id, contact.id, hubbie);
+    }
+  });
+}
+
+module.exports = { storeAndForwardRoutes, sendRoutes };

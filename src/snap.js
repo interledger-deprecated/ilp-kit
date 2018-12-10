@@ -1,7 +1,7 @@
 const hashlocks = require('hashlocks');
 
 const db = require('./db');
-const { storeRoutes } = require('./routing');
+const routing = require('./routing');
 const { newTransaction } = require('./ledger');
 
 async function snapOut(userId, objIn, hubbie) {
@@ -180,17 +180,19 @@ async function snapIn(peerName, message, userName, hubbie) {
       // break; // unreachable
     }
     case 'ROUTING': {
-      storeRoutes(userName, peerName, obj);
+      await routing.storeAndForwardRoutes(userName, peerName, obj, hubbie);
       break;
     }
     case 'FRIEND-REQUEST': {
+      // console.log('incoming friend request!', userName);
       const user = await db.getObject('SELECT id FROM users WHERE name = $1', [userName]);
       // console.log('friend request received', user, peerName, obj);
-      await db.runSql('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max", "landmark") VALUES ($1, $2, $3, $4, $5, $6, $7)', [user.id, peerName, obj.url, obj.token, 0, obj.trust, `${userName}:${peerName}`]);
+      await db.getValue('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max", "landmark") VALUES ($1, $2, $3, $4, $5, $6, $7)  RETURNING id AS value', [user.id, peerName, obj.url, obj.token, 0, obj.trust, `${userName}:${peerName}`]);
       break;
     }
     default:
   }
+  // console.log('snapIn done');
   return undefined; // eslint expects a return statement here
 }
 
