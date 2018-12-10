@@ -19,7 +19,6 @@ describe('Contacts', function () {
   beforeEach(async function () {
     await runSqlFile('./schema.sql');
     await runSqlFile('./fixture.sql');
-    await db.runSql('DELETE FROM contacts');
     this.hubbieHandler = {};
     this.hubbie = {
       addClient: () => {
@@ -63,7 +62,8 @@ describe('Contacts', function () {
     });
 
     it('creates a contact', async function () {
-      const firstContact = await db.getObject('SELECT * FROM contacts LIMIT 1');
+      const contacts = await db.runSql('SELECT * FROM contacts');
+      const newContact = contacts[contacts.length - 1];
       // console.log(this.snapSent);
       const expectedFriendRequest = {
         peerName: 'name',
@@ -88,15 +88,15 @@ describe('Contacts', function () {
       };
       assert.deepEqual(this.snapSent[0], expectedFriendRequest);
       assert.deepEqual(this.snapSent[1], expectedLandmarkAnnouncement);
-      assert.deepEqual(firstContact, {
+      assert.deepEqual(newContact, {
         user_id: 1,
         id: 8,
         landmark: 'michiel:name',
         max: 0,
         min: -5,
         name: 'name',
-        token: firstContact.token,
-        url: firstContact.url,
+        token: newContact.token,
+        url: newContact.url,
       });
     });
   });
@@ -113,7 +113,8 @@ describe('Contacts', function () {
     });
 
     it('creates a contact', async function () {
-      const firstContact = await db.getObject('SELECT * FROM contacts LIMIT 1');
+      const contacts = await db.runSql('SELECT * FROM contacts');
+      const newContact = contacts[contacts.length - 1];
       // console.log(firstContact);
       //  const expectedLandmarkAnnouncement = {
       //    peerName: 'name',
@@ -126,15 +127,15 @@ describe('Contacts', function () {
       //    userId: 'michiel',
       //  };
       //  assert.deepEqual(this.snapSent[0], expectedLandmarkAnnouncement);
-      assert.deepEqual(firstContact, {
+      assert.deepEqual(newContact, {
         user_id: 1,
         id: 8,
         landmark: 'michiel:name',
         max: 1234,
         min: 0,
         name: 'name',
-        token: firstContact.token,
-        url: firstContact.url,
+        token: newContact.token,
+        url: newContact.url,
       });
     });
   });

@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "node src/server.js",
-    "test": "eslint src/**/*.js && eslint public/app.js && eslint test/**/*.js && npm run unit",
+    "lint": "eslint src/**/*.js public/app.js test/**/*.js",
+    "test": "npm run lint && npm run unit",
     "unit": "mocha  test/**/*.js"
   },
   "repository": {
