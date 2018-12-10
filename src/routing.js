@@ -21,12 +21,8 @@ async function storeRoutes(userName, peerName, obj) {
 }
 
 async function sendRoutes(userId, contactId, hubbie) {
-  function getPendingBalance(direction) {
-    return db.getValue('SELECT SUM(amount) AS value FROM transactions WHERE user_id = $1 AND contact_id = $2 AND direction = $3 AND status = \'pending\'', [userId, contactId, direction]).then(val => parseInt(val || 0, 10));
-  }
-  const receivable = await getPendingBalance('IN');
-  // calculate their current-payable-min balance as a max of how much you want to route through them
-  const current = parseInt(await db.getValue('SELECT SUM(amount * CASE direction WHEN \'IN\' THEN 1 WHEN \'OUT\' THEN -1 END) AS value FROM transactions WHERE user_id = $1 AND contact_id = $2 AND status = \'accepted\'', [userId, contactId]) || 0, 10);
+  const receivable = await balances.getMyReceivable(userId, contactId);
+  const current = await balances.getMyCurrent(userId, contactId);
   const contact = await db.getObject('SELECT * FROM contacts WHERE user_id= $1  AND id = $2', [userId, contactId]);
   // console.log(`CHECK1] ${contact.max} - ${current} - ${receivable}`);
   const limit = (contact.max - current - receivable);
