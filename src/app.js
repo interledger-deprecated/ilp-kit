@@ -31,9 +31,9 @@ function mixInContactNames(transactions) {
     return [];
   }
   async function addContactName(transaction) {
-    console.log('adding contact name', transaction);
+    // console.log('adding contact name', transaction);
     return Object.assign(transaction, {
-      peerName: await db.getValue('SELECT name AS value FROM contacts WHERE id = $1 AND user_id = $2', [ transaction.contact_id, transaction.user_id ]),
+      peerName: await db.getValue('SELECT name AS value FROM contacts WHERE id = $1 AND user_id = $2', [transaction.contact_id, transaction.user_id]),
     });
   }
   return Promise.all(transactions.map(addContactName));
@@ -66,7 +66,7 @@ function makeHandler(hubbie) {
   hubbie.on('message', (peerName, msg, userName) => snapIn(peerName, msg, userName, hubbie));
 
   return function handler(req, res) {
-    console.log('hubbie passed req to app\'s own handler', req.method, req.url);
+    // console.log('hubbie passed req to app\'s own handler', req.method, req.url);
     let body = '';
     req.on('data', (chunk) => {
       body += chunk;
@@ -139,38 +139,39 @@ function makeHandler(hubbie) {
         case 'contacts':
         case 'transactions':
           try {
-            console.log(resource, req.headers.authorization, req.method, body);
+            // console.log(resource, req.headers.authorization, req.method, body);
             const [username, password] = atob(req.headers.authorization.split(' ')[1]).split(':');
-            console.log('checkpass', username, password);
+            // console.log('checkpass', username, password);
             await db.checkPass(username, password).then((user_id) => {
-              console.log(user_id, req.method);
+              // console.log(user_id, req.method);
               if (user_id === false) {
                 throw new Error('auth error');
               }
-              if (req.method === 'PUT') {
-                console.log('yes', resource, body);
-                const obj = JSON.parse(body);
-                console.log('saving', resource, obj);
-                if (resource === 'contacts') {
-                  const myRemoteName = randomBytes(12).toString('hex');
-                  const token = randomBytes(12).toString('hex');
-                  const channelName = `${username}/${obj.name}`;
-                  const landmark = `${username}:${obj.name}`;
-                  db.runSql('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max", "landmark") VALUES ($1, $2, $3, $4, $5, $6, $7);', [user_id, obj.name, obj.url + '/' + myRemoteName, token, obj.min, obj.max, landmark]);
-                  hubbie.addClient({
-                    peerUrl: obj.url + '/' + myRemoteName,
-                    /* fixme: hubbie should omit myName before mySecret in outgoing url */
-                    myName: token,
-                    peerName: channelName,
-                  });
-                  return hubbie.send(obj.name /* part of channelName */, JSON.stringify({
-                    msgType: 'FRIEND-REQUEST',
-                    url: hubbie.myBaseUrl + '/' + username +  '/' + obj.name,
-                    token,
-                  }), username /* other part of channelName */); 
+              return Promise.resolve().then(() => { // eslint-disable-line consistent-return
+                if (req.method === 'PUT') {
+                  // console.log('yes', resource, body);
+                  const obj = JSON.parse(body);
+                  // console.log('saving', resource, obj);
+                  if (resource === 'contacts') {
+                    const myRemoteName = randomBytes(12).toString('hex');
+                    const token = randomBytes(12).toString('hex');
+                    const channelName = `${username}/${obj.name}`;
+                    const landmark = `${username}:${obj.name}`;
+                    db.runSql('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max", "landmark") VALUES ($1, $2, $3, $4, $5, $6, $7);', [user_id, obj.name, `${obj.url}/${myRemoteName}`, token, obj.min, obj.max, landmark]);
+                    hubbie.addClient({
+                      peerUrl: `${obj.url}/${myRemoteName}`,
+                      /* fixme: hubbie should omit myName before mySecret in outgoing url */
+                      myName: token,
+                      peerName: channelName,
+                    });
+                    return hubbie.send(obj.name /* part of channelName */, JSON.stringify({
+                      msgType: 'FRIEND-REQUEST',
+                      url: `${hubbie.myBaseUrl}/${username}/${obj.name}`,
+                      token,
+                    }), username /* other part of channelName */);
+                  }
                 }
-              }
-              return getData(user_id, resource).then((data) => {
+              }).then(() => getData(user_id, resource)).then((data) => {
                 res.end(JSON.stringify({
                   ok: true,
                   [resource]: data,
@@ -178,7 +179,7 @@ function makeHandler(hubbie) {
               });
             });
           } catch (e) {
-            console.error(e.message);
+            console.error(e.message); // eslint-disable-line no-console
             res.end(JSON.stringify({ ok: false, error: e.message }));
           }
           break;

@@ -1,5 +1,4 @@
 const hashlocks = require('hashlocks');
-const randomBytes = require('randombytes');
 
 const { storeRoutes } = require('./routing');
 const db = require('./db');
@@ -230,7 +229,7 @@ async function snapIn(peerName, message, userName, hubbie) {
     }
     case 'FRIEND-REQUEST': {
       const user = await db.getObject('SELECT id FROM users WHERE name = $1', [userName]);
-      console.log('friend request received', user, peerName, obj);
+      // console.log('friend request received', user, peerName, obj);
       await db.runSql('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max", "landmark") VALUES ($1, $2, $3, $4, $5, $6, $7)', [user.id, peerName, obj.url, obj.token, 0, 0, `${userName}:${peerName}`]);
       break;
     }

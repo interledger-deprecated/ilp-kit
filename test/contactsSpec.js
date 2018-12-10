@@ -22,13 +22,23 @@ describe('Contacts', function () {
     await runSqlFile('./fixture.sql');
     await db.runSql('DELETE FROM contacts');
     this.hubbie = new Hubbie();
+    this.hubbie.send = function (peerName, msg, userName) {
+      assert.equal(peerName, 'name');
+      assert.equal(msg, JSON.stringify({
+        msgType: 'FRIEND-REQUEST',
+        url: 'undefined/michiel/name',
+        token: JSON.parse(msg).token,
+      }));
+      assert.equal(userName, 'michiel');
+      return Promise.resolve();
+    };
     this.handler = App.makeHandler(this.hubbie);
     await new Promise(resolve => this.handler({
       headers: {
         authorization: 'Basic bWljaGllbDpxd2Vy',
       },
       url: '/contacts',
-      method: 'POST',
+      method: 'PUT',
       on: (eventName, eventHandler) => {
         if (eventName === 'data') {
           setTimeout(() => eventHandler(JSON.stringify({
@@ -59,15 +69,16 @@ describe('Contacts', function () {
 
   it('creates a contact', async function () {
     const firstContact = await db.getObject('SELECT * FROM contacts LIMIT 1');
+    // console.log(firstContact);
     assert.deepEqual(firstContact, {
       user_id: 1,
       id: 8,
-      landmark: null,
+      landmark: 'michiel:name',
       max: 10,
       min: 5,
       name: 'name',
-      token: 'some_token',
-      url: 'url',
+      token: firstContact.token,
+      url: firstContact.url,
     });
   });
 });
