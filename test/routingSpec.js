@@ -1,4 +1,4 @@
-// const { assert } = require('chai');
+const { assert } = require('chai');
 const fs = require('fs');
 const db = require('../src/db');
 const App = require('../src/app');
@@ -47,11 +47,37 @@ describe('Routing', function () {
 
   it('stores the route', async function () {
     const routes = await db.runSql('SELECT * FROM routes');
-    console.log(routes);
+    // console.log(routes);
+    assert.deepEqual(routes, [
+      {
+        user_id: 1,
+        contact_id: 1,
+        landmark: 'asdf',
+        approach: 'qwer',
+        max_to: 8,
+        max_from: 51,
+      },
+    ]);
   });
 
   it('forwards the route', async function () {
-    console.log(this.snapSent);
+    assert.deepEqual(this.snapSent, [
+      {
+        peerName: 'Eddie',
+        msg: '{"msgType":"ROUTING","canRoute":{"michiel:edward":{"max_to":1000,"max_from":10}}}',
+        userId: 'michiel',
+      },
+      {
+        peerName: 'Donnie',
+        msg: '{"msgType":"ROUTING","canRoute":{"michiel:donald":{"max_to":1000,"max_from":10},"asdf":{"max_to":8,"max_from":10}}}',
+        userId: 'michiel',
+      },
+      {
+        peerName: 'contact-bob',
+        msg: '{"msgType":"ROUTING","canRoute":{"landmark":{"max_to":1000,"max_from":10},"asdf":{"max_to":8,"max_from":10}}}',
+        userId: 'michiel',
+      },
+    ]);
   });
 
   afterEach(async function () {

@@ -92,9 +92,11 @@ describe('Database', function () {
   it('has a routes table', async function () {
     const firstRoute = await db.getObject('SELECT * FROM routes LIMIT 1');
     assert.deepEqual(firstRoute, {
-      amount: 51,
+      max_to: 8,
+      max_from: 51,
       contact_id: 1,
       landmark: 'asdf',
+      approach: 'qwer',
       user_id: 1,
     });
   });

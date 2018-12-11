@@ -4,19 +4,31 @@ const balances = require('./balances');
 
 async function sendRoutes(userId, contactId, hubbie) {
   // console.log('async function sendRoutes', userId, contactId, hubbie);
-  const receivable = await balances.getMyReceivable(userId, contactId);
-  const current = await balances.getMyCurrent(userId, contactId);
+  const receivable = await balances.getTheirReceivable(userId, contactId);
+  const payable = await balances.getTheirPayable(userId, contactId);
+  const current = await balances.getTheirCurrent(userId, contactId);
   const contact = await db.getObject('SELECT * FROM contacts WHERE user_id= $1  AND id = $2', [userId, contactId]);
   // console.log(`CHECK1] ${contact.max} - ${current} - ${receivable}`);
-  const limit = (-contact.min - current - receivable);
+  // when sending money to a contact, their balance  goes up
+  // a limit for that is theirMax - theirCurrent - theirReceivable
+  const limitTo = (contact.max - current - receivable);
+  // when receiving money from a contact, their balance goes down
+  // a limit for that is -theirMin + theirCurrent - theirPayable
+  const limitFrom = (-contact.min - current - payable);
   const list = await db.runSql('SELECT * FROM routes WHERE user_id = $1 AND contact_id != $2', [userId, contactId]);
   // const randomString = randomBytes(8).toString('hex');
   const canRoute = {
-    [contact.landmark]: limit,
+    [contact.landmark]: {
+      max_to: limitTo,
+      max_from: limitFrom,
+    },
   };
   if (list) {
     list.map((entry) => {
-      canRoute[entry.landmark] = Math.min(limit, entry.amount);
+      canRoute[entry.landmark] = {
+        max_to: Math.min(limitTo, entry.max_to),
+        max_from: Math.min(limitFrom, entry.max_from),
+      };
       return undefined;
     });
   }

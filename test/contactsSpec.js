@@ -80,8 +80,14 @@ describe('Contacts', function () {
         msg: JSON.stringify({
           msgType: 'ROUTING',
           canRoute: {
-            'michiel:name': 5,
-            asdf: 5,
+            'michiel:name': {
+              max_to: 0,
+              max_from: 5,
+            },
+            asdf: {
+              max_to: 0,
+              max_from: 5,
+            },
           },
         }),
         userId: 'michiel',
