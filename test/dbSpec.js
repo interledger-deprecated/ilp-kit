@@ -61,7 +61,7 @@ describe('Database', function () {
       id: 1,
       msgid: null,
       request_json: null,
-      requested_at: new Date('2018-11-11T23:00:00.000Z'),
+      requested_at: new Date('2018-12-11T00:00:00.000Z'),
       responded_at: null,
       response_json: null,
       status: null,
