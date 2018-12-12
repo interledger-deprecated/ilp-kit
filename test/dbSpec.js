@@ -12,7 +12,7 @@ async function runSqlFile(filename) {
 
 describe('Database', function () {
   before(async function () {
-    process.env.DATABASE_URL = 'postgresql://snap:snap@localhost/test';
+    process.env.DATABASE_URL = process.env.DATABASE_URL || 'postgresql://snap:snap@localhost/test';
   });
 
   beforeEach(async function () {
