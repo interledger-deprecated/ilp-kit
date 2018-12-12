@@ -1,6 +1,8 @@
 # nlt-kit
 LedgerLoops network node and GUI
 
+[![Tests](https://api.travis-ci.org/ledgerloops/nlt-kit.svg?branch=master)](https://travis-ci.org/ledgerloops/nlt-kit)
+
 Inspired on the now-deprecated [ilp-kit](https://github.com/interledger-deprecated/ilp-kit), this server runs a database and a GUI that allow you to keep trustline ledgers with other users of similar [Network Ledger Technology](https://michielbdejong.com/blog/21.html) servers.
 
 

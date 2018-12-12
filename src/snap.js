@@ -193,7 +193,7 @@ async function snapIn(peerName, message, userName, hubbie) {
     default:
   }
   // console.log('snapIn done');
-  return undefined; // eslint expects a return statement here
+  return Promise.resolve();
 }
 
 module.exports = { snapIn, snapOut };

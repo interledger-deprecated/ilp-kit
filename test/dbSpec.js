@@ -12,7 +12,7 @@ async function runSqlFile(filename) {
 
 describe('Database', function () {
   before(async function () {
-    process.env.DATABASE_URL = 'postgresql://snap:snap@localhost/test';
+    process.env.DATABASE_URL = process.env.DATABASE_URL || 'postgresql://snap:snap@localhost/test';
   });
 
   beforeEach(async function () {
@@ -61,7 +61,7 @@ describe('Database', function () {
       id: 1,
       msgid: null,
       request_json: null,
-      requested_at: new Date('2018-11-11T23:00:00.000Z'),
+      requested_at: new Date('2018-12-11T00:00:00.000Z'),
       responded_at: null,
       response_json: null,
       status: null,
@@ -92,9 +92,11 @@ describe('Database', function () {
   it('has a routes table', async function () {
     const firstRoute = await db.getObject('SELECT * FROM routes LIMIT 1');
     assert.deepEqual(firstRoute, {
-      amount: 51,
+      max_to: 8,
+      max_from: 51,
       contact_id: 1,
       landmark: 'asdf',
+      approach: 'qwer',
       user_id: 1,
     });
   });
