@@ -19,7 +19,7 @@ async function runSql(query, params) {
     return results;
   } catch (err) {
     console.log('DATABASE ERROR!'); // eslint-disable-line no-console
-    console.error(err); // eslint-disable-line no-console
+    console.error(err.message); // eslint-disable-line no-console
     throw err;
   }
 }
