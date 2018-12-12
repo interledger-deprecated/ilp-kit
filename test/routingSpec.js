@@ -19,6 +19,7 @@ describe('Routing', function () {
   beforeEach(async function () {
     await runSqlFile('./schema.sql');
     await runSqlFile('./fixture.sql');
+    // console.log(await  db.runSql('SELECT * FROM contacts'));
     this.hubbieHandler = {};
     this.hubbie = {
       addClient: () => {
@@ -36,11 +37,14 @@ describe('Routing', function () {
     return this.hubbieHandler.message('Eddie', JSON.stringify({
       msgType: 'ROUTING',
       canRoute: {
-        'edward:Micky': 123,
-        donald: 8,
-      },
-      reachableThrough: {
-        donald: 8,
+        'edward:Micky': {
+          maxTo: null,
+          maxFrom: null,
+        },
+        'donald:Ed': {
+          maxTo: 51,
+          maxFrom: 52,
+        },
       },
     }), 'michiel');
   });
@@ -57,24 +61,59 @@ describe('Routing', function () {
         max_to: 8,
         max_from: 51,
       },
+      {
+        user_id: 1,
+        contact_id: 1,
+        landmark: 'edward',
+        approach: 'Micky',
+        max_to: null,
+        max_from: null,
+      },
+      {
+        user_id: 1,
+        contact_id: 1,
+        landmark: 'donald',
+        approach: 'Ed',
+        max_to: 51,
+        max_from: 52,
+      },
     ]);
   });
 
   it('forwards the route', async function () {
     assert.deepEqual(this.snapSent, [
       {
-        peerName: 'Eddie',
-        msg: '{"msgType":"ROUTING","canRoute":{"michiel:edward":{"max_to":1000,"max_from":10}}}',
-        userId: 'michiel',
-      },
-      {
         peerName: 'Donnie',
-        msg: '{"msgType":"ROUTING","canRoute":{"michiel:donald":{"max_to":1000,"max_from":10},"asdf":{"max_to":8,"max_from":10}}}',
+        msg: JSON.stringify({
+          msgType: 'ROUTING',
+          canRoute: {
+            'edward:Micky': {
+              maxTo: 1000,
+              maxFrom: 10,
+            },
+            'donald:Ed': {
+              maxTo: 51,
+              maxFrom: 10,
+            },
+          },
+        }),
         userId: 'michiel',
       },
       {
         peerName: 'contact-bob',
-        msg: '{"msgType":"ROUTING","canRoute":{"landmark":{"max_to":1000,"max_from":10},"asdf":{"max_to":8,"max_from":10}}}',
+        msg: JSON.stringify({
+          msgType: 'ROUTING',
+          canRoute: {
+            'edward:Micky': {
+              maxTo: 1000,
+              maxFrom: 10,
+            },
+            'donald:Ed': {
+              maxTo: 51,
+              maxFrom: 10,
+            },
+          },
+        }),
         userId: 'michiel',
       },
     ]);
