@@ -37,7 +37,7 @@ describe('Pay', function () {
         authorization: 'Basic bWljaGllbDpxd2Vy',
       },
       url: '/pay',
-      method: 'POST',
+      method: 'PUT',
       on: (eventName, eventHandler) => {
         if (eventName === 'data') {
           setTimeout(() => eventHandler(JSON.stringify({

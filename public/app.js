@@ -9,9 +9,9 @@ function get(resource, creds) {
   }).then(response => response.json());
 }
 
-function post(resource, data, creds, method = 'POST') {
+function put(resource, data, creds) {
   return fetch(resource, {
-    method,
+    method: 'PUT',
     headers: {
       Authorization: `Basic ${btoa(creds)}`,
     },
@@ -84,7 +84,7 @@ const app = new Vue({
       });
     },
     save(resource, index) {
-      post(`/${resource}/${index}`, this[resource][index], `${this.username}:${this.password}`, 'PUT').then((data) => {
+      put(`/${resource}/${index}`, this[resource][index], `${this.username}:${this.password}`).then((data) => {
         if (data[resource]) {
           this[resource] = data[resource];
         }
@@ -103,17 +103,17 @@ const app = new Vue({
       // (blocked on https://github.com/ledgerloops/hubbie/issues/20)
       if (topup > 0) {
         // console.log('topup needed first!', { amount, topup });
-        await post('/topup', {
+        await put('/topup', {
           contactName: this.contacts[index].name,
           amount: topup,
-        }, `${this.username}:${this.password}`, 'PUT');
+        }, `${this.username}:${this.password}`);
       } else {
         // console.log('no topup needed!', { amount, topup });
       }
-      const data = await post('/pay', {
+      const data = await put('/pay', {
         contactName: this.contacts[index].name,
         amount: parseInt(this.payAmount, 10),
-      }, `${this.username}:${this.password}`, 'PUT');
+      }, `${this.username}:${this.password}`);
       if (data.contacts) {
         this.contacts = data.contacts;
       }
