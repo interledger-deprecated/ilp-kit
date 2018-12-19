@@ -84,7 +84,7 @@ const app = new Vue({
       });
     },
     save(resource, index) {
-      put(`/${resource}/${index}`, this[resource][index], `${this.username}:${this.password}`).then((data) => {
+      put(`/${resource}/${this[resource][index].id}`, this[resource][index], `${this.username}:${this.password}`).then((data) => {
         if (data[resource]) {
           this[resource] = data[resource];
         }
