@@ -64,7 +64,19 @@ describe('Contacts', function () {
     it('creates a contact', async function () {
       const contacts = await db.runSql('SELECT * FROM contacts');
       const newContact = contacts[contacts.length - 1];
-      // console.log(this.snapSent);
+      assert.deepEqual(newContact, {
+        user_id: 1,
+        id: 8,
+        landmark: 'michiel:name',
+        max: 0,
+        min: -5,
+        name: 'name',
+        token: newContact.token,
+        url: newContact.url,
+      });
+    });
+
+    it('sends a friend  request', async function () {
       const expectedFriendRequest = {
         peerName: 'name',
         msg: JSON.stringify({
@@ -75,6 +87,10 @@ describe('Contacts', function () {
         }),
         userId: 'michiel',
       };
+      assert.deepEqual(this.snapSent[0], expectedFriendRequest);
+    });
+
+    it.skip('announces the landmark', async function () {
       //  const expectedLandmarkAnnouncement = {
       //    peerName: 'name',
       //    msg: JSON.stringify({
@@ -92,18 +108,7 @@ describe('Contacts', function () {
       //    }),
       //    userId: 'michiel',
       //  };
-      assert.deepEqual(this.snapSent[0], expectedFriendRequest);
       // assert.deepEqual(this.snapSent[1], expectedLandmarkAnnouncement);
-      assert.deepEqual(newContact, {
-        user_id: 1,
-        id: 8,
-        landmark: 'michiel:name',
-        max: 0,
-        min: -5,
-        name: 'name',
-        token: newContact.token,
-        url: newContact.url,
-      });
     });
   });
 
@@ -121,6 +126,19 @@ describe('Contacts', function () {
     it('creates a contact', async function () {
       const contacts = await db.runSql('SELECT * FROM contacts');
       const newContact = contacts[contacts.length - 1];
+      assert.deepEqual(newContact, {
+        user_id: 1,
+        id: 8,
+        landmark: 'michiel:name',
+        max: 1234,
+        min: 0,
+        name: 'name',
+        token: newContact.token,
+        url: newContact.url,
+      });
+    });
+
+    it.skip('announces the landmark', async function () {
       // console.log(firstContact);
       //  const expectedLandmarkAnnouncement = {
       //    peerName: 'name',
@@ -133,16 +151,85 @@ describe('Contacts', function () {
       //    userId: 'michiel',
       //  };
       //  assert.deepEqual(this.snapSent[0], expectedLandmarkAnnouncement);
-      assert.deepEqual(newContact, {
+    });
+  });
+
+  describe('contact update', function () {
+    beforeEach(function () {
+      return new Promise(resolve => this.handler({
+        headers: {
+          authorization: 'Basic bWljaGllbDpxd2Vy',
+        },
+        url: '/contacts/2',
+        method: 'PUT',
+        on: (eventName, eventHandler) => {
+          if (eventName === 'data') {
+            setTimeout(() => eventHandler(JSON.stringify({
+              name: 'name',
+              url: 'url',
+              token: 'some_token',
+              trust: 5,
+            })), 0);
+          } else {
+            setTimeout(() => eventHandler(), 0);
+          }
+        },
+      }, {
+        end: () => {
+          resolve();
+        },
+      }));
+    });
+
+    it('updates a contact', async function () {
+      // console.log(await db.runSql('SELECT * FROM contacts', []));
+      const contact = await db.getObject('SELECT * FROM contacts WHERE user_id = $1 AND id = $2', [1, 2]);
+      assert.deepEqual(contact, {
         user_id: 1,
-        id: 8,
+        id: 2,
         landmark: 'michiel:name',
-        max: 1234,
-        min: 0,
+        max: 0,
+        min: -5,
         name: 'name',
-        token: newContact.token,
-        url: newContact.url,
+        token: contact.token,
+        url: contact.url,
       });
+    });
+
+    it('sends an updated friend request', async function () {
+      console.log(this.snapSent);
+      const expectedFriendRequest = {
+        peerName: 'name',
+        msg: JSON.stringify({
+          msgType: 'FRIEND-REQUEST',
+          url: 'undefined/michiel/name',
+          trust: 5,
+          token: JSON.parse(this.snapSent[0].msg).token,
+        }),
+        userId: 'michiel',
+      };
+      assert.deepEqual(this.snapSent[0], expectedFriendRequest);
+    });
+
+    it.skip('announces the updated landmark', async function () {
+      //  const expectedLandmarkAnnouncement = {
+      //    peerName: 'name',
+      //    msg: JSON.stringify({
+      //      msgType: 'ROUTING',
+      //      canRoute: {
+      //        'michiel:name': {
+      //          max_to: 0,
+      //          max_from: 5,
+      //        },
+      //        asdf: {
+      //          max_to: 0,
+      //          max_from: 5,
+      //        },
+      //      },
+      //    }),
+      //    userId: 'michiel',
+      //  };
+      // assert.deepEqual(this.snapSent[1], expectedLandmarkAnnouncement);
     });
   });
 

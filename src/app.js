@@ -156,7 +156,14 @@ function makeHandler(hubbie) {
                 const token = randomBytes(12).toString('hex');
                 const channelName = `${username}/${obj.name}`;
                 const landmark = `${username}:${obj.name}`;
-                const contactId = await db.getValue('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max", "landmark") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id AS value;', [user_id, obj.name, `${obj.url}/${myRemoteName}`, token, -obj.trust, 0, landmark]);
+
+                let contactId;
+                if (who === undefined) {
+                  contactId = await db.getValue('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max", "landmark") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id AS value;', [user_id, obj.name, `${obj.url}/${myRemoteName}`, token, -obj.trust, 0, landmark]);
+                } else {
+                  contactId = parseInt(who, 10);
+                  await db.runSql('UPDATE contacts SET "name" = $2, "url" =$3, "token" = $4, "min" = $5, "max" = $6, "landmark" = $7 WHERE user_id = $1 AND id = $8;', [user_id, obj.name, `${obj.url}/${myRemoteName}`, token, -obj.trust, 0, landmark, contactId]);
+                }
                 hubbie.addClient({
                   peerUrl: `${obj.url}/${myRemoteName}`,
                   /* fixme: hubbie should omit myName before mySecret in outgoing url */

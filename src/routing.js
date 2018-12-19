@@ -46,7 +46,7 @@ async function sendRoutes(userId, contactId, obj, hubbie) {
     myName: contact.token,
     peerName: channelName,
   });
-  return hubbie.send(contact.name, JSON.stringify(obj), user.name);
+  return hubbie.send(contact.name, JSON.stringify(Object.assign(obj, { msgType: 'ROUTING' })), user.name);
 }
 
 async function storeAndForwardRoutes(userName, peerName, obj, hubbie) {
