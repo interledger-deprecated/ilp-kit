@@ -90,25 +90,25 @@ describe('Contacts', function () {
       assert.deepEqual(this.snapSent[0], expectedFriendRequest);
     });
 
-    it.skip('announces the landmark', async function () {
-      //  const expectedLandmarkAnnouncement = {
-      //    peerName: 'name',
-      //    msg: JSON.stringify({
-      //      msgType: 'ROUTING',
-      //      canRoute: {
-      //        'michiel:name': {
-      //          max_to: 0,
-      //          max_from: 5,
-      //        },
-      //        asdf: {
-      //          max_to: 0,
-      //          max_from: 5,
-      //        },
-      //      },
-      //    }),
-      //    userId: 'michiel',
-      //  };
-      // assert.deepEqual(this.snapSent[1], expectedLandmarkAnnouncement);
+    it('announces the landmark', async function () {
+      const expectedLandmarkAnnouncement = {
+        peerName: 'name',
+        msg: JSON.stringify({
+          msgType: 'ROUTING',
+          canRoute: {
+            landmark: {
+              maxTo: 8,
+              maxFrom: 51,
+            },
+            'landmark:qwer': {
+              maxTo: 8,
+              maxFrom: 51,
+            },
+          },
+        }),
+        userId: 'michiel',
+      };
+      assert.deepEqual(this.snapSent[1], expectedLandmarkAnnouncement);
     });
   });
 
@@ -138,19 +138,26 @@ describe('Contacts', function () {
       });
     });
 
-    it.skip('announces the landmark', async function () {
-      // console.log(firstContact);
-      //  const expectedLandmarkAnnouncement = {
-      //    peerName: 'name',
-      //    msg: JSON.stringify({
-      //      msgType: 'ROUTING',
-      //      reachableThrough: {
-      //        asdf: 5,
-      //      },
-      //    }),
-      //    userId: 'michiel',
-      //  };
-      //  assert.deepEqual(this.snapSent[0], expectedLandmarkAnnouncement);
+    it('announces the landmark', async function () {
+      const expectedLandmarkAnnouncement = {
+        peerName: 'name',
+        msg: JSON.stringify({
+          msgType: 'ROUTING',
+          canRoute: {
+            landmark: {
+              maxTo: 8,
+              maxFrom: 51,
+            },
+            'landmark:qwer': {
+              maxTo: 8,
+              maxFrom: 51,
+            },
+          },
+        }),
+        userId: 'michiel',
+      };
+      // console.log(this.snapSent);
+      assert.deepEqual(this.snapSent[0], expectedLandmarkAnnouncement);
     });
   });
 
@@ -197,7 +204,6 @@ describe('Contacts', function () {
     });
 
     it('sends an updated friend request', async function () {
-      console.log(this.snapSent);
       const expectedFriendRequest = {
         peerName: 'name',
         msg: JSON.stringify({
@@ -211,25 +217,25 @@ describe('Contacts', function () {
       assert.deepEqual(this.snapSent[0], expectedFriendRequest);
     });
 
-    it.skip('announces the updated landmark', async function () {
-      //  const expectedLandmarkAnnouncement = {
-      //    peerName: 'name',
-      //    msg: JSON.stringify({
-      //      msgType: 'ROUTING',
-      //      canRoute: {
-      //        'michiel:name': {
-      //          max_to: 0,
-      //          max_from: 5,
-      //        },
-      //        asdf: {
-      //          max_to: 0,
-      //          max_from: 5,
-      //        },
-      //      },
-      //    }),
-      //    userId: 'michiel',
-      //  };
-      // assert.deepEqual(this.snapSent[1], expectedLandmarkAnnouncement);
+    it('announces the updated landmark', async function () {
+      const expectedLandmarkAnnouncement = {
+        peerName: 'name',
+        msg: JSON.stringify({
+          msgType: 'ROUTING',
+          canRoute: {
+            landmark: {
+              maxTo: 8,
+              maxFrom: 51,
+            },
+            'landmark:qwer': {
+              maxTo: 8,
+              maxFrom: 51,
+            },
+          },
+        }),
+        userId: 'michiel',
+      };
+      assert.deepEqual(this.snapSent[1], expectedLandmarkAnnouncement);
     });
   });
 

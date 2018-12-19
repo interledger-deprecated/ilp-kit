@@ -176,7 +176,7 @@ function makeHandler(hubbie) {
                   trust: obj.trust,
                   token,
                 }), username /* other part of channelName */);
-                await routing.sendRoutes(user_id, contactId, obj, hubbie);
+                await routing.sendRoutesToNewContact(user_id, contactId, hubbie);
               }
             }
             const data = await getData(user_id, resource);

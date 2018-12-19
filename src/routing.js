@@ -46,7 +46,33 @@ async function sendRoutes(userId, contactId, obj, hubbie) {
     myName: contact.token,
     peerName: channelName,
   });
-  return hubbie.send(contact.name, JSON.stringify(Object.assign(obj, { msgType: 'ROUTING' })), user.name);
+  return hubbie.send(contact.name, JSON.stringify(obj), user.name);
+}
+
+async function sendRoutesToNewContact(userId, contactId, hubbie) {
+  const routes = await db.runSql('SELECT * FROM routes WHERE user_id = $1', [userId]);
+  const canRoute = {};
+  function addRoute(label, maxTo, maxFrom) {
+    if (canRoute[label] === undefined) {
+      canRoute[label] = {
+        maxTo,
+        maxFrom,
+      };
+    } else {
+      canRoute[label] = {
+        maxTo: Math.max(canRoute[label].maxTo, maxTo),
+        maxFrom: Math.max(canRoute[label].maxFrom, maxFrom),
+      };
+    }
+  }
+  routes.forEach((row) => {
+    addRoute(row.landmark, row.max_to, row.max_from);
+    addRoute(`${row.landmark}:${row.approach}`, row.max_to, row.max_from);
+  });
+  return sendRoutes(userId, contactId, {
+    msgType: 'ROUTING',
+    canRoute,
+  }, hubbie);
 }
 
 async function storeAndForwardRoutes(userName, peerName, obj, hubbie) {
@@ -76,4 +102,4 @@ async function storeAndForwardRoutes(userName, peerName, obj, hubbie) {
   }));
 }
 
-module.exports = { storeAndForwardRoutes, sendRoutes };
+module.exports = { storeAndForwardRoutes, sendRoutes, sendRoutesToNewContact };

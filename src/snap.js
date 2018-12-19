@@ -187,7 +187,8 @@ async function snapIn(peerName, message, userName, hubbie) {
       // console.log('incoming friend request!', userName);
       const user = await db.getObject('SELECT id FROM users WHERE name = $1', [userName]);
       // console.log('friend request received', user, peerName, obj);
-      await db.getValue('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max", "landmark") VALUES ($1, $2, $3, $4, $5, $6, $7)  RETURNING id AS value', [user.id, peerName, obj.url, obj.token, 0, obj.trust, `${userName}:${peerName}`]);
+      const contactId = await db.getValue('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max", "landmark") VALUES ($1, $2, $3, $4, $5, $6, $7)  RETURNING id AS value', [user.id, peerName, obj.url, obj.token, 0, obj.trust, `${userName}:${peerName}`]);
+      await routing.sendRoutesToNewContact(user.id, contactId, hubbie);
       break;
     }
     default:
