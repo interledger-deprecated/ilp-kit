@@ -11,7 +11,7 @@ CREATE TABLE transactions (
   contact_id INT,
   direction tdirection,
   msgId INT,
-  amount INT,
+  amount INT DEFAULT 0,
   description VARCHAR,
   status tstatus,
   requested_at timestamp without time zone,
@@ -25,8 +25,8 @@ CREATE TABLE contacts (
   name VARCHAR,
   url VARCHAR,
   token VARCHAR,
-  min INT,
-  max INT,
+  min INT DEFAULT 0,
+  max INT DEFAULT 0,
   landmark VARCHAR,
   CONSTRAINT unq_userid_name UNIQUE(user_id,name)
 );

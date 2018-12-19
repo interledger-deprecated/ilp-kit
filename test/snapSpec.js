@@ -57,8 +57,21 @@ describe('SNAP Access', function () {
       });
       return this.hubbieHandlers.message('contact-bob', '{}', 'michiel');
     });
-    it('returns false to the Hubbie peer event', function () {
-      assert.equal(this.verdict, false);
+    it('returns true to the Hubbie peer event', function () {
+      assert.equal(this.verdict, true);
+    });
+    it('creates the contact on-the-fly', async function () {
+      const contacts = await db.runSql('SELECT * FROM contacts', []);
+      assert.deepEqual(contacts[contacts.length - 1], {
+        id: 8,
+        landmark: 'michiel:someone-unknown',
+        max: 0,
+        min: 0,
+        name: 'someone-unknown',
+        token: 'what',
+        url: null,
+        user_id: 1,
+      });
     });
   });
 

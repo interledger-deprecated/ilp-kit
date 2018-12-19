@@ -113,8 +113,15 @@ describe('Contacts', function () {
   });
 
   describe('incoming friend request', function () {
-    beforeEach(function () {
+    beforeEach(async function () {
       // console.log('calling this handler');
+      await this.hubbieHandler.peer({
+        peerName: 'name',
+        peerSecret: 'incoming_token',
+        userName: 'michiel',
+      });
+      // console.log(await db.runSql('SELECT * FROM contacts'));
+
       return this.hubbieHandler.message('name', JSON.stringify({
         msgType: 'FRIEND-REQUEST',
         url: 'incoming_url',
@@ -158,25 +165,6 @@ describe('Contacts', function () {
       };
       // console.log(this.snapSent);
       assert.deepEqual(this.snapSent[0], expectedLandmarkAnnouncement);
-    });
-  });
-
-  describe('incoming friend request, peerName taken', function () {
-    beforeEach(function () {
-      // console.log('calling this handler');
-      this.result = this.hubbieHandler.message('contact-bob', JSON.stringify({
-        msgType: 'FRIEND-REQUEST',
-        url: 'incoming_url',
-        trust: 1234,
-        token: 'incoming_token',
-      }), 'michiel');
-    });
-
-    it('rejects the friend request', function (done) {
-      this.result.catch((e) => {
-        assert.equal(e.message, 'duplicate key value violates unique constraint "unq_userid_name"');
-        done();
-      });
     });
   });
 

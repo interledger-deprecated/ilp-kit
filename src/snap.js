@@ -81,7 +81,7 @@ async function usePreimage(obj, userName, hubbie) {
 }
 
 async function snapIn(peerName, message, userName, hubbie) {
-  console.log('hubbie message!', { peerName, message, userName });
+  // console.log('hubbie message!', { peerName, message, userName });
   let obj;
   try {
     obj = JSON.parse(message);
@@ -187,7 +187,8 @@ async function snapIn(peerName, message, userName, hubbie) {
       // console.log('incoming friend request!', userName);
       const user = await db.getObject('SELECT id FROM users WHERE name = $1', [userName]);
       // console.log('friend request received', user, peerName, obj);
-      const contactId = await db.getValue('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max", "landmark") VALUES ($1, $2, $3, $4, $5, $6, $7)  RETURNING id AS value', [user.id, peerName, obj.url, obj.token, 0, obj.trust, `${userName}:${peerName}`]);
+      const contactId = await db.getValue('SELECT id AS value FROM contacts WHERE "user_id"= $1 AND "name" = $2', [user.id, peerName]);
+      await db.runSql('UPDATE contacts SET "url" = $1, "max" = $2 WHERE "user_id"= $3 AND "name" = $4', [obj.url, obj.trust, user.id, peerName]);
       await routing.sendRoutesToNewContact(user.id, contactId, hubbie);
       break;
     }

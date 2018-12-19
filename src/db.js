@@ -47,6 +47,7 @@ function checkPass(username, password) {
 function getObject(query, params) {
   return runSql(query, params).then((results) => {
     if (!results || !results.length) {
+      // console.log(query, params);
       throw new Error('db row not found');
     }
     return results[0];

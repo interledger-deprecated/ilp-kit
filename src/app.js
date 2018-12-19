@@ -56,12 +56,25 @@ function getData(user_id, resource) {
 }
 
 function makeHandler(hubbie) {
-  hubbie.on('peer', eventObj => db.runSql(
-    'select c.token from users u join contacts c on u.id=c.user_id where u.name= $1 and c.name= $2', [
-      eventObj.userName,
-      eventObj.peerName,
-    ], // I think requiring this trailing comma is a bug in eslint
-  ).then(results => !!(results && results.length && eventObj.peerSecret === results[0].token)));
+  hubbie.on('peer', async (eventObj) => {
+    const users = await db.runSql('SELECT * FROM users WHERE name = $1', [eventObj.userName]);
+    if (users === null || users.length === 0) {
+      // console.log('verdict 1  false!');
+      return false;
+    }
+    // console.log('still here 1');
+    const user = users[0];
+    const contacts = await db.runSql('SELECT * FROM contacts WHERE name = $1 AND user_id  = $2', [eventObj.peerName, user.id]);
+    if (contacts === null || contacts.length === 0) {
+      // console.log('verdict 2 true!');
+      await db.runSql('INSERT INTO contacts (user_id, name, token, landmark) VALUES ($1, $2, $3, $4)', [user.id, eventObj.peerName, eventObj.peerSecret, `${user.name}:${eventObj.peerName}`]);
+      return true;
+    }
+    // console.log('still here 2');
+    const contact = contacts[0];
+    // console.log('contact found!', eventObj, users, contacts);
+    return (eventObj.peerSecret === contact.token);
+  });
 
   hubbie.on('message', (peerName, msg, userName) => snapIn(peerName, msg, userName, hubbie));
 
