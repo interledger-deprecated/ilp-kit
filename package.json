@@ -36,6 +36,7 @@
     "randombytes": "^2.0.6"
   },
   "devDependencies": {
+    "btoa": "^1.2.1",
     "chai": "^4.2.0",
     "eslint": "^5.10.0",
     "eslint-config-airbnb": "^17.1.0",
