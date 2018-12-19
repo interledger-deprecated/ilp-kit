@@ -81,7 +81,7 @@ async function usePreimage(obj, userName, hubbie) {
 }
 
 async function snapIn(peerName, message, userName, hubbie) {
-  // console.log('hubbie message!', { peerName, message, userName });
+  console.log('hubbie message!', { peerName, message, userName });
   let obj;
   try {
     obj = JSON.parse(message);

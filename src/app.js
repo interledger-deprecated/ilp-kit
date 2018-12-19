@@ -61,7 +61,7 @@ function makeHandler(hubbie) {
       eventObj.userName,
       eventObj.peerName,
     ], // I think requiring this trailing comma is a bug in eslint
-  ).then(results => results && results.length && eventObj.peerSecret === results[0].token));
+  ).then(results => !!(results && results.length && eventObj.peerSecret === results[0].token)));
 
   hubbie.on('message', (peerName, msg, userName) => snapIn(peerName, msg, userName, hubbie));
 
