@@ -21,4 +21,4 @@ INSERT INTO transactions (user_id, contact_id, requested_at, description, direct
 -- preimage, forwards, routes:
 INSERT INTO preimages (user_id, hash, preimage) VALUES (3, 'bc21571c5f1968c083c5740bb0879bde3f61c787e3c41540cd3290604f70bbed', '36d0589ec033779c31b50a8cff4aeeacaece3c0ecfe0d8a300b307fd29cf59a3');
 INSERT INTO forwards (user_id, incoming_peer_id, incoming_msg_id, outgoing_peer_id, hash) VALUES (1, 1, 1, 2, 'asdf');
-INSERT INTO routes (user_id, contact_id, landmark, approach, max_to, max_from) VALUES (1, 1, 'asdf', 'qwer', 8, 51);
+INSERT INTO routes (user_id, contact_id, landmark, approach, max_to, max_from) VALUES (1, 1, 'landmark', 'qwer', 8, 51);

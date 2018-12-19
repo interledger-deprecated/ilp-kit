@@ -56,7 +56,7 @@ describe('Routing', function () {
       {
         user_id: 1,
         contact_id: 1,
-        landmark: 'asdf',
+        landmark: 'landmark',
         approach: 'qwer',
         max_to: 8,
         max_from: 51,

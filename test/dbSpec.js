@@ -95,7 +95,7 @@ describe('Database', function () {
       max_to: 8,
       max_from: 51,
       contact_id: 1,
-      landmark: 'asdf',
+      landmark: 'landmark',
       approach: 'qwer',
       user_id: 1,
     });

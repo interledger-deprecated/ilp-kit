@@ -18,7 +18,8 @@ async function loop(userId, obj, hubbie) {
   }
   // console.log('snapOut', userId, obj);
   // console.log('will create transaction with msgId', obj.msgId);
-  const landmark = await getValue('SELECT landmark FROM contacts WHERE user_id= $1  AND name = $2', [userId, obj.contactName]);
+  const landmark = await getValue('SELECT landmark AS value FROM contacts WHERE user_id= $1  AND name = $2', [userId, obj.contactName]);
+  // console.log({ userId,  obj,  landmark });
   const routes = await runSql('SELECT r.* FROM routes r INNER JOIN contacts c ON r.landmark = c.landmark WHERE r.user_id = $1 AND c.user_id = $1 AND c.name = $2', [userId, obj.contactName]);
   // console.log(routes);
   const preimage = randomBytes(32);
@@ -31,7 +32,7 @@ async function loop(userId, obj, hubbie) {
     msgType: 'PROPOSE',
     msgId: maxId + 1,
     amount: obj.amount,
-    landmark,
+    landmarks: landmark,
     condition,
   };
   const friend = await getObject('SELECT * FROM contacts WHERE user_id = $1 AND id = $2', [userId, friendId]);
