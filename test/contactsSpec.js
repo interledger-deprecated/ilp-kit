@@ -246,6 +246,33 @@ describe('Contacts', function () {
     });
   });
 
+  describe('contact delete', function () {
+    beforeEach(function () {
+      return new Promise(resolve => this.handler({
+        headers: {
+          authorization: 'Basic bWljaGllbDpxd2Vy',
+        },
+        url: '/contacts/2',
+        method: 'DELETE',
+        on: (eventName, eventHandler) => {
+          if (eventName === 'end') {
+            setTimeout(() => eventHandler(), 0);
+          }
+        },
+      }, {
+        end: () => {
+          resolve();
+        },
+      }));
+    });
+
+    it('deletes a contact', async function () {
+      // console.log(await db.runSql('SELECT * FROM contacts', []));
+      const matchingContacts = await db.runSql('SELECT * FROM contacts WHERE user_id = $1 AND id = $2', [1, 2]);
+      assert.equal(matchingContacts, null);
+    });
+  });
+
   afterEach(async function () {
     await runSqlFile('./drop.sql');
   });

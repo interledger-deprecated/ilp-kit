@@ -121,7 +121,11 @@
                 <td>{{ contact.current }}</td>
                 <td>{{ contact.receivable }}</td>
                 <td>{{ contact.max }}</td>
-                <td><a class="button" v-on:click="edit=index">Edit</a> <a class="button" v-on:click="pay=index">Pay</a></td>
+                <td>
+                  <a class="button" v-on:click="edit=index">Edit</a>
+                  <a class="button" v-on:click="pay=index">Pay</a>
+                  <a class="button" v-on:click="deleteContact(index);window.alert(index)">Delete</a>
+                </td>
               </tr>
             </tbody>
           </table>

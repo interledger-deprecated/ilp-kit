@@ -9,9 +9,9 @@ function get(resource, creds) {
   }).then(response => response.json());
 }
 
-function put(resource, data, creds) {
+function put(resource, data, creds, method = 'PUT') {
   return fetch(resource, {
-    method: 'PUT',
+    method,
     headers: {
       Authorization: `Basic ${btoa(creds)}`,
     },
@@ -97,6 +97,13 @@ const app = new Vue({
       put(`/${resource}/${this[resource][index].id}`, this[resource][index], `${this.username}:${this.password}`).then((data) => {
         if (data[resource]) {
           this[resource] = data[resource];
+        }
+      });
+    },
+    deleteContact(index) {
+      put(`/contacts/${this.contacts[index].id}`, {}, `${this.username}:${this.password}`, 'DELETE').then((data) => {
+        if (data.contacts) {
+          this.contacts = data.contacts;
         }
       });
     },

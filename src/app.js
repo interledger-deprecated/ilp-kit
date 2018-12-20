@@ -192,6 +192,10 @@ function makeHandler(hubbie) {
                 await routing.sendRoutesToNewContact(user_id, contactId, hubbie);
               }
             }
+            if (req.method === 'DELETE' && resource === 'contacts') {
+              const contactId = parseInt(who, 10);
+              await db.runSql('DELETE FROM contacts WHERE user_id = $1 AND id = $2;', [user_id, contactId]);
+            }
             const data = await getData(user_id, resource);
             res.end(JSON.stringify({
               ok: true,
