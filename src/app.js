@@ -171,7 +171,7 @@ function makeHandler(hubbie) {
                 const landmark = `${username}:${obj.name}`;
 
                 let contactId;
-                if (who === undefined) {
+                if (who === 'new') {
                   contactId = await db.getValue('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max", "landmark") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id AS value;', [user_id, obj.name, `${obj.url}/${myRemoteName}`, token, obj.min, 0, landmark]);
                 } else {
                   contactId = parseInt(who, 10);

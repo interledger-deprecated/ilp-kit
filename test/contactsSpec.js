@@ -40,7 +40,7 @@ describe('Contacts', function () {
         headers: {
           authorization: 'Basic bWljaGllbDpxd2Vy',
         },
-        url: '/contacts',
+        url: '/contacts/new',
         method: 'PUT',
         on: (eventName, eventHandler) => {
           if (eventName === 'data') {

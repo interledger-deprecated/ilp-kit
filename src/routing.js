@@ -51,6 +51,9 @@ async function sendRoutes(userId, contactId, obj, hubbie) {
 
 async function sendRoutesToNewContact(userId, contactId, hubbie) {
   const routes = await db.runSql('SELECT * FROM routes WHERE user_id = $1', [userId]);
+  if (routes === null) {
+    return Promise.resolve();
+  }
   const canRoute = {};
   function addRoute(label, maxTo, maxFrom) {
     if (canRoute[label] === undefined) {

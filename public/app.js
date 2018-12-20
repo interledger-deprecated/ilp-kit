@@ -40,10 +40,12 @@ const app = new Vue({
   computed: {
     editTrust: {
       get() {
-        return -this.contacts[this.edit].min;
+        const min = (this.contacts[this.edit].min === undefined ? 0 : this.contacts[this.edit].min);
+        return -min;
       },
       set(val) {
-        this.contacts[this.edit].min = -val;
+        const trust = (Number.isNaN(val) ? 0 : val);
+        this.contacts[this.edit].min = -trust;
       },
     },
   },
@@ -94,7 +96,11 @@ const app = new Vue({
       });
     },
     save(resource, index) {
-      put(`/${resource}/${this[resource][index].id}`, this[resource][index], `${this.username}:${this.password}`).then((data) => {
+      let { id } = this[resource][index];
+      if (id === undefined) {
+        id = 'new';
+      }
+      put(`/${resource}/${id}`, this[resource][index], `${this.username}:${this.password}`).then((data) => {
         if (data[resource]) {
           this[resource] = data[resource];
         }
