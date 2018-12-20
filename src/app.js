@@ -172,10 +172,10 @@ function makeHandler(hubbie) {
 
                 let contactId;
                 if (who === undefined) {
-                  contactId = await db.getValue('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max", "landmark") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id AS value;', [user_id, obj.name, `${obj.url}/${myRemoteName}`, token, -obj.trust, 0, landmark]);
+                  contactId = await db.getValue('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max", "landmark") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id AS value;', [user_id, obj.name, `${obj.url}/${myRemoteName}`, token, obj.min, 0, landmark]);
                 } else {
                   contactId = parseInt(who, 10);
-                  await db.runSql('UPDATE contacts SET "name" = $2, "url" =$3, "token" = $4, "min" = $5, "max" = $6, "landmark" = $7 WHERE user_id = $1 AND id = $8;', [user_id, obj.name, `${obj.url}/${myRemoteName}`, token, -obj.trust, 0, landmark, contactId]);
+                  await db.runSql('UPDATE contacts SET "name" = $2, "url" =$3, "token" = $4, "min" = $5, "max" = $6, "landmark" = $7 WHERE user_id = $1 AND id = $8;', [user_id, obj.name, `${obj.url}/${myRemoteName}`, token, obj.min, 0, landmark, contactId]);
                 }
                 hubbie.addClient({
                   peerUrl: `${obj.url}/${myRemoteName}`,
@@ -186,7 +186,7 @@ function makeHandler(hubbie) {
                 await hubbie.send(obj.name /* part of channelName */, JSON.stringify({
                   msgType: 'FRIEND-REQUEST',
                   url: `${hubbie.myBaseUrl}/${username}/${obj.name}`,
-                  trust: obj.trust,
+                  trust: -obj.min,
                   token,
                 }), username /* other part of channelName */);
                 await routing.sendRoutesToNewContact(user_id, contactId, hubbie);

@@ -37,6 +37,16 @@ const app = new Vue({
     contacts: [],
     transactions: [],
   },
+  computed: {
+    editTrust: {
+      get: function() {
+        return -this.contacts[this.edit].min;
+      },
+      set: function(val) {
+        this.contacts[this.edit].min = -val;
+      },
+    },
+  },
   methods: {
     register() {
       if (this.repeat === this.password) {
