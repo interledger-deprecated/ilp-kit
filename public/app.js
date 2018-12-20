@@ -39,10 +39,10 @@ const app = new Vue({
   },
   computed: {
     editTrust: {
-      get: function() {
+      get() {
         return -this.contacts[this.edit].min;
       },
-      set: function(val) {
+      set(val) {
         this.contacts[this.edit].min = -val;
       },
     },

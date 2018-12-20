@@ -48,7 +48,7 @@ describe('Contacts', function () {
               name: 'name',
               url: 'url',
               token: 'some_token',
-              trust: 5,
+              min: -5,
             })), 0);
           } else {
             setTimeout(() => eventHandler(), 0);
@@ -182,7 +182,7 @@ describe('Contacts', function () {
               name: 'name',
               url: 'url',
               token: 'some_token',
-              trust: 5,
+              min: -5,
             })), 0);
           } else {
             setTimeout(() => eventHandler(), 0);
