@@ -25,8 +25,8 @@ describe('Pay', function () {
     this.hubbie = {
       addClient: () => {
       },
-      send: (peerName, msg, userId) => {
-        this.snapSent.push({ peerName, msg, userId });
+      send: (peerName, msg, userName) => {
+        this.snapSent.push({ peerName, msg, userName });
       },
       on: () => {
       },
@@ -83,9 +83,9 @@ describe('Pay', function () {
 
   it('sends a snap message', async function () {
     assert.deepEqual(this.snapSent, [{
-      peerName: '1:contact-bob',
+      peerName: 'contact-bob',
       msg: '{"msgType":"PROPOSE","msgId":1,"amount":3}',
-      userId: undefined,
+      userName: 'michiel',
     }]);
   });
 });

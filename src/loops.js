@@ -3,7 +3,7 @@ const randomBytes = require('randombytes');
 const { runSql, getObject, getValue } = require('./db');
 const { newTransaction } = require('./ledger');
 
-async function loop(userId, obj, hubbie) {
+async function loop(userId, obj, hubbieSend) {
   if (typeof userId !== 'number') {
     throw new Error('snapOut: userId not a number');
   }
@@ -35,9 +35,10 @@ async function loop(userId, obj, hubbie) {
     landmarks: landmark,
     condition,
   };
+  const user = await getObject('SELECT * FROM users WHERE  id = $1', [userId]);
   const friend = await getObject('SELECT * FROM contacts WHERE user_id = $1 AND id = $2', [userId, friendId]);
   try {
-    await newTransaction(userId, friend, trans, 'OUT', hubbie);
+    await newTransaction(userId, friend, trans, 'OUT', hubbieSend);
   } catch (e) {
     // console.error('snapOut fail', e.message);
     throw e;
@@ -52,13 +53,7 @@ async function loop(userId, obj, hubbie) {
   // Only downside: you need to give your peer a URL that ends in the name they have
   // in your addressbook.
   // For now, we use a special hubbie channel to make the outgoing call:
-  const peerName = `${userId}:${friend.name}`;
-  hubbie.addClient({
-    peerUrl: friend.url,
-    myName: /* fixme: hubbie should omit myName before mySecret in outgoing url */ friend.token,
-    peerName,
-  });
-  return hubbie.send(peerName, JSON.stringify(trans));
+  return hubbieSend(user, friend, trans);
 }
 
 module.exports = { loop };

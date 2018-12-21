@@ -36,20 +36,13 @@ async function restrictLimits(user, contact, obj) {
   };
 }
 
-async function sendRoutes(userId, contactId, obj, hubbie) {
+async function sendRoutes(userId, contactId, obj, hubbieSend) {
   const user = await db.getObject('SELECT * FROM users WHERE id = $1', [userId]);
   const contact = await db.getObject('SELECT * FROM contacts WHERE user_id = $1 AND id = $2', [userId, contactId]);
-  const channelName = `{$user.name}/${contact.name}`;
-  hubbie.addClient({
-    peerUrl: contact.url,
-    /* fixme: hubbie should omit myName before mySecret in outgoing url */
-    myName: contact.token,
-    peerName: channelName,
-  });
-  return hubbie.send(contact.name, JSON.stringify(obj), user.name);
+  return hubbieSend(user, contact, obj);
 }
 
-async function sendRoutesToNewContact(userId, contactId, hubbie) {
+async function sendRoutesToNewContact(userId, contactId, hubbieSend) {
   const routes = await db.runSql('SELECT * FROM routes WHERE user_id = $1', [userId]);
   if (routes === null) {
     return Promise.resolve();
@@ -75,14 +68,14 @@ async function sendRoutesToNewContact(userId, contactId, hubbie) {
   return sendRoutes(userId, contactId, {
     msgType: 'ROUTING',
     canRoute,
-  }, hubbie);
+  }, hubbieSend);
 }
 
-async function storeAndForwardRoutes(userName, peerName, obj, hubbie) {
+async function storeAndForwardRoutes(userName, peerName, obj, hubbieSend) {
   const user = await db.getObject('SELECT * FROM users WHERE name = $1', [userName]);
   const receivedFrom = await db.getObject('SELECT * FROM contacts WHERE user_id = $1 AND name = $2', [user.id, peerName]);
   const contacts = await db.runSql('SELECT* FROM contacts WHERE user_id = $1', [user.id]);
-  // console.log('storeAndForward', contacts, userName, peerName, obj, hubbie);
+  // console.log('storeAndForward', contacts, userName, peerName, obj, hubbieSend);
   await Promise.all(Object.keys(obj.canRoute).map((key) => {
     const [landmark, approach] = key.split(':');
     return db.runSql(
@@ -101,7 +94,7 @@ async function storeAndForwardRoutes(userName, peerName, obj, hubbie) {
     if (contact.id === receivedFrom.id) {
       return Promise.resolve();
     }
-    return sendRoutes(user.id, contact.id, restricted, hubbie);
+    return sendRoutes(user.id, contact.id, restricted, hubbieSend);
   }));
 }
 

@@ -4,7 +4,7 @@ const db = require('./db');
 const routing = require('./routing');
 const { newTransaction } = require('./ledger');
 
-async function snapOut(userId, objIn, hubbie) {
+async function snapOut(userId, objIn, hubbieSend) {
   if (typeof userId !== 'number') {
     throw new Error('snapOut: userId not a number');
   }
@@ -23,9 +23,10 @@ async function snapOut(userId, objIn, hubbie) {
   });
   // console.log('snapOut', userId, obj);
   // console.log('will create transaction with msgId', obj.msgId);
-  const contact = await db.getObject('SELECT id, url, token, min, max FROM contacts WHERE user_id= $1  AND name = $2', [userId, obj.contactName]);
+  const contact = await db.getObject('SELECT * FROM contacts WHERE user_id= $1  AND name = $2', [userId, obj.contactName]);
+  // console.log('sending out SNAP to contact', contact);
   try {
-    await newTransaction(userId, contact, obj, 'OUT', hubbie);
+    await newTransaction(userId, contact, obj, 'OUT', hubbieSend);
   } catch (e) {
     // console.error('snapOut fail', e.message);
     throw e;
@@ -40,47 +41,36 @@ async function snapOut(userId, objIn, hubbie) {
   // Only downside: you need to give your peer a URL that ends in the name they havei
   // in your addressbook.
   // For now, we use a special hubbie channel to make the outgoing call:
-  const peerName = `${userId}:${obj.contactName}`;
-  hubbie.addClient({
-    peerUrl: contact.url,
-    myName: /* fixme: hubbie should omit myName before mySecret in outgoing url */ contact.token,
-    peerName,
-  });
-  return hubbie.send(peerName, JSON.stringify({
+  const user = await db.getObject('SELECT * FROM users WHERE id  = $1', [userId]);
+  return hubbieSend(user, contact, {
     msgType: 'PROPOSE',
     msgId: obj.msgId,
     amount: obj.amount,
     description: obj.description,
     condition: obj.condition,
-  }));
+  });
 }
 
-async function usePreimage(obj, userName, hubbie) {
-  const userId = await db.getValue('SELECT id AS value FROM users WHERE name = $1', [userName]);
+async function usePreimage(obj, userName, hubbieSend) {
+  const user = await db.getObject('SELECT * FROM users WHERE name = $1', [userName]);
   const hash = hashlocks.sha256(Buffer.from(obj.preimage, 'hex')).toString('hex');
   // console.log('usePreimage', hash, obj);
   const backPeer = await db.getObject('SELECT incoming_peer_id, incoming_msg_id FROM forwards WHERE user_id =  $1 AND hash = $2', [
-    userId,
+    user.id,
     hash,
   ]);
-  const contact = await db.getObject('SELECT name, url, token, min, max FROM contacts WHERE user_id= $1  AND id = $2', [userId, backPeer.incoming_peer_id]);
+  const contact = await db.getObject('SELECT name, url, token, min, max FROM contacts WHERE user_id= $1  AND id = $2', [user.id, backPeer.incoming_peer_id]);
   // console.log('using in backwarded ACCEPT', contact, backPeer);
-  const peerName = `${userId}:${contact.name}`;
-  hubbie.addClient({
-    peerUrl: contact.url,
-    myName: /* fixme: hubbie should omit myName before mySecret in outgoing url */ contact.token,
-    peerName,
-  });
-  return hubbie.send(peerName, JSON.stringify({
+  return hubbieSend(user, contact, {
     msgType: 'ACCEPT',
     msgId: backPeer.incoming_msg_id,
     preimage: obj.preimage,
-  }));
+  });
   // TODO: store preimages in case backPeer repeats the PROPOSE,
   // and then delete preimage rows once ACCEPT was ACKed and e.g. a week has passed
 }
 
-async function snapIn(peerName, message, userName, hubbie) {
+async function snapIn(peerName, message, userName, hubbieSend) {
   // console.log('hubbie message!', { peerName, message, userName });
   let obj;
   try {
@@ -103,7 +93,7 @@ async function snapIn(peerName, message, userName, hubbie) {
       updateStatus('accepted', 'OUT');
       if (obj.preimage) {
         try {
-          await usePreimage(obj, userName, hubbie);
+          await usePreimage(obj, userName, hubbieSend);
         } catch (e) {
           // console.log('ALAS, no backpeer found - or maybe I was the loop initiator');
         }
@@ -144,12 +134,12 @@ async function snapIn(peerName, message, userName, hubbie) {
               condition: obj.condition,
               description: `DEBUG: multi-hop to ${peerName}`,
               amount: obj.amount,
-            }, hubbie);
+            }, hubbieSend);
           }
         }
         // console.log({ preimage });
         // console.log('snapIn try start');
-        await newTransaction(user.id, contact, obj, 'IN', hubbie);
+        await newTransaction(user.id, contact, obj, 'IN', hubbieSend);
         // TODO: could also do these two sql queries in one
         // console.log('incoming proposal accepted');
         await updateStatus('accepted', 'IN');
@@ -161,26 +151,16 @@ async function snapIn(peerName, message, userName, hubbie) {
         // console.log('incoming proposal rejected');
         result = 'REJECT';
       }
-      // FIXME: even when using http, maybe this peer should already exist if a message is
-      // being received from them?
-      const channelName = `${userName}/${peerName}`; // match behavior of hubbie's internal channelName function
-      hubbie.addClient({
-        peerUrl: contact.url,
-        /* fixme: hubbie should omit myName before mySecret in outgoing url */
-        myName: contact.token,
-        peerName: channelName,
-      });
       // console.log('hubbie send back out', obj, channelName, user.id);
-      // see FIXME comment above about peerBackName
-      return hubbie.send(peerName, JSON.stringify({
+      return hubbieSend(user, contact, {
         msgType: result,
         msgId: obj.msgId,
         preimage,
-      }), userName);
+      });
       // break; // unreachable
     }
     case 'ROUTING': {
-      await routing.storeAndForwardRoutes(userName, peerName, obj, hubbie);
+      await routing.storeAndForwardRoutes(userName, peerName, obj, hubbieSend);
       break;
     }
     case 'FRIEND-REQUEST': {
@@ -189,7 +169,7 @@ async function snapIn(peerName, message, userName, hubbie) {
       // console.log('friend request received', user, peerName, obj);
       const contactId = await db.getValue('SELECT id AS value FROM contacts WHERE "user_id"= $1 AND "name" = $2', [user.id, peerName]);
       await db.runSql('UPDATE contacts SET "url" = $1, "max" = $2 WHERE "user_id"= $3 AND "name" = $4', [obj.url, obj.trust, user.id, peerName]);
-      await routing.sendRoutesToNewContact(user.id, contactId, hubbie);
+      await routing.sendRoutesToNewContact(user.id, contactId, hubbieSend);
       break;
     }
     default:

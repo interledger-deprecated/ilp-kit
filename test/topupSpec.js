@@ -25,8 +25,8 @@ describe('TopUp', function () {
     this.hubbie = {
       addClient: () => {
       },
-      send: (peerName, msg, userId) => {
-        this.snapSent.push({ peerName, msg, userId });
+      send: (peerName, msg, userName) => {
+        this.snapSent.push({ peerName, msg, userName });
       },
       on: () => {
       },
@@ -83,9 +83,9 @@ describe('TopUp', function () {
 
   it('sends a snap message to Eddie', async function () {
     assert.deepEqual(this.snapSent, [{
-      peerName: '1:Eddie',
+      peerName: 'Eddie',
       msg: this.snapSent[0].msg,
-      userId: undefined,
+      userName: 'michiel',
     }]);
     const msgObj = JSON.parse(this.snapSent[0].msg);
     assert.deepEqual(msgObj, {

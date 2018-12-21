@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 const Static = require('node-static');
 const atob = require('atob');
 const randomBytes = require('randombytes');
@@ -39,12 +38,12 @@ function mixInContactNames(transactions) {
   return Promise.all(transactions.map(addContactName));
 }
 
-function getData(user_id, resource) {
+function getData(userId, resource) {
   const columns = {
     contacts: '"id", "user_id", "name", "url", "token", "min", "max"',
     transactions: '"user_id", "contact_id", "requested_at", "description", "direction", "amount"',
   };
-  return db.runSql(`SELECT ${columns[resource]} FROM ${resource} WHERE user_id = $1;`, [user_id]).then((data) => {
+  return db.runSql(`SELECT ${columns[resource]} FROM ${resource} WHERE user_id = $1;`, [userId]).then((data) => {
     if (resource === 'contacts') {
       return mixInBalances(data);
     }
@@ -75,8 +74,21 @@ function makeHandler(hubbie) {
     // console.log('contact found!', eventObj, users, contacts);
     return (eventObj.peerSecret === contact.token);
   });
+  function hubbieSend(user, contact, obj) {
+    // console.log('hubbieSend', user, contact, obj);
+    // FIXME: even when using http, maybe this peer should already exist if a message is
+    // being received from them?
+    const channelName = `${user.name}/${contact.name}`; // match behavior of hubbie's internal channelName function
+    hubbie.addClient({
+      peerUrl: contact.url,
+      /* fixme: hubbie should omit myName before mySecret in outgoing url */
+      myName: contact.token,
+      peerName: channelName,
+    });
+    return hubbie.send(contact.name, JSON.stringify(obj), user.name);
+  }
 
-  hubbie.on('message', (peerName, msg, userName) => snapIn(peerName, msg, userName, hubbie));
+  hubbie.on('message', (peerName, msg, userName) => snapIn(peerName, msg, userName, hubbieSend));
 
   return function handler(req, res) {
     // console.log('hubbie passed req to app\'s own handler', req.method, req.url);
@@ -91,8 +103,8 @@ function makeHandler(hubbie) {
           try {
             // console.log(req.headers);
             const [username, password] = atob(req.headers.authorization.split(' ')[1]).split(':');
-            db.checkPass(username, password).then((user_id) => {
-              res.end(JSON.stringify({ username, ok: (user_id !== false) }));
+            db.checkPass(username, password).then((userId) => {
+              res.end(JSON.stringify({ username, ok: (userId !== false) }));
             });
           } catch (e) {
             res.end(JSON.stringify({ ok: false, error: e.message }));
@@ -107,7 +119,7 @@ function makeHandler(hubbie) {
               throw new Error('auth fail');
             }
             // console.log('calling  snapOut',  userId, body);
-            const transactionId = await snapOut(userId, JSON.parse(body), hubbie);
+            const transactionId = await snapOut(userId, JSON.parse(body), hubbieSend);
             const response = {
               ok: true,
               transactionId,
@@ -126,7 +138,7 @@ function makeHandler(hubbie) {
             if (userId === false) {
               throw new Error('auth fail');
             }
-            const result = await loop(userId, JSON.parse(body), hubbie);
+            const result = await loop(userId, JSON.parse(body), hubbieSend);
             res.end(JSON.stringify({ ok: true, result }));
           } catch (e) {
             res.end(JSON.stringify({ ok: false, error: e.message }));
@@ -139,7 +151,7 @@ function makeHandler(hubbie) {
             if (userId === false) {
               throw new Error('auth fail');
             }
-            const result = await routing.sendRoutes(userId, JSON.parse(body), hubbie);
+            const result = await routing.sendRoutes(userId, JSON.parse(body), hubbieSend);
             res.end(JSON.stringify({ ok: true, result }));
           } catch (e) {
             res.end(JSON.stringify({ ok: false, error: e.message }));
@@ -155,9 +167,9 @@ function makeHandler(hubbie) {
             // console.log(resource, req.headers.authorization, req.method, body);
             const [username, password] = atob(req.headers.authorization.split(' ')[1]).split(':');
             // console.log('checkpass', username, password);
-            const user_id = await db.checkPass(username, password);
+            const userId = await db.checkPass(username, password);
             // console.log(user_id, req.method);
-            if (user_id === false) {
+            if (userId === false) {
               throw new Error('auth error');
             }
             if (req.method === 'PUT') {
@@ -167,36 +179,35 @@ function makeHandler(hubbie) {
               if (resource === 'contacts') {
                 const myRemoteName = randomBytes(12).toString('hex');
                 const token = randomBytes(12).toString('hex');
-                const channelName = `${username}/${obj.name}`;
                 const landmark = `${username}:${obj.name}`;
 
                 let contactId;
                 if (who === 'new') {
-                  contactId = await db.getValue('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max", "landmark") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id AS value;', [user_id, obj.name, `${obj.url}/${myRemoteName}`, token, obj.min, 0, landmark]);
+                  contactId = await db.getValue('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max", "landmark") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id AS value;', [userId, obj.name, `${obj.url}/${myRemoteName}`, token, obj.min, 0, landmark]);
                 } else {
                   contactId = parseInt(who, 10);
-                  await db.runSql('UPDATE contacts SET "name" = $2, "url" =$3, "token" = $4, "min" = $5, "max" = $6, "landmark" = $7 WHERE user_id = $1 AND id = $8;', [user_id, obj.name, `${obj.url}/${myRemoteName}`, token, obj.min, 0, landmark, contactId]);
+                  await db.runSql('UPDATE contacts SET "name" = $2, "url" =$3, "token" = $4, "min" = $5, "max" = $6, "landmark" = $7 WHERE user_id = $1 AND id = $8;', [userId, obj.name, `${obj.url}/${myRemoteName}`, token, obj.min, 0, landmark, contactId]);
                 }
-                hubbie.addClient({
+                const contact = {
+                  name: obj.name,
                   peerUrl: `${obj.url}/${myRemoteName}`,
-                  /* fixme: hubbie should omit myName before mySecret in outgoing url */
-                  myName: token,
-                  peerName: channelName,
-                });
-                await hubbie.send(obj.name /* part of channelName */, JSON.stringify({
+                  token,
+                };
+                const user = await db.getObject('SELECT * FROM users WHERE id = $1', [userId]);
+                await hubbieSend(user, contact, {
                   msgType: 'FRIEND-REQUEST',
                   url: `${hubbie.myBaseUrl}/${username}/${obj.name}`,
                   trust: -obj.min,
                   token,
-                }), username /* other part of channelName */);
-                await routing.sendRoutesToNewContact(user_id, contactId, hubbie);
+                });
+                await routing.sendRoutesToNewContact(userId, contactId, hubbieSend);
               }
             }
             if (req.method === 'DELETE' && resource === 'contacts') {
               const contactId = parseInt(who, 10);
-              await db.runSql('DELETE FROM contacts WHERE user_id = $1 AND id = $2;', [user_id, contactId]);
+              await db.runSql('DELETE FROM contacts WHERE user_id = $1 AND id = $2;', [userId, contactId]);
             }
-            const data = await getData(user_id, resource);
+            const data = await getData(userId, resource);
             res.end(JSON.stringify({
               ok: true,
               [resource]: data,
