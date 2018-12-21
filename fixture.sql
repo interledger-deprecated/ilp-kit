@@ -1,18 +1,18 @@
 -- create user 1  with user 2 as a contact:
 INSERT INTO users (name, secrethash) VALUES('michiel', '$2b$10$tmznzb0z6FTgb4RNRd5NYOp1WR2SHYvnZuDzawF6BHZPNygsFZ8me');
-INSERT INTO contacts (user_id, name, url, token, min, max, landmark) VALUES (1, 'Eddie', 'http://localhost:3000/edward/Micky', '45yga3iuhewp3oi3w4j', -10, 1000, 'michiel:edward');
-INSERT INTO contacts (user_id, name, url, token, min, max, landmark) VALUES (1, 'Donnie', 'http://localhost:3000/donald/Mike', '45yga3iuhewp3oi3w4j', -10, 1000, 'michiel:donald');
-INSERT INTO contacts (user_id, name, url, token, min, max, landmark) VALUES (1, 'contact-bob', null, 'some_token', -10, 1000, 'landmark');
+INSERT INTO contacts (user_id, name, display_name, url, token, min, max, landmark) VALUES (1, 'Eddie', 'Eddie', 'http://localhost:3000/edward/Micky', '45yga3iuhewp3oi3w4j', -10, 1000, 'michiel:edward');
+INSERT INTO contacts (user_id, name, display_name, url, token, min, max, landmark) VALUES (1, 'Donnie', 'Donnie', 'http://localhost:3000/donald/Mike', '45yga3iuhewp3oi3w4j', -10, 1000, 'michiel:donald');
+INSERT INTO contacts (user_id, name, display_name, url, token, min, max, landmark) VALUES (1, 'contact-bob', 'Bob', null, 'some_token', -10, 1000, 'landmark');
 
 -- create user 2  with users 1 and 3 as contacts:
 INSERT INTO users (name, secrethash) VALUES('edward', '$2b$10$GuyyjgXJqoSYaalD/lFJFug4ikCUhHjcjMaZoQjVC/XLT8FdaDkTG');
-INSERT INTO contacts (user_id, name, url, token, min, max, landmark) VALUES (2, 'Micky', 'http://localhost:3000/michiel/Eddie', '45yga3iuhewp3oi3w4j', -10, 1000, 'edward:michiel');
-INSERT INTO contacts (user_id, name, url, token, min, max, landmark) VALUES (2, 'Don', 'http://localhost:3000/donald/Ed', '45yga3iuhewp3oi3w4j', -10, 1000, 'edward:donald');
+INSERT INTO contacts (user_id, name, display_name, url, token, min, max, landmark) VALUES (2, 'Micky', 'Micky', 'http://localhost:3000/michiel/Eddie', '45yga3iuhewp3oi3w4j', -10, 1000, 'edward:michiel');
+INSERT INTO contacts (user_id, name, display_name, url, token, min, max, landmark) VALUES (2, 'Don', 'Don', 'http://localhost:3000/donald/Ed', '45yga3iuhewp3oi3w4j', -10, 1000, 'edward:donald');
 
 -- create user 3  with user 2 as a contact:
 INSERT INTO users (name, secrethash) VALUES('donald', '$2b$10$GuyyjgXJqoSYaalD/lFJFug4ikCUhHjcjMaZoQjVC/XLT8FdaDkTG');
-INSERT INTO contacts (user_id, name, url, token, min, max, landmark) VALUES (3, 'Ed', 'http://localhost:3000/edward/Don', '45yga3iuhewp3oi3w4j', -10, 1000, 'donald:edward');
-INSERT INTO contacts (user_id, name, url, token, min, max, landmark) VALUES (3, 'Mike', 'http://localhost:3000/michiel/Donnie', '45yga3iuhewp3oi3w4j', -10, 1000, 'donald:michiel');
+INSERT INTO contacts (user_id, name, display_name, url, token, min, max, landmark) VALUES (3, 'Ed', 'Ed', 'http://localhost:3000/edward/Don', '45yga3iuhewp3oi3w4j', -10, 1000, 'donald:edward');
+INSERT INTO contacts (user_id, name, display_name, url, token, min, max, landmark) VALUES (3, 'Mike', 'Mike', 'http://localhost:3000/michiel/Donnie', '45yga3iuhewp3oi3w4j', -10, 1000, 'donald:michiel');
 
 -- two copies of transaction from user 1 to user 2
 INSERT INTO transactions (user_id, contact_id, requested_at, description, direction, amount) VALUES (1, 1, '12-11-2018', 'Beers after squash game', 'OUT', 25);

@@ -46,6 +46,7 @@ describe('Contacts', function () {
           if (eventName === 'data') {
             setTimeout(() => eventHandler(JSON.stringify({
               name: 'name',
+              display_name: 'some nick name',
               url: 'url',
               token: 'some_token',
               min: -5,
@@ -71,6 +72,7 @@ describe('Contacts', function () {
         max: 0,
         min: -5,
         name: 'name',
+        display_name: 'some nick name',
         token: newContact.token,
         url: newContact.url,
       });
@@ -83,6 +85,7 @@ describe('Contacts', function () {
           msgType: 'FRIEND-REQUEST',
           url: 'undefined/michiel/name',
           trust: 5,
+          myName: 'michiel',
           token: JSON.parse(this.snapSent[0].msg).token,
         }),
         userId: 'michiel',
@@ -126,6 +129,7 @@ describe('Contacts', function () {
         msgType: 'FRIEND-REQUEST',
         url: 'incoming_url',
         trust: 1234,
+        myName: 'fred',
         token: 'incoming_token',
       }), 'michiel');
     });
@@ -140,7 +144,8 @@ describe('Contacts', function () {
         max: 1234,
         min: 0,
         name: 'name',
-        token: newContact.token,
+        display_name: 'fred',
+        token: 'incoming_token',
         url: newContact.url,
       });
     });
@@ -180,6 +185,7 @@ describe('Contacts', function () {
           if (eventName === 'data') {
             setTimeout(() => eventHandler(JSON.stringify({
               name: 'name',
+              display_name: 'display_name',
               url: 'url',
               token: 'some_token',
               min: -5,
@@ -205,6 +211,7 @@ describe('Contacts', function () {
         max: 0,
         min: -5,
         name: 'name',
+        display_name: 'display_name',
         token: contact.token,
         url: contact.url,
       });
@@ -217,6 +224,7 @@ describe('Contacts', function () {
           msgType: 'FRIEND-REQUEST',
           url: 'undefined/michiel/name',
           trust: 5,
+          myName: 'michiel', // when updating a contact, user will send their own username
           token: JSON.parse(this.snapSent[0].msg).token,
         }),
         userId: 'michiel',

@@ -157,7 +157,7 @@ async function snapIn(user, contact, message, hubbieSend) {
     case 'FRIEND-REQUEST': {
       // console.log('incoming friend request!', userName);
       // console.log('friend request received', user, peerName, obj);
-      await db.runSql('UPDATE contacts SET "url" = $1, "max" = $2 WHERE "user_id"= $3 AND "id" = $4', [obj.url, obj.trust, user.id, contact.id]);
+      await db.runSql('UPDATE contacts SET "display_name" = $1, "url" = $2, "max" = $3 WHERE "user_id"= $4 AND "id" = $5', [obj.myName, obj.url, obj.trust, user.id, contact.id]);
       await routing.sendRoutesToNewContact(user, contact, hubbieSend);
       break;
     }

@@ -43,6 +43,7 @@ describe('Database', function () {
       id: 1,
       user_id: 1,
       name: 'Eddie',
+      display_name: 'Eddie',
       url: 'http://localhost:3000/edward/Micky',
       token: '45yga3iuhewp3oi3w4j',
       min: -10,

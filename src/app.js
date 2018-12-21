@@ -196,6 +196,7 @@ function makeHandler(hubbie) {
                 const contact = {
                   user_id: user.id,
                   name: obj.name,
+                  display_name: obj.display_name,
                   url: `${obj.url}/${myRemoteName}`,
                   token: randomBytes(12).toString('hex'),
                   landmark: `${username}:${obj.name}`,
@@ -203,16 +204,16 @@ function makeHandler(hubbie) {
                   max: 0,
                 };
                 if (who === 'new') {
-                  contact.id = await db.getValue('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max", "landmark") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id AS value;', [contact.user_id, contact.name, contact.url, contact.token, contact.min, contact.max, contact.landmark]);
+                  contact.id = await db.getValue('INSERT INTO contacts ("user_id", "name", "display_name", "url", "token", "min", "max", "landmark") VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id AS value;', [contact.user_id, contact.name, contact.display_name, contact.url, contact.token, contact.min, contact.max, contact.landmark]);
                 } else {
                   contact.id = parseInt(who, 10);
-                  await db.runSql('UPDATE contacts SET "name" = $2, "url" =$3, "token" = $4, "min" = $5, "max" = $6, "landmark" = $7 WHERE user_id = $1 AND id = $8;', [contact.user_id, contact.name, contact.url, contact.token, contact.min, contact.max, contact.landmark, contact.id]);
+                  await db.runSql('UPDATE contacts SET "name" = $1, "display_name" = $2, "url" =$3, "token" = $4, "min" = $5, "max" = $6, "landmark" = $7 WHERE user_id = $8 AND id = $9;', [contact.name, contact.display_name, contact.url, contact.token, contact.min, contact.max, contact.landmark, contact.user_id, contact.id]);
                 }
                 await hubbieSend(user, contact, {
                   msgType: 'FRIEND-REQUEST',
                   url: `${hubbie.myBaseUrl}/${username}/${obj.name}`,
                   trust: -obj.min,
-                  // myName: user.name,
+                  myName: user.name,
                   token: contact.token,
                 });
                 await routing.sendRoutesToNewContact(user, contact, hubbieSend);
