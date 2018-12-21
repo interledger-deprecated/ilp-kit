@@ -24,7 +24,7 @@ Bob and Charlie  also trust each other for 10 UCR, but the balance between them 
 Alice now wants to buy a book from Bob, for 10 UCR. Her remaining trustline balance of 10-5 is insufficient.
 So Alice will try to top up her trustline with Bob first, through Charlie. Let's look at all the landmarks and how routes for them appear in each node's routing table:
 
-* Each node landmark can be routed to and from with unlimited amounts from that node itself, so the following six entries exist, marked 'self' below.
+* Each node landmark can be routed to and from with unlimited amounts from that node itself, so six entries exist for that, marked 'self' below.
 * Then there are the two-hop routes, like Alice -> Bob -> Charlie, which are limited by the max amount the second node is willing to pay to the third one. In practice, they are also limited by what the first node is willing to pay the second one, but that limit is applied on-the-fly, and not recorded in the routing table. Two-hop routes are marked '2 hop' below:
 
 `user_id` `landmark` `approach` `contact_id`  `max_to` `max_from`
@@ -50,7 +50,7 @@ So Alice will try to top up her trustline with Bob first, through Charlie. Let's
  Charlie   Charlie    Alice      Bob           5        10       // 3 hop C -> B ( 5< >15) A (15< > 5) C
 
 Now to buy the book from Bob, Alice will have to top up her trustline first, using a circular payment via Charlie and Bob to herself.
-She creates a conditional proposal to Charlie, listing landmarks 'Alice:B' (the end-point she wants to top up), and 'Bob' (the landmark Charlie is more likely to know). She sets the amount to `liquidity_needed - liquidity_available = 10 - (10-5) = 5 UCR`.
+She creates a conditional proposal to Charlie, listing landmarks 'Alice:Bob' (the end-point she wants to top up), and 'Bob' (the landmark Charlie is more likely to know). She sets the amount to `liquidity_needed - liquidity_available = 10 - (10-5) = 5 UCR`.
 In her routing table, she looks up landmark Alice, approach Bob, and sees that contact Charlie can route up to 10 UCR to there.
 But mind that she herself can only get 5 UCR to Charlie on the circular payment's first hop, so that limit is applied on-the-fly.
 After the top-up, she owes Charlie 5 UCR, and owes Bob zero, a situation that allows her to buy the book from Bob.
