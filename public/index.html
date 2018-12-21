@@ -58,7 +58,7 @@
         <div v-if="tab  ==  'profile'">
           <h2>Welcome, {{ username }}!</h2>
           <div>
-            To join the network, trust some people on the contacts tab.
+            To join the network, trust some people on the contacts tab. Your URL is {{ window.location + username }}.
           </div>
           <div>
             To use the network, pay your contacts.
@@ -72,7 +72,7 @@
         <div v-if="tab == 'contacts' && edit>-1">
           (editing contact {{ edit }})
           <p>Display Name: <input v-model="contacts[edit].display_name" placeholder="Contact name"></p>
-          <p>URL: <input v-model="contacts[edit].url" placeholder="URL"></p>
+          <p>URL: <input size="60" v-model="contacts[edit].url" placeholder="https://michiels-nlt-kit.herokuapp.com/michiel"> (e.g. yours is {{ window.location + username }})</p>
           <p>Amount you trust them for: <input v-model="editTrust" placeholder="amount in UCR"></p>
           <a class="button is-success" v-on:click="save('contacts', edit);edit=-1">
             Done
