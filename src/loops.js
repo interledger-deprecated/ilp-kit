@@ -3,9 +3,9 @@ const randomBytes = require('randombytes');
 const { runSql, getObject, getValue } = require('./db');
 const { newTransaction } = require('./ledger');
 
-async function loop(userId, obj, hubbieSend) {
-  if (typeof userId !== 'number') {
-    throw new Error('snapOut: userId not a number');
+async function loop(user, obj, hubbieSend) {
+  if (typeof user !== 'object') {
+    throw new Error('snapOut: user not an object');
   }
   if (typeof obj !== 'object') {
     throw new Error('snapOut: obj not an object');
@@ -16,18 +16,16 @@ async function loop(userId, obj, hubbieSend) {
   if (typeof obj.contactName !== 'string') {
     throw new Error('snapOut: obj.contactName not a string');
   }
-  // console.log('snapOut', userId, obj);
-  // console.log('will create transaction with msgId', obj.msgId);
-  const landmark = await getValue('SELECT landmark AS value FROM contacts WHERE user_id= $1  AND name = $2', [userId, obj.contactName]);
-  // console.log({ userId,  obj,  landmark });
-  const routes = await runSql('SELECT r.* FROM routes r INNER JOIN contacts c ON r.landmark = c.landmark WHERE r.user_id = $1 AND c.user_id = $1 AND c.name = $2', [userId, obj.contactName]);
+  const landmark = await getValue('SELECT landmark AS value FROM contacts WHERE user_id= $1  AND name = $2', [user.id, obj.contactName]);
+  // console.log({ user, obj, landmark });
+  const routes = await runSql('SELECT r.* FROM routes r INNER JOIN contacts c ON r.landmark = c.landmark WHERE r.user_id = $1 AND c.user_id = $1 AND c.name = $2', [user.id, obj.contactName]);
   // console.log(routes);
   const preimage = randomBytes(32);
   const hash = hashlocks.sha256(preimage);
   const condition = hash.toString('hex');
-  await runSql('INSERT INTO preimages (user_id, hash, preimage) VALUES ($1, $2, $3)', [userId, condition, preimage.toString('hex')]);
+  await runSql('INSERT INTO preimages (user_id, hash, preimage) VALUES ($1, $2, $3)', [user.id, condition, preimage.toString('hex')]);
   const friendId = routes[0].contact_id;
-  const maxId = await getValue('SELECT MAX(msgId) AS value FROM transactions WHERE user_id = $1 AND contact_id = $2', [userId, friendId], 0);
+  const maxId = await getValue('SELECT MAX(msgId) AS value FROM transactions WHERE user_id = $1 AND contact_id = $2', [user.id, friendId], 0);
   const trans = {
     msgType: 'PROPOSE',
     msgId: maxId + 1,
@@ -35,10 +33,10 @@ async function loop(userId, obj, hubbieSend) {
     landmarks: landmark,
     condition,
   };
-  const user = await getObject('SELECT * FROM users WHERE  id = $1', [userId]);
-  const friend = await getObject('SELECT * FROM contacts WHERE user_id = $1 AND id = $2', [userId, friendId]);
+  const friend = await getObject('SELECT * FROM contacts WHERE user_id = $1 AND id = $2', [user.id, friendId]);
+  // console.log('going', friend, trans);
   try {
-    await newTransaction(userId, friend, trans, 'OUT', hubbieSend);
+    await newTransaction(user, friend, trans, 'OUT', hubbieSend);
   } catch (e) {
     // console.error('snapOut fail', e.message);
     throw e;

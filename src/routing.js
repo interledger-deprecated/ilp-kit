@@ -3,9 +3,9 @@ const db = require('./db');
 const balances = require('./balances');
 
 async function restrictLimits(user, contact, obj) {
-  const receivable = await balances.getTheirReceivable(user.id, contact.id);
-  const payable = await balances.getTheirPayable(user.id, contact.id);
-  const current = await balances.getTheirCurrent(user.id, contact.id);
+  const receivable = await balances.getTheirReceivable(user, contact);
+  const payable = await balances.getTheirPayable(user, contact);
+  const current = await balances.getTheirCurrent(user, contact);
   // they can forward network money to a landmark, but we only want them
   // to if that doesn't make their current + their receivable exceed their max balance
   // example:  balance 5, max 10, receivable 3  ->  limitTo = 10 - 5 - 3 = 2
@@ -36,14 +36,12 @@ async function restrictLimits(user, contact, obj) {
   };
 }
 
-async function sendRoutes(userId, contactId, obj, hubbieSend) {
-  const user = await db.getObject('SELECT * FROM users WHERE id = $1', [userId]);
-  const contact = await db.getObject('SELECT * FROM contacts WHERE user_id = $1 AND id = $2', [userId, contactId]);
+async function sendRoutes(user, contact, obj, hubbieSend) {
   return hubbieSend(user, contact, obj);
 }
 
-async function sendRoutesToNewContact(userId, contactId, hubbieSend) {
-  const routes = await db.runSql('SELECT * FROM routes WHERE user_id = $1', [userId]);
+async function sendRoutesToNewContact(user, contact, hubbieSend) {
+  const routes = await db.runSql('SELECT * FROM routes WHERE user_id = $1', [user.id]);
   if (routes === null) {
     return Promise.resolve();
   }
@@ -65,23 +63,21 @@ async function sendRoutesToNewContact(userId, contactId, hubbieSend) {
     addRoute(row.landmark, row.max_to, row.max_from);
     addRoute(`${row.landmark}:${row.approach}`, row.max_to, row.max_from);
   });
-  return sendRoutes(userId, contactId, {
+  return sendRoutes(user, contact, {
     msgType: 'ROUTING',
     canRoute,
   }, hubbieSend);
 }
 
-async function storeAndForwardRoutes(userName, peerName, obj, hubbieSend) {
-  const user = await db.getObject('SELECT * FROM users WHERE name = $1', [userName]);
-  const receivedFrom = await db.getObject('SELECT * FROM contacts WHERE user_id = $1 AND name = $2', [user.id, peerName]);
+async function storeAndForwardRoutes(user, contact, obj, hubbieSend) {
   const contacts = await db.runSql('SELECT* FROM contacts WHERE user_id = $1', [user.id]);
-  // console.log('storeAndForward', contacts, userName, peerName, obj, hubbieSend);
+  // console.log('storeAndForward', contacts, user, contact, obj, hubbieSend);
   await Promise.all(Object.keys(obj.canRoute).map((key) => {
     const [landmark, approach] = key.split(':');
     return db.runSql(
       'INSERT INTO routes (user_id, contact_id, landmark, approach, max_to, max_from) VALUES ($1, $2, $3, $4, $5, $6)', [
         user.id,
-        receivedFrom.id,
+        contact.id,
         landmark,
         approach,
         obj.canRoute[key].maxTo,
@@ -89,12 +85,12 @@ async function storeAndForwardRoutes(userName, peerName, obj, hubbieSend) {
       ],
     );
   }));
-  const restricted = await restrictLimits(user.id, receivedFrom, obj);
-  return Promise.all(contacts.map((contact) => {
-    if (contact.id === receivedFrom.id) {
+  const restricted = await restrictLimits(user, contact, obj);
+  return Promise.all(contacts.map((otherContact) => {
+    if (otherContact.id === contact.id) {
       return Promise.resolve();
     }
-    return sendRoutes(user.id, contact.id, restricted, hubbieSend);
+    return sendRoutes(user, otherContact, restricted, hubbieSend);
   }));
 }
 

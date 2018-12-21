@@ -1,12 +1,11 @@
 const db = require('./db');
 const balances = require('./balances');
 
-async function newTransaction(userId, contact, transaction, direction) {
-  // console.log('newTransaction', userId, contact, transaction, direction);
-
-  const receivable = await balances.getMyReceivable(userId, contact.id);
-  const payable = await balances.getMyPayable(userId, contact.id);
-  const current = await balances.getMyCurrent(userId, contact.id);
+async function newTransaction(user, contact, transaction, direction) {
+  // console.log('newTransaction', user, contact, transaction, direction);
+  const receivable = await balances.getMyReceivable(user, contact);
+  const payable = await balances.getMyPayable(user, contact);
+  const current = await balances.getMyCurrent(user, contact);
   if (direction === 'IN') {
     // their current balance will go up by amount
     // console.log(`CHECK1] ${current} + ${receivable} + ${transaction.amount} ?> ${contact.max}`);
@@ -33,10 +32,11 @@ async function newTransaction(userId, contact, transaction, direction) {
       throw new Error('peer could hit max balance (OUT)');
     }
   }
+  // console.log('inserting');
   return db.getValue('INSERT INTO transactions '
       + '(user_id, contact_id, msgid, requested_at, description,  direction, amount, status) VALUES '
       + '($1,      $2,         $3,    now (),       $4,           $5,        $6,     \'pending\') RETURNING id AS value', [
-    userId,
+    user.id,
     contact.id,
     transaction.msgId,
     transaction.description,

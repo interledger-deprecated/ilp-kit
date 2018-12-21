@@ -25,7 +25,7 @@ async function runSql(query, params) {
 }
 function checkPass(username, password) {
   // console.log('checking  password', username, password);
-  return runSql('SELECT id, secrethash FROM users WHERE name=$1', [
+  return runSql('SELECT * FROM users WHERE name=$1', [
     username,
   ]).then((results) => {
     // console.log('sql query result', results);
@@ -40,14 +40,14 @@ function checkPass(username, password) {
     }
     const secretHash = results[0].secrethash;
     // console.log('returning compare', results, password, secretHash);
-    return bcrypt.compare(password, secretHash).then(ret => ret && results[0].id);
+    return bcrypt.compare(password, secretHash).then(ret => ret && results[0]);
   });
 }
 
 function getObject(query, params) {
   return runSql(query, params).then((results) => {
     if (!results || !results.length) {
-      // console.log(query, params);
+      // console.log('throwing row not found!', query, params);
       throw new Error('db row not found');
     }
     return results[0];
