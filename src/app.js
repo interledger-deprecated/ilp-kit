@@ -192,14 +192,15 @@ function makeHandler(hubbie) {
               const obj = JSON.parse(body);
               // console.log('saving', resource, obj);
               if (resource === 'contacts') {
-                const myRemoteName = randomBytes(12).toString('hex');
+                const myRemoteId = randomBytes(12).toString('hex');
+                const contactId = randomBytes(12).toString('hex');
                 const contact = {
                   user_id: user.id,
-                  name: obj.name,
+                  name: contactId,
                   display_name: obj.display_name,
-                  url: `${obj.url}/${myRemoteName}`,
+                  url: `${obj.url}/${myRemoteId}`,
                   token: randomBytes(12).toString('hex'),
-                  landmark: `${username}:${obj.name}`,
+                  landmark: `${username}:${contactId}`,
                   min: obj.min,
                   max: 0,
                 };
@@ -211,7 +212,7 @@ function makeHandler(hubbie) {
                 }
                 await hubbieSend(user, contact, {
                   msgType: 'FRIEND-REQUEST',
-                  url: `${hubbie.myBaseUrl}/${username}/${obj.name}`,
+                  url: `${hubbie.myBaseUrl}/${username}/${contactId}`,
                   trust: -obj.min,
                   myName: user.name,
                   token: contact.token,
