@@ -145,6 +145,33 @@ describe('Contacts', function () {
       });
     });
 
+    it('deals with contact name clashes', async function () {
+      await this.hubbieHandler.peer({
+        peerName: 'name2',
+        peerSecret: 'incoming_token2',
+        userName: 'michiel',
+      });
+      await this.hubbieHandler.message('name2', JSON.stringify({
+        msgType: 'FRIEND-REQUEST',
+        url: 'incoming_url2',
+        trust: 1234,
+        myName: 'fred',
+        token: 'incoming_token2',
+      }), 'michiel');
+      const contacts = await db.runSql('SELECT * FROM contacts');
+      const newContact = contacts[contacts.length - 1];
+      assert.deepEqual(newContact, {
+        user_id: 1,
+        id: 9,
+        landmark: 'michiel:name2',
+        max: 1234,
+        min: 0,
+        name: 'fred 2',
+        token: 'incoming_token2',
+        url: newContact.url,
+      });
+    });
+
     it('announces the landmark', async function () {
       const expectedLandmarkAnnouncement = {
         peerName: 'name',

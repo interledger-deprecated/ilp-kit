@@ -152,7 +152,6 @@ function makeHandler(hubbie) {
             if (user === false) {
               throw new Error('auth fail');
             }
-            // console.log('callinglop', user, JSON.parse(body));
             const result = await loop(user, JSON.parse(body), hubbieSend);
             res.end(JSON.stringify({ ok: true, result }));
           } catch (e) {

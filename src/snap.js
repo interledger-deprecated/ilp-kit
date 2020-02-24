@@ -68,15 +68,29 @@ async function usePreimage(obj, user, hubbieSend) {
   // and then delete preimage rows once ACCEPT was ACKed and e.g. a week has passed
 }
 
+async function updateContact(obj, user, contact, attempt) {
+  let name = obj.myName;
+  if (attempt > 1) {
+    name += ` ${attempt}`;
+  }
+  try {
+    await db.runSql('UPDATE contacts SET "name" = $1, "url" = $2, "max" = $3 WHERE "user_id"= $4 AND "id" = $5', [name, obj.url, obj.trust, user.id, contact.id]);
+  } catch (e) {
+    if (e.message === 'duplicate key value violates unique constraint "unq_userid_name"') {
+      return updateContact(obj, user, contact, attempt + 1);
+    }
+    throw e;
+  }
+  return true;
+}
+
 async function snapIn(user, contact, message, hubbieSend) {
-  // console.log('hubbie message!', { peerName, message, userName });
   let obj;
   try {
     obj = JSON.parse(message);
   } catch (e) {
     throw new Error('message not json');
   }
-  // console.log('snapIn message parsed', message);
   async function updateStatus(newStatus, direction) {
     return db.runSql('UPDATE transactions SET status = $1, responded_at = now() WHERE '
         + 'msgid = $2 AND user_id = $3 AND contact_id = $4 AND direction = $5 AND status = \'pending\'',
@@ -155,9 +169,7 @@ async function snapIn(user, contact, message, hubbieSend) {
       break;
     }
     case 'FRIEND-REQUEST': {
-      // console.log('incoming friend request!', userName);
-      // console.log('friend request received', user, peerName, obj);
-      await db.runSql('UPDATE contacts SET "name" = $1, "url" = $2, "max" = $3 WHERE "user_id"= $4 AND "id" = $5', [obj.myName, obj.url, obj.trust, user.id, contact.id]);
+      await updateContact(obj, user, contact, 1);
       await routing.sendRoutesToNewContact(user, contact, hubbieSend);
       break;
     }
