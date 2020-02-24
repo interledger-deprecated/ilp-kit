@@ -8,11 +8,15 @@ async function runSql(query, params) {
   if (!pool) {
     pool = new Pool({
       connectionString: process.env.DATABASE_URL || 'postgresql://snap:snap@localhost/dev',
-      ssl: true,
+      // ssl: true, // - see https://github.com/ledgerloops/nlt-kit/issues/50
     });
-    client = await pool.connect();
+    try {
+      client = await pool.connect();
+    } catch (e) {
+      console.error('Error connecting to pool!', e.message);
+      throw new Error('Could not connect to Postgres server');
+    }
   }
-  // console.log('running sql', query, params);
   try {
     const result = await client.query(query, params);
     const results = (result && result.rowCount) ? result.rows : null;
