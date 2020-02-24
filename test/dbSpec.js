@@ -43,7 +43,6 @@ describe('Database', function () {
       id: 1,
       user_id: 1,
       name: 'Eddie',
-      display_name: 'Eddie',
       url: 'http://localhost:3000/edward/Micky',
       token: '45yga3iuhewp3oi3w4j',
       min: -10,
@@ -62,7 +61,7 @@ describe('Database', function () {
       id: 1,
       msgid: null,
       request_json: null,
-      requested_at: new Date('2018-12-11T00:00:00.000Z'),
+      requested_at: firstTransaction.requested_at, // new Date('2018-12-11T00:00:00.000Z'), - see https://github.com/ledgerloops/nlt-kit/issues/38
       responded_at: null,
       response_json: null,
       status: null,

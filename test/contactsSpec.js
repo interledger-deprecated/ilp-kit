@@ -6,7 +6,6 @@ const App = require('../src/app');
 async function runSqlFile(filename) {
   const file = fs.readFileSync(filename).toString().split('\r\n');
   for (const line of file) { // eslint-disable-line no-restricted-syntax
-    // console.log(line);
     await db.runSql(line); // eslint-disable-line no-await-in-loop
   }
 }
@@ -46,7 +45,6 @@ describe('Contacts', function () {
           if (eventName === 'data') {
             setTimeout(() => eventHandler(JSON.stringify({
               name: 'name',
-              display_name: 'some nick name',
               url: 'url',
               token: 'some_token',
               min: -5,
@@ -68,25 +66,25 @@ describe('Contacts', function () {
       assert.deepEqual(newContact, {
         user_id: 1,
         id: 8,
-        landmark: 'michiel:name',
+        landmark: newContact.landmark, // UUID
         max: 0,
         min: -5,
         name: 'name',
-        display_name: 'some nick name',
         token: newContact.token,
         url: newContact.url,
       });
     });
 
-    it('sends a friend  request', async function () {
+    it('sends a friend request', async function () {
+      const friendRequestSent = JSON.parse(this.snapSent[0].msg);
       const expectedFriendRequest = {
         peerName: 'name',
         msg: JSON.stringify({
           msgType: 'FRIEND-REQUEST',
-          url: 'undefined/michiel/name',
+          url: `undefined/michiel/${friendRequestSent.url.substring('undefined/michiel/'.length)}`,
           trust: 5,
           myName: 'michiel',
-          token: JSON.parse(this.snapSent[0].msg).token,
+          token: friendRequestSent.token,
         }),
         userId: 'michiel',
       };
@@ -117,13 +115,11 @@ describe('Contacts', function () {
 
   describe('incoming friend request', function () {
     beforeEach(async function () {
-      // console.log('calling this handler');
       await this.hubbieHandler.peer({
         peerName: 'name',
         peerSecret: 'incoming_token',
         userName: 'michiel',
       });
-      // console.log(await db.runSql('SELECT * FROM contacts'));
 
       return this.hubbieHandler.message('name', JSON.stringify({
         msgType: 'FRIEND-REQUEST',
@@ -143,8 +139,7 @@ describe('Contacts', function () {
         landmark: 'michiel:name',
         max: 1234,
         min: 0,
-        name: 'name',
-        display_name: 'fred',
+        name: 'fred',
         token: 'incoming_token',
         url: newContact.url,
       });
@@ -168,7 +163,6 @@ describe('Contacts', function () {
         }),
         userId: 'michiel',
       };
-      // console.log(this.snapSent);
       assert.deepEqual(this.snapSent[0], expectedLandmarkAnnouncement);
     });
   });
@@ -185,7 +179,6 @@ describe('Contacts', function () {
           if (eventName === 'data') {
             setTimeout(() => eventHandler(JSON.stringify({
               name: 'name',
-              display_name: 'display_name',
               url: 'url',
               token: 'some_token',
               min: -5,
@@ -202,30 +195,29 @@ describe('Contacts', function () {
     });
 
     it('updates a contact', async function () {
-      // console.log(await db.runSql('SELECT * FROM contacts', []));
       const contact = await db.getObject('SELECT * FROM contacts WHERE user_id = $1 AND id = $2', [1, 2]);
       assert.deepEqual(contact, {
         user_id: 1,
         id: 2,
-        landmark: 'michiel:name',
+        landmark: contact.landmark,
         max: 0,
         min: -5,
         name: 'name',
-        display_name: 'display_name',
         token: contact.token,
         url: contact.url,
       });
     });
 
     it('sends an updated friend request', async function () {
+      const friendRequestSent = JSON.parse(this.snapSent[0].msg);
       const expectedFriendRequest = {
         peerName: 'name',
         msg: JSON.stringify({
           msgType: 'FRIEND-REQUEST',
-          url: 'undefined/michiel/name',
+          url: `undefined/michiel/${friendRequestSent.url.substring('undefined/michiel/'.length)}`,
           trust: 5,
           myName: 'michiel', // when updating a contact, user will send their own username
-          token: JSON.parse(this.snapSent[0].msg).token,
+          token: friendRequestSent.token,
         }),
         userId: 'michiel',
       };
@@ -275,7 +267,6 @@ describe('Contacts', function () {
     });
 
     it('deletes a contact', async function () {
-      // console.log(await db.runSql('SELECT * FROM contacts', []));
       const matchingContacts = await db.runSql('SELECT * FROM contacts WHERE user_id = $1 AND id = $2', [1, 2]);
       assert.equal(matchingContacts, null);
     });

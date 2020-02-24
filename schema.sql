@@ -23,7 +23,6 @@ CREATE TABLE contacts (
   id SERIAL PRIMARY KEY,
   user_id INT,
   name VARCHAR,
-  display_name VARCHAR,
   url VARCHAR,
   token VARCHAR,
   min INT DEFAULT 0,

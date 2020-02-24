@@ -192,27 +192,28 @@ function makeHandler(hubbie) {
               const obj = JSON.parse(body);
               // console.log('saving', resource, obj);
               if (resource === 'contacts') {
-                const myRemoteId = randomBytes(12).toString('hex');
-                const contactId = randomBytes(12).toString('hex');
+                const channel = randomBytes(12).toString('hex');
+                const token = randomBytes(12).toString('hex');
+                const landmark = randomBytes(12).toString('hex');
+
                 const contact = {
                   user_id: user.id,
-                  name: contactId,
-                  display_name: obj.display_name,
-                  url: `${obj.url}/${myRemoteId}`,
-                  token: randomBytes(12).toString('hex'),
-                  landmark: `${username}:${contactId}`,
+                  name: obj.name,
+                  url: `${obj.url}/${channel}`,
+                  token,
+                  landmark,
                   min: obj.min,
                   max: 0,
                 };
                 if (who === 'new') {
-                  contact.id = await db.getValue('INSERT INTO contacts ("user_id", "name", "display_name", "url", "token", "min", "max", "landmark") VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id AS value;', [contact.user_id, contact.name, contact.display_name, contact.url, contact.token, contact.min, contact.max, contact.landmark]);
+                  contact.id = await db.getValue('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max", "landmark") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id AS value;', [contact.user_id, contact.name, contact.url, contact.token, contact.min, contact.max, contact.landmark]);
                 } else {
                   contact.id = parseInt(who, 10);
-                  await db.runSql('UPDATE contacts SET "name" = $1, "display_name" = $2, "url" =$3, "token" = $4, "min" = $5, "max" = $6, "landmark" = $7 WHERE user_id = $8 AND id = $9;', [contact.name, contact.display_name, contact.url, contact.token, contact.min, contact.max, contact.landmark, contact.user_id, contact.id]);
+                  await db.runSql('UPDATE contacts SET "name" = $1, "url" =$2, "token" = $3, "min" = $4, "max" = $5, "landmark" = $6 WHERE user_id = $7 AND id = $8;', [contact.name, contact.url, contact.token, contact.min, contact.max, contact.landmark, contact.user_id, contact.id]);
                 }
                 await hubbieSend(user, contact, {
                   msgType: 'FRIEND-REQUEST',
-                  url: `${hubbie.myBaseUrl}/${username}/${contactId}`,
+                  url: `${hubbie.myBaseUrl}/${username}/${channel}`,
                   trust: -obj.min,
                   myName: user.name,
                   token: contact.token,

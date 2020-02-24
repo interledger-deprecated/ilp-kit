@@ -71,7 +71,7 @@
         <!-- contacts tab, edit: -->
         <div v-if="tab == 'contacts' && edit>-1">
           (editing contact {{ edit }})
-          <p>Display Name: <input v-model="contacts[edit].display_name" placeholder="Contact name"></p>
+          <p>Name: <input v-model="contacts[edit].name" placeholder="Contact name"></p>
           <p>URL: <input size="60" v-model="contacts[edit].url" placeholder="https://michiels-nlt-kit.herokuapp.com/michiel"> (e.g. yours is {{ window.location + username }})</p>
           <p>Amount you trust them for: <input v-model="editTrust" placeholder="amount in UCR"></p>
           <a class="button is-success" v-on:click="save('contacts', edit);edit=-1">
@@ -81,8 +81,8 @@
 
         <!-- contacts tab, pay: -->
         <div v-if="tab == 'contacts' && pay>-1">
-          (paying {{ contacts[pay].display_name }})
-          <p>Name: <input v-model="contacts[pay].display_name" placeholder="Contact name"></p>
+          (paying {{ contacts[pay].name }})
+          <p>Name: <input v-model="contacts[pay].name" placeholder="Contact name"></p>
           <p>Amount: <input v-model="payAmount" placeholder="amount in UCR"></p>
           <a class="button is-success" v-on:click="doPay(pay);pay=-1">
             Done
@@ -115,7 +115,7 @@
             </thead>
             <tbody>
               <tr v-for="(contact, index) in contacts">
-                <td>{{ contact.display_name }}</td>
+                <td>{{ contact.name }}</td>
                 <td>{{ contact.min }}</td>
                 <td>{{ contact.payable }}</td>
                 <td>{{ contact.current }}</td>

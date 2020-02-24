@@ -68,7 +68,6 @@ describe('SNAP Access', function () {
         max: 0,
         min: 0,
         name: 'someone-unknown',
-        display_name: null,
         token: 'what',
         url: null,
         user_id: 1,
