@@ -63,7 +63,7 @@ describe('Pay', function () {
     await db.close();
   });
 
-  it('creates a transsaction', async function () {
+  it('creates a transaction', async function () {
     const firstTransaction = await db.getObject('SELECT * FROM transactions LIMIT 1');
     assert.deepEqual(firstTransaction, {
       amount: 3,

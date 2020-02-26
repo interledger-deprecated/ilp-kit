@@ -70,7 +70,7 @@ async function sendRoutesToNewContact(user, contact, hubbieSend) {
 }
 
 async function storeAndForwardRoutes(user, contact, obj, hubbieSend) {
-  const contacts = await db.runSql('SELECT* FROM contacts WHERE user_id = $1', [user.id]);
+  const contacts = await db.runSql('SELECT * FROM contacts WHERE user_id = $1', [user.id]);
   // console.log('storeAndForward', contacts, user, contact, obj, hubbieSend);
   await Promise.all(Object.keys(obj.canRoute).map((key) => {
     const [landmark, approach] = key.split(':');
