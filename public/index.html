@@ -122,7 +122,7 @@
                 <td>{{ contact.receivable }}</td>
                 <td>{{ contact.max }}</td>
                 <td>
-                  <a class="button" v-on:click="edit=index">Edit</a>
+                  <!-- See https://github.com/ledgerloops/nlt-kit/issues/53 <a class="button" v-on:click="edit=index">Edit</a> -->
                   <a class="button" v-on:click="pay=index">Pay</a>
                   <a class="button" v-on:click="deleteContact(index);window.alert(index)">Delete</a>
                 </td>
