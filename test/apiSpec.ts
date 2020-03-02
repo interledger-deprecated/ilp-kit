@@ -1,14 +1,13 @@
-const { assert } = require('chai');
-const fs = require('fs');
-const btoa = require('btoa');
-const db = require('../src/db');
-const App = require('../src/app');
+import fs from 'fs';
+import btoa from 'btoa';
+import { runSql, getObject, close } from '../src/db';
+import { makeHandler } from '../src/app';
 
 async function runSqlFile(filename) {
   const file = fs.readFileSync(filename).toString().split('\r\n');
   for (const line of file) { // eslint-disable-line no-restricted-syntax
     // console.log(line);
-    await db.runSql(line); // eslint-disable-line no-await-in-loop
+    await runSql(line); // eslint-disable-line no-await-in-loop
   }
 }
 
@@ -24,14 +23,16 @@ describe('API Access', function () {
     this.snapSent = [];
     this.hubbie = {
       addClient: () => {
+        return undefined;
       },
       send: (peerName, msg, userId) => {
         this.snapSent.push({ peerName, msg, userId });
       },
       on: () => {
+        return undefined;
       },
     };
-    this.handler = App.makeHandler(this.hubbie);
+    this.handler = makeHandler(this.hubbie);
   });
   function doLogin(handler, user, pass) {
     const token = btoa(`${user}:${pass}`);
@@ -55,14 +56,14 @@ describe('API Access', function () {
       this.responseBody = await doLogin(this.handler, 'someone', 'bla');
     });
     it('allows access', function () {
-      assert.deepEqual(JSON.parse(this.responseBody), {
+      expect(JSON.parse(this.responseBody)).toEqual({
         username: 'someone',
         ok: true,
       });
     });
     it('registers the new user', async function () {
-      const newUser = await db.getObject('SELECT * FROM users WHERE name= $1', ['someone']);
-      assert.deepEqual(newUser, {
+      const newUser = await getObject('SELECT * FROM users WHERE name= $1', ['someone']);
+      expect(newUser).toEqual({
         id: 4,
         name: 'someone',
         secrethash: newUser.secrethash,
@@ -74,7 +75,7 @@ describe('API Access', function () {
       this.responseBody = await doLogin(this.handler, 'michiel', 'qwer');
     });
     it('allows access', function () {
-      assert.deepEqual(JSON.parse(this.responseBody), {
+      expect(JSON.parse(this.responseBody)).toEqual({
         username: 'michiel',
         ok: true,
       });
@@ -85,7 +86,7 @@ describe('API Access', function () {
       this.responseBody = await doLogin(this.handler, 'michiel', 'bla');
     });
     it('denies access', function () {
-      assert.deepEqual(JSON.parse(this.responseBody), {
+      expect(JSON.parse(this.responseBody)).toEqual({
         username: 'michiel',
         ok: false,
       });
@@ -97,6 +98,6 @@ describe('API Access', function () {
   });
 
   after(async function () {
-    await db.close();
+    await close();
   });
 });

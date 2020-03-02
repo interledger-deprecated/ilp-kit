@@ -1,13 +1,13 @@
-const Static = require('node-static');
-const atob = require('atob');
-const randomBytes = require('randombytes');
+import Static from 'node-static';
+import atob from 'atob';
+import randomBytes from 'randombytes';
 
-const db = require('./db');
-const { snapOut, snapIn } = require('./snap');
-const { loop } = require('./loops');
-const routing = require('./routing');
-const balances = require('./balances');
-const friendForm = require('./friendForm');
+import db from './db';
+import { snapOut, snapIn } from './snap';
+import { loop } from './loops';
+import routing from './routing';
+import balances from './balances';
+import friendForm from './friendForm';
 
 const file = new Static.Server('./public');
 
@@ -32,7 +32,7 @@ function mixInContactNames(transactions) {
   async function addContactName(transaction) {
     // console.log('adding contact name', transaction);
     return Object.assign(transaction, {
-      peerName: await db.getValue('SELECT name AS value FROM contacts WHERE id = $1 AND user_id = $2', [transaction.contact_id, transaction.user_id]),
+      peerName: await db.getValue('SELECT name AS value FROM contacts WHERE id = $1 AND userId = $2', [transaction.contactId, transaction.userId]),
     });
   }
   return Promise.all(transactions.map(addContactName));
@@ -40,10 +40,10 @@ function mixInContactNames(transactions) {
 
 function getData(user, resource) {
   const columns = {
-    contacts: '"id", "user_id", "name", "url", "token", "min", "max"',
-    transactions: '"user_id", "contact_id", "requested_at", "description", "direction", "amount"',
+    contacts: '"id", "userId", "name", "url", "token", "min", "max"',
+    transactions: '"userId", "contact_id", "requested_at", "description", "direction", "amount"',
   };
-  return db.runSql(`SELECT ${columns[resource]} FROM ${resource} WHERE user_id = $1;`, [user.id]).then((data) => {
+  return db.runSql(`SELECT ${columns[resource]} FROM ${resource} WHERE userId = $1;`, [user.id]).then((data) => {
     if (resource === 'contacts') {
       return mixInBalances(user, data);
     }
@@ -54,7 +54,7 @@ function getData(user, resource) {
   });
 }
 
-function makeHandler(hubbie) {
+export function makeHandler(hubbie) {
   hubbie.on('peer', async (eventObj) => {
     // FIXME: these same two SQL queries are repeated in the message event
     const users = await db.runSql('SELECT * FROM users WHERE name = $1', [eventObj.userName]);
@@ -64,10 +64,10 @@ function makeHandler(hubbie) {
     }
     // console.log('still here 1');
     const user = users[0];
-    const contacts = await db.runSql('SELECT * FROM contacts WHERE name = $1 AND user_id  = $2', [eventObj.peerName, user.id]);
+    const contacts = await db.runSql('SELECT * FROM contacts WHERE name = $1 AND userId  = $2', [eventObj.peerName, user.id]);
     if (contacts === null || contacts.length === 0) {
       // console.log('verdict 2 true!');
-      await db.runSql('INSERT INTO contacts (user_id, name, token, landmark) VALUES ($1, $2, $3, $4)', [user.id, eventObj.peerName, eventObj.peerSecret, `${user.name}:${eventObj.peerName}`]);
+      await db.runSql('INSERT INTO contacts (userId, name, token, landmark) VALUES ($1, $2, $3, $4)', [user.id, eventObj.peerName, eventObj.peerSecret, `${user.name}:${eventObj.peerName}`]);
       return true;
     }
     // console.log('still here 2');
@@ -96,7 +96,7 @@ function makeHandler(hubbie) {
       return false;
     }
     const user = users[0];
-    const contacts = await db.runSql('SELECT * FROM contacts WHERE name = $1 AND user_id  = $2', [peerName, user.id]);
+    const contacts = await db.runSql('SELECT * FROM contacts WHERE name = $1 AND userId  = $2', [peerName, user.id]);
     if (contacts === null || contacts.length === 0) {
       return false;
     }
@@ -182,7 +182,7 @@ function makeHandler(hubbie) {
             const [username, password] = atob(req.headers.authorization.split(' ')[1]).split(':');
             // console.log('checkpass', username, password);
             const user = await db.checkPass(username, password);
-            // console.log(user_id, req.method);
+            // console.log(userId, req.method);
             if (user === false) {
               throw new Error('auth error');
             }
@@ -196,7 +196,7 @@ function makeHandler(hubbie) {
                 const landmark = randomBytes(12).toString('hex');
 
                 const contact = {
-                  user_id: user.id,
+                  userId: user.id,
                   name: obj.name,
                   url: `${obj.url}/${channel}`,
                   token,
@@ -205,10 +205,10 @@ function makeHandler(hubbie) {
                   max: 0,
                 };
                 if (who === 'new') {
-                  contact.id = await db.getValue('INSERT INTO contacts ("user_id", "name", "url", "token", "min", "max", "landmark") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id AS value;', [contact.user_id, contact.name, contact.url, contact.token, contact.min, contact.max, contact.landmark]);
+                  contact.id = await db.getValue('INSERT INTO contacts ("userId", "name", "url", "token", "min", "max", "landmark") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id AS value;', [contact.userId, contact.name, contact.url, contact.token, contact.min, contact.max, contact.landmark]);
                 } else {
                   contact.id = parseInt(who, 10);
-                  await db.runSql('UPDATE contacts SET "name" = $1, "url" =$2, "token" = $3, "min" = $4, "max" = $5, "landmark" = $6 WHERE user_id = $7 AND id = $8;', [contact.name, contact.url, contact.token, contact.min, contact.max, contact.landmark, contact.user_id, contact.id]);
+                  await db.runSql('UPDATE contacts SET "name" = $1, "url" =$2, "token" = $3, "min" = $4, "max" = $5, "landmark" = $6 WHERE userId = $7 AND id = $8;', [contact.name, contact.url, contact.token, contact.min, contact.max, contact.landmark, contact.userId, contact.id]);
                 }
                 await hubbieSend(user, contact, {
                   msgType: 'FRIEND-REQUEST',
@@ -225,7 +225,7 @@ function makeHandler(hubbie) {
                 id: parseInt(who, 10),
                 // no need to instantiate other fields for a delete
               };
-              await db.runSql('DELETE FROM contacts WHERE user_id = $1 AND id = $2;', [user.id, contact.id]);
+              await db.runSql('DELETE FROM contacts WHERE userId = $1 AND id = $2;', [user.id, contact.id]);
             }
             const data = await getData(user, resource);
             res.end(JSON.stringify({
@@ -244,5 +244,3 @@ function makeHandler(hubbie) {
     req.on('end', handleReq);
   };
 }
-
-module.exports = { makeHandler };

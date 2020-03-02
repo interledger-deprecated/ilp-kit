@@ -1,15 +1,16 @@
-const Hubbie = require('hubbie');
-const App = require('./app');
-const db = require('./db');
+import { Hubbie } from 'hubbie';
+import { makeHandler } from './app';
+import { runSql } from './db';
 
 const hubbie = new Hubbie();
-const port = parseInt(process.env.PORT || 3000, 10);
+const port = parseInt(process.env.PORT || '3000', 10);
 hubbie.myBaseUrl = process.env.HOST || `http://localhost:${port}`;
 console.log('binding to port', port); // eslint-disable-line no-console
 
 hubbie.listen({
   port,
   multiUser: true,
-  handler: App.makeHandler(hubbie),
+  handler: makeHandler(hubbie),
 });
-db.runSql('SELECT now();'); // test db connection
+
+runSql('SELECT now();', {}); // test db connection

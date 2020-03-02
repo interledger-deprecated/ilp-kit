@@ -1,10 +1,10 @@
-const bcrypt = require('bcrypt');
-const { Pool } = require('pg');
+import bcrypt from 'bcrypt';
+import { Pool } from 'pg';
 
 let pool;
 let client;
 
-async function runSql(query, params) {
+export async function runSql(query, params?) {
   if (!pool) {
     pool = new Pool({
       connectionString: process.env.DATABASE_URL || 'postgresql://snap:snap@localhost/dev',
@@ -13,7 +13,7 @@ async function runSql(query, params) {
     try {
       client = await pool.connect();
     } catch (e) {
-      console.error('Error connecting to pool!', e.message);
+      console.error('Error connecting to pool!', e.message); // eslint-disable-line no-console
       throw new Error('Could not connect to Postgres server');
     }
   }
@@ -27,7 +27,8 @@ async function runSql(query, params) {
     throw err;
   }
 }
-function checkPass(username, password) {
+
+export function checkPass(username, password) {
   // console.log('checking  password', username, password);
   return runSql('SELECT * FROM users WHERE name=$1', [
     username,
@@ -48,7 +49,7 @@ function checkPass(username, password) {
   });
 }
 
-function getObject(query, params) {
+export function getObject(query, params) {
   return runSql(query, params).then((results) => {
     if (!results || !results.length) {
       // console.log('throwing row not found!', query, params);
@@ -58,7 +59,7 @@ function getObject(query, params) {
   });
 }
 
-function getValue(query, params, defaultVal) {
+export function getValue(query, params, defaultVal) {
   return getObject(query, params).then(obj => obj.value).catch((e) => {
     if (e.message === 'db row not found' && defaultVal !== undefined) {
       return defaultVal;
@@ -67,16 +68,10 @@ function getValue(query, params, defaultVal) {
   });
 }
 
-module.exports = {
-  runSql,
-  checkPass,
-  getObject,
-  getValue,
-  close: () => {
-    client.release();
-    client = null;
-    return pool.end().then(() => {
-      pool = null;
-    });
-  },
+export function close() {
+  client.release();
+  client = null;
+  return pool.end().then(() => {
+    pool = null;
+  });
 };

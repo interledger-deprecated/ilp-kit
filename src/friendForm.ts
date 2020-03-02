@@ -1,4 +1,5 @@
-module.exports = who => `<!DOCTYPE html>
+export function FriendForm(who) {
+  return `<!DOCTYPE html>
 <html lang="en">
   <head>
     <title>NLT KIT</title>
@@ -30,3 +31,4 @@ module.exports = who => `<!DOCTYPE html>
     };
   </script>
 </html>`;
+  }

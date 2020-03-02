@@ -1,12 +1,12 @@
-const { assert } = require('chai');
-const fs = require('fs');
-const db = require('../src/db');
-const App = require('../src/app');
+import { assert } from 'chai';
+import fs from 'fs';
+import { runSql, getObject } from '../src/db';
+import { makeHandler } from '../src/app';
 
 async function runSqlFile(filename) {
   const file = fs.readFileSync(filename).toString().split('\r\n');
   for (const line of file) { // eslint-disable-line no-restricted-syntax
-    await db.runSql(line); // eslint-disable-line no-await-in-loop
+    await runSql(line, {}); // eslint-disable-line no-await-in-loop
   }
 }
 
@@ -21,6 +21,7 @@ describe('Contacts', function () {
     this.hubbieHandler = {};
     this.hubbie = {
       addClient: () => {
+        return undefined;
       },
       send: (peerName, msg, userId) => {
         this.snapSent.push({ peerName, msg, userId });
@@ -30,8 +31,8 @@ describe('Contacts', function () {
       },
     };
     this.snapSent = [];
-    this.handler = App.makeHandler(this.hubbie);
-  });
+    this.handler = makeHandler(this.hubbie);
+  }); 
 
   describe('contact creation', function () {
     beforeEach(function () {
@@ -61,10 +62,10 @@ describe('Contacts', function () {
     });
 
     it('creates a contact', async function () {
-      const contacts = await db.runSql('SELECT * FROM contacts');
+      const contacts = await runSql('SELECT * FROM contacts');
       const newContact = contacts[contacts.length - 1];
       assert.deepEqual(newContact, {
-        user_id: 1,
+        userId: 1,
         id: 8,
         landmark: newContact.landmark, // UUID
         max: 0,
@@ -131,10 +132,10 @@ describe('Contacts', function () {
     });
 
     it('creates a contact', async function () {
-      const contacts = await db.runSql('SELECT * FROM contacts');
+      const contacts = await runSql('SELECT * FROM contacts');
       const newContact = contacts[contacts.length - 1];
       assert.deepEqual(newContact, {
-        user_id: 1,
+        userId: 1,
         id: 8,
         landmark: 'michiel:name',
         max: 1234,
@@ -158,10 +159,10 @@ describe('Contacts', function () {
         myName: 'fred',
         token: 'incoming_token2',
       }), 'michiel');
-      const contacts = await db.runSql('SELECT * FROM contacts');
+      const contacts = await runSql('SELECT * FROM contacts');
       const newContact = contacts[contacts.length - 1];
       assert.deepEqual(newContact, {
-        user_id: 1,
+        userId: 1,
         id: 9,
         landmark: 'michiel:name2',
         max: 1234,
@@ -222,9 +223,9 @@ describe('Contacts', function () {
     });
 
     it('updates a contact', async function () {
-      const contact = await db.getObject('SELECT * FROM contacts WHERE user_id = $1 AND id = $2', [1, 2]);
+      const contact = await getObject('SELECT * FROM contacts WHERE userId = $1 AND id = $2', [1, 2]);
       assert.deepEqual(contact, {
-        user_id: 1,
+        userId: 1,
         id: 2,
         landmark: contact.landmark,
         max: 0,
@@ -294,7 +295,7 @@ describe('Contacts', function () {
     });
 
     it('deletes a contact', async function () {
-      const matchingContacts = await db.runSql('SELECT * FROM contacts WHERE user_id = $1 AND id = $2', [1, 2]);
+      const matchingContacts = await runSql('SELECT * FROM contacts WHERE userId = $1 AND id = $2', [1, 2]);
       assert.equal(matchingContacts, null);
     });
   });
@@ -304,6 +305,6 @@ describe('Contacts', function () {
   });
 
   after(async function () {
-    await db.close();
+    await close();
   });
 });
