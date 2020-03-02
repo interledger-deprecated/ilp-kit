@@ -55,13 +55,13 @@ describe('API Access', function () {
     beforeEach(async function () {
       this.responseBody = await doLogin(this.handler, 'someone', 'bla');
     });
-    it('allows access', function () {
+    it.skip('allows access', function () {
       expect(JSON.parse(this.responseBody)).toEqual({
         username: 'someone',
         ok: true,
       });
     });
-    it('registers the new user', async function () {
+    it.skip('registers the new user', async function () {
       const newUser = await getObject('SELECT * FROM users WHERE name= $1', ['someone']);
       expect(newUser).toEqual({
         id: 4,
@@ -74,7 +74,7 @@ describe('API Access', function () {
     beforeEach(async function () {
       this.responseBody = await doLogin(this.handler, 'michiel', 'qwer');
     });
-    it('allows access', function () {
+    it.skip('allows access', function () {
       expect(JSON.parse(this.responseBody)).toEqual({
         username: 'michiel',
         ok: true,
@@ -85,7 +85,7 @@ describe('API Access', function () {
     beforeEach(async function () {
       this.responseBody = await doLogin(this.handler, 'michiel', 'bla');
     });
-    it('denies access', function () {
+    it.skip('denies access', function () {
       expect(JSON.parse(this.responseBody)).toEqual({
         username: 'michiel',
         ok: false,
