@@ -4,10 +4,12 @@
   "description": "Network Ledger Technology (demo server)",
   "main": "app.js",
   "scripts": {
+    "build": "tsc src/**/*.ts --target ES6",
+    "lint": "eslint src/ test/ --ext .ts",
+    "lint-app": "eslint public/app.js",
+    "jest": "jest",
     "start": "node src/server.js",
-    "lint": "eslint src/**/*.js public/app.js test/**/*.js",
-    "test": "npm run lint && npm run unit",
-    "unit": "mocha  test/**/*.js"
+    "test": "npm run lint && npm run jest"
   },
   "repository": {
     "type": "git",
@@ -33,14 +35,25 @@
     "hubbie": "^4.2.0",
     "node-static": "^0.7.11",
     "pg": "^7.18.1",
-    "randombytes": "^2.1.0"
+    "randombytes": "^2.1.0",
+    "snap": "github:ledgerloops/snap#draft-half-ledgers"
   },
   "devDependencies": {
+    "@babel/core": "^7.8.6",
+    "@babel/preset-env": "^7.8.6",
+    "@babel/preset-typescript": "^7.8.3",
+    "@types/jest": "^25.1.3",
+    "@typescript-eslint/eslint-plugin": "^2.21.0",
+    "@typescript-eslint/parser": "^2.21.0",
+    "babel": "^6.23.0",
     "btoa": "^1.2.1",
     "chai": "^4.2.0",
     "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.1",
+    "eslint-config-prettier": "^6.10.0",
     "eslint-plugin-import": "^2.20.1",
-    "mocha": "^5.2.0"
+    "mocha": "^5.2.0",
+    "prettier": "^1.19.1",
+    "typescript": "^3.8.3"
   }
 }
