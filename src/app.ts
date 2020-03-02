@@ -2,12 +2,8 @@ import Static from 'node-static';
 import atob from 'atob';
 import randomBytes from 'randombytes';
 
-import db from './db';
-import { snapOut, snapIn } from './snap';
-import { loop } from './loops';
-import routing from './routing';
-import balances from './balances';
-import friendForm from './friendForm';
+import { runSql, checkPass, getValue } from './db';
+import { FriendForm } from './friendForm';
 
 const file = new Static.Server('./public');
 
@@ -17,9 +13,9 @@ function mixInBalances(user, contacts) {
   }
   async function addBalances(contact) {
     return Object.assign(contact, {
-      payable: await balances.getTheirPayable(user, contact),
-      receivable: await balances.getTheirReceivable(user, contact),
-      current: await balances.getTheirCurrent(user, contact),
+      // payable: await balances.getTheirPayable(user, contact),
+      // receivable: await balances.getTheirReceivable(user, contact),
+      // current: await balances.getTheirCurrent(user, contact),
     });
   }
   return Promise.all(contacts.map(addBalances));
@@ -32,7 +28,7 @@ function mixInContactNames(transactions) {
   async function addContactName(transaction) {
     // console.log('adding contact name', transaction);
     return Object.assign(transaction, {
-      peerName: await db.getValue('SELECT name AS value FROM contacts WHERE id = $1 AND userId = $2', [transaction.contactId, transaction.userId]),
+      peerName: await getValue('SELECT name AS value FROM contacts WHERE id = $1 AND userId = $2', [transaction.contactId, transaction.userId]),
     });
   }
   return Promise.all(transactions.map(addContactName));
@@ -43,7 +39,7 @@ function getData(user, resource) {
     contacts: '"id", "userId", "name", "url", "token", "min", "max"',
     transactions: '"userId", "contact_id", "requested_at", "description", "direction", "amount"',
   };
-  return db.runSql(`SELECT ${columns[resource]} FROM ${resource} WHERE userId = $1;`, [user.id]).then((data) => {
+  return runSql(`SELECT ${columns[resource]} FROM ${resource} WHERE userId = $1;`, [user.id]).then((data) => {
     if (resource === 'contacts') {
       return mixInBalances(user, data);
     }
@@ -57,17 +53,17 @@ function getData(user, resource) {
 export function makeHandler(hubbie) {
   hubbie.on('peer', async (eventObj) => {
     // FIXME: these same two SQL queries are repeated in the message event
-    const users = await db.runSql('SELECT * FROM users WHERE name = $1', [eventObj.userName]);
+    const users = await runSql('SELECT * FROM users WHERE name = $1', [eventObj.userName]);
     if (users === null || users.length === 0) {
       // console.log('verdict 1  false!');
       return false;
     }
     // console.log('still here 1');
     const user = users[0];
-    const contacts = await db.runSql('SELECT * FROM contacts WHERE name = $1 AND userId  = $2', [eventObj.peerName, user.id]);
+    const contacts = await runSql('SELECT * FROM contacts WHERE name = $1 AND userId  = $2', [eventObj.peerName, user.id]);
     if (contacts === null || contacts.length === 0) {
       // console.log('verdict 2 true!');
-      await db.runSql('INSERT INTO contacts (userId, name, token, landmark) VALUES ($1, $2, $3, $4)', [user.id, eventObj.peerName, eventObj.peerSecret, `${user.name}:${eventObj.peerName}`]);
+      await runSql('INSERT INTO contacts (userId, name, token, landmark) VALUES ($1, $2, $3, $4)', [user.id, eventObj.peerName, eventObj.peerSecret, `${user.name}:${eventObj.peerName}`]);
       return true;
     }
     // console.log('still here 2');
@@ -91,12 +87,12 @@ export function makeHandler(hubbie) {
 
   hubbie.on('message', async (peerName, msg, userName) => {
     // FIXME: these same two SQL queries are already done in the peer event
-    const users = await db.runSql('SELECT * FROM users WHERE name = $1', [userName]);
+    const users = await runSql('SELECT * FROM users WHERE name = $1', [userName]);
     if (users === null || users.length === 0) {
       return false;
     }
     const user = users[0];
-    const contacts = await db.runSql('SELECT * FROM contacts WHERE name = $1 AND userId  = $2', [peerName, user.id]);
+    const contacts = await runSql('SELECT * FROM contacts WHERE name = $1 AND userId  = $2', [peerName, user.id]);
     if (contacts === null || contacts.length === 0) {
       return false;
     }
@@ -117,7 +113,7 @@ export function makeHandler(hubbie) {
           try {
             // console.log(req.headers);
             const [username, password] = atob(req.headers.authorization.split(' ')[1]).split(':');
-            db.checkPass(username, password).then((user) => {
+            checkPass(username, password).then((user) => {
               res.end(JSON.stringify({ username, ok: (user !== false) }));
             });
           } catch (e) {
@@ -128,7 +124,7 @@ export function makeHandler(hubbie) {
           try {
             // console.log(req.headers, body);
             const [username, password] = atob(req.headers.authorization.split(' ')[1]).split(':');
-            const user = await db.checkPass(username, password);
+            const user = await checkPass(username, password);
             if (user === false) {
               throw new Error('auth fail');
             }
@@ -148,7 +144,7 @@ export function makeHandler(hubbie) {
         case 'topup':
           try {
             const [username, password] = atob(req.headers.authorization.split(' ')[1]).split(':');
-            const user = await db.checkPass(username, password);
+            const user = await checkPass(username, password);
             if (user === false) {
               throw new Error('auth fail');
             }
@@ -161,7 +157,7 @@ export function makeHandler(hubbie) {
         case 'sendroutes':
           try {
             const [username, password] = atob(req.headers.authorization.split(' ')[1]).split(':');
-            const user = await db.checkPass(username, password);
+            const user = await checkPass(username, password);
             if (user === false) {
               throw new Error('auth fail');
             }
@@ -172,7 +168,7 @@ export function makeHandler(hubbie) {
           }
           break;
         case 'profile': {
-          res.end(friendForm(who));
+          res.end(FriendForm(who));
           break;
         }
         case 'contacts':
@@ -181,7 +177,7 @@ export function makeHandler(hubbie) {
             // console.log(resource, req.headers.authorization, req.method, body);
             const [username, password] = atob(req.headers.authorization.split(' ')[1]).split(':');
             // console.log('checkpass', username, password);
-            const user = await db.checkPass(username, password);
+            const user = await checkPass(username, password);
             // console.log(userId, req.method);
             if (user === false) {
               throw new Error('auth error');
@@ -205,10 +201,10 @@ export function makeHandler(hubbie) {
                   max: 0,
                 };
                 if (who === 'new') {
-                  contact.id = await db.getValue('INSERT INTO contacts ("userId", "name", "url", "token", "min", "max", "landmark") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id AS value;', [contact.userId, contact.name, contact.url, contact.token, contact.min, contact.max, contact.landmark]);
+                  contact.id = await getValue('INSERT INTO contacts ("userId", "name", "url", "token", "min", "max", "landmark") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id AS value;', [contact.userId, contact.name, contact.url, contact.token, contact.min, contact.max, contact.landmark]);
                 } else {
                   contact.id = parseInt(who, 10);
-                  await db.runSql('UPDATE contacts SET "name" = $1, "url" =$2, "token" = $3, "min" = $4, "max" = $5, "landmark" = $6 WHERE userId = $7 AND id = $8;', [contact.name, contact.url, contact.token, contact.min, contact.max, contact.landmark, contact.userId, contact.id]);
+                  await runSql('UPDATE contacts SET "name" = $1, "url" =$2, "token" = $3, "min" = $4, "max" = $5, "landmark" = $6 WHERE userId = $7 AND id = $8;', [contact.name, contact.url, contact.token, contact.min, contact.max, contact.landmark, contact.userId, contact.id]);
                 }
                 await hubbieSend(user, contact, {
                   msgType: 'FRIEND-REQUEST',
@@ -225,7 +221,7 @@ export function makeHandler(hubbie) {
                 id: parseInt(who, 10),
                 // no need to instantiate other fields for a delete
               };
-              await db.runSql('DELETE FROM contacts WHERE userId = $1 AND id = $2;', [user.id, contact.id]);
+              await runSql('DELETE FROM contacts WHERE userId = $1 AND id = $2;', [user.id, contact.id]);
             }
             const data = await getData(user, resource);
             res.end(JSON.stringify({

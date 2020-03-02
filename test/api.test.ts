@@ -12,10 +12,10 @@ async function runSqlFile(filename) {
 }
 
 describe('API Access', function () {
-  before(async function () {
+  beforeAll(() => {
     process.env.DATABASE_URL = process.env.DATABASE_URL || 'postgresql://snap:snap@localhost/test';
   });
-
+ 
   beforeEach(async function () {
     // await runSqlFile('./drop.sql');
     await runSqlFile('./schema.sql');
@@ -97,7 +97,7 @@ describe('API Access', function () {
     await runSqlFile('./drop.sql');
   });
 
-  after(async function () {
+  this.afterAll(async function () {
     await close();
   });
 });

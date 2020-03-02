@@ -10,7 +10,7 @@ async function runSqlFile(filename) {
 }
 
 describe('Database', function () {
-  before(async function () {
+  beforeAll(() => {
     process.env.DATABASE_URL = process.env.DATABASE_URL || 'postgresql://snap:snap@localhost/test';
   });
 
@@ -23,7 +23,7 @@ describe('Database', function () {
     await runSqlFile('./drop.sql');
   });
 
-  after(async function () {
+  afterAll(async function () {
     await close();
   });
 

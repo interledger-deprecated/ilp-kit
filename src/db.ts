@@ -49,7 +49,7 @@ export function checkPass(username, password) {
   });
 }
 
-export function getObject(query, params) {
+export function getObject(query, params?) {
   return runSql(query, params).then((results) => {
     if (!results || !results.length) {
       // console.log('throwing row not found!', query, params);
@@ -59,7 +59,7 @@ export function getObject(query, params) {
   });
 }
 
-export function getValue(query, params, defaultVal) {
+export function getValue(query, params?, defaultVal?) {
   return getObject(query, params).then(obj => obj.value).catch((e) => {
     if (e.message === 'db row not found' && defaultVal !== undefined) {
       return defaultVal;
