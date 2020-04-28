@@ -1,6 +1,5 @@
 import { SnapTransactionState } from "snap-checker";
-import { SnapSolid } from "./SnapSolid";
-import { SnapContact } from "./SnapContact";
+import { SnapSolid, SnapContact } from "snap-solid";
 import { forDebugging } from "./forDebugging";
 
 export async function runPresentation(
