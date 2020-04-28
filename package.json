@@ -1,60 +1,67 @@
 {
   "name": "nlt-kit",
-  "version": "1.0.0",
-  "description": "Network Ledger Technology (demo server)",
-  "main": "app.js",
+  "version": "1.1.0",
+  "description": "Network Ledger Technology (demo server), using SNAP on top of Solid",
+  "files": [
+    "src",
+    "lib"
+  ],
+  "main": "lib/index.js",
   "scripts": {
-    "build": "tsc src/**/*.ts --target ES6",
-    "lint": "eslint src/ test/ --ext .ts",
-    "lint-app": "eslint public/app.js",
+    "build": "webpack",
+    "coverage": "jest --collect-coverage",
     "jest": "jest",
-    "start": "node src/server.js",
-    "test": "npm run lint && npm run jest"
+    "lint": "eslint src/ test/ --ext .ts",
+    "postversion": "git push && git push --tags && npm publish",
+    "prettier": "prettier --write \"{src,test,__mocks__}/**/*.ts\"",
+    "preversion": "npm test",
+    "start": "NODE_EXTRA_CA_CERTS=myCA.pem DEBUG=* node ./node_modules/solid-app-kit/lib/cli public/",
+    "test": "npm run build && npm run lint && npm run jest",
+    "version": "npm run build"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ledgerloops/nlt-kit.git"
   },
-  "keywords": [
-    "nlt",
-    "network",
-    "ledger",
-    "technology",
-    "ledgerloops"
-  ],
-  "author": "Michiel de Jong",
-  "license": "MIT",
+  "author": "Michiel B. de Jong",
+  "license": "ISC",
   "bugs": {
     "url": "https://github.com/ledgerloops/nlt-kit/issues"
   },
   "homepage": "https://github.com/ledgerloops/nlt-kit#readme",
-  "dependencies": {
-    "atob": "^2.1.2",
-    "bcrypt": "^3.0.2",
-    "hashlocks": "^1.0.0",
-    "hubbie": "^4.2.0",
-    "node-static": "^0.7.11",
-    "pg": "^7.18.1",
-    "randombytes": "^2.1.0",
-    "snap": "github:ledgerloops/snap#draft-half-ledgers"
-  },
   "devDependencies": {
-    "@babel/core": "^7.8.6",
-    "@babel/preset-env": "^7.8.6",
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.8.7",
+    "@babel/preset-env": "^7.8.7",
     "@babel/preset-typescript": "^7.8.3",
     "@types/jest": "^25.1.3",
-    "@typescript-eslint/eslint-plugin": "^2.21.0",
-    "@typescript-eslint/parser": "^2.21.0",
-    "babel": "^6.23.0",
-    "btoa": "^1.2.1",
-    "chai": "^4.2.0",
-    "eslint": "^5.16.0",
-    "eslint-config-airbnb": "^17.1.1",
+    "@typescript-eslint/eslint-plugin": "^2.22.0",
+    "@typescript-eslint/parser": "^2.22.0",
+    "babel-jest": "^25.2.4",
+    "babel-loader": "^8.0.6",
+    "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.10.0",
-    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-prettier": "^3.1.2",
+    "husky": "^4.2.3",
     "jest": "^25.1.0",
-    "mocha": "^5.2.0",
     "prettier": "^1.19.1",
-    "typescript": "^3.8.3"
+    "pretty-quick": "^2.0.1",
+    "solid-app-kit": "^1.5.3",
+    "source-map-loader": "^0.2.4",
+    "typescript": "^3.8.3",
+    "webpack": "^4.42.0",
+    "webpack-cli": "^3.3.11"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  },
+  "dependencies": {
+    "plandoc": "github:michielbdejong/plandoc#fetchContainer",
+    "rdf-namespaces": "^1.8.0",
+    "snap-checker": "^1.5.1",
+    "tripledoc": "^4.3.2",
+    "uuid": "^7.0.3"
   }
 }

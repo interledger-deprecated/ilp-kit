@@ -1,0 +1,1 @@
+{"version":3,"sources":["../src/index.ts"],"names":["HelloWorld"],"mappings":";;;;;;;AAAO,SAASA,UAAT,GAA8B;AACnC,SAAO,cAAP;AACD","sourcesContent":["export function HelloWorld(): string {\n  return \"hello, world\";\n}\n"],"file":"index.js"}
